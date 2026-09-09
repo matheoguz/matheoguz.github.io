@@ -1,0 +1,375 @@
+<title>Atelier Réponse</title>
+<meta name="description" content="On automatise la première réponse client des petites entreprises — chatbot, prise de RDV, relance — livré en une semaine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Public+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --bg:#fff8ef;
+  --surface:#ffffff;
+  --surface-2:#fff1de;
+  --line:#f0ddc0;
+  --text:#211a12;
+  --text-dim:#5c5044;
+  --text-faint:#8c8072;
+  --accent:#e8602c;
+  --accent-strong:#c94d1f;
+  --accent-ink:#fff6ee;
+  --pop:#2f8f6f;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1611;
+    --surface:#231d16;
+    --surface-2:#2a2318;
+    --line:#3a3123;
+    --text:#f7f0e4;
+    --text-dim:#c4b8a4;
+    --text-faint:#8c8072;
+    --accent:#ff8a52;
+    --accent-strong:#ffa26f;
+    --accent-ink:#2a1206;
+    --pop:#5fcba0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1611;
+  --surface:#231d16;
+  --surface-2:#2a2318;
+  --line:#3a3123;
+  --text:#f7f0e4;
+  --text-dim:#c4b8a4;
+  --text-faint:#8c8072;
+  --accent:#ff8a52;
+  --accent-strong:#ffa26f;
+  --accent-ink:#2a1206;
+  --pop:#5fcba0;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{
+  font-family:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-weight:500;
+  text-wrap:balance;
+  margin:0;
+}
+p{line-height:1.65; color:var(--text-dim); margin:0;}
+.wrap{max-width:980px; margin:0 auto; padding:0 28px;}
+a{color:inherit;}
+
+/* ---- top bar ---- */
+.topbar{border-bottom:1px solid var(--line);}
+.topbar-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 0;
+}
+.brand{
+  font-size:1.02rem;
+  font-weight:600;
+  letter-spacing:-0.01em;
+}
+.topbar a.cta-small{
+  font-size:0.88rem;
+  text-decoration:none;
+  border:1px solid var(--line);
+  padding:9px 16px;
+  border-radius:12px;
+  color:var(--text);
+  transition:border-color .15s ease, background .15s ease;
+}
+.topbar a.cta-small:hover{border-color:var(--accent); background:var(--surface-2);}
+
+/* ---- hero ---- */
+.hero{
+  padding:80px 0 68px;
+  max-width:720px;
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.85rem;
+  font-weight:600;
+  letter-spacing:0.02em;
+  color:var(--accent-strong);
+  background:var(--surface-2);
+  padding:7px 14px 7px 10px;
+  border-radius:99px;
+  margin-bottom:18px;
+}
+.eyebrow::before{
+  content:"";
+  width:8px; height:8px; border-radius:50%;
+  background:var(--pop);
+  flex-shrink:0;
+}
+.hero h1{
+  font-size:clamp(2rem, 3.6vw, 2.9rem);
+  line-height:1.15;
+  letter-spacing:-0.01em;
+}
+.hero-sub{
+  margin-top:20px;
+  font-size:1.08rem;
+  max-width:52ch;
+}
+.hero-actions{
+  margin-top:30px;
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+}
+.cta-main{
+  font-size:0.94rem;
+  text-decoration:none;
+  background:var(--accent);
+  color:var(--accent-ink);
+  padding:14px 24px;
+  border-radius:12px;
+  font-weight:600;
+  transition:background .15s ease;
+}
+.cta-main:hover{background:var(--accent-strong);}
+.hero-meta{
+  font-size:0.85rem;
+  color:var(--text-faint);
+}
+
+/* ---- section shell ---- */
+section{padding:56px 0;}
+.section-head{
+  max-width:56ch;
+  margin-bottom:32px;
+}
+.section-head h2{font-size:1.55rem;}
+.section-head p{margin-top:10px;}
+
+/* ---- personal note ---- */
+.note{
+  border-left:3px solid var(--accent);
+  padding:4px 0 4px 20px;
+}
+.note p{font-size:1rem; max-width:60ch; color:var(--text);}
+.note-sig{
+  margin-top:10px;
+  font-size:0.85rem;
+  color:var(--text-faint);
+}
+
+/* ---- pain / before-after ---- */
+.compare{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.compare-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px;
+  background:var(--surface);
+}
+.compare-label{
+  font-size:0.78rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  margin-bottom:14px;
+  display:block;
+  color:var(--text-faint);
+}
+.compare-card.good .compare-label{color:var(--pop);}
+.compare-card ul{margin:0; padding:0; list-style:none;}
+.compare-card li{
+  font-size:0.94rem;
+  color:var(--text-dim);
+  padding:10px 0;
+  border-top:1px solid var(--line);
+  display:flex; gap:10px;
+}
+.compare-card li:first-child{border-top:none;}
+.compare-card li::before{content:"–"; color:var(--text-faint); flex-shrink:0;}
+.compare-card.good li::before{content:"✓"; color:var(--pop);}
+
+/* ---- pricing ---- */
+.pricing{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:20px;
+}
+.price-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:26px 22px;
+  background:var(--surface);
+  display:flex; flex-direction:column; gap:16px;
+}
+.price-card.highlight{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, var(--surface)), var(--surface));
+}
+.price-card.pop{border-color:var(--pop);}
+.price-card.pop .price-name{color:var(--pop);}
+.price-name{font-size:0.82rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.04em; font-weight:600;}
+.price-amount{font-family:'Source Serif 4', serif; font-size:1.9rem; font-weight:500;}
+.price-amount sup{font-size:0.9rem; font-weight:400; color:var(--text-faint);}
+.price-desc{font-size:0.9rem;}
+.price-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px;}
+.price-list li{font-size:0.87rem; color:var(--text-dim); display:flex; gap:8px;}
+.price-list li::before{content:"·"; color:var(--accent); font-weight:700;}
+
+/* ---- final cta ---- */
+.final{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  padding:44px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.final h2{font-size:1.55rem; margin-bottom:8px;}
+.final p{max-width:44ch;}
+
+footer{border-top:1px solid var(--line); padding:26px 0 40px;}
+.footer-inner{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:0.84rem;
+  color:var(--text-faint);
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+@media (max-width: 780px){
+  .compare{grid-template-columns:1fr;}
+  .pricing{grid-template-columns:1fr;}
+}
+</style>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">Atelier Réponse</div>
+    <a class="cta-small" href="mailto:contact@atelier-reponse.fr?subject=Demande%20de%20d%C3%A9mo">Écrire un mail</a>
+  </div>
+</div>
+
+<div class="wrap hero">
+  <div class="eyebrow">Automatisation de la relation client</div>
+  <h1>Pendant que vous êtes avec un client, le suivant attend une réponse.</h1>
+  <p class="hero-sub">On installe un assistant qui répond, prend rendez-vous et relance à votre place — pensé pour les commerces, artisans et cabinets qui n'ont pas de secrétariat. Mis en place en une semaine, sans engagement.</p>
+  <div class="hero-actions">
+    <a class="cta-main" href="mailto:contact@atelier-reponse.fr?subject=Demande%20de%20d%C3%A9mo">Demander une démo gratuite</a>
+    <span class="hero-meta">Réponse sous 24h · aucune carte requise</span>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Le problème n'est pas le travail, c'est l'attente</h2>
+    </div>
+    <div class="compare">
+      <div class="compare-card">
+        <span class="compare-label">Sans assistant</span>
+        <ul>
+          <li>Message reçu à 19h, lu le lendemain midi</li>
+          <li>Le client a déjà écrit à un concurrent</li>
+          <li>Les devis en attente se noient dans la boîte mail</li>
+          <li>Chaque question répétée prend du temps sur le vrai métier</li>
+        </ul>
+      </div>
+      <div class="compare-card good">
+        <span class="compare-label">Avec Atelier Réponse</span>
+        <ul>
+          <li>Réponse en moins d'une minute, jour et nuit</li>
+          <li>Rendez-vous proposés directement dans le message</li>
+          <li>Relance automatique des devis sans réponse à J+3</li>
+          <li>Vous ne voyez que les échanges qui ont besoin de vous</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="note">
+      <p>Je m'appelle Matheo, étudiant, et je monte ce projet moi-même. Pas d'équipe commerciale : si vous m'écrivez, c'est moi qui vous réponds et qui configure votre assistant. Le premier essai est gratuit — je préfère vous montrer que vous convaincre.</p>
+      <div class="note-sig">— Matheo, fondateur</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Une question avant de se lancer ?</h2>
+      <p>N'hésitez pas à m'écrire à <a href="mailto:contact@atelier-reponse.fr">contact@atelier-reponse.fr</a> pour la moindre question, même si vous n'êtes pas encore sûr de vouloir tester — je réponds toujours.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Un prix par ce que ça vous rapporte, pas par fonctionnalité</h2>
+    </div>
+    <div class="pricing">
+      <div class="price-card pop">
+        <span class="price-name">Découverte</span>
+        <div class="price-amount">Gratuit</div>
+        <p class="price-desc">Démo faite sur vos propres messages, sans engagement.</p>
+        <ul class="price-list">
+          <li>Audit de vos échanges actuels</li>
+          <li>Exemple d'assistant sur mesure</li>
+          <li>Estimation du temps gagné</li>
+        </ul>
+      </div>
+      <div class="price-card highlight">
+        <span class="price-name">Mise en place</span>
+        <div class="price-amount">89€<sup>/mois</sup></div>
+        <p class="price-desc">L'essentiel pour un commerce ou un cabinet seul.</p>
+        <ul class="price-list">
+          <li>Réponses automatiques mail + SMS</li>
+          <li>Prise de rendez-vous intégrée</li>
+          <li>Ajustements illimités le 1er mois</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <span class="price-name">Sur devis</span>
+        <div class="price-amount">—</div>
+        <p class="price-desc">Plusieurs canaux, plusieurs sites, ou une équipe.</p>
+        <ul class="price-list">
+          <li>Instagram, WhatsApp, formulaire</li>
+          <li>Tableau de suivi partagé</li>
+          <li>Accompagnement dédié</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap final">
+    <div>
+      <h2>On regarde ensemble ce que ça donnerait chez vous ?</h2>
+      <p>Un mail avec deux ou trois exemples de vos échanges suffit pour préparer la démo.</p>
+    </div>
+    <a class="cta-main" href="mailto:contact@atelier-reponse.fr?subject=Demande%20de%20d%C3%A9mo">Écrire à l'atelier</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>Atelier Réponse — projet indépendant, pas une agence</span>
+    <span>contact@atelier-reponse.fr</span>
+  </div>
+</footer>
