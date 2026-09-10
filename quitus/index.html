@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quitus — Conformité sous-traitants</title>
+<meta name="description" content="Quitus prouve que vous avez vérifié la conformité de vos sous-traitants. Attestations URSSAF, registres transport et sécurité privée, journal de vigilance horodaté.">
+<meta property="og:title" content="Quitus — Conformité sous-traitants">
+<meta property="og:description" content="Vos fournisseurs déposent. Nous prouvons que vous avez vérifié. Attestations URSSAF, registres transport et sécurité privée, journal de vigilance horodaté.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✓</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --papier:#F4F6F4; --surface:#FFFFFF; --surface-2:#FAFBFA;
+  --encre:#171C1A; --encre-doux:#454E4A; --muet:#6E7873; --bord:#DCE1DD;
+  --accent:#1F4B43; --accent-fond:#E7EFEB; --accent-bord:#BDD2CA;
+  --echeance:#96581F; --echeance-fond:#FAF0E2; --echeance-bord:#E4CBA5;
+  --manquant:#A6332A; --manquant-fond:#FAEAE7; --manquant-bord:#E8C0BA;
+  --ombre:0 1px 2px rgba(23,28,26,.05), 0 8px 24px -12px rgba(23,28,26,.12);
+  --r:10px;
+  --pas:clamp(3.5rem,7vw,6rem);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --papier:#101413; --surface:#181E1C; --surface-2:#1C2321;
+    --encre:#E7EBE9; --encre-doux:#B3BCB8; --muet:#818C87; --bord:#2B3330;
+    --accent:#77B6A2; --accent-fond:#1B2A26; --accent-bord:#2F4A42;
+    --echeance:#D69A5C; --echeance-fond:#2A2118; --echeance-bord:#4A3823;
+    --manquant:#E08076; --manquant-fond:#2B1B19; --manquant-bord:#4C2C27;
+    --ombre:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --papier:#101413; --surface:#181E1C; --surface-2:#1C2321;
+  --encre:#E7EBE9; --encre-doux:#B3BCB8; --muet:#818C87; --bord:#2B3330;
+  --accent:#77B6A2; --accent-fond:#1B2A26; --accent-bord:#2F4A42;
+  --echeance:#D69A5C; --echeance-fond:#2A2118; --echeance-bord:#4A3823;
+  --manquant:#E08076; --manquant-fond:#2B1B19; --manquant-bord:#4C2C27;
+  --ombre:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--papier); color:var(--encre);
+  font-family:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.page{max-width:63rem; margin:0 auto; padding-inline:clamp(1rem,4vw,2.5rem); padding-block:clamp(2.5rem,6vw,4.5rem)}
+section{margin-block-start:var(--pas)}
+h1,h2,h3{font-family:'Archivo',system-ui,sans-serif; text-wrap:balance; margin:0; letter-spacing:-.018em; line-height:1.12}
+h1{font-size:clamp(2.1rem,5.2vw,3.4rem); font-weight:700}
+h2{font-size:clamp(1.5rem,3.2vw,2.05rem); font-weight:600}
+h3{font-size:1.05rem; font-weight:600; letter-spacing:-.008em}
+p{margin:0; max-width:62ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+.eyebrow{
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.7rem; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--muet); margin:0
+}
+.pile{display:flex; flex-direction:column; gap:1.15rem}
+.pile-serre{display:flex; flex-direction:column; gap:.6rem}
+
+
+/* — Marque — */
+.marque{
+  display:flex; align-items:baseline; gap:.6rem; margin-block-end:2.25rem;
+}
+.marque b{font-family:'Archivo',sans-serif; font-weight:700; font-size:1.2rem; letter-spacing:-.02em}
+.marque span{font-size:.8rem; color:var(--muet)}
+
+/* — Héros — */
+.these{font-size:clamp(1.05rem,2.1vw,1.2rem); color:var(--encre-doux); max-width:56ch}
+.these b{color:var(--encre); font-weight:600}
+
+/* — Échéancier — */
+.cadre{
+  background:var(--surface); border:1px solid var(--bord); border-radius:var(--r);
+  box-shadow:var(--ombre); overflow:hidden; margin-block-start:2.5rem;
+}
+.cadre-tete{
+  display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:baseline; justify-content:space-between;
+  padding:.85rem 1.1rem; border-bottom:1px solid var(--bord); background:var(--surface-2);
+}
+.cadre-tete .eyebrow{color:var(--encre-doux)}
+.exemple{font-size:.72rem; color:var(--muet); font-style:italic}
+.defile{overflow-x:auto}
+table{border-collapse:collapse; width:100%; min-width:41rem; font-size:.875rem}
+th{
+  text-align:left; font-family:'IBM Plex Mono',monospace; font-weight:500;
+  font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muet);
+  padding:.7rem 1.1rem; border-bottom:1px solid var(--bord); white-space:nowrap;
+}
+td{padding:.85rem 1.1rem; border-bottom:1px solid var(--bord); vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.fournisseur{font-weight:500; white-space:nowrap}
+.secteur{display:block; font-size:.75rem; color:var(--muet); font-weight:400}
+.num{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--encre-doux)}
+.vide{color:var(--muet)}
+.etat{
+  display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap;
+  font-size:.76rem; font-weight:500; padding:.24rem .6rem .28rem; border-radius:99px; border:1px solid;
+}
+.etat::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor; flex:none}
+.e-ok{color:var(--accent); background:var(--accent-fond); border-color:var(--accent-bord)}
+.e-bientot{color:var(--echeance); background:var(--echeance-fond); border-color:var(--echeance-bord)}
+.e-manque{color:var(--manquant); background:var(--manquant-fond); border-color:var(--manquant-bord)}
+
+/* — Le piège des dates — */
+.regles{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(17rem,1fr)); margin-block-start:2rem}
+.regle{
+  background:var(--surface); border:1px solid var(--bord); border-radius:var(--r);
+  padding:1.25rem 1.35rem 1.35rem; display:flex; flex-direction:column; gap:.55rem;
+}
+.regle .faux,.regle .vrai{
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; line-height:1.5; padding-inline-start:.85rem;
+  border-inline-start:2px solid;
+}
+.regle .faux{color:var(--manquant); border-color:var(--manquant-bord); text-decoration:line-through; text-decoration-thickness:1px}
+.regle .vrai{color:var(--accent); border-color:var(--accent-bord)}
+
+/* — Étapes — */
+.etapes{display:flex; flex-direction:column; gap:0; margin-block-start:2rem; counter-reset:e}
+.etape{
+  display:grid; grid-template-columns:auto 1fr; gap:0 1.15rem;
+  padding-block:1.5rem; border-bottom:1px solid var(--bord);
+}
+.etape:last-child{border-bottom:none}
+.etape::before{
+  counter-increment:e; content:counter(e,decimal-leading-zero);
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:500; color:var(--accent);
+  padding-block-start:.2rem;
+}
+.etape p{grid-column:2; margin-block-start:.4rem; color:var(--encre-doux); font-size:.94rem}
+.code{
+  grid-column:2; margin-block-start:.75rem; font-family:'IBM Plex Mono',monospace; font-size:.78rem;
+  background:var(--accent-fond); border:1px solid var(--accent-bord); color:var(--accent);
+  padding:.55rem .8rem; border-radius:6px; display:inline-flex; flex-wrap:wrap; gap:.5rem; align-items:center;
+  justify-self:start; max-width:100%; word-break:break-word;
+}
+
+/* — Franchise — */
+.franchise{
+  background:var(--surface); border:1px solid var(--bord); border-inline-start:3px solid var(--accent);
+  border-radius:var(--r); padding:1.5rem clamp(1.15rem,3vw,1.75rem); margin-block-start:2rem;
+}
+.franchise ul{margin:1.15rem 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.9rem}
+.franchise li{display:grid; grid-template-columns:auto 1fr; gap:.7rem; font-size:.9rem; color:var(--encre-doux)}
+.franchise li::before{content:"—"; color:var(--muet); font-family:'IBM Plex Mono',monospace}
+.franchise li b{color:var(--encre); font-weight:600}
+
+/* — Tarifs — */
+.paliers{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(13.5rem,1fr)); margin-block-start:2rem}
+.palier{
+  background:var(--surface); border:1px solid var(--bord); border-radius:var(--r);
+  padding:1.35rem; display:flex; flex-direction:column; gap:.3rem;
+}
+.palier.mis{border-color:var(--accent-bord); background:var(--accent-fond)}
+.palier .nom{font-family:'Archivo',sans-serif; font-weight:600; font-size:.95rem}
+.palier .prix{font-family:'Archivo',sans-serif; font-weight:700; font-size:1.75rem; letter-spacing:-.02em; font-variant-numeric:tabular-nums; margin-block-start:.35rem}
+.palier .prix small{font-family:'IBM Plex Sans',sans-serif; font-weight:400; font-size:.78rem; color:var(--muet); letter-spacing:0}
+.palier .qui{font-size:.83rem; color:var(--muet)}
+.gratuit{
+  margin-block-start:1.15rem; font-size:.9rem; color:var(--encre-doux);
+  background:var(--surface-2); border:1px solid var(--bord); border-radius:var(--r); padding:1rem 1.15rem;
+}
+.gratuit b{color:var(--encre); font-weight:600}
+
+/* — Appel — */
+.appel{
+  margin-block-start:var(--pas); background:var(--surface); border:1px solid var(--bord);
+  border-radius:var(--r); padding:clamp(1.5rem,4vw,2.5rem); box-shadow:var(--ombre);
+}
+.bouton{
+  display:inline-block; margin-block-start:1.35rem; background:var(--accent); color:var(--papier);
+  font-family:'Archivo',sans-serif; font-weight:600; font-size:.95rem; text-decoration:none;
+  padding:.75rem 1.4rem; border-radius:7px; transition:opacity .15s ease;
+}
+.bouton:hover{opacity:.88}
+.sous-bouton{margin-block-start:.85rem; font-size:.8rem; color:var(--muet)}
+
+footer{
+  margin-block-start:var(--pas); padding-block-start:1.75rem; border-top:1px solid var(--bord);
+  font-size:.78rem; color:var(--muet); display:flex; flex-direction:column; gap:.4rem;
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="marque"><b>Quitus</b><span>conformité des sous-traitants</span></div>
+
+  <header class="pile">
+    <p class="eyebrow">Transport routier · Sécurité privée</p>
+    <h1>Vos fournisseurs déposent. Nous prouvons que vous avez vérifié.</h1>
+    <p class="these">En contrôle URSSAF, ce qui vous protège n'est pas d'avoir le PDF quelque part. C'est de pouvoir montrer <b>quelle pièce, reçue à quelle date, vérifiée par quel moyen</b> — et avec quelle réponse de l'organisme émetteur.</p>
+  </header>
+
+  <div class="cadre">
+    <div class="cadre-tete">
+      <p class="eyebrow">Échéancier de vigilance</p>
+      <span class="exemple">Données d'exemple</span>
+    </div>
+    <div class="defile">
+      <table>
+        <thead>
+          <tr><th>Fournisseur</th><th>Montant du contrat</th><th>Vérifiée le</th><th>Échéance</th><th>État</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fournisseur">Transports Bergeron<span class="secteur">Affrètement — 52.29B</span></td>
+            <td class="num">41 500 € HT</td>
+            <td class="num">12/08/2026</td>
+            <td class="num">31/01/2027</td>
+            <td><span class="etat e-ok">Conforme</span></td>
+          </tr>
+          <tr>
+            <td class="fournisseur">Atlas Sécurité Privée<span class="secteur">Gardiennage — 80.10Z</span></td>
+            <td class="num">24 000 € HT</td>
+            <td class="num">03/04/2026</td>
+            <td class="num">30/09/2026</td>
+            <td><span class="etat e-bientot">À renouveler — 20 j</span></td>
+          </tr>
+          <tr>
+            <td class="fournisseur">Vialog Distribution<span class="secteur">Transport routier — 49.41A</span></td>
+            <td class="num">9 600 € HT</td>
+            <td class="num vide">—</td>
+            <td class="num vide">—</td>
+            <td><span class="etat e-manque">Jamais collectée</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="pile">
+    <p class="eyebrow">Le piège</p>
+    <h2>Deux règles de dates qui rendent un tableur faux</h2>
+    <p>Ce ne sont pas des subtilités : ce sont les deux erreurs qui produisent un suivi « tout vert » chez une entreprise qui, juridiquement, n'est pas couverte.</p>
+    <div class="regles">
+      <div class="regle">
+        <h3>La fin de validité se lit, elle ne se calcule pas</h3>
+        <p class="faux">date d'édition + 6 mois</p>
+        <p class="vrai">fin de la période analysée + 6 mois,<br>arrondie à la fin du mois</p>
+        <p style="font-size:.85rem;color:var(--encre-doux)">Une attestation téléchargée en septembre peut ne couvrir qu'une période close en juin. Compter six mois depuis le téléchargement donne une échéance fausse, et fausse dans le mauvais sens.</p>
+      </div>
+      <div class="regle">
+        <h3>Le cycle court depuis le contrat</h3>
+        <p class="faux">6 mois depuis le dernier document reçu</p>
+        <p class="vrai">6 mois depuis la date de conclusion,<br>jusqu'à la fin d'exécution</p>
+        <p style="font-size:.85rem;color:var(--encre-doux)">L'obligation porte sur tout contrat au-delà de 5 000 € HT, sur le montant global de l'opération — pas sur celui d'une facture. Et c'est cette relance semestrielle qui saute en premier quand elle repose sur la mémoire d'une personne.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pile">
+    <p class="eyebrow">Le mécanisme</p>
+    <h2>Trois étapes, dans cet ordre</h2>
+    <div class="etapes">
+      <div class="etape">
+        <h3>Vos contrats entrent, les échéances se calculent</h3>
+        <p>Vous saisissez le fournisseur, la date de conclusion et le montant global. Quitus détermine seul si le contrat est assujetti et à quelles dates les pièces doivent être réclamées.</p>
+      </div>
+      <div class="etape">
+        <h3>Le fournisseur dépose, l'URSSAF confirme</h3>
+        <p>Il reçoit un lien, dépose son attestation, et nous vérifions son code de sécurité auprès de l'URSSAF. Pas un contrôle visuel : une réponse de l'organisme qui l'a émise.</p>
+        <p class="code"><span>Code de sécurité</span><span style="color:var(--encre-doux)">7K2P9M4XA1B6D3F</span><span>→ authentique, valide jusqu'au 31/01/2027</span></p>
+      </div>
+      <div class="etape">
+        <h3>Le journal s'écrit tout seul</h3>
+        <p>Chaque relance, chaque dépôt, chaque vérification est horodaté et ne peut plus être modifié. En contrôle, vous exportez ce journal. C'est lui, le produit.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pile">
+    <p class="eyebrow">La différence</p>
+    <h2>Nous lisons les registres que personne ne lit</h2>
+    <p>Un outil généraliste attend que le sous-traitant dépose ses pièces. Deux de vos filières tiennent des registres publics — nous les interrogeons avant même de le solliciter.</p>
+    <div class="regles">
+      <div class="regle">
+        <h3>Transport — registre national</h3>
+        <p class="vrai">licences et copies conformes,<br>avec leurs dates de validité</p>
+        <p style="font-size:.85rem;color:var(--encre-doux)">L'État publie la liste nationale des transporteurs deux fois par semaine, et recalcule chaque année leur capacité financière à partir des données fiscales — 1 800 € puis 900 € par véhicule jusqu'à 3,5 t, 9 000 € puis 5 000 € au-delà. Une suspension y devient visible. Nous vous le disons avant que le camion parte.</p>
+      </div>
+      <div class="regle">
+        <h3>Sécurité — annuaire CNAPS</h3>
+        <p class="vrai">autorisation d'exercer :<br>active, suspendue, retirée ou expirée</p>
+        <p style="font-size:.85rem;color:var(--encre-doux)">Et une règle que peu connaissent : dans la sécurité privée, la sous-traitance est limitée à deux rangs, et c'est au donneur d'ordre de vérifier que les motifs du recours sont validés. Un tableur ne vous dira jamais que vous êtes au troisième rang.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pile">
+    <p class="eyebrow">Franchise</p>
+    <h2>Ce que nous ne promettrons jamais</h2>
+    <p>Sur un marché de conformité, une promesse invérifiable détruit la confiance plus vite qu'un périmètre étroit. Voici donc ce que Quitus ne fera pas, et pourquoi.</p>
+    <div class="franchise">
+      <ul>
+        <li><span><b>Nous n'irons pas chercher l'attestation de vigilance à votre place.</b> L'API de l'administration qui le permettrait est réservée aux acheteurs publics. Personne dans le secteur privé n'y a droit — et ceux qui le laissent entendre vous racontent une histoire. Les registres publics, en revanche, nous les lisons pour vous (ci-dessus).</span></li>
+        <li><span><b>Nous n'écrirons jamais « document falsifié ».</b> Quand l'URSSAF ne confirme pas un code, la réponse est ambiguë. Nous écrivons « non confirmé », et vous décidez.</span></li>
+        <li><span><b>Nous ne dirons jamais qu'un fournisseur est « à jour de ses cotisations ».</b> L'attestation est délivrée même sous plan d'apurement. Nous disons « attestation authentique et en cours de validité ».</span></li>
+        <li><span><b>Nous ne vérifierons pas la validité des titres de séjour.</b> Le téléservice est réservé aux employeurs pour leurs propres embauches. Nous contrôlons que la liste est complète, et nous alertons.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="pile">
+    <p class="eyebrow">Tarifs</p>
+    <h2>Un forfait, pas un compteur de licences</h2>
+    <p>Facturer à l'utilisateur revient à faire payer une entreprise chaque fois qu'elle implique une personne de plus dans sa conformité. Chez Quitus, le nombre d'utilisateurs est illimité à tous les paliers.</p>
+    <div class="paliers">
+      <div class="palier">
+        <span class="nom">Essentiel</span>
+        <span class="prix">89 €<small> HT / mois</small></span>
+        <span class="qui">Jusqu'à 25 fournisseurs actifs</span>
+      </div>
+      <div class="palier mis">
+        <span class="nom">Standard</span>
+        <span class="prix">149 €<small> HT / mois</small></span>
+        <span class="qui">Jusqu'à 75 fournisseurs actifs</span>
+      </div>
+      <div class="palier">
+        <span class="nom">Étendu</span>
+        <span class="prix">249 €<small> HT / mois</small></span>
+        <span class="qui">Au-delà de 75 fournisseurs</span>
+      </div>
+    </div>
+    <p class="gratuit"><b>Le dépôt est gratuit pour vos fournisseurs, définitivement.</b> Certaines plateformes facturent aux sous-traitants entre 449 et 1 699 € HT par an pour déposer un document que l'URSSAF délivre gratuitement — en indexant le tarif sur leur nombre de clients. Nous ne le ferons pas : un fournisseur qui paie pour être conforme finit par ne plus l'être.</p>
+  </section>
+
+  <div class="appel">
+    <p class="eyebrow">Essai gratuit</p>
+    <h2>Testez Quitus gratuitement — aucune carte bancaire requise</h2>
+    <p style="margin-block-start:.9rem;color:var(--encre-doux)">Créez votre compte en 30 secondes. Ajoutez vos sous-traitants, partagez le portail fournisseur, suivez vos échéances. Tout est inclus, sans limite de temps.</p>
+    <a class="bouton" href="https://quitus.vercel.app/inscription" id="cta-inscription">Commencer gratuitement</a>
+    <p class="sous-bouton">Aucune installation requise. Vos fournisseurs déposent leurs attestations gratuitement.</p>
+    <p style="margin-block-start:1rem"><a href="mailto:matheoguzzi@gmail.com?subject=Quitus%20%E2%80%94%20question" style="color:var(--muet);font-size:.875rem">Une question ? Contactez-nous →</a></p>
+  </div>
+
+  <footer>
+    <span>Quitus — conformité des sous-traitants</span>
+    <span>Obligation de vigilance : articles L.8222-1 et D.8222-5 du Code du travail.</span>
+  </footer>
+
+</div>
+
+
+</body>
+</html>
