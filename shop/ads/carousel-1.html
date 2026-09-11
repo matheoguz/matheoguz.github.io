@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe - Instagram Carousel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    gap: 4px;
+    background: #1a1a2e;
+    padding: 20px;
+  }
+
+  /* Each slide */
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  /* Shared slide backgrounds */
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+  }
+  .slide-1 .slide-bg {
+    background: linear-gradient(160deg, #0d0d1a 0%, #1a0d2e 50%, #0d1a2e 100%);
+  }
+  .slide-2 .slide-bg {
+    background: linear-gradient(160deg, #0d0d1a 0%, #0d1a2e 50%, #0d2e2a 100%);
+  }
+  .slide-3 .slide-bg {
+    background: linear-gradient(160deg, #0d0d1a 0%, #1a0d2e 50%, #2e0d2a 100%);
+  }
+  .slide-4 .slide-bg {
+    background: linear-gradient(160deg, #0d0d1a 0%, #0d2e2a 50%, #0d1a2e 100%);
+  }
+
+  /* Ambient glow per slide */
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+  }
+  .slide-1 .glow { width: 500px; height: 500px; background: rgba(108,92,231,0.3); top: 300px; left: 300px; }
+  .slide-2 .glow { width: 500px; height: 500px; background: rgba(0,206,201,0.3); top: 300px; left: 300px; }
+  .slide-3 .glow { width: 500px; height: 500px; background: rgba(108,92,231,0.25); top: 300px; left: 300px; }
+  .slide-4 .glow { width: 500px; height: 500px; background: rgba(0,206,201,0.25); top: 300px; left: 300px; }
+
+  /* Grid overlay */
+  .slide-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Top accent bar */
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+  }
+
+  /* Header */
+  .slide-header {
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .s-logo {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-num {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+  }
+  .slide-dots {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    top: 90px;
+    left: 50px;
+  }
+  .s-dot {
+    width: 40px;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+  }
+  .s-dot.active {
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+  }
+
+  /* Category icon */
+  .cat-icon-wrap {
+    position: absolute;
+    top: 180px;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  .cat-icon-bg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .cat-icon-bg::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .cat-icon {
+    font-size: 100px;
+    filter: drop-shadow(0 10px 30px rgba(0,206,201,0.3));
+  }
+
+  /* Category name */
+  .cat-name {
+    position: absolute;
+    top: 430px;
+    left: 50px;
+    right: 50px;
+    text-align: center;
+  }
+  .cat-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #00CEC9;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .cat-title {
+    font-size: 72px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .cat-divider {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  /* Product previews */
+  .products-preview {
+    position: absolute;
+    top: 630px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    gap: 16px;
+  }
+  .preview-card {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+  }
+  .preview-emoji {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  .preview-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.2;
+    color: rgba(255,255,255,0.8);
+  }
+  .preview-price {
+    font-size: 18px;
+    font-weight: 900;
+    color: #00CEC9;
+  }
+
+  /* Price callout */
+  .price-callout {
+    position: absolute;
+    bottom: 220px;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  .price-from {
+    font-size: 24px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+  }
+  .price-value {
+    font-size: 64px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Bottom CTA */
+  .slide-cta {
+    position: absolute;
+    bottom: 80px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cta-btn {
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    padding: 20px 50px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 30px rgba(108,92,231,0.3);
+  }
+  .swipe-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+  }
+  .swipe-arrow {
+    font-size: 24px;
+    animation: arrowSlide 1.5s ease-in-out infinite;
+  }
+  @keyframes arrowSlide {
+    0%, 100% { transform: translateX(0); opacity: 0.4; }
+    50% { transform: translateX(8px); opacity: 1; }
+  }
+
+  /* Tagline */
+  .slide-tagline {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Corner accents */
+  .corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(108,92,231,0.12);
+  }
+  .c-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+  .c-br { bottom: 20px; right: 20px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+</style>
+</head>
+<body>
+
+  <!-- SLIDE 1: Cuisine -->
+  <div class="slide slide-1">
+    <div class="slide-bg"></div>
+    <div class="glow"></div>
+    <div class="slide-grid"></div>
+    <div class="top-bar"></div>
+    <div class="corner c-tl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="slide-header">
+      <div class="s-logo">HomeVibe</div>
+      <div class="slide-num">01 / 04</div>
+    </div>
+    <div class="slide-dots">
+      <div class="s-dot active"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+    </div>
+
+    <div class="cat-icon-wrap">
+      <div class="cat-icon-bg">
+        <div class="cat-icon">&#127869;</div>
+      </div>
+    </div>
+
+    <div class="cat-name">
+      <div class="cat-label">Categorie</div>
+      <div class="cat-title">Cuisine</div>
+      <div class="cat-divider"></div>
+    </div>
+
+    <div class="products-preview">
+      <div class="preview-card">
+        <div class="preview-emoji">&#129379;</div>
+        <div class="preview-name">Coupe-legumes</div>
+        <div class="preview-price">14,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#127836;</div>
+        <div class="preview-name">Organiseur epices</div>
+        <div class="preview-price">19,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#129483;</div>
+        <div class="preview-name">Balance connectee</div>
+        <div class="preview-price">24,99&#8364;</div>
+      </div>
+    </div>
+
+    <div class="price-callout">
+      <div class="price-from">A partir de</div>
+      <div class="price-value">9,99&#8364;</div>
+    </div>
+
+    <div class="slide-cta">
+      <div class="cta-btn">Voir la Collection</div>
+      <div class="swipe-hint">
+        Glisser <span class="swipe-arrow">&#8594;</span>
+      </div>
+    </div>
+
+    <div class="slide-tagline">Transformez Votre Maison</div>
+  </div>
+
+  <!-- SLIDE 2: Lumieres -->
+  <div class="slide slide-2">
+    <div class="slide-bg"></div>
+    <div class="glow"></div>
+    <div class="slide-grid"></div>
+    <div class="top-bar"></div>
+    <div class="corner c-tl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="slide-header">
+      <div class="s-logo">HomeVibe</div>
+      <div class="slide-num">02 / 04</div>
+    </div>
+    <div class="slide-dots">
+      <div class="s-dot"></div>
+      <div class="s-dot active"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+    </div>
+
+    <div class="cat-icon-wrap">
+      <div class="cat-icon-bg">
+        <div class="cat-icon">&#128161;</div>
+      </div>
+    </div>
+
+    <div class="cat-name">
+      <div class="cat-label">Categorie</div>
+      <div class="cat-title">Lumieres</div>
+      <div class="cat-divider"></div>
+    </div>
+
+    <div class="products-preview">
+      <div class="preview-card">
+        <div class="preview-emoji">&#127752;</div>
+        <div class="preview-name">Bande LED RGB</div>
+        <div class="preview-price">12,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#127769;</div>
+        <div class="preview-name">Lampe lune 3D</div>
+        <div class="preview-price">22,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#11088;</div>
+        <div class="preview-name">Projecteur galaxie</div>
+        <div class="preview-price">29,99&#8364;</div>
+      </div>
+    </div>
+
+    <div class="price-callout">
+      <div class="price-from">A partir de</div>
+      <div class="price-value">12,99&#8364;</div>
+    </div>
+
+    <div class="slide-cta">
+      <div class="cta-btn">Voir la Collection</div>
+      <div class="swipe-hint">
+        Glisser <span class="swipe-arrow">&#8594;</span>
+      </div>
+    </div>
+
+    <div class="slide-tagline">Transformez Votre Maison</div>
+  </div>
+
+  <!-- SLIDE 3: Organisation -->
+  <div class="slide slide-3">
+    <div class="slide-bg"></div>
+    <div class="glow"></div>
+    <div class="slide-grid"></div>
+    <div class="top-bar"></div>
+    <div class="corner c-tl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="slide-header">
+      <div class="s-logo">HomeVibe</div>
+      <div class="slide-num">03 / 04</div>
+    </div>
+    <div class="slide-dots">
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot active"></div>
+      <div class="s-dot"></div>
+    </div>
+
+    <div class="cat-icon-wrap">
+      <div class="cat-icon-bg">
+        <div class="cat-icon">&#128230;</div>
+      </div>
+    </div>
+
+    <div class="cat-name">
+      <div class="cat-label">Categorie</div>
+      <div class="cat-title">Organisation</div>
+      <div class="cat-divider"></div>
+    </div>
+
+    <div class="products-preview">
+      <div class="preview-card">
+        <div class="preview-emoji">&#128188;</div>
+        <div class="preview-name">Rangement bureau</div>
+        <div class="preview-price">16,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#128717;&#65039;</div>
+        <div class="preview-name">Etagere murale</div>
+        <div class="preview-price">21,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#128092;</div>
+        <div class="preview-name">Boite rangement</div>
+        <div class="preview-price">11,99&#8364;</div>
+      </div>
+    </div>
+
+    <div class="price-callout">
+      <div class="price-from">A partir de</div>
+      <div class="price-value">7,99&#8364;</div>
+    </div>
+
+    <div class="slide-cta">
+      <div class="cta-btn">Voir la Collection</div>
+      <div class="swipe-hint">
+        Glisser <span class="swipe-arrow">&#8594;</span>
+      </div>
+    </div>
+
+    <div class="slide-tagline">Transformez Votre Maison</div>
+  </div>
+
+  <!-- SLIDE 4: Tech -->
+  <div class="slide slide-4">
+    <div class="slide-bg"></div>
+    <div class="glow"></div>
+    <div class="slide-grid"></div>
+    <div class="top-bar"></div>
+    <div class="corner c-tl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="slide-header">
+      <div class="s-logo">HomeVibe</div>
+      <div class="slide-num">04 / 04</div>
+    </div>
+    <div class="slide-dots">
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot"></div>
+      <div class="s-dot active"></div>
+    </div>
+
+    <div class="cat-icon-wrap">
+      <div class="cat-icon-bg">
+        <div class="cat-icon">&#128187;</div>
+      </div>
+    </div>
+
+    <div class="cat-name">
+      <div class="cat-label">Categorie</div>
+      <div class="cat-title">Tech</div>
+      <div class="cat-divider"></div>
+    </div>
+
+    <div class="products-preview">
+      <div class="preview-card">
+        <div class="preview-emoji">&#128262;</div>
+        <div class="preview-name">Chargeur sans fil</div>
+        <div class="preview-price">17,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#127911;</div>
+        <div class="preview-name">Support telephone</div>
+        <div class="preview-price">9,99&#8364;</div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-emoji">&#9000;&#65039;</div>
+        <div class="preview-name">Hub USB-C</div>
+        <div class="preview-price">24,99&#8364;</div>
+      </div>
+    </div>
+
+    <div class="price-callout">
+      <div class="price-from">A partir de</div>
+      <div class="price-value">9,99&#8364;</div>
+    </div>
+
+    <div class="slide-cta">
+      <div class="cta-btn">Voir la Collection</div>
+      <div class="swipe-hint">
+        Derniere slide
+      </div>
+    </div>
+
+    <div class="slide-tagline">Transformez Votre Maison</div>
+  </div>
+
+</body>
+</html>

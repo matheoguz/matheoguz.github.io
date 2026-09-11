@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe Admin - Tableau de Bord</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a1a2e;--card:#16213e;--card-hover:#1b2a4a;
+  --accent:#6C5CE7;--accent2:#00CEC9;
+  --text:#e0e0e0;--text-muted:#8a8a9a;--text-dim:#5a5a6a;
+  --border:#2a2a4e;--success:#00b894;--warning:#fdcb6e;--danger:#e17055;--info:#74b9ff;
+  --sidebar-w:260px;--sidebar-collapsed:70px;--topbar-h:64px;
+  --radius:12px;--radius-sm:8px;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+button{cursor:pointer;border:none;background:none;color:inherit;font:inherit}
+input{font:inherit;color:inherit}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
+  background:var(--card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;
+  transition:width .3s ease,transform .3s ease;
+  overflow:hidden;
+}
+.sidebar.collapsed{width:var(--sidebar-collapsed)}
+.sidebar-header{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 18px;border-bottom:1px solid var(--border);
+  min-height:70px;
+}
+.sidebar-logo{
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;flex-shrink:0;
+}
+.sidebar-brand{font-size:16px;font-weight:700;white-space:nowrap;color:#fff}
+.sidebar-brand span{color:var(--accent2);font-weight:400;font-size:12px;display:block}
+.sidebar.collapsed .sidebar-brand{display:none}
+
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-section{padding:0 18px;margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);white-space:nowrap}
+.sidebar.collapsed .nav-section{text-align:center;font-size:0}
+.nav-item{
+  display:flex;align-items:center;gap:14px;
+  padding:11px 18px;margin:2px 10px;border-radius:var(--radius-sm);
+  color:var(--text-muted);cursor:pointer;transition:.2s;white-space:nowrap;
+  font-size:13.5px;position:relative;
+}
+.nav-item:hover{background:rgba(108,92,231,.1);color:var(--text)}
+.nav-item.active{background:rgba(108,92,231,.15);color:#fff;font-weight:600}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:24px;background:var(--accent);border-radius:2px;
+}
+.nav-icon{width:20px;text-align:center;flex-shrink:0;font-size:16px}
+.sidebar.collapsed .nav-item span:not(.nav-icon){display:none}
+.sidebar.collapsed .nav-item{justify-content:center;padding:11px 0;margin:2px 8px}
+
+.sidebar-footer{
+  padding:16px 18px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sidebar.collapsed .sidebar-footer span{display:none}
+.sidebar-footer .status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);transition:margin-left .3s ease;min-height:100vh}
+body.sidebar-collapsed .main{margin-left:var(--sidebar-collapsed)}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);display:flex;align-items:center;gap:16px;
+  padding:0 28px;border-bottom:1px solid var(--border);
+  background:var(--card);position:sticky;top:0;z-index:90;
+}
+.topbar-toggle{
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(108,92,231,.1);color:var(--accent);font-size:18px;
+  transition:.2s;
+}
+.topbar-toggle:hover{background:rgba(108,92,231,.2)}
+.topbar-search{
+  flex:1;max-width:400px;position:relative;
+}
+.topbar-search input{
+  width:100%;padding:9px 14px 9px 38px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--bg);color:var(--text);
+  font-size:13px;transition:.2s;
+}
+.topbar-search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,92,231,.15)}
+.topbar-search::before{
+  content:'\1F50D';position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:14px;opacity:.5;
+}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.topbar-date{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.topbar-btn{
+  width:38px;height:38px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);border:1px solid var(--border);position:relative;
+  font-size:16px;transition:.2s;
+}
+.topbar-btn:hover{border-color:var(--accent);background:rgba(108,92,231,.1)}
+.notif-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--danger);color:#fff;font-size:10px;font-weight:700;
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--card);
+}
+.topbar-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:14px;color:#fff;cursor:pointer;
+}
+
+/* Notification Dropdown */
+.notif-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:320px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.4);
+  z-index:200;
+}
+.notif-dropdown[hidden]{display:none !important}
+.notif-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.notif-list{max-height:300px;overflow-y:auto}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.notif-item:hover{background:rgba(108,92,231,.08)}
+.notif-item:last-child{border-bottom:none}
+.notif-item .ni-title{font-size:12.5px;font-weight:600;margin-bottom:3px}
+.notif-item .ni-text{font-size:11.5px;color:var(--text-muted)}
+.notif-item .ni-time{font-size:10.5px;color:var(--text-dim);margin-top:4px}
+.notif-item.unread{border-left:3px solid var(--accent)}
+
+/* ── BANNER ── */
+.sync-banner{
+  margin:20px 28px 0;padding:14px 20px;
+  background:linear-gradient(135deg,rgba(108,92,231,.15),rgba(0,206,201,.1));
+  border:1px solid rgba(108,92,231,.3);border-radius:var(--radius);
+  display:flex;align-items:center;gap:12px;font-size:13px;
+}
+.sync-banner .banner-icon{font-size:20px;flex-shrink:0}
+.sync-banner .banner-text{flex:1}
+.sync-banner .banner-btn{
+  padding:7px 16px;background:var(--accent);color:#fff;
+  border-radius:var(--radius-sm);font-size:12px;font-weight:600;
+  white-space:nowrap;transition:.2s;
+}
+.sync-banner .banner-btn:hover{background:#5a4bd6}
+.banner-close{font-size:18px;color:var(--text-muted);cursor:pointer;padding:4px}
+
+/* ── CONTENT ── */
+.content{padding:20px 28px 40px}
+.section{display:none}
+.section.active{display:block}
+.section-title{font-size:20px;font-weight:700;margin-bottom:20px;color:#fff}
+.section-subtitle{font-size:13px;color:var(--text-muted);margin-top:4px;font-weight:400}
+
+/* ── KPI CARDS ── */
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;margin-bottom:28px;
+}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;transition:.2s;position:relative;overflow:hidden;
+}
+.kpi-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.kpi-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  opacity:0;transition:.2s;
+}
+.kpi-card:hover::after{opacity:1}
+.kpi-icon{
+  width:42px;height:42px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:14px;
+}
+.kpi-icon.purple{background:rgba(108,92,231,.15)}
+.kpi-icon.teal{background:rgba(0,206,201,.15)}
+.kpi-icon.green{background:rgba(0,184,148,.15)}
+.kpi-icon.orange{background:rgba(225,112,85,.15)}
+.kpi-icon.blue{background:rgba(116,185,255,.15)}
+.kpi-label{font-size:12px;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.kpi-value{font-size:26px;font-weight:800;color:#fff;margin-bottom:6px}
+.kpi-trend{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.kpi-trend.up{color:var(--success)}
+.kpi-trend.down{color:var(--danger)}
+.kpi-trend .arrow{font-size:14px}
+
+/* ── CHART ── */
+.chart-section{
+  display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:28px;
+}
+.chart-card,.side-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;
+}
+.chart-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.chart-card-title{font-size:15px;font-weight:700;color:#fff}
+.chart-period{
+  display:flex;gap:4px;
+}
+.chart-period button{
+  padding:5px 12px;border-radius:var(--radius-sm);font-size:11px;
+  color:var(--text-muted);transition:.2s;
+}
+.chart-period button.active{background:var(--accent);color:#fff}
+.chart-period button:hover:not(.active){background:rgba(108,92,231,.1)}
+
+.chart-container{position:relative;width:100%;height:260px}
+.chart-container svg{width:100%;height:100%}
+
+/* ── TABLE ── */
+.table-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:28px;
+}
+.table-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+}
+.table-title{font-size:15px;font-weight:700;color:#fff}
+.table-actions{display:flex;gap:8px}
+.filter-btn{
+  padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;
+  border:1px solid var(--border);color:var(--text-muted);transition:.2s;
+}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(108,92,231,.08)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th{
+  text-align:left;padding:12px 16px;font-size:11px;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--text-dim);border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;white-space:nowrap;
+}
+th:hover{color:var(--text)}
+th .sort-icon{margin-left:4px;font-size:10px;opacity:.4}
+th.sorted .sort-icon{opacity:1;color:var(--accent)}
+td{padding:12px 16px;border-bottom:1px solid rgba(42,42,78,.5);font-size:13px;white-space:nowrap}
+tr{transition:.15s}
+tr:hover td{background:rgba(108,92,231,.04)}
+tr.clickable{cursor:pointer}
+.status-badge{
+  padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  display:inline-block;
+}
+.status-badge.en-cours{background:rgba(253,203,110,.15);color:var(--warning)}
+.status-badge.expedie{background:rgba(116,185,255,.15);color:var(--info)}
+.status-badge.livre{background:rgba(0,184,148,.15);color:var(--success)}
+.status-badge.annule{background:rgba(225,112,85,.15);color:var(--danger)}
+
+/* Product performance */
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.bar-chart-item{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid rgba(42,42,78,.5);
+}
+.bar-chart-item:last-child{border-bottom:none}
+.bar-rank{font-size:12px;color:var(--text-dim);width:24px;text-align:center;font-weight:700}
+.bar-info{flex:1;min-width:0}
+.bar-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-meta{font-size:11px;color:var(--text-muted)}
+.bar-track{height:6px;background:var(--bg);border-radius:3px;margin-top:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.6s}
+.bar-value{font-size:14px;font-weight:700;color:#fff;white-space:nowrap}
+.stock-badge{
+  font-size:10px;padding:2px 8px;border-radius:10px;margin-left:8px;font-weight:600;
+}
+.stock-badge.ok{background:rgba(0,184,148,.15);color:var(--success)}
+.stock-badge.low{background:rgba(253,203,110,.15);color:var(--warning)}
+.stock-badge.out{background:rgba(225,112,85,.15);color:var(--danger)}
+
+/* ── FINANCES ── */
+.finance-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:28px}
+.finance-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;
+}
+.finance-card-title{font-size:13px;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.finance-value{font-size:28px;font-weight:800;color:#fff}
+.finance-value.teal{color:var(--accent2)}
+.finance-value.red{color:var(--danger)}
+.finance-value.green{color:var(--success)}
+.payment-list{margin-top:16px}
+.payment-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid rgba(42,42,78,.5);font-size:13px;
+}
+.payment-item:last-child{border-bottom:none}
+.payment-status{
+  width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;
+}
+.payment-status.received{background:var(--success)}
+.payment-status.pending{background:var(--warning)}
+.payment-status.failed{background:var(--danger)}
+
+/* Monthly breakdown */
+.monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px}
+.month-item{
+  background:var(--bg);border-radius:var(--radius-sm);padding:14px;text-align:center;
+}
+.month-label{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.month-value{font-size:16px;font-weight:700;color:#fff}
+
+/* ── ALI TRACKING ── */
+.tracking-status{
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;
+}
+.tracking-status.passee{background:rgba(116,185,255,.12);color:var(--info)}
+.tracking-status.preparation{background:rgba(253,203,110,.12);color:var(--warning)}
+.tracking-status.expedie-ali{background:rgba(108,92,231,.15);color:var(--accent)}
+.tracking-status.transit{background:rgba(0,206,201,.12);color:var(--accent2)}
+.tracking-status.livre-ali{background:rgba(0,184,148,.12);color:var(--success)}
+.tracking-code{font-family:'Courier New',monospace;font-size:12px;color:var(--accent2);letter-spacing:.5px}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay[hidden]{display:none !important}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  width:90%;max-width:560px;max-height:85vh;overflow-y:auto;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+}
+.modal-title{font-size:16px;font-weight:700;color:#fff}
+.modal-close{font-size:22px;color:var(--text-muted);cursor:pointer;padding:4px}
+.modal-close:hover{color:#fff}
+.modal-body{padding:22px}
+.modal-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(42,42,78,.5);font-size:13px}
+.modal-row:last-child{border-bottom:none}
+.modal-label{color:var(--text-muted)}
+.modal-val{font-weight:600;color:#fff}
+
+/* ── DATE RANGE ── */
+.date-range{
+  display:flex;align-items:center;gap:8px;
+}
+.date-range input[type="date"]{
+  padding:6px 10px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--bg);color:var(--text);
+  font-size:12px;
+}
+.date-range input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  .chart-section{grid-template-columns:1fr}
+  .finance-grid{grid-template-columns:1fr 1fr}
+  .product-grid{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .finance-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:var(--sidebar-w)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .main{margin-left:0 !important}
+  .topbar{padding:0 16px}
+  .content{padding:16px}
+  .sync-banner{margin:12px 16px 0}
+  .topbar-search{max-width:200px}
+  .topbar-date{display:none}
+}
+
+/* Util */
+.flex-center{display:flex;align-items:center;justify-content:center}
+.gap-8{gap:8px}
+.mt-16{margin-top:16px}
+.text-sm{font-size:12px}
+.text-muted{color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">H</div>
+    <div class="sidebar-brand">HomeVibe<span>Administration</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" data-section="dashboard" onclick="switchSection('dashboard',this)">
+      <span class="nav-icon">&#x1F4CA;</span><span>Tableau de Bord</span>
+    </div>
+    <div class="nav-item" data-section="orders" onclick="switchSection('orders',this)">
+      <span class="nav-icon">&#x1F4E6;</span><span>Commandes</span>
+    </div>
+    <div class="nav-item" data-section="products" onclick="switchSection('products',this)">
+      <span class="nav-icon">&#x1F6CD;</span><span>Produits</span>
+    </div>
+    <div class="nav-section" style="margin-top:16px">Gestion</div>
+    <div class="nav-item" data-section="finances" onclick="switchSection('finances',this)">
+      <span class="nav-icon">&#x1F4B0;</span><span>Finances</span>
+    </div>
+    <div class="nav-item" data-section="clients" onclick="switchSection('clients',this)">
+      <span class="nav-icon">&#x1F465;</span><span>Clients</span>
+    </div>
+    <div class="nav-item" data-section="tracking" onclick="switchSection('tracking',this)">
+      <span class="nav-icon">&#x1F69A;</span><span>Suivi AliExpress</span>
+    </div>
+    <div class="nav-section" style="margin-top:16px">Systeme</div>
+    <div class="nav-item" data-section="settings" onclick="switchSection('settings',this)">
+      <span class="nav-icon">&#x2699;</span><span>Parametres</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <span class="status-dot"></span>
+    <span class="text-sm text-muted">Boutique en ligne</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" id="mainContent">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="topbar-toggle" onclick="toggleSidebar()" title="Menu">&#x2630;</button>
+    <div class="topbar-search">
+      <input type="text" placeholder="Rechercher commandes, produits, clients...">
+    </div>
+    <div class="topbar-right">
+      <div class="date-range">
+        <input type="date" value="2026-09-04">
+        <span class="text-muted">-</span>
+        <input type="date" value="2026-09-11">
+      </div>
+      <span class="topbar-date" id="currentDate"></span>
+      <div style="position:relative">
+        <button class="topbar-btn" onclick="toggleNotifs()" title="Notifications">
+          &#x1F514;
+          <span class="notif-badge">5</span>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown" hidden>
+          <div class="notif-header">
+            <span>Notifications</span>
+            <button style="font-size:11px;color:var(--accent)" onclick="document.getElementById('notifDropdown').hidden=true">Tout marquer lu</button>
+          </div>
+          <div class="notif-list">
+            <div class="notif-item unread">
+              <div class="ni-title">Nouvelle commande #1247</div>
+              <div class="ni-text">Marie Dupont - Lampe Nordique LED</div>
+              <div class="ni-time">Il y a 5 minutes</div>
+            </div>
+            <div class="notif-item unread">
+              <div class="ni-title">Paiement recu</div>
+              <div class="ni-text">Virement de 890.00 EUR confirme</div>
+              <div class="ni-time">Il y a 23 minutes</div>
+            </div>
+            <div class="notif-item unread">
+              <div class="ni-title">Stock faible</div>
+              <div class="ni-text">Coussin Boheme Macrame - 3 restants</div>
+              <div class="ni-time">Il y a 1 heure</div>
+            </div>
+            <div class="notif-item">
+              <div class="ni-title">Commande expediee</div>
+              <div class="ni-text">#1241 - Colis pris en charge par Colissimo</div>
+              <div class="ni-time">Il y a 3 heures</div>
+            </div>
+            <div class="notif-item">
+              <div class="ni-title">Avis client</div>
+              <div class="ni-text">Jean Martin a laisse un avis 5 etoiles</div>
+              <div class="ni-time">Il y a 5 heures</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-avatar" title="Admin">MG</div>
+    </div>
+  </header>
+
+  <!-- SYNC BANNER -->
+  <div class="sync-banner" id="syncBanner">
+    <span class="banner-icon">&#x1F517;</span>
+    <span class="banner-text"><strong>Connectez votre boutique Shopify pour synchroniser les donnees en temps reel.</strong> Importez automatiquement vos commandes, produits et clients.</span>
+    <button class="banner-btn">Connecter Shopify</button>
+    <span class="banner-close" onclick="document.getElementById('syncBanner').hidden=true">&times;</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════ SECTION: DASHBOARD ═══════ -->
+    <div class="section active" id="sec-dashboard">
+      <h1 class="section-title">Tableau de Bord <span class="section-subtitle">Vue d'ensemble de votre activite</span></h1>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon purple">&#x1F4B6;</div>
+          <div class="kpi-label">Chiffre d'Affaires</div>
+          <div class="kpi-value">&euro;4 250,00</div>
+          <div class="kpi-trend up"><span class="arrow">&#x25B2;</span> +12,5% vs semaine dern.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon teal">&#x1F4E6;</div>
+          <div class="kpi-label">Commandes Aujourd'hui</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-trend up"><span class="arrow">&#x25B2;</span> +8% vs hier</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green">&#x1F465;</div>
+          <div class="kpi-label">Clients Actifs</div>
+          <div class="kpi-value">156</div>
+          <div class="kpi-trend up"><span class="arrow">&#x25B2;</span> +5,2% ce mois</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon orange">&#x1F6D2;</div>
+          <div class="kpi-label">Panier Moyen</div>
+          <div class="kpi-value">&euro;28,50</div>
+          <div class="kpi-trend up"><span class="arrow">&#x25B2;</span> +3,1%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon blue">&#x1F4C8;</div>
+          <div class="kpi-label">Marge Beneficiaire</div>
+          <div class="kpi-value">67%</div>
+          <div class="kpi-trend up"><span class="arrow">&#x25B2;</span> Stable</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="chart-section">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-title">Revenus - 7 derniers jours</div>
+            <div class="chart-period">
+              <button class="active">7J</button>
+              <button>30J</button>
+              <button>90J</button>
+            </div>
+          </div>
+          <div class="chart-container" id="revenueChart"></div>
+        </div>
+        <div class="side-card">
+          <div class="chart-card-title" style="margin-bottom:16px">Repartition des ventes</div>
+          <div style="text-align:center;margin-bottom:16px">
+            <svg viewBox="0 0 200 200" width="160" height="160">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--border)" stroke-width="24"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--accent)" stroke-width="24"
+                stroke-dasharray="180 502.65" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--accent2)" stroke-width="24"
+                stroke-dasharray="120 502.65" stroke-dashoffset="-180" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--success)" stroke-width="24"
+                stroke-dasharray="90 502.65" stroke-dashoffset="-300" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--warning)" stroke-width="24"
+                stroke-dasharray="60 502.65" stroke-dashoffset="-390" transform="rotate(-90 100 100)"/>
+              <text x="100" y="96" text-anchor="middle" fill="#fff" font-size="22" font-weight="800">247</text>
+              <text x="100" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="11">commandes</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></span>
+              Decoration - 36%
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--accent2)"></span>
+              Luminaires - 24%
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--success)"></span>
+              Textile - 18%
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--warning)"></span>
+              Rangement - 12%
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--border)"></span>
+              Autres - 10%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders Preview -->
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Commandes recentes</div>
+          <div class="table-actions">
+            <button class="filter-btn active" onclick="filterOrders('all',this)">Toutes</button>
+            <button class="filter-btn" onclick="filterOrders('en-cours',this)">En cours</button>
+            <button class="filter-btn" onclick="filterOrders('expedie',this)">Expedie</button>
+            <button class="filter-btn" onclick="filterOrders('livre',this)">Livre</button>
+            <button class="filter-btn" onclick="filterOrders('annule',this)">Annule</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable(0,this)"># Commande <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(1,this)">Client <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(2,this)">Produit <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(3,this)">Montant <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(4,this)">Statut <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(5,this)">Date <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: ORDERS (full) ═══════ -->
+    <div class="section" id="sec-orders">
+      <h1 class="section-title">Commandes <span class="section-subtitle">Gestion de toutes les commandes</span></h1>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Toutes les commandes</div>
+          <div class="table-actions">
+            <button class="filter-btn active" onclick="filterOrders('all',this)">Toutes</button>
+            <button class="filter-btn" onclick="filterOrders('en-cours',this)">En cours</button>
+            <button class="filter-btn" onclick="filterOrders('expedie',this)">Expedie</button>
+            <button class="filter-btn" onclick="filterOrders('livre',this)">Livre</button>
+            <button class="filter-btn" onclick="filterOrders('annule',this)">Annule</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortTable(0,this)"># Commande <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(1,this)">Client <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(2,this)">Produit <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(3,this)">Montant <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(4,this)">Statut <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+                <th onclick="sortTable(5,this)">Date <span class="sort-icon">&#x25B4;&#x25BE;</span></th>
+              </tr>
+            </thead>
+            <tbody id="ordersBodyFull"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: PRODUCTS ═══════ -->
+    <div class="section" id="sec-products">
+      <h1 class="section-title">Produits <span class="section-subtitle">Performance et stock des produits</span></h1>
+      <div class="product-grid">
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:18px">Top 5 - Meilleures ventes</div>
+          <div id="productBars"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:18px">Statut des stocks</div>
+          <div id="stockList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: FINANCES ═══════ -->
+    <div class="section" id="sec-finances">
+      <h1 class="section-title">Finances <span class="section-subtitle">Revenus, couts et marges</span></h1>
+      <div class="finance-grid">
+        <div class="finance-card">
+          <div class="finance-card-title">Revenus Bruts (Sept.)</div>
+          <div class="finance-value">&euro;12 840,00</div>
+          <div class="text-sm text-muted mt-16">+18,3% vs aout</div>
+        </div>
+        <div class="finance-card">
+          <div class="finance-card-title">Couts AliExpress</div>
+          <div class="finance-value red">&euro;4 237,20</div>
+          <div class="text-sm text-muted mt-16">33% du CA</div>
+        </div>
+        <div class="finance-card">
+          <div class="finance-card-title">Marge Nette</div>
+          <div class="finance-value green">&euro;8 602,80</div>
+          <div class="text-sm text-muted mt-16">67% de marge</div>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:16px">Paiements recents</div>
+          <div class="payment-list">
+            <div class="payment-item">
+              <span><span class="payment-status received"></span>Stripe - Virement #TR-4821</span>
+              <span style="font-weight:700;color:var(--success)">&euro;2 340,00</span>
+            </div>
+            <div class="payment-item">
+              <span><span class="payment-status received"></span>Stripe - Virement #TR-4820</span>
+              <span style="font-weight:700;color:var(--success)">&euro;1 890,00</span>
+            </div>
+            <div class="payment-item">
+              <span><span class="payment-status pending"></span>PayPal - En attente</span>
+              <span style="font-weight:700;color:var(--warning)">&euro;456,00</span>
+            </div>
+            <div class="payment-item">
+              <span><span class="payment-status received"></span>Stripe - Virement #TR-4819</span>
+              <span style="font-weight:700;color:var(--success)">&euro;3 120,00</span>
+            </div>
+            <div class="payment-item">
+              <span><span class="payment-status failed"></span>CB - Paiement refuse</span>
+              <span style="font-weight:700;color:var(--danger)">&euro;89,00</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:16px">Virement bancaire</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div>
+                <div style="font-weight:600;font-size:13px;color:#fff">Prochain virement</div>
+                <div class="text-sm text-muted">Stripe vers Societe Generale</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:var(--accent2)">&euro;2 150,00</div>
+                <div class="text-sm text-muted">15 sept. 2026</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div>
+                <div style="font-weight:600;font-size:13px;color:#fff">Dernier virement</div>
+                <div class="text-sm text-muted">Stripe vers Societe Generale</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:var(--success)">&euro;3 890,00</div>
+                <div class="text-sm text-muted">1 sept. 2026 &#x2714;</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-card-title" style="margin-top:24px;margin-bottom:12px">Revenus mensuels</div>
+          <div class="monthly-grid">
+            <div class="month-item"><div class="month-label">Juin</div><div class="month-value">&euro;8 420</div></div>
+            <div class="month-item"><div class="month-label">Juil.</div><div class="month-value">&euro;9 180</div></div>
+            <div class="month-item"><div class="month-label">Aout</div><div class="month-value">&euro;10 860</div></div>
+            <div class="month-item"><div class="month-label">Sept.</div><div class="month-value" style="color:var(--accent2)">&euro;12 840</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: CLIENTS ═══════ -->
+    <div class="section" id="sec-clients">
+      <h1 class="section-title">Clients <span class="section-subtitle">Base de donnees clients</span></h1>
+      <div class="kpi-grid" style="margin-bottom:24px">
+        <div class="kpi-card">
+          <div class="kpi-icon teal">&#x1F465;</div>
+          <div class="kpi-label">Total Clients</div>
+          <div class="kpi-value">156</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green">&#x1F504;</div>
+          <div class="kpi-label">Clients Recurrents</div>
+          <div class="kpi-value">42</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon purple">&#x2B50;</div>
+          <div class="kpi-label">Note Moyenne</div>
+          <div class="kpi-value">4,7/5</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Meilleurs clients</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Client</th><th>Email</th><th>Ville</th><th>Commandes</th><th>Total depense</th><th>Derniere commande</th>
+              </tr>
+            </thead>
+            <tbody id="clientsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: TRACKING ═══════ -->
+    <div class="section" id="sec-tracking">
+      <h1 class="section-title">Suivi Commandes AliExpress <span class="section-subtitle">Statut des commandes fournisseur</span></h1>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Commandes en cours</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Commande Shop</th>
+                <th>Commande AliExpress</th>
+                <th>Produit</th>
+                <th>Statut Livraison</th>
+                <th>Tracking</th>
+                <th>Mise a jour</th>
+              </tr>
+            </thead>
+            <tbody id="trackingBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SECTION: SETTINGS ═══════ -->
+    <div class="section" id="sec-settings">
+      <h1 class="section-title">Parametres <span class="section-subtitle">Configuration de votre boutique</span></h1>
+      <div class="product-grid">
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:16px">Informations boutique</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Nom de la boutique</label>
+              <input type="text" value="HomeVibe" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)">
+            </div>
+            <div>
+              <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Email de contact</label>
+              <input type="email" value="contact@homevibe.fr" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)">
+            </div>
+            <div>
+              <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Devise</label>
+              <input type="text" value="EUR (Euro)" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)" readonly>
+            </div>
+            <div>
+              <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Fuseau horaire</label>
+              <input type="text" value="Europe/Paris (UTC+2)" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title" style="margin-bottom:16px">Integrations</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:20px">&#x1F6D2;</span>
+                <div><div style="font-weight:600;font-size:13px;color:#fff">Shopify</div><div class="text-sm text-muted">Non connecte</div></div>
+              </div>
+              <button style="padding:6px 14px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);font-size:12px;font-weight:600">Connecter</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:20px">&#x1F4B3;</span>
+                <div><div style="font-weight:600;font-size:13px;color:#fff">Stripe</div><div class="text-sm text-muted" style="color:var(--success)">Connecte</div></div>
+              </div>
+              <button style="padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px">Configurer</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:20px">&#x1F4E6;</span>
+                <div><div style="font-weight:600;font-size:13px;color:#fff">AliExpress</div><div class="text-sm text-muted" style="color:var(--success)">Connecte</div></div>
+              </div>
+              <button style="padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px">Configurer</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border-radius:var(--radius-sm)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:20px">&#x1F4E7;</span>
+                <div><div style="font-weight:600;font-size:13px;color:#fff">Mailchimp</div><div class="text-sm text-muted">Non connecte</div></div>
+              </div>
+              <button style="padding:6px 14px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);font-size:12px;font-weight:600">Connecter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-overlay" id="orderModal" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detail commande</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const orders = [
+  {id:'#1247',client:'Marie Dupont',product:'Lampe Nordique LED',amount:45.90,status:'en-cours',date:'11/09/2026',city:'Paris',email:'m.dupont@email.fr'},
+  {id:'#1246',client:'Jean Martin',product:'Coussin Boheme Macrame',amount:24.50,status:'expedie',date:'10/09/2026',city:'Lyon',email:'j.martin@email.fr'},
+  {id:'#1245',client:'Sophie Bernard',product:'Miroir Rond Dore',amount:67.00,status:'livre',date:'10/09/2026',city:'Marseille',email:'s.bernard@email.fr'},
+  {id:'#1244',client:'Lucas Moreau',product:'Vase Ceramique Artisanal',amount:38.90,status:'en-cours',date:'09/09/2026',city:'Toulouse',email:'l.moreau@email.fr'},
+  {id:'#1243',client:'Camille Leroy',product:'Guirlande Lumineuse Coton',amount:19.90,status:'annule',date:'09/09/2026',city:'Nice',email:'c.leroy@email.fr'},
+  {id:'#1242',client:'Antoine Roux',product:'Etagere Murale Bois',amount:52.00,status:'expedie',date:'08/09/2026',city:'Nantes',email:'a.roux@email.fr'},
+  {id:'#1241',client:'Isabelle Faure',product:'Bougie Parfumee Vanille',amount:15.90,status:'livre',date:'08/09/2026',city:'Strasbourg',email:'i.faure@email.fr'},
+  {id:'#1240',client:'Thomas Girard',product:'Plaid Tricote Gris',amount:34.50,status:'livre',date:'07/09/2026',city:'Bordeaux',email:'t.girard@email.fr'},
+  {id:'#1239',client:'Julie Bonnet',product:'Cadre Photo Multivues',amount:28.00,status:'en-cours',date:'07/09/2026',city:'Lille',email:'j.bonnet@email.fr'},
+  {id:'#1238',client:'Pierre Lambert',product:'Horloge Murale Vintage',amount:42.90,status:'expedie',date:'06/09/2026',city:'Rennes',email:'p.lambert@email.fr'}
+];
+
+const products = [
+  {name:'Lampe Nordique LED',sold:89,revenue:4085.10,stock:24,pct:100},
+  {name:'Coussin Boheme Macrame',sold:76,revenue:1862.00,stock:3,pct:85},
+  {name:'Miroir Rond Dore',sold:61,revenue:4087.00,stock:15,pct:69},
+  {name:'Vase Ceramique Artisanal',sold:53,revenue:2061.70,stock:31,pct:60},
+  {name:'Guirlande Lumineuse Coton',sold:48,revenue:955.20,stock:0,pct:54}
+];
+
+const clients = [
+  {name:'Marie Dupont',email:'m.dupont@email.fr',city:'Paris',orders:8,total:'367,20',last:'11/09/2026'},
+  {name:'Thomas Girard',email:'t.girard@email.fr',city:'Bordeaux',orders:6,total:'298,50',last:'07/09/2026'},
+  {name:'Sophie Bernard',email:'s.bernard@email.fr',city:'Marseille',orders:5,total:'245,00',last:'10/09/2026'},
+  {name:'Jean Martin',email:'j.martin@email.fr',city:'Lyon',orders:5,total:'218,90',last:'10/09/2026'},
+  {name:'Isabelle Faure',email:'i.faure@email.fr',city:'Strasbourg',orders:4,total:'189,60',last:'08/09/2026'},
+  {name:'Antoine Roux',email:'a.roux@email.fr',city:'Nantes',orders:4,total:'176,00',last:'08/09/2026'},
+  {name:'Pierre Lambert',email:'p.lambert@email.fr',city:'Rennes',orders:3,total:'142,70',last:'06/09/2026'},
+  {name:'Camille Leroy',email:'c.leroy@email.fr',city:'Nice',orders:3,total:'119,70',last:'09/09/2026'}
+];
+
+const aliTracking = [
+  {shop:'#1247',ali:'AE-8827364521',product:'Lampe Nordique LED',status:'Commande passee',statusClass:'passee',tracking:'-',date:'11/09/2026'},
+  {shop:'#1246',ali:'AE-8827301498',product:'Coussin Boheme Macrame',status:'En preparation',statusClass:'preparation',tracking:'-',date:'10/09/2026'},
+  {shop:'#1244',ali:'AE-8827298374',product:'Vase Ceramique Artisanal',status:'Expedie',statusClass:'expedie-ali',tracking:'LP00182736452CN',date:'09/09/2026'},
+  {shop:'#1242',ali:'AE-8826987321',product:'Etagere Murale Bois',status:'En transit',statusClass:'transit',tracking:'LP00178293641CN',date:'08/09/2026'},
+  {shop:'#1241',ali:'AE-8826543219',product:'Bougie Parfumee Vanille',status:'Livre',statusClass:'livre-ali',tracking:'LP00174829361CN',date:'08/09/2026'},
+  {shop:'#1240',ali:'AE-8826210987',product:'Plaid Tricote Gris',status:'En transit',statusClass:'transit',tracking:'LP00171038264CN',date:'07/09/2026'},
+  {shop:'#1239',ali:'AE-8825876543',product:'Cadre Photo Multivues',status:'Expedie',statusClass:'expedie-ali',tracking:'LP00168274931CN',date:'07/09/2026'},
+  {shop:'#1238',ali:'AE-8825542310',product:'Horloge Murale Vintage',status:'En transit',statusClass:'transit',tracking:'LP00164928371CN',date:'06/09/2026'}
+];
+
+const statusLabels = {'en-cours':'En cours','expedie':'Expedie','livre':'Livre','annule':'Annule'};
+
+/* ── RENDER ORDERS ── */
+function renderOrders(targetId, filter) {
+  const tbody = document.getElementById(targetId);
+  if (!tbody) return;
+  const filtered = filter && filter !== 'all' ? orders.filter(o => o.status === filter) : orders;
+  tbody.innerHTML = filtered.map(o => `
+    <tr class="clickable" data-status="${o.status}" onclick="openOrder('${o.id}')">
+      <td style="font-weight:600;color:var(--accent)">${o.id}</td>
+      <td>${o.client}</td>
+      <td>${o.product}</td>
+      <td style="font-weight:600">&euro;${o.amount.toFixed(2).replace('.',',')}</td>
+      <td><span class="status-badge ${o.status}">${statusLabels[o.status]}</span></td>
+      <td class="text-muted">${o.date}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── RENDER PRODUCTS ── */
+function renderProducts() {
+  const el = document.getElementById('productBars');
+  if (!el) return;
+  el.innerHTML = products.map((p,i) => `
+    <div class="bar-chart-item">
+      <div class="bar-rank">${i+1}</div>
+      <div class="bar-info">
+        <div class="bar-name">${p.name}</div>
+        <div class="bar-meta">${p.sold} vendus</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${p.pct}%"></div></div>
+      </div>
+      <div class="bar-value">&euro;${p.revenue.toFixed(2).replace('.',',')}</div>
+    </div>
+  `).join('');
+
+  const sl = document.getElementById('stockList');
+  if (!sl) return;
+  const allProds = [
+    ...products,
+    {name:'Bougie Parfumee Vanille',stock:18},
+    {name:'Plaid Tricote Gris',stock:12},
+    {name:'Cadre Photo Multivues',stock:8},
+    {name:'Horloge Murale Vintage',stock:22},
+    {name:'Etagere Murale Bois',stock:6}
+  ];
+  sl.innerHTML = allProds.map(p => {
+    let cls='ok', lbl='En stock';
+    if (p.stock === 0) { cls='out'; lbl='Rupture'; }
+    else if (p.stock <= 5) { cls='low'; lbl='Stock faible'; }
+    else if (p.stock <= 10) { cls='low'; lbl='Stock limite'; }
+    return `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(42,42,78,.5);font-size:13px">
+        <span style="color:#fff">${p.name}</span>
+        <span><span class="stock-badge ${cls}">${lbl}</span> <span class="text-muted" style="margin-left:6px">${p.stock} u.</span></span>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── RENDER CLIENTS ── */
+function renderClients() {
+  const el = document.getElementById('clientsBody');
+  if (!el) return;
+  el.innerHTML = clients.map(c => `
+    <tr>
+      <td style="font-weight:600;color:#fff">${c.name}</td>
+      <td class="text-muted">${c.email}</td>
+      <td>${c.city}</td>
+      <td style="text-align:center">${c.orders}</td>
+      <td style="font-weight:600">&euro;${c.total}</td>
+      <td class="text-muted">${c.last}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── RENDER ALI TRACKING ── */
+function renderTracking() {
+  const el = document.getElementById('trackingBody');
+  if (!el) return;
+  el.innerHTML = aliTracking.map(t => `
+    <tr>
+      <td style="font-weight:600;color:var(--accent)">${t.shop}</td>
+      <td><span class="text-muted">${t.ali}</span></td>
+      <td>${t.product}</td>
+      <td><span class="tracking-status ${t.statusClass}">${t.status}</span></td>
+      <td><span class="tracking-code">${t.tracking}</span></td>
+      <td class="text-muted">${t.date}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── REVENUE CHART (SVG) ── */
+function renderChart() {
+  const container = document.getElementById('revenueChart');
+  if (!container) return;
+  const data = [
+    {label:'Lun', value:450},
+    {label:'Mar', value:680},
+    {label:'Mer', value:520},
+    {label:'Jeu', value:890},
+    {label:'Ven', value:750},
+    {label:'Sam', value:560},
+    {label:'Dim', value:400}
+  ];
+  const W=700, H=240, padL=50, padR=20, padT=20, padB=40;
+  const chartW = W-padL-padR, chartH = H-padT-padB;
+  const maxVal = 1000;
+  const stepX = chartW / (data.length - 1);
+
+  const points = data.map((d,i) => ({
+    x: padL + i * stepX,
+    y: padT + chartH - (d.value / maxVal) * chartH
+  }));
+
+  // Grid lines
+  let gridLines = '';
+  for (let v = 0; v <= maxVal; v += 200) {
+    const y = padT + chartH - (v / maxVal) * chartH;
+    gridLines += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(42,42,78,.6)" stroke-width="1"/>`;
+    gridLines += `<text x="${padL-8}" y="${y+4}" text-anchor="end" fill="var(--text-dim)" font-size="10">${v}&#8364;</text>`;
+  }
+
+  // X labels
+  let xLabels = data.map((d,i) =>
+    `<text x="${padL + i*stepX}" y="${H-8}" text-anchor="middle" fill="var(--text-muted)" font-size="11">${d.label}</text>`
+  ).join('');
+
+  // Path
+  const pathD = points.map((p,i) => `${i===0?'M':'L'}${p.x},${p.y}`).join(' ');
+  const areaD = pathD + ` L${points[points.length-1].x},${padT+chartH} L${points[0].x},${padT+chartH} Z`;
+
+  // Dots and value labels
+  let dots = points.map((p,i) => `
+    <circle cx="${p.x}" cy="${p.y}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="3"/>
+    <text x="${p.x}" y="${p.y - 12}" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">${data[i].value}&#8364;</text>
+  `).join('');
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--accent)" stop-opacity=".3"/>
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--accent)"/>
+          <stop offset="100%" stop-color="var(--accent2)"/>
+        </linearGradient>
+      </defs>
+      ${gridLines}
+      ${xLabels}
+      <path d="${areaD}" fill="url(#chartGrad)"/>
+      <path d="${pathD}" fill="none" stroke="url(#lineGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+    </svg>
+  `;
+}
+
+/* ── SECTION SWITCHING ── */
+function switchSection(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('sec-' + name);
+  if (sec) sec.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+/* ── SIDEBAR TOGGLE ── */
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  // Mobile
+  if (window.innerWidth <= 768) {
+    sb.classList.toggle('mobile-open');
+    return;
+  }
+  sb.classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed');
+  try { localStorage.setItem('hv_sidebar', sb.classList.contains('collapsed') ? '1' : '0'); } catch(e){}
+}
+
+/* ── FILTER ORDERS ── */
+function filterOrders(status, btn) {
+  if (btn) {
+    btn.closest('.table-actions').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderOrders('ordersBody', status);
+  renderOrders('ordersBodyFull', status);
+}
+
+/* ── SORT TABLE ── */
+let sortState = {};
+function sortTable(colIdx, thEl) {
+  const table = thEl.closest('table');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const key = colIdx + '_' + tbody.id;
+  sortState[key] = sortState[key] === 'asc' ? 'desc' : 'asc';
+  const dir = sortState[key] === 'asc' ? 1 : -1;
+
+  // Reset headers
+  table.querySelectorAll('th').forEach(t => t.classList.remove('sorted'));
+  thEl.classList.add('sorted');
+
+  rows.sort((a, b) => {
+    let va = a.cells[colIdx].textContent.trim();
+    let vb = b.cells[colIdx].textContent.trim();
+    // Numeric?
+    const na = parseFloat(va.replace(/[^0-9.,-]/g,'').replace(',','.'));
+    const nb = parseFloat(vb.replace(/[^0-9.,-]/g,'').replace(',','.'));
+    if (!isNaN(na) && !isNaN(nb)) return (na - nb) * dir;
+    return va.localeCompare(vb, 'fr') * dir;
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+/* ── MODAL ── */
+function openOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('modalTitle').textContent = 'Commande ' + o.id;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-row"><span class="modal-label">Numero</span><span class="modal-val">${o.id}</span></div>
+    <div class="modal-row"><span class="modal-label">Client</span><span class="modal-val">${o.client}</span></div>
+    <div class="modal-row"><span class="modal-label">Email</span><span class="modal-val">${o.email}</span></div>
+    <div class="modal-row"><span class="modal-label">Ville</span><span class="modal-val">${o.city}</span></div>
+    <div class="modal-row"><span class="modal-label">Produit</span><span class="modal-val">${o.product}</span></div>
+    <div class="modal-row"><span class="modal-label">Montant</span><span class="modal-val" style="color:var(--accent2)">&euro;${o.amount.toFixed(2).replace('.',',')}</span></div>
+    <div class="modal-row"><span class="modal-label">Statut</span><span class="modal-val"><span class="status-badge ${o.status}">${statusLabels[o.status]}</span></span></div>
+    <div class="modal-row"><span class="modal-label">Date</span><span class="modal-val">${o.date}</span></div>
+    <div class="modal-row"><span class="modal-label">Mode de paiement</span><span class="modal-val">Carte bancaire</span></div>
+    <div class="modal-row"><span class="modal-label">Frais de port</span><span class="modal-val">&euro;4,90</span></div>
+    <div style="margin-top:18px;display:flex;gap:8px">
+      <button style="flex:1;padding:10px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);font-weight:600;font-size:13px">Marquer expedie</button>
+      <button style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px">Imprimer facture</button>
+    </div>
+  `;
+  document.getElementById('orderModal').hidden = false;
+}
+function closeModal() {
+  document.getElementById('orderModal').hidden = true;
+}
+document.getElementById('orderModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+/* ── NOTIFICATIONS ── */
+function toggleNotifs() {
+  const dd = document.getElementById('notifDropdown');
+  dd.hidden = !dd.hidden;
+}
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('notifDropdown');
+  if (!dd.hidden && !e.target.closest('.topbar-btn') && !e.target.closest('.notif-dropdown')) {
+    dd.hidden = true;
+  }
+});
+
+/* ── DATE ── */
+function updateDate() {
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  const el = document.getElementById('currentDate');
+  if (el) el.textContent = new Date().toLocaleDateString('fr-FR', opts);
+}
+
+/* ── RESTORE SIDEBAR ── */
+function restoreSidebar() {
+  try {
+    if (localStorage.getItem('hv_sidebar') === '1' && window.innerWidth > 768) {
+      document.getElementById('sidebar').classList.add('collapsed');
+      document.body.classList.add('sidebar-collapsed');
+    }
+  } catch(e){}
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+    document.getElementById('notifDropdown').hidden = true;
+  }
+});
+
+/* ── INIT ── */
+(function init() {
+  restoreSidebar();
+  updateDate();
+  renderOrders('ordersBody', 'all');
+  renderOrders('ordersBodyFull', 'all');
+  renderProducts();
+  renderClients();
+  renderTracking();
+  renderChart();
+})();
+</script>
+</body>
+</html>

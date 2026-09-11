@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe - Instagram Feed Ad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0d0d1a;
+    position: relative;
+    color: #fff;
+  }
+
+  /* Background gradient blobs */
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+  }
+  .bg-blob-1 {
+    width: 600px; height: 600px;
+    background: rgba(108,92,231,0.35);
+    top: -200px; left: -150px;
+  }
+  .bg-blob-2 {
+    width: 500px; height: 500px;
+    background: rgba(0,206,201,0.25);
+    bottom: -150px; right: -100px;
+  }
+  .bg-blob-3 {
+    width: 300px; height: 300px;
+    background: rgba(108,92,231,0.2);
+    bottom: 200px; left: 300px;
+  }
+
+  /* Top section */
+  .top-section {
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .logo {
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .flash-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: flashPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes flashPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  /* Headline */
+  .headline {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    right: 50px;
+    text-align: center;
+  }
+  .headline h1 {
+    font-size: 72px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .headline h1 .gradient-text {
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .headline .subtitle {
+    font-size: 22px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+
+  /* Product grid */
+  .product-grid {
+    position: absolute;
+    top: 300px;
+    left: 50px;
+    right: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .product-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 28px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .product-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+  }
+  .product-emoji {
+    font-size: 80px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 8px 20px rgba(0,206,201,0.3));
+  }
+  .product-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .price-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .old-price {
+    font-size: 22px;
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+    font-weight: 600;
+  }
+  .new-price {
+    font-size: 30px;
+    font-weight: 900;
+    color: #00CEC9;
+  }
+  .discount-tag {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  /* Bottom CTA */
+  .bottom-cta {
+    position: absolute;
+    bottom: 40px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tagline {
+    font-size: 18px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .shop-btn {
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    padding: 20px 50px;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 40px rgba(108,92,231,0.4);
+  }
+
+  /* Timer bar */
+  .timer-bar {
+    position: absolute;
+    top: 270px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .timer-dot {
+    width: 10px;
+    height: 10px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .timer-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ff6b6b;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Corner accents */
+  .corner-accent {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(108,92,231,0.2);
+  }
+  .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; border-radius: 10px 0 0 0; }
+  .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; border-radius: 0 10px 0 0; }
+  .corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; border-radius: 0 0 0 10px; }
+  .corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; border-radius: 0 0 10px 0; }
+</style>
+</head>
+<body>
+
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+
+  <div class="corner-accent corner-tl"></div>
+  <div class="corner-accent corner-tr"></div>
+  <div class="corner-accent corner-bl"></div>
+  <div class="corner-accent corner-br"></div>
+
+  <div class="top-section">
+    <div class="logo">HomeVibe</div>
+    <div class="flash-badge">&#9889; Offre Flash</div>
+  </div>
+
+  <div class="headline">
+    <h1><span class="gradient-text">Offre Flash</span></h1>
+    <div class="subtitle">Jusqu'a -70% sur tout le site</div>
+  </div>
+
+  <div class="timer-bar">
+    <div class="timer-dot"></div>
+    <div class="timer-text">Se termine dans 24:00:00</div>
+  </div>
+
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="discount-tag">-50%</div>
+      <div class="product-emoji">&#128161;</div>
+      <div class="product-title">Lampe LED<br>Intelligente</div>
+      <div class="price-row">
+        <span class="old-price">39,99&#8364;</span>
+        <span class="new-price">19,99&#8364;</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="discount-tag">-60%</div>
+      <div class="product-emoji">&#127869;</div>
+      <div class="product-title">Organiseur<br>de Cuisine</div>
+      <div class="price-row">
+        <span class="old-price">49,99&#8364;</span>
+        <span class="new-price">19,99&#8364;</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="discount-tag">-45%</div>
+      <div class="product-emoji">&#128262;</div>
+      <div class="product-title">Chargeur<br>Sans Fil</div>
+      <div class="price-row">
+        <span class="old-price">34,99&#8364;</span>
+        <span class="new-price">18,99&#8364;</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="discount-tag">-55%</div>
+      <div class="product-emoji">&#127811;</div>
+      <div class="product-title">Diffuseur<br>d'Aromes</div>
+      <div class="price-row">
+        <span class="old-price">44,99&#8364;</span>
+        <span class="new-price">19,99&#8364;</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-cta">
+    <div class="tagline">Transformez Votre Maison</div>
+    <div class="shop-btn">Acheter Maintenant</div>
+  </div>
+
+</body>
+</html>

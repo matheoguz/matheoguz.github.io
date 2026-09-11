@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe - TikTok Story Ad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #6C5CE7 0%, #1a1a2e 40%, #0d0d1a 60%, #00CEC9 100%);
+    position: relative;
+    color: #fff;
+  }
+
+  /* Animated geometric shapes */
+  .geo {
+    position: absolute;
+    border-radius: 20px;
+    opacity: 0.12;
+    animation: float 6s ease-in-out infinite;
+  }
+  .geo-1 {
+    width: 300px; height: 300px;
+    background: #6C5CE7;
+    top: 80px; left: -60px;
+    transform: rotate(45deg);
+    animation-delay: 0s;
+  }
+  .geo-2 {
+    width: 200px; height: 200px;
+    background: #00CEC9;
+    top: 400px; right: -40px;
+    transform: rotate(30deg);
+    animation-delay: 1s;
+  }
+  .geo-3 {
+    width: 250px; height: 250px;
+    background: #6C5CE7;
+    bottom: 500px; left: 60px;
+    transform: rotate(60deg);
+    border-radius: 50%;
+    animation-delay: 2s;
+  }
+  .geo-4 {
+    width: 180px; height: 180px;
+    background: #00CEC9;
+    bottom: 200px; right: 80px;
+    transform: rotate(15deg);
+    animation-delay: 0.5s;
+  }
+  .geo-5 {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    top: 250px; right: 200px;
+    transform: rotate(22deg);
+    border-radius: 50%;
+    opacity: 0.18;
+    animation-delay: 3s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50% { transform: translateY(-30px) rotate(50deg); }
+  }
+
+  /* Grid lines overlay */
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108,92,231,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,92,231,0.06) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  /* Top bar */
+  .top-bar {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    right: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 0%, #00CEC9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .badge {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Main headline */
+  .headline-wrap {
+    position: absolute;
+    top: 220px;
+    left: 60px;
+    right: 60px;
+    text-align: center;
+  }
+  .headline-sub {
+    font-size: 32px;
+    font-weight: 600;
+    color: #00CEC9;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .headline {
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+  }
+  .headline .accent {
+    background: linear-gradient(135deg, #00CEC9, #6C5CE7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .headline-line {
+    width: 120px;
+    height: 6px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+    margin: 30px auto;
+    border-radius: 3px;
+  }
+
+  /* Product showcase */
+  .product-area {
+    position: absolute;
+    top: 680px;
+    left: 60px;
+    right: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  .product-card {
+    width: 700px;
+    height: 500px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, #6C5CE7, transparent, #00CEC9);
+    border-radius: 42px;
+    z-index: -1;
+    opacity: 0.5;
+  }
+  .product-placeholder {
+    text-align: center;
+  }
+  .product-icon {
+    font-size: 120px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 30px rgba(0,206,201,0.3));
+  }
+  .product-name {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .product-desc {
+    font-size: 22px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Price section */
+  .price-section {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 10px;
+  }
+  .price-old {
+    font-size: 36px;
+    color: rgba(255,255,255,0.4);
+    text-decoration: line-through;
+    font-weight: 600;
+  }
+  .price-new {
+    font-size: 52px;
+    font-weight: 900;
+    color: #00CEC9;
+    text-shadow: 0 0 30px rgba(0,206,201,0.4);
+  }
+
+  /* Features strip */
+  .features {
+    position: absolute;
+    bottom: 460px;
+    left: 60px;
+    right: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+  }
+  .feature {
+    text-align: center;
+  }
+  .feature-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .feature-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* CTA */
+  .cta-area {
+    position: absolute;
+    bottom: 160px;
+    left: 60px;
+    right: 60px;
+    text-align: center;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    padding: 30px 100px;
+    border-radius: 60px;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 20px 60px rgba(108,92,231,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 20px 60px rgba(108,92,231,0.4); }
+    50% { transform: scale(1.03); box-shadow: 0 25px 70px rgba(108,92,231,0.6); }
+  }
+  .cta-sub {
+    margin-top: 24px;
+    font-size: 22px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* Bottom branding */
+  .bottom-brand {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Floating dots */
+  .dot {
+    position: absolute;
+    border-radius: 50%;
+    background: #00CEC9;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  .dot-1 { width: 8px; height: 8px; top: 180px; left: 200px; animation-delay: 0s; }
+  .dot-2 { width: 6px; height: 6px; top: 520px; right: 150px; animation-delay: 1s; }
+  .dot-3 { width: 10px; height: 10px; bottom: 700px; left: 300px; animation-delay: 0.5s; }
+  .dot-4 { width: 5px; height: 5px; top: 350px; left: 100px; animation-delay: 2s; background: #6C5CE7; }
+  .dot-5 { width: 7px; height: 7px; bottom: 380px; right: 250px; animation-delay: 1.5s; background: #6C5CE7; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="grid-overlay"></div>
+
+  <div class="geo geo-1"></div>
+  <div class="geo geo-2"></div>
+  <div class="geo geo-3"></div>
+  <div class="geo geo-4"></div>
+  <div class="geo geo-5"></div>
+
+  <div class="dot dot-1"></div>
+  <div class="dot dot-2"></div>
+  <div class="dot dot-3"></div>
+  <div class="dot dot-4"></div>
+  <div class="dot dot-5"></div>
+
+  <div class="top-bar">
+    <div class="logo">HomeVibe</div>
+    <div class="badge">Exclu TikTok</div>
+  </div>
+
+  <div class="headline-wrap">
+    <div class="headline-sub">Offre Limitee</div>
+    <div class="headline">
+      <span class="accent">50%</span><br>
+      DE<br>
+      REDUCTION
+    </div>
+    <div class="headline-line"></div>
+  </div>
+
+  <div class="product-area">
+    <div class="product-card">
+      <div class="product-placeholder">
+        <div class="product-icon">&#127968;</div>
+        <div class="product-name">Gadgets Maison Premium</div>
+        <div class="product-desc">Design moderne &bull; Qualite superieure</div>
+        <div class="price-section">
+          <span class="price-old">59,99&#8364;</span>
+          <span class="price-new">29,99&#8364;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">&#128666;</div>
+      <div class="feature-text">Livraison<br>rapide</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#128274;</div>
+      <div class="feature-text">Paiement<br>securise</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#10004;&#65039;</div>
+      <div class="feature-text">Satisfait ou<br>rembourse</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#11088;</div>
+      <div class="feature-text">+10K avis<br>positifs</div>
+    </div>
+  </div>
+
+  <div class="cta-area">
+    <div class="cta-btn">Lien dans la bio</div>
+    <div class="cta-sub">&#9650; Glissez vers le haut &#9650;</div>
+  </div>
+
+  <div class="bottom-brand">Transformez Votre Maison</div>
+
+</body>
+</html>

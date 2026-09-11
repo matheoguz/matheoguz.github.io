@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /shop/
+Disallow: /shop/admin/
+Disallow: /shop/guide/
+
+Sitemap: https://matheoguz.github.io/shop/sitemap.xml

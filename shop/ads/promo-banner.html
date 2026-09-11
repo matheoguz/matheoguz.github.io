@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe - Promo Banner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    width: 1200px;
+    height: 628px;
+    overflow: hidden;
+    background: #0a0a14;
+    position: relative;
+    color: #fff;
+  }
+
+  /* Background elements */
+  .bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 10% 50%, rgba(108,92,231,0.25), transparent),
+      radial-gradient(ellipse 500px 350px at 90% 50%, rgba(0,206,201,0.2), transparent);
+  }
+
+  /* Subtle grid */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Horizontal accent line */
+  .accent-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+  }
+  .accent-line-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00CEC9, #6C5CE7);
+  }
+
+  /* Layout: left text, right products */
+  .layout {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding: 0 60px;
+    gap: 50px;
+  }
+
+  /* Left side */
+  .left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .logo {
+    font-size: 32px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #00CEC9, #6C5CE7);
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+  .promo-badge .icon-truck {
+    font-size: 20px;
+  }
+  .headline {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+  }
+  .headline .accent {
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .sub-text {
+    font-size: 18px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .features-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 4px;
+  }
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+  .feature-pill .f-icon {
+    font-size: 18px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    padding: 18px 48px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: fit-content;
+    box-shadow: 0 12px 40px rgba(108,92,231,0.35);
+    margin-top: 4px;
+  }
+
+  /* Right side - products */
+  .right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .product-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .product-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    width: 200px;
+    position: relative;
+  }
+  .product-card.featured {
+    width: 220px;
+    background: rgba(108,92,231,0.12);
+    border-color: rgba(108,92,231,0.25);
+  }
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+    border-radius: 20px 20px 0 0;
+  }
+  .p-emoji {
+    font-size: 50px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 6px 15px rgba(0,206,201,0.3));
+  }
+  .p-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .p-price {
+    font-size: 20px;
+    font-weight: 900;
+    color: #00CEC9;
+  }
+  .p-old-price {
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    text-decoration: line-through;
+    margin-bottom: 2px;
+  }
+  .free-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #00CEC9;
+    color: #0a0a14;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  /* Decorative elements */
+  .deco-circle {
+    position: absolute;
+    border: 2px solid rgba(0,206,201,0.1);
+    border-radius: 50%;
+  }
+  .dc-1 { width: 200px; height: 200px; top: -80px; right: 200px; }
+  .dc-2 { width: 120px; height: 120px; bottom: -40px; right: 100px; }
+  .dc-3 { width: 80px; height: 80px; top: 60px; right: 60px; border-color: rgba(108,92,231,0.15); }
+
+  /* Tagline */
+  .tagline {
+    position: absolute;
+    bottom: 20px;
+    left: 60px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg-gradient"></div>
+  <div class="grid"></div>
+  <div class="accent-line"></div>
+  <div class="accent-line-bottom"></div>
+
+  <div class="deco-circle dc-1"></div>
+  <div class="deco-circle dc-2"></div>
+  <div class="deco-circle dc-3"></div>
+
+  <div class="layout">
+    <div class="left">
+      <div class="logo">HomeVibe</div>
+      <div class="promo-badge">
+        <span class="icon-truck">&#128666;</span>
+        Livraison Gratuite
+      </div>
+      <div class="headline">
+        <span class="accent">Livraison<br>Gratuite</span><br>
+        Sur Tout !
+      </div>
+      <div class="sub-text">
+        Sans minimum d'achat &bull; France metropolitaine
+      </div>
+      <div class="features-row">
+        <div class="feature-pill">
+          <span class="f-icon">&#9889;</span>
+          Expedition 24h
+        </div>
+        <div class="feature-pill">
+          <span class="f-icon">&#128274;</span>
+          Paiement securise
+        </div>
+        <div class="feature-pill">
+          <span class="f-icon">&#128257;</span>
+          Retour gratuit
+        </div>
+      </div>
+      <div class="cta-btn">Commander Maintenant</div>
+    </div>
+
+    <div class="right">
+      <div class="product-col">
+        <div class="product-card">
+          <div class="free-tag">GRATUIT</div>
+          <div class="p-emoji">&#128161;</div>
+          <div class="p-name">Lampe LED<br>Connectee</div>
+          <div class="p-old-price">39,99&#8364;</div>
+          <div class="p-price">19,99&#8364;</div>
+        </div>
+        <div class="product-card">
+          <div class="free-tag">GRATUIT</div>
+          <div class="p-emoji">&#127811;</div>
+          <div class="p-name">Diffuseur<br>d'Aromes</div>
+          <div class="p-old-price">44,99&#8364;</div>
+          <div class="p-price">22,99&#8364;</div>
+        </div>
+      </div>
+      <div class="product-col" style="margin-top: 30px;">
+        <div class="product-card featured">
+          <div class="free-tag">GRATUIT</div>
+          <div class="p-emoji">&#127869;</div>
+          <div class="p-name">Organiseur<br>Cuisine Pro</div>
+          <div class="p-old-price">54,99&#8364;</div>
+          <div class="p-price">27,99&#8364;</div>
+        </div>
+        <div class="product-card">
+          <div class="free-tag">GRATUIT</div>
+          <div class="p-emoji">&#128262;</div>
+          <div class="p-name">Chargeur<br>Sans Fil</div>
+          <div class="p-old-price">34,99&#8364;</div>
+          <div class="p-price">17,99&#8364;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tagline">Transformez Votre Maison</div>
+
+</body>
+</html>
