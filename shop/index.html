@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="HomeVibe - Transformez votre maison avec nos gadgets tendance. Livraison gratuite, paiement securise.">
+<meta property="og:title" content="HomeVibe - Gadgets Maison & Lifestyle">
+<meta property="og:description" content="Decouvrez nos gadgets maison tendance TikTok. Cuisine intelligente, lumieres d'ambiance, organisation et accessoires tech. Livraison gratuite !">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://matheoguz.github.io/shop/">
+<meta property="og:image" content="https://matheoguz.github.io/shop/og-image.svg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="HomeVibe">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HomeVibe - Gadgets Maison & Lifestyle">
+<meta name="twitter:description" content="Gadgets maison tendance TikTok. Livraison gratuite, paiement securise.">
+<meta name="twitter:image" content="https://matheoguz.github.io/shop/og-image.svg">
+<meta name="theme-color" content="#6C5CE7">
+<link rel="canonical" href="https://matheoguz.github.io/shop/">
 <title>HomeVibe - Gadgets Maison & Lifestyle</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -245,6 +258,17 @@ ul{list-style:none}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ── COOKIE BANNER ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:var(--surface);border-top:1px solid var(--glass-border);padding:16px;box-shadow:0 -4px 24px rgba(0,0,0,0.3);transform:translateY(100%);transition:transform 0.4s ease;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.cookie-banner.show{transform:translateY(0)}
+.cookie-banner p{font-size:0.85rem;color:var(--text2);max-width:600px;text-align:center}
+.cookie-banner p a{color:var(--accent);text-decoration:underline}
+.cookie-btn{padding:8px 20px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:600;transition:var(--transition)}
+.cookie-btn.accept{background:var(--accent-g);color:#fff}
+.cookie-btn.accept:hover{opacity:0.9}
+.cookie-btn.refuse{border:1px solid var(--glass-border);color:var(--text2)}
+.cookie-btn.refuse:hover{border-color:var(--accent);color:var(--text)}
 </style>
 </head>
 <body>
@@ -252,11 +276,11 @@ ul{list-style:none}
 <!-- NAV -->
 <nav class="nav" id="nav">
  <div class="nav-inner">
-  <a href="#" class="nav-logo">Home<span>Vibe</span></a>
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
   <div class="nav-links">
    <a href="#categories">Categories</a>
    <a href="#produits">Produits</a>
-   <a href="#newsletter">Contact</a>
+   <a href="contact.html">Contact</a>
   </div>
   <div class="nav-actions">
    <div class="nav-search" id="searchDesktop">
@@ -282,7 +306,7 @@ ul{list-style:none}
  <input type="text" class="mobile-search" id="mobileSearchInput" placeholder="Rechercher un produit..." aria-label="Rechercher">
  <a href="#categories" onclick="closeMobileNav()">Categories</a>
  <a href="#produits" onclick="closeMobileNav()">Produits</a>
- <a href="#newsletter" onclick="closeMobileNav()">Contact</a>
+ <a href="contact.html" onclick="closeMobileNav()">Contact</a>
 </div>
 
 <!-- HERO -->
@@ -426,19 +450,19 @@ ul{list-style:none}
    <div>
     <h4>Informations</h4>
     <ul>
-     <li><a href="#">A Propos</a></li>
-     <li><a href="#">Livraison</a></li>
-     <li><a href="#">FAQ</a></li>
-     <li><a href="#">Nous Contacter</a></li>
+     <li><a href="legal/livraison.html">Livraison</a></li>
+     <li><a href="legal/faq.html">FAQ</a></li>
+     <li><a href="contact.html">Nous Contacter</a></li>
+     <li><a href="legal/retours.html">Retours</a></li>
     </ul>
    </div>
    <div>
     <h4>Legal</h4>
     <ul>
-     <li><a href="#">Mentions Legales</a></li>
-     <li><a href="#">CGV</a></li>
-     <li><a href="#">Politique de Confidentialite</a></li>
-     <li><a href="#">Cookies</a></li>
+     <li><a href="legal/mentions-legales.html">Mentions Legales</a></li>
+     <li><a href="legal/cgv.html">CGV</a></li>
+     <li><a href="legal/confidentialite.html">Politique de Confidentialite</a></li>
+     <li><a href="legal/retours.html">Retours & Remboursements</a></li>
     </ul>
    </div>
   </div>
@@ -477,6 +501,13 @@ ul{list-style:none}
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- COOKIE CONSENT RGPD -->
+<div class="cookie-banner" id="cookieBanner">
+ <p>Nous utilisons des cookies pour ameliorer votre experience. En continuant, vous acceptez notre <a href="legal/confidentialite.html">politique de confidentialite</a>.</p>
+ <button class="cookie-btn accept" onclick="acceptCookies()">Accepter</button>
+ <button class="cookie-btn refuse" onclick="refuseCookies()">Refuser</button>
+</div>
 
 <script>
 /* ── DATA ── */
@@ -770,8 +801,23 @@ function setupListeners(){
  });
 }
 
+/* ── COOKIE CONSENT ── */
+function showCookieBanner(){
+ try{if(localStorage.getItem('hv_cookies'))return;}catch(e){}
+ setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'),1500);
+}
+function acceptCookies(){
+ try{localStorage.setItem('hv_cookies','accepted');}catch(e){}
+ document.getElementById('cookieBanner').classList.remove('show');
+}
+function refuseCookies(){
+ try{localStorage.setItem('hv_cookies','refused');}catch(e){}
+ document.getElementById('cookieBanner').classList.remove('show');
+}
+
 /* ── GO ── */
 init();
+showCookieBanner();
 </script>
 </body>
 </html>
