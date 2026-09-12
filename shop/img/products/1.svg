@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bg1" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a1a24"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </radialGradient>
+    <filter id="glow1">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg1)"/>
+  <!-- Slicer body -->
+  <rect x="120" y="130" width="160" height="20" rx="4" fill="#6C5CE7"/>
+  <rect x="130" y="150" width="140" height="100" rx="6" fill="#a29bfe" opacity="0.9"/>
+  <!-- Blade lines -->
+  <line x1="145" y1="165" x2="255" y2="165" stroke="#6C5CE7" stroke-width="1.5"/>
+  <line x1="145" y1="180" x2="255" y2="180" stroke="#6C5CE7" stroke-width="1.5"/>
+  <line x1="145" y1="195" x2="255" y2="195" stroke="#6C5CE7" stroke-width="1.5"/>
+  <line x1="145" y1="210" x2="255" y2="210" stroke="#6C5CE7" stroke-width="1.5"/>
+  <line x1="145" y1="225" x2="255" y2="225" stroke="#6C5CE7" stroke-width="1.5"/>
+  <!-- Handle -->
+  <rect x="175" y="110" width="50" height="25" rx="8" fill="#00CEC9"/>
+  <!-- Vegetable slices falling -->
+  <ellipse cx="170" cy="275" rx="18" ry="6" fill="#00CEC9" opacity="0.8"/>
+  <ellipse cx="200" cy="290" rx="18" ry="6" fill="#81ecec" opacity="0.7"/>
+  <ellipse cx="230" cy="280" rx="18" ry="6" fill="#00CEC9" opacity="0.8"/>
+  <ellipse cx="185" cy="305" rx="15" ry="5" fill="#81ecec" opacity="0.6"/>
+  <ellipse cx="215" cy="310" rx="15" ry="5" fill="#00CEC9" opacity="0.7"/>
+  <!-- Subtle glow under slices -->
+  <ellipse cx="200" cy="295" rx="60" ry="15" fill="#6C5CE7" opacity="0.15" filter="url(#glow1)"/>
+</svg>

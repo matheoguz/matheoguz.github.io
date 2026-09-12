@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bg5" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a1a24"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </radialGradient>
+    <radialGradient id="nebula" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#6C5CE7" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#00CEC9" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <filter id="glow5">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg5)"/>
+  <!-- Nebula/galaxy effect -->
+  <ellipse cx="200" cy="150" rx="160" ry="120" fill="url(#nebula)"/>
+  <!-- Stars -->
+  <circle cx="120" cy="80" r="2" fill="#81ecec" filter="url(#starglow)"/>
+  <circle cx="280" cy="60" r="1.5" fill="#a29bfe" filter="url(#starglow)"/>
+  <circle cx="160" cy="50" r="1.5" fill="#fff" opacity="0.7"/>
+  <circle cx="250" cy="100" r="2" fill="#81ecec" filter="url(#starglow)"/>
+  <circle cx="310" cy="130" r="1" fill="#fff" opacity="0.6"/>
+  <circle cx="90" cy="140" r="1.5" fill="#a29bfe" filter="url(#starglow)"/>
+  <circle cx="200" cy="70" r="2.5" fill="#00CEC9" filter="url(#starglow)"/>
+  <circle cx="140" cy="120" r="1" fill="#fff" opacity="0.5"/>
+  <circle cx="270" cy="160" r="1.5" fill="#81ecec"/>
+  <circle cx="330" cy="90" r="1" fill="#a29bfe"/>
+  <circle cx="70" cy="100" r="1" fill="#81ecec"/>
+  <!-- Projector body -->
+  <circle cx="200" cy="240" r="55" fill="#6C5CE7"/>
+  <circle cx="200" cy="240" r="48" fill="#a29bfe" opacity="0.3"/>
+  <!-- Lens opening -->
+  <circle cx="200" cy="220" r="18" fill="#00CEC9" opacity="0.6" filter="url(#glow5)"/>
+  <circle cx="200" cy="220" r="12" fill="#81ecec" opacity="0.5"/>
+  <circle cx="200" cy="220" r="6" fill="#fff" opacity="0.3"/>
+  <!-- Light beam going up -->
+  <polygon points="188,205 212,205 260,80 140,80" fill="#6C5CE7" opacity="0.08"/>
+  <!-- Base -->
+  <rect x="170" y="290" width="60" height="15" rx="5" fill="#6C5CE7"/>
+  <!-- Bottom glow -->
+  <ellipse cx="200" cy="310" rx="50" ry="8" fill="#6C5CE7" opacity="0.2" filter="url(#glow5)"/>
+</svg>

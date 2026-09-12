@@ -146,6 +146,8 @@ ul{list-style:none}
 .product-img{height:200px;position:relative;overflow:hidden}
 .product-img-bg{width:100%;height:100%;transition:transform 0.5s ease}
 .product-card:hover .product-img-bg{transform:scale(1.05)}
+.product-card:hover img{transform:scale(1.05);transition:transform 0.5s ease}
+a.product-name:hover{color:var(--accent)!important}
 .product-badge{position:absolute;top:12px;left:12px;background:var(--danger);color:#fff;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:999px;z-index:2}
 .product-badge.trend{background:var(--accent-g);display:flex;align-items:center;gap:4px}
 .product-discount{position:absolute;top:12px;right:12px;background:var(--surface);backdrop-filter:blur(8px);color:var(--success);font-size:0.72rem;font-weight:700;padding:4px 8px;border-radius:var(--radius-sm);z-index:2}
@@ -570,14 +572,15 @@ function renderProducts(){
   const stars='&#9733;'.repeat(Math.floor(p.rating))+(p.rating%1>=0.5?'&#9734;':'');
   return `
   <div class="product-card fade-in" data-cat="${p.cat}" data-id="${p.id}" data-name="${p.name.toLowerCase()}">
-   <div class="product-img">
-    <div class="product-img-bg" style="background:${p.bg}"></div>
+   <a href="product.html?id=${p.id}" class="product-img" style="display:block;cursor:pointer">
+    <img src="img/products/${p.id}.svg" alt="${escapeHtml(p.name)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius) var(--radius) 0 0" onerror="this.style.display='none';this.nextElementSibling.style.display=''">
+    <div class="product-img-bg" style="background:${p.bg};display:none"></div>
     ${p.trend?'<div class="product-badge trend">&#x1F525; TikTok</div>':''}
     <div class="product-discount">-${disc}%</div>
-   </div>
+   </a>
    <div class="product-body">
     <div class="product-cat">${p.catLabel}</div>
-    <div class="product-name">${p.name}</div>
+    <a href="product.html?id=${p.id}" class="product-name" style="color:var(--text);transition:var(--transition)">${p.name}</a>
     <div class="product-rating">
      <span class="stars">${stars}</span>
      <span>${p.rating} (${p.reviews})</span>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a1a24"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </radialGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg2)"/>
+  <!-- Blender cup body -->
+  <rect x="145" y="120" width="110" height="180" rx="12" fill="#a29bfe" opacity="0.85"/>
+  <rect x="150" y="125" width="100" height="170" rx="10" fill="#1a1a24" opacity="0.5"/>
+  <!-- Liquid inside -->
+  <rect x="155" y="170" width="90" height="120" rx="8" fill="#6C5CE7" opacity="0.6"/>
+  <!-- Lid -->
+  <rect x="140" y="108" width="120" height="18" rx="6" fill="#00CEC9"/>
+  <rect x="180" y="90" width="40" height="22" rx="5" fill="#00CEC9"/>
+  <!-- USB port indicator -->
+  <rect x="185" y="305" width="30" height="10" rx="3" fill="#81ecec"/>
+  <!-- Base -->
+  <rect x="150" y="300" width="100" height="20" rx="6" fill="#6C5CE7"/>
+  <!-- Fruit shapes inside -->
+  <circle cx="180" cy="210" r="12" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="210" cy="230" r="10" fill="#81ecec" opacity="0.6"/>
+  <circle cx="190" cy="250" r="8" fill="#00CEC9" opacity="0.5"/>
+  <!-- Bubbles -->
+  <circle cx="175" cy="185" r="4" fill="#81ecec" opacity="0.4"/>
+  <circle cx="215" cy="195" r="3" fill="#81ecec" opacity="0.3"/>
+  <circle cx="195" cy="175" r="3" fill="#81ecec" opacity="0.35"/>
+  <!-- Glow -->
+  <ellipse cx="200" cy="200" rx="50" ry="80" fill="#6C5CE7" opacity="0.08" filter="url(#glow2)"/>
+</svg>
