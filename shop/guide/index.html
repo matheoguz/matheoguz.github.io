@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HomeVibe - Guide complet pour configurer et lancer votre boutique dropshipping.">
+<title>HomeVibe - Guide de Configuration</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f14;--bg2:#1a1a24;--bg3:#24243a;--surface:#1e1e2e;--surface2:#2a2a3e;
+  --text:#f0f0f5;--text2:#a0a0b8;--text3:#6a6a80;
+  --accent:#6C5CE7;--accent2:#00CEC9;--accent-g:linear-gradient(135deg,#6C5CE7,#00CEC9);
+  --danger:#ff6b6b;--success:#00b894;--warning:#fdcb6e;
+  --glass:rgba(30,30,46,0.7);--glass-border:rgba(108,92,231,0.15);
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 8px 32px rgba(0,0,0,0.3);--shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f5f5fa;--bg2:#ebebf2;--bg3:#e0e0ec;--surface:#ffffff;--surface2:#f0f0f8;
+  --text:#1a1a2e;--text2:#5a5a72;--text3:#8a8a9e;
+  --glass:rgba(255,255,255,0.75);--glass-border:rgba(108,92,231,0.12);
+  --shadow:0 8px 32px rgba(0,0,0,0.08);--shadow-sm:0 4px 12px rgba(0,0,0,0.06);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+a{color:var(--accent2);text-decoration:none;transition:var(--transition)}
+a:hover{color:var(--accent);text-decoration:underline}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:56px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--glass);border-bottom:1px solid var(--glass-border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1000px;margin:0 auto;padding:0 20px}
+.nav-logo{font-size:1.3rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-back{font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:6px}
+.nav-back:hover{color:var(--text);text-decoration:none}
+
+/* ── LAYOUT ── */
+.container{max-width:1000px;margin:0 auto;padding:80px 20px 0}
+
+/* ── HERO ── */
+.guide-hero{text-align:center;padding:40px 0 32px;position:relative}
+.guide-hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(108,92,231,0.12),transparent 70%);pointer-events:none;z-index:0}
+.guide-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+.guide-hero h1 span{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.guide-hero p{color:var(--text2);font-size:1.05rem;max-width:560px;margin:0 auto;position:relative;z-index:1}
+
+/* ── PROGRESS ── */
+.progress-section{margin:32px 0 40px;padding:24px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--glass-border)}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.progress-header h3{font-size:1rem;font-weight:600}
+.progress-pct{font-size:1.6rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.progress-bar{height:10px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent-g);border-radius:99px;transition:width 0.5s ease;width:0%}
+.progress-stats{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.progress-stat{font-size:0.82rem;color:var(--text2)}
+.progress-stat strong{color:var(--text)}
+
+/* ── STEP CARD ── */
+.step-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--glass-border);margin-bottom:16px;overflow:hidden;transition:var(--transition)}
+.step-card.completed{border-color:rgba(0,184,148,0.3)}
+.step-header{display:flex;align-items:center;gap:14px;padding:18px 20px;cursor:pointer;transition:var(--transition);user-select:none}
+.step-header:hover{background:var(--surface2)}
+.step-num{width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;transition:var(--transition)}
+.step-card.completed .step-num{background:var(--success);color:#fff}
+.step-info{flex:1;min-width:0}
+.step-info h3{font-size:1.05rem;font-weight:700;margin-bottom:2px}
+.step-meta{display:flex;gap:14px;flex-wrap:wrap}
+.step-meta span{font-size:0.78rem;color:var(--text3);display:flex;align-items:center;gap:4px}
+.step-chevron{width:24px;height:24px;color:var(--text3);transition:transform 0.3s ease;flex-shrink:0}
+.step-card.open .step-chevron{transform:rotate(180deg)}
+.step-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.step-card.open .step-body{max-height:4000px}
+.step-content{padding:0 20px 24px;border-top:1px solid var(--glass-border);padding-top:20px}
+.step-progress-mini{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.step-progress-fill{height:100%;background:var(--accent-g);border-radius:99px;transition:width 0.4s ease}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);transition:var(--transition);cursor:pointer}
+.checklist li:hover{background:var(--bg3)}
+.checklist li.checked{opacity:0.6}
+.checklist li.checked .check-label{text-decoration:line-through}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition);margin-top:1px}
+.checklist li.checked .check-box{background:var(--success);border-color:var(--success)}
+.check-label{font-size:0.92rem;line-height:1.5}
+
+/* ── INFO BLOCKS ── */
+.info-block{background:var(--bg2);border-radius:var(--radius-sm);padding:16px 18px;margin-top:16px;border-left:3px solid var(--accent)}
+.info-block.teal{border-left-color:var(--accent2)}
+.info-block.warning{border-left-color:var(--warning)}
+.info-block.success{border-left-color:var(--success)}
+.info-block h4{font-size:0.92rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.info-block p,.info-block li{font-size:0.88rem;color:var(--text2);line-height:1.7}
+.info-block ol,.info-block ul{padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.info-block ol{list-style:decimal}
+.info-block ul{list-style:disc}
+
+/* ── CODE BLOCK ── */
+.code-block{position:relative;margin-top:12px}
+.code-block code{display:block;background:var(--bg);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:14px 16px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.82rem;color:var(--accent2);word-break:break-all;white-space:pre-wrap}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);color:var(--text2);font-size:0.72rem;padding:4px 10px;border-radius:4px;transition:var(--transition);font-weight:600}
+.copy-btn:hover{background:var(--accent);color:#fff}
+
+/* ── TEMPLATE BLOCK ── */
+.template-block{background:var(--bg2);border-radius:var(--radius-sm);padding:16px 18px;margin-top:12px}
+.template-block h5{font-size:0.85rem;font-weight:700;color:var(--accent2);margin-bottom:8px}
+.template-block pre{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.8rem;color:var(--text2);white-space:pre-wrap;line-height:1.7}
+
+/* ── LINK BUTTON ── */
+.link-btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent-g);color:#fff;padding:8px 18px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:600;margin-top:12px;transition:var(--transition);text-decoration:none}
+.link-btn:hover{opacity:0.85;text-decoration:none;color:#fff}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);padding:12px 20px;z-index:100;display:flex;align-items:center;justify-content:center;gap:12px}
+.bottom-nav a{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);color:var(--text2);padding:8px 18px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:600;text-decoration:none;transition:var(--transition)}
+.bottom-nav a:hover{background:var(--accent);color:#fff;text-decoration:none}
+.reset-btn{color:var(--danger)!important;font-size:0.8rem!important;padding:6px 12px!important}
+
+@media(max-width:600px){
+  .step-header{padding:14px 16px;gap:10px}
+  .step-content{padding:0 16px 20px;padding-top:16px}
+  .step-num{width:32px;height:32px;font-size:0.8rem}
+  .step-info h3{font-size:0.95rem}
+  .progress-section{padding:18px}
+  .container{padding:70px 16px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-back">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"/></svg>
+      Retour boutique
+    </a>
+    <a href="../index.html" class="nav-logo">Home<span>Vibe</span></a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- HERO -->
+<div class="guide-hero">
+  <h1>Guide de <span>Configuration</span></h1>
+  <p>Suivez ces etapes pour configurer et lancer votre boutique HomeVibe. Cochez chaque tache au fur et a mesure.</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <div class="progress-header">
+    <h3>Progression globale</h3>
+    <span class="progress-pct" id="globalPct">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="globalBar"></div>
+  </div>
+  <div class="progress-stats">
+    <span class="progress-stat"><strong id="doneCount">0</strong> / <strong id="totalCount">0</strong> taches</span>
+    <span class="progress-stat">Temps estime restant : <strong id="timeLeft">~4h</strong></span>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div id="stepsContainer">
+
+<!-- ETAPE 1 -->
+<div class="step-card" data-step="1">
+  <div class="step-header" onclick="toggleStep(1)">
+    <div class="step-num">1</div>
+    <div class="step-info">
+      <h3>Configuration du Paiement Stripe</h3>
+      <div class="step-meta">
+        <span>&#9201; ~45 min</span>
+        <span id="stepProg1">0/9 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar1"></div></div>
+      <ul class="checklist" data-step="1">
+        <li data-id="1-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer un compte Stripe sur <a href="https://stripe.com" target="_blank" rel="noopener">stripe.com</a></span></li>
+        <li data-id="1-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifier votre identite (carte d'identite / passeport)</span></li>
+        <li data-id="1-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ajouter votre compte bancaire (IBAN)</span></li>
+        <li data-id="1-4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Recuperer vos cles API : Dashboard > Developers > API Keys</span></li>
+        <li data-id="1-5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Copier la "Cle publiable" (pk_live_...)</span></li>
+        <li data-id="1-6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ouvrir le fichier <strong>shop/js/stripe-integration.js</strong></span></li>
+        <li data-id="1-7" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Remplacer <code>'pk_test_VOTRE_CLE_ICI'</code> par votre cle publiable</span></li>
+        <li data-id="1-8" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer vos produits dans le Dashboard Stripe (nom, prix, image)</span></li>
+        <li data-id="1-9" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Tester un paiement en mode test avant de passer en production</span></li>
+      </ul>
+
+      <div class="info-block">
+        <h4>&#128273; Comment recuperer vos cles API</h4>
+        <ol>
+          <li>Connectez-vous a <a href="https://dashboard.stripe.com" target="_blank" rel="noopener">dashboard.stripe.com</a></li>
+          <li>Allez dans <strong>Developers</strong> (menu de gauche)</li>
+          <li>Cliquez sur <strong>API Keys</strong></li>
+          <li>Copiez la <strong>Publishable key</strong> (commence par <code>pk_live_</code>)</li>
+          <li>Gardez la <strong>Secret key</strong> en securite (ne la mettez JAMAIS cote client)</li>
+        </ol>
+      </div>
+
+      <div class="info-block warning">
+        <h4>&#9888;&#65039; Mode Test vs Production</h4>
+        <p>Utilisez d'abord les cles <code>pk_test_</code> pour tester. Une fois pret, basculez vers les cles <code>pk_live_</code>. Le bouton "Test mode" dans le Dashboard Stripe permet de basculer.</p>
+      </div>
+
+      <div class="code-block">
+        <code>// Dans shop/js/stripe-integration.js
+// Remplacez cette ligne :
+const stripe = Stripe('pk_test_VOTRE_CLE_ICI');
+
+// Par votre cle publiable :
+const stripe = Stripe('pk_live_xxxxxxxxxxxxxxxx');</code>
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      </div>
+
+      <a href="https://stripe.com/docs/payments/checkout" target="_blank" rel="noopener" class="link-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Documentation Stripe Checkout
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 2 -->
+<div class="step-card" data-step="2">
+  <div class="step-header" onclick="toggleStep(2)">
+    <div class="step-num">2</div>
+    <div class="step-info">
+      <h3>Configuration AliExpress / Fournisseurs</h3>
+      <div class="step-meta">
+        <span>&#9201; ~1h30</span>
+        <span id="stepProg2">0/6 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar2"></div></div>
+      <ul class="checklist" data-step="2">
+        <li data-id="2-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer un compte sur <a href="https://www.aliexpress.com" target="_blank" rel="noopener">AliExpress</a></span></li>
+        <li data-id="2-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Rechercher les fournisseurs pour chaque produit du catalogue</span></li>
+        <li data-id="2-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifier les evaluations (minimum 4.5 etoiles, +1000 ventes)</span></li>
+        <li data-id="2-4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Commander un echantillon de chaque produit pour verifier la qualite</span></li>
+        <li data-id="2-5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Negocier les prix avec les fournisseurs (remise volume)</span></li>
+        <li data-id="2-6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Sauvegarder les liens des produits fournisseurs dans un document</span></li>
+      </ul>
+
+      <div class="info-block teal">
+        <h4>&#128230; Workflow de commande (a chaque vente)</h4>
+        <ol>
+          <li>Le client commande sur HomeVibe &#8594; vous recevez un email Stripe</li>
+          <li>Ouvrez le Dashboard Admin &#8594; voyez la nouvelle commande</li>
+          <li>Allez sur AliExpress &#8594; commandez le produit correspondant</li>
+          <li>Entrez l'adresse du client comme adresse de livraison</li>
+          <li>Payez avec votre carte (le prix AliExpress = votre cout)</li>
+          <li>Copiez le numero de suivi (tracking)</li>
+          <li>Mettez a jour le statut dans le Dashboard Admin</li>
+          <li>Envoyez le tracking au client par email</li>
+        </ol>
+      </div>
+
+      <div class="info-block warning">
+        <h4>&#128161; Conseils fournisseurs</h4>
+        <ul>
+          <li>Privilegiez les fournisseurs avec l'option <strong>ePacket</strong> ou <strong>AliExpress Standard Shipping</strong> (livraison 10-20 jours)</li>
+          <li>Envoyez un message au fournisseur avant de commander pour verifier le stock</li>
+          <li>Demandez des photos reelles du produit (pas seulement les images marketing)</li>
+          <li>Comparez au moins 3 fournisseurs pour chaque produit</li>
+        </ul>
+      </div>
+
+      <a href="https://www.aliexpress.com" target="_blank" rel="noopener" class="link-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Aller sur AliExpress
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 3 -->
+<div class="step-card" data-step="3">
+  <div class="step-header" onclick="toggleStep(3)">
+    <div class="step-num">3</div>
+    <div class="step-info">
+      <h3>Pages Legales</h3>
+      <div class="step-meta">
+        <span>&#9201; ~30 min</span>
+        <span id="stepProg3">0/4 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar3"></div></div>
+      <ul class="checklist" data-step="3">
+        <li data-id="3-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Remplir les Mentions Legales (<strong>shop/legal/mentions-legales.html</strong>)</span></li>
+        <li data-id="3-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Obtenir un numero SIRET (auto-entrepreneur ou societe)</span></li>
+        <li data-id="3-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Completer les informations dans toutes les pages legales</span></li>
+        <li data-id="3-4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifier les CGV (Conditions Generales de Vente)</span></li>
+      </ul>
+
+      <div class="info-block">
+        <h4>&#128220; Documents obligatoires pour le e-commerce en France</h4>
+        <ul>
+          <li><strong>Mentions legales</strong> : nom, adresse, SIRET, email, hebergeur</li>
+          <li><strong>CGV</strong> : prix, livraison, retours, droit de retractation (14 jours)</li>
+          <li><strong>Politique de confidentialite</strong> : RGPD, cookies, donnees collectees</li>
+          <li><strong>Politique de cookies</strong> : bandeau de consentement</li>
+        </ul>
+      </div>
+
+      <div class="info-block warning">
+        <h4>&#9888;&#65039; Important</h4>
+        <p>L'absence de mentions legales est passible d'une amende de <strong>75 000 EUR</strong> pour une personne physique. Assurez-vous que toutes les informations sont correctes et a jour.</p>
+      </div>
+
+      <a href="https://www.autoentrepreneur.urssaf.fr" target="_blank" rel="noopener" class="link-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        S'inscrire Auto-Entrepreneur
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 4 -->
+<div class="step-card" data-step="4">
+  <div class="step-header" onclick="toggleStep(4)">
+    <div class="step-num">4</div>
+    <div class="step-info">
+      <h3>Reseaux Sociaux &amp; Marketing</h3>
+      <div class="step-meta">
+        <span>&#9201; ~1h</span>
+        <span id="stepProg4">0/5 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar4"></div></div>
+      <ul class="checklist" data-step="4">
+        <li data-id="4-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer un compte <a href="https://www.tiktok.com/business" target="_blank" rel="noopener">TikTok Business</a></span></li>
+        <li data-id="4-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer un compte <a href="https://business.instagram.com" target="_blank" rel="noopener">Instagram Business</a></span></li>
+        <li data-id="4-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Utiliser les creatifs publicitaires dans <strong>shop/ads/</strong></span></li>
+        <li data-id="4-4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Publier 2-3 videos par jour sur TikTok</span></li>
+        <li data-id="4-5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Hashtags : #homevibe #decomaison #bonplan #tendance #fyp</span></li>
+      </ul>
+
+      <div class="info-block teal">
+        <h4>&#127909; Strategie TikTok</h4>
+        <ul>
+          <li><strong>Videos de demonstration</strong> : montrez le produit en action (15-30 secondes)</li>
+          <li><strong>Avant/Apres</strong> : transformation d'un espace avec le produit</li>
+          <li><strong>Reviews/Unboxing</strong> : deballez le produit face camera</li>
+          <li><strong>Tendances</strong> : adaptez les trends du moment a vos produits</li>
+          <li><strong>Lien dans la bio</strong> : matheoguz.github.io/shop/</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>&#128197; Calendrier de publication</h4>
+        <ul>
+          <li><strong>Lundi-Vendredi</strong> : 2-3 TikTok + 1 Story Instagram</li>
+          <li><strong>Samedi-Dimanche</strong> : 1 TikTok + 1 Post Instagram</li>
+          <li><strong>Horaires optimaux</strong> : 12h-14h et 18h-21h</li>
+          <li><strong>Creatifs dispo</strong> : <a href="../ads/">shop/ads/</a></li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+        <code>#homevibe #decomaison #bonplan #tendance #fyp #home #decoration #gadget #lifestyle #interiordesign</code>
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 5 -->
+<div class="step-card" data-step="5">
+  <div class="step-header" onclick="toggleStep(5)">
+    <div class="step-num">5</div>
+    <div class="step-info">
+      <h3>Gestion Financiere</h3>
+      <div class="step-meta">
+        <span>&#9201; ~30 min</span>
+        <span id="stepProg5">0/3 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar5"></div></div>
+      <ul class="checklist" data-step="5">
+        <li data-id="5-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ouvrir un compte bancaire dedie a l'activite</span></li>
+        <li data-id="5-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Configurer les virements Stripe vers ce compte</span></li>
+        <li data-id="5-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Creer un tableur de suivi financier (ou utiliser le <a href="calculateur.html">calculateur</a>)</span></li>
+      </ul>
+
+      <div class="info-block teal">
+        <h4>&#128200; Calcul de la marge</h4>
+        <ul>
+          <li><strong>Recettes</strong> = Prix de vente x nombre de ventes</li>
+          <li><strong>Depenses</strong> = Cout AliExpress + Frais Stripe (1.4% + 0,25 EUR) + Budget pub</li>
+          <li><strong>Marge</strong> = Recettes - Depenses</li>
+          <li><strong>Objectif de marge</strong> : 60-70%</li>
+        </ul>
+      </div>
+
+      <div class="info-block warning">
+        <h4>&#128176; Frais Stripe</h4>
+        <p>Stripe preleve <strong>1.4% + 0,25 EUR</strong> par transaction reussie (cartes europeennes). Pour une vente a 29,99 EUR, Stripe prend 0,67 EUR. Integrez toujours ces frais dans votre calcul de prix.</p>
+      </div>
+
+      <a href="calculateur.html" class="link-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+        Ouvrir le Calculateur de Profits
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 6 -->
+<div class="step-card" data-step="6">
+  <div class="step-header" onclick="toggleStep(6)">
+    <div class="step-num">6</div>
+    <div class="step-info">
+      <h3>Service Client</h3>
+      <div class="step-meta">
+        <span>&#9201; ~30 min</span>
+        <span id="stepProg6">0/3 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar6"></div></div>
+      <ul class="checklist" data-step="6">
+        <li data-id="6-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Configurer un email professionnel (ex: contact@homevibe.fr)</span></li>
+        <li data-id="6-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Preparer des reponses types (templates ci-dessous)</span></li>
+        <li data-id="6-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Rediger et publier la politique de remboursement</span></li>
+      </ul>
+
+      <div class="template-block">
+        <h5>&#9993; Confirmation de commande</h5>
+        <pre>Bonjour [Prenom],
+
+Merci pour votre commande chez HomeVibe !
+
+Votre commande n&#176;[NUMERO] a bien ete enregistree.
+Vous recevrez un email avec votre numero de suivi
+des que votre colis sera expedie (sous 24-48h).
+
+A bientot,
+L'equipe HomeVibe</pre>
+      </div>
+
+      <div class="template-block">
+        <h5>&#128230; Suivi de commande</h5>
+        <pre>Bonjour [Prenom],
+
+Votre colis a ete expedie !
+Numero de suivi : [TRACKING]
+Suivez votre colis ici : [LIEN_TRACKING]
+
+Delai de livraison estime : 10-20 jours ouvrables.
+
+L'equipe HomeVibe</pre>
+      </div>
+
+      <div class="template-block">
+        <h5>&#128260; Demande de retour</h5>
+        <pre>Bonjour [Prenom],
+
+Nous sommes desoles que le produit ne vous convienne pas.
+Conformement a notre politique, vous disposez de 14 jours
+pour retourner votre article.
+
+Merci de nous envoyer :
+- Votre numero de commande
+- La raison du retour
+- Des photos du produit
+
+Nous traiterons votre demande sous 48h.
+
+L'equipe HomeVibe</pre>
+      </div>
+
+      <div class="template-block">
+        <h5>&#9888;&#65039; Probleme de livraison</h5>
+        <pre>Bonjour [Prenom],
+
+Nous comprenons votre inquietude concernant votre colis.
+Les livraisons internationales peuvent prendre entre
+10 et 25 jours ouvrables.
+
+Si votre colis n'arrive pas dans les 30 jours suivant
+l'expedition, nous vous enverrons un remplacement ou
+un remboursement complet.
+
+Votre numero de suivi : [TRACKING]
+N'hesitez pas a nous recontacter si besoin.
+
+L'equipe HomeVibe</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 7 -->
+<div class="step-card" data-step="7">
+  <div class="step-header" onclick="toggleStep(7)">
+    <div class="step-num">7</div>
+    <div class="step-info">
+      <h3>Mise en Ligne</h3>
+      <div class="step-meta">
+        <span>&#9201; ~20 min</span>
+        <span id="stepProg7">0/5 taches</span>
+      </div>
+    </div>
+    <svg class="step-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body">
+    <div class="step-content">
+      <div class="step-progress-mini"><div class="step-progress-fill" id="stepBar7"></div></div>
+      <ul class="checklist" data-step="7">
+        <li data-id="7-1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifier que tous les produits sont corrects (prix, images, descriptions)</span></li>
+        <li data-id="7-2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Tester le processus d'achat complet (ajout panier &#8594; paiement)</span></li>
+        <li data-id="7-3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifier la version mobile sur votre telephone</span></li>
+        <li data-id="7-4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Publier le site (push sur GitHub)</span></li>
+        <li data-id="7-5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Lancer la premiere campagne marketing</span></li>
+      </ul>
+
+      <div class="info-block success">
+        <h4>&#127881; Commande pour publier sur GitHub</h4>
+        <p>Ouvrez un terminal dans le dossier du projet et executez :</p>
+      </div>
+
+      <div class="code-block">
+        <code>git add . && git commit -m "update" && git push</code>
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      </div>
+
+      <div class="info-block">
+        <h4>&#128269; Checklist pre-lancement</h4>
+        <ul>
+          <li>Tous les liens fonctionnent</li>
+          <li>Les images se chargent correctement</li>
+          <li>Le panier fonctionne sur mobile</li>
+          <li>Les pages legales sont completes</li>
+          <li>Le paiement Stripe est en mode <strong>live</strong> (pas test)</li>
+          <li>L'email de contact fonctionne</li>
+          <li>Google Analytics est configure (optionnel)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /stepsContainer -->
+</div><!-- /container -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="calculateur.html">&#128202; Calculateur</a>
+  <a href="../index.html">&#127968; Boutique</a>
+  <button class="reset-btn" onclick="resetProgress()" style="background:var(--surface2);border-radius:var(--radius-sm);cursor:pointer">Reinitialiser</button>
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'homevibe-guide-progress';
+  var checked = {};
+  var stepTaskCounts = {1:9, 2:6, 3:4, 4:5, 5:3, 6:3, 7:5};
+  var stepTimes = {1:45, 2:90, 3:30, 4:60, 5:30, 6:30, 7:20};
+  var totalTasks = 0;
+  for (var k in stepTaskCounts) totalTasks += stepTaskCounts[k];
+
+  // Load state
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) checked = JSON.parse(saved);
+  } catch(e) { checked = {}; }
+
+  // Init UI
+  function init() {
+    document.querySelectorAll('.checklist li').forEach(function(li) {
+      var id = li.getAttribute('data-id');
+      if (checked[id]) li.classList.add('checked');
+    });
+    updateAll();
+  }
+
+  // Toggle a checkbox
+  window.toggleCheck = function(li) {
+    if (li.tagName !== 'LI') li = li.closest('li');
+    if (!li) return;
+    // Don't toggle if clicking a link
+    if (event && event.target && event.target.tagName === 'A') return;
+    var id = li.getAttribute('data-id');
+    if (checked[id]) {
+      delete checked[id];
+      li.classList.remove('checked');
+    } else {
+      checked[id] = true;
+      li.classList.add('checked');
+    }
+    save();
+    updateAll();
+  };
+
+  // Toggle step expand
+  window.toggleStep = function(n) {
+    var card = document.querySelector('.step-card[data-step="'+n+'"]');
+    if (!card) return;
+    card.classList.toggle('open');
+  };
+
+  // Copy code
+  window.copyCode = function(btn) {
+    var code = btn.parentElement.querySelector('code');
+    if (!code) return;
+    var text = code.textContent;
+    try {
+      navigator.clipboard.writeText(text);
+      btn.textContent = 'Copie !';
+      setTimeout(function(){ btn.textContent = 'Copier'; }, 1500);
+    } catch(e) {
+      // Fallback
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = 'Copie !';
+      setTimeout(function(){ btn.textContent = 'Copier'; }, 1500);
+    }
+  };
+
+  // Reset progress
+  window.resetProgress = function() {
+    if (!confirm('Reinitialiser toute la progression ?')) return;
+    checked = {};
+    save();
+    document.querySelectorAll('.checklist li').forEach(function(li) {
+      li.classList.remove('checked');
+    });
+    updateAll();
+  };
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); } catch(e) {}
+  }
+
+  function updateAll() {
+    var done = Object.keys(checked).length;
+    var pct = Math.round((done / totalTasks) * 100);
+
+    document.getElementById('globalPct').textContent = pct + '%';
+    document.getElementById('globalBar').style.width = pct + '%';
+    document.getElementById('doneCount').textContent = done;
+    document.getElementById('totalCount').textContent = totalTasks;
+
+    // Time left
+    var minutesLeft = 0;
+    for (var s = 1; s <= 7; s++) {
+      var stepDone = 0;
+      for (var t = 1; t <= stepTaskCounts[s]; t++) {
+        if (checked[s+'-'+t]) stepDone++;
+      }
+      var stepPct = stepDone / stepTaskCounts[s];
+      minutesLeft += Math.round(stepTimes[s] * (1 - stepPct));
+    }
+    var hours = Math.floor(minutesLeft / 60);
+    var mins = minutesLeft % 60;
+    var timeStr = hours > 0 ? '~' + hours + 'h' + (mins > 0 ? mins.toString().padStart(2,'0') : '') : '~' + mins + ' min';
+    if (minutesLeft === 0) timeStr = 'Termine !';
+    document.getElementById('timeLeft').textContent = timeStr;
+
+    // Per-step
+    for (var s = 1; s <= 7; s++) {
+      var stepDone = 0;
+      for (var t = 1; t <= stepTaskCounts[s]; t++) {
+        if (checked[s+'-'+t]) stepDone++;
+      }
+      var el = document.getElementById('stepProg'+s);
+      if (el) el.textContent = stepDone + '/' + stepTaskCounts[s] + ' taches';
+      var bar = document.getElementById('stepBar'+s);
+      if (bar) bar.style.width = Math.round((stepDone/stepTaskCounts[s])*100) + '%';
+      var card = document.querySelector('.step-card[data-step="'+s+'"]');
+      if (card) {
+        if (stepDone === stepTaskCounts[s]) {
+          card.classList.add('completed');
+        } else {
+          card.classList.remove('completed');
+        }
+      }
+    }
+  }
+
+  // Open step 1 by default if nothing done
+  if (Object.keys(checked).length === 0) {
+    var firstCard = document.querySelector('.step-card[data-step="1"]');
+    if (firstCard) firstCard.classList.add('open');
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

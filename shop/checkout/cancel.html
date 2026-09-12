@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Annule - HomeVibe</title>
+    <meta name="description" content="Votre paiement a ete annule. Votre panier est toujours disponible.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .cancel-header {
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cancel-header .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        /* Conteneur principal */
+        .cancel-container {
+            max-width: 580px;
+            margin: 0 auto;
+            padding: 60px 16px 80px;
+            text-align: center;
+        }
+
+        /* Icone d'annulation */
+        .cancel-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 28px;
+            border-radius: 50%;
+            background: rgba(243, 156, 18, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .cancel-icon svg {
+            width: 44px;
+            height: 44px;
+            color: #f39c12;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Titres */
+        .cancel-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .cancel-subtitle {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 36px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Carte info panier -->  */
+        .cart-preserved-card {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            text-align: left;
+        }
+
+        .cart-preserved-card .icon-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .cart-preserved-card .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(46, 204, 113, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cart-preserved-card .icon-circle svg {
+            width: 20px;
+            height: 20px;
+            color: #2ecc71;
+        }
+
+        .cart-preserved-card .icon-text {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .cart-preserved-card p {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        /* Raisons possibles */
+        .reasons {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            text-align: left;
+        }
+
+        .reasons h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reasons li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .reasons li::before {
+            content: '\2022';
+            color: #6C5CE7;
+            font-size: 1.2rem;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        /* Boutons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: transparent;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+        }
+
+        /* Section aide -->  */
+        .help-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .help-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .help-contacts {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .help-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .help-contact:hover {
+            color: #00CEC9;
+        }
+
+        .help-contact svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .cancel-container {
+                padding: 40px 16px 60px;
+            }
+
+            .cancel-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="cancel-header">
+        <a href="/shop/" class="logo">HomeVibe</a>
+    </header>
+
+    <!-- Contenu -->
+    <main class="cancel-container">
+
+        <!-- Icone -->
+        <div class="cancel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+        </div>
+
+        <h1 class="cancel-title">Paiement annule</h1>
+        <p class="cancel-subtitle">Pas d'inquietude, aucun montant n'a ete debite de votre compte.</p>
+
+        <!-- Panier conserve -->
+        <div class="cart-preserved-card">
+            <div class="icon-row">
+                <div class="icon-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                </div>
+                <span class="icon-text">Votre panier est toujours disponible</span>
+            </div>
+            <p>Tous vos articles ont ete conserves. Vous pouvez reprendre votre commande a tout moment en retournant a la page de paiement.</p>
+        </div>
+
+        <!-- Raisons possibles -->
+        <div class="reasons">
+            <h3>Vous avez peut-etre annule parce que :</h3>
+            <ul>
+                <li>Vous souhaitez modifier votre panier ou vos articles</li>
+                <li>Vous voulez verifier les details de votre commande</li>
+                <li>Vous preferez utiliser un autre moyen de paiement</li>
+                <li>Vous avez rencontre un probleme technique</li>
+            </ul>
+        </div>
+
+        <!-- Boutons -->
+        <div class="action-buttons">
+            <a href="/shop/checkout/" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Retourner au paiement
+            </a>
+            <a href="/shop/" class="btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Retour a la boutique
+            </a>
+        </div>
+
+        <!-- Section aide -->
+        <div class="help-section">
+            <h3>Besoin d'aide ?</h3>
+            <div class="help-contacts">
+                <a href="mailto:support@homevibe.fr" class="help-contact">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    support@homevibe.fr
+                </a>
+                <span class="help-contact">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Reponse sous 24h, du lundi au vendredi
+                </span>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

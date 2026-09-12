@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HomeVibe - Mentions legales. Informations legales obligatoires conformement a la loi francaise.">
+<title>HomeVibe - Mentions L&eacute;gales</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f14;--bg2:#1a1a24;--bg3:#24243a;--surface:#1e1e2e;--surface2:#2a2a3e;
+  --text:#f0f0f5;--text2:#a0a0b8;--text3:#6a6a80;
+  --accent:#6C5CE7;--accent2:#00CEC9;--accent-g:linear-gradient(135deg,#6C5CE7,#00CEC9);
+  --danger:#ff6b6b;--success:#00b894;--warning:#fdcb6e;
+  --glass:rgba(30,30,46,0.7);--glass-border:rgba(108,92,231,0.15);
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 8px 32px rgba(0,0,0,0.3);--shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+  --nav-h:64px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f5f5fa;--bg2:#ebebf2;--bg3:#e0e0ec;--surface:#ffffff;--surface2:#f0f0f8;
+  --text:#1a1a2e;--text2:#5a5a72;--text3:#8a8a9e;
+  --glass:rgba(255,255,255,0.75);--glass-border:rgba(108,92,231,0.12);
+  --shadow:0 8px 32px rgba(0,0,0,0.08);--shadow-sm:0 4px 12px rgba(0,0,0,0.06);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none;transition:var(--transition)}
+a:hover{color:var(--accent2)}
+img{max-width:100%;display:block}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--glass);border-bottom:1px solid var(--glass-border);transition:var(--transition)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1200px;margin:0 auto;padding:0 16px}
+.nav-logo{font-size:1.4rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;text-decoration:none}
+.nav-logo span{font-weight:400;opacity:0.7}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:500;color:var(--text2);transition:var(--transition)}
+.nav-back:hover{color:var(--accent)}
+
+/* MAIN */
+.page-wrapper{max-width:860px;margin:0 auto;padding:calc(var(--nav-h) + 40px) 16px 60px}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--glass-border)}
+.page-header h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.page-header h1 .gradient{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-header .updated{font-size:0.82rem;color:var(--text3)}
+
+/* CONTENT */
+.legal-section{margin-bottom:36px}
+.legal-section h2{font-size:1.25rem;font-weight:700;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:10px}
+.legal-section h2::before{content:'';width:4px;height:24px;background:var(--accent-g);border-radius:2px;flex-shrink:0}
+.legal-section h3{font-size:1.05rem;font-weight:600;margin:16px 0 8px;color:var(--text)}
+.legal-section p,.legal-section li{font-size:0.92rem;color:var(--text2);margin-bottom:8px}
+.legal-section ul{padding-left:20px;margin-bottom:12px}
+.legal-section ul li{list-style:disc;margin-bottom:6px}
+
+/* PLACEHOLDER BOX */
+.placeholder{background:rgba(253,203,110,0.15);border:1px solid rgba(253,203,110,0.4);border-radius:var(--radius-sm);padding:3px 8px;color:#fdcb6e;font-weight:600;font-size:0.88rem;display:inline}
+
+/* INFO BOX */
+.info-box{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:20px 0}
+.info-box.warning{border-color:rgba(253,203,110,0.4);background:rgba(253,203,110,0.06)}
+.info-box p{margin-bottom:6px}
+.info-box p:last-child{margin-bottom:0}
+
+/* FOOTER */
+.legal-footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--glass-border);text-align:center}
+.legal-footer .nav-logo{font-size:1.2rem;display:inline-block;margin-bottom:12px}
+.legal-footer p{font-size:0.78rem;color:var(--text3);margin-bottom:4px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:16px}
+.footer-links a{font-size:0.82rem;color:var(--text3);transition:var(--transition)}
+.footer-links a:hover{color:var(--accent)}
+
+@media(max-width:600px){
+  .page-wrapper{padding:calc(var(--nav-h) + 24px) 16px 40px}
+  .legal-section h2{font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+ <div class="nav-inner">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <a href="/shop/" class="nav-back">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+   Retour &agrave; la boutique
+  </a>
+ </div>
+</nav>
+
+<main class="page-wrapper">
+ <header class="page-header">
+  <h1>Mentions <span class="gradient">L&eacute;gales</span></h1>
+  <p class="updated">Derni&egrave;re mise &agrave; jour : <span class="placeholder">[DATE &Agrave; COMPL&Eacute;TER]</span></p>
+ </header>
+
+ <div class="info-box warning">
+  <p><strong>Important :</strong> Les champs surlign&eacute;s en jaune <span class="placeholder">[&Agrave; COMPL&Eacute;TER]</span> doivent &ecirc;tre remplis avec vos informations r&eacute;elles avant la mise en ligne du site. Ces informations sont obligatoires conform&eacute;ment &agrave; la loi n&deg; 2004-575 du 21 juin 2004 pour la confiance dans l'&eacute;conomie num&eacute;rique (LCEN).</p>
+ </div>
+
+ <section class="legal-section">
+  <h2>&Eacute;diteur du site</h2>
+  <p>Le site <strong>HomeVibe</strong> (ci-apr&egrave;s &laquo; le Site &raquo;), accessible &agrave; l'adresse <strong>https://homevibe-shop.com</strong>, est &eacute;dit&eacute; par :</p>
+  <div class="info-box">
+   <p><strong>Raison sociale :</strong> <span class="placeholder">[NOM DE LA SOCI&Eacute;T&Eacute; &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Forme juridique :</strong> <span class="placeholder">[SAS / SARL / EI / Auto-entrepreneur &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Capital social :</strong> <span class="placeholder">[MONTANT &Agrave; COMPL&Eacute;TER]</span> euros</p>
+   <p><strong>Si&egrave;ge social :</strong> <span class="placeholder">[ADRESSE COMPL&Egrave;TE &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Num&eacute;ro SIRET :</strong> <span class="placeholder">[NUM&Eacute;RO SIRET &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Num&eacute;ro RCS :</strong> <span class="placeholder">[VILLE + NUM&Eacute;RO RCS &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Num&eacute;ro de TVA intracommunautaire :</strong> <span class="placeholder">[NUM&Eacute;RO TVA &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>T&eacute;l&eacute;phone :</strong> <span class="placeholder">[NUM&Eacute;RO DE T&Eacute;L&Eacute;PHONE &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Adresse e-mail :</strong> contact@homevibe-shop.com</p>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>Directeur de la publication</h2>
+  <p>Le Directeur de la publication du Site est : <span class="placeholder">[PR&Eacute;NOM NOM DU DIRECTEUR DE PUBLICATION &Agrave; COMPL&Eacute;TER]</span></p>
+  <p>Adresse e-mail : contact@homevibe-shop.com</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>H&eacute;bergeur du site</h2>
+  <p>Le Site est h&eacute;berg&eacute; par :</p>
+  <div class="info-box">
+   <p><strong>GitHub, Inc.</strong></p>
+   <p>88 Colin P Kelly Jr St</p>
+   <p>San Francisco, CA 94107, &Eacute;tats-Unis</p>
+   <p>Site web : <a href="https://github.com" target="_blank" rel="noopener">https://github.com</a></p>
+   <p>Service : GitHub Pages</p>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>Activit&eacute; commerciale</h2>
+  <p>Le Site exerce une activit&eacute; de commerce &eacute;lectronique (e-commerce) de vente de produits pour la maison et le lifestyle. Le Site propose la vente &agrave; distance de produits au d&eacute;tail destin&eacute;s aux consommateurs.</p>
+  <p>Num&eacute;ro de d&eacute;claration d'activit&eacute; CNIL : <span class="placeholder">[NUM&Eacute;RO CNIL &Agrave; COMPL&Eacute;TER ou mention de la dispense si applicable]</span></p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Propri&eacute;t&eacute; intellectuelle</h2>
+  <p>L'ensemble du contenu du Site (textes, images, graphismes, logo, ic&ocirc;nes, sons, logiciels, etc.) est la propri&eacute;t&eacute; exclusive de l'&eacute;diteur ou de ses partenaires et est prot&eacute;g&eacute; par les lois fran&ccedil;aises et internationales relatives &agrave; la propri&eacute;t&eacute; intellectuelle.</p>
+  <p>Toute reproduction, repr&eacute;sentation, modification, publication, transmission, d&eacute;naturation, totale ou partielle du Site ou de son contenu, par quelque proc&eacute;d&eacute; que ce soit, et sur quelque support que ce soit est interdite sans l'autorisation &eacute;crite pr&eacute;alable de l'&eacute;diteur.</p>
+  <p>Toute exploitation non autoris&eacute;e du Site ou de son contenu, des informations qui y sont divulgu&eacute;es, engagerait la responsabilit&eacute; de l'utilisateur et constituerait une contrefa&ccedil;on sanctionn&eacute;e par les articles L.335-2 et suivants du Code de la Propri&eacute;t&eacute; Intellectuelle.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Responsabilit&eacute;</h2>
+  <p>L'&eacute;diteur du Site s'efforce de fournir des informations aussi pr&eacute;cises que possible. Toutefois, il ne pourra &ecirc;tre tenu responsable des omissions, des inexactitudes et des carences dans la mise &agrave; jour, qu'elles soient de son fait ou du fait des tiers partenaires qui lui fournissent ces informations.</p>
+  <p>L'&eacute;diteur ne saurait &ecirc;tre tenu pour responsable des dommages directs ou indirects r&eacute;sultant de l'acc&egrave;s au Site ou de l'utilisation du Site ou des informations disponibles sur celui-ci.</p>
+  <p>L'&eacute;diteur du Site ne peut &ecirc;tre tenu pour responsable de l'utilisation qui est faite des informations pr&eacute;sentes sur le Site, ni de tout pr&eacute;judice direct ou indirect pouvant en d&eacute;couler.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Liens hypertextes</h2>
+  <p>Le Site peut contenir des liens hypertextes vers d'autres sites internet. Les pages web vers lesquelles ces liens m&egrave;nent n'engagent en rien la responsabilit&eacute; de HomeVibe, qui n'a pas le contr&ocirc;le de ces sites.</p>
+  <p>L'utilisateur est inform&eacute; que lors de ses visites sur ces sites tiers, un ou des cookies sont susceptibles de s'installer sur son ordinateur. La mise en place de ces liens ne constitue pas une approbation du contenu de ces sites.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Donn&eacute;es personnelles</h2>
+  <p>Conform&eacute;ment au R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es (RGPD &ndash; R&egrave;glement UE 2016/679) et &agrave; la loi Informatique et Libert&eacute;s du 6 janvier 1978 modifi&eacute;e, le Site collecte et traite des donn&eacute;es personnelles. Pour en savoir plus, consultez notre <a href="confidentialite.html">Politique de Confidentialit&eacute;</a>.</p>
+  <p>Vous disposez d'un droit d'acc&egrave;s, de rectification, de suppression, de limitation, de portabilit&eacute; et d'opposition sur vos donn&eacute;es personnelles. Pour exercer ces droits, vous pouvez nous contacter &agrave; : contact@homevibe-shop.com</p>
+  <p>Vous pouvez &eacute;galement introduire une r&eacute;clamation aupr&egrave;s de la CNIL (Commission Nationale de l'Informatique et des Libert&eacute;s) : <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a></p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Cookies</h2>
+  <p>Le Site utilise des cookies pour am&eacute;liorer l'exp&eacute;rience de navigation de l'utilisateur. En naviguant sur le Site, l'utilisateur consent &agrave; l'utilisation de cookies conformes &agrave; notre <a href="confidentialite.html">Politique de Confidentialit&eacute;</a>.</p>
+  <p>L'utilisateur peut &agrave; tout moment d&eacute;sactiver les cookies en param&eacute;trant son navigateur web. La d&eacute;sactivation des cookies peut toutefois limiter l'acc&egrave;s &agrave; certaines fonctionnalit&eacute;s du Site.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>M&eacute;diation des litiges de consommation</h2>
+  <p>Conform&eacute;ment aux articles L.616-1 et R.616-1 du Code de la consommation, le Site propose un dispositif de m&eacute;diation de la consommation. L'entit&eacute; de m&eacute;diation retenue est :</p>
+  <div class="info-box">
+   <p><strong>M&eacute;diateur :</strong> <span class="placeholder">[NOM DU M&Eacute;DIATEUR &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Adresse :</strong> <span class="placeholder">[ADRESSE DU M&Eacute;DIATEUR &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Site web :</strong> <span class="placeholder">[URL DU M&Eacute;DIATEUR &Agrave; COMPL&Eacute;TER]</span></p>
+  </div>
+  <p>Vous pouvez &eacute;galement recourir &agrave; la plateforme de r&egrave;glement en ligne des litiges de la Commission europ&eacute;enne : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a></p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Droit applicable</h2>
+  <p>Les pr&eacute;sentes mentions l&eacute;gales sont soumises au droit fran&ccedil;ais. En cas de litige et &agrave; d&eacute;faut de r&eacute;solution amiable, les tribunaux fran&ccedil;ais seront seuls comp&eacute;tents pour conna&icirc;tre de ce diff&eacute;rend.</p>
+ </section>
+
+ <footer class="legal-footer">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <p>&copy; 2026 HomeVibe. Tous droits r&eacute;serv&eacute;s.</p>
+  <div class="footer-links">
+   <a href="mentions-legales.html">Mentions L&eacute;gales</a>
+   <a href="cgv.html">CGV</a>
+   <a href="confidentialite.html">Confidentialit&eacute;</a>
+   <a href="livraison.html">Livraison</a>
+   <a href="retours.html">Retours</a>
+   <a href="faq.html">FAQ</a>
+   <a href="/shop/contact.html">Contact</a>
+  </div>
+ </footer>
+</main>
+
+</body>
+</html>

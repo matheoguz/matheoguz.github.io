@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HomeVibe - Politique de Confidentialite. Decouvrez comment nous protegeons vos donnees personnelles conformement au RGPD.">
+<title>HomeVibe - Politique de Confidentialit&eacute;</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f14;--bg2:#1a1a24;--bg3:#24243a;--surface:#1e1e2e;--surface2:#2a2a3e;
+  --text:#f0f0f5;--text2:#a0a0b8;--text3:#6a6a80;
+  --accent:#6C5CE7;--accent2:#00CEC9;--accent-g:linear-gradient(135deg,#6C5CE7,#00CEC9);
+  --danger:#ff6b6b;--success:#00b894;--warning:#fdcb6e;
+  --glass:rgba(30,30,46,0.7);--glass-border:rgba(108,92,231,0.15);
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 8px 32px rgba(0,0,0,0.3);--shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+  --nav-h:64px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f5f5fa;--bg2:#ebebf2;--bg3:#e0e0ec;--surface:#ffffff;--surface2:#f0f0f8;
+  --text:#1a1a2e;--text2:#5a5a72;--text3:#8a8a9e;
+  --glass:rgba(255,255,255,0.75);--glass-border:rgba(108,92,231,0.12);
+  --shadow:0 8px 32px rgba(0,0,0,0.08);--shadow-sm:0 4px 12px rgba(0,0,0,0.06);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none;transition:var(--transition)}
+a:hover{color:var(--accent2)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--glass);border-bottom:1px solid var(--glass-border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1200px;margin:0 auto;padding:0 16px}
+.nav-logo{font-size:1.4rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;text-decoration:none}
+.nav-logo span{font-weight:400;opacity:0.7}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:500;color:var(--text2);transition:var(--transition)}
+.nav-back:hover{color:var(--accent)}
+.page-wrapper{max-width:860px;margin:0 auto;padding:calc(var(--nav-h) + 40px) 16px 60px}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--glass-border)}
+.page-header h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.page-header h1 .gradient{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-header .updated{font-size:0.82rem;color:var(--text3)}
+.legal-section{margin-bottom:36px}
+.legal-section h2{font-size:1.25rem;font-weight:700;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:10px}
+.legal-section h2::before{content:'';width:4px;height:24px;background:var(--accent-g);border-radius:2px;flex-shrink:0}
+.legal-section h3{font-size:1.05rem;font-weight:600;margin:16px 0 8px;color:var(--text)}
+.legal-section p,.legal-section li{font-size:0.92rem;color:var(--text2);margin-bottom:8px}
+.legal-section ul{padding-left:20px;margin-bottom:12px}
+.legal-section ul li{list-style:disc;margin-bottom:6px}
+.placeholder{background:rgba(253,203,110,0.15);border:1px solid rgba(253,203,110,0.4);border-radius:var(--radius-sm);padding:3px 8px;color:#fdcb6e;font-weight:600;font-size:0.88rem;display:inline}
+.info-box{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:20px 0}
+.info-box.warning{border-color:rgba(253,203,110,0.4);background:rgba(253,203,110,0.06)}
+.info-box p{margin-bottom:6px}
+.info-box p:last-child{margin-bottom:0}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.88rem}
+.data-table th,.data-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--glass-border)}
+.data-table th{background:var(--surface);color:var(--text);font-weight:600;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.5px}
+.data-table td{color:var(--text2)}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:var(--radius);border:1px solid var(--glass-border)}
+
+.legal-footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--glass-border);text-align:center}
+.legal-footer .nav-logo{font-size:1.2rem;display:inline-block;margin-bottom:12px}
+.legal-footer p{font-size:0.78rem;color:var(--text3);margin-bottom:4px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:16px}
+.footer-links a{font-size:0.82rem;color:var(--text3);transition:var(--transition)}
+.footer-links a:hover{color:var(--accent)}
+
+@media(max-width:600px){
+  .page-wrapper{padding:calc(var(--nav-h) + 24px) 16px 40px}
+  .legal-section h2{font-size:1.1rem}
+  .data-table th,.data-table td{padding:8px 10px;font-size:0.8rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+ <div class="nav-inner">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <a href="/shop/" class="nav-back">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+   Retour &agrave; la boutique
+  </a>
+ </div>
+</nav>
+
+<main class="page-wrapper">
+ <header class="page-header">
+  <h1>Politique de <span class="gradient">Confidentialit&eacute;</span></h1>
+  <p class="updated">Derni&egrave;re mise &agrave; jour : <span class="placeholder">[DATE &Agrave; COMPL&Eacute;TER]</span></p>
+ </header>
+
+ <p style="font-size:0.92rem;color:var(--text2);margin-bottom:24px">La pr&eacute;sente Politique de Confidentialit&eacute; d&eacute;crit les modalit&eacute;s de collecte, d'utilisation et de protection de vos donn&eacute;es personnelles lorsque vous utilisez le site HomeVibe. Elle est &eacute;tablie conform&eacute;ment au R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es (RGPD &ndash; R&egrave;glement UE 2016/679) et &agrave; la loi n&deg; 78-17 du 6 janvier 1978 relative &agrave; l'informatique, aux fichiers et aux libert&eacute;s.</p>
+
+ <section class="legal-section">
+  <h2>1. Responsable du traitement</h2>
+  <p>Le responsable du traitement des donn&eacute;es personnelles collect&eacute;es sur le Site est :</p>
+  <div class="info-box">
+   <p><strong>Soci&eacute;t&eacute; :</strong> <span class="placeholder">[NOM DE LA SOCI&Eacute;T&Eacute; &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Adresse :</strong> <span class="placeholder">[ADRESSE &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>E-mail :</strong> contact@homevibe-shop.com</p>
+   <p><strong>D&eacute;l&eacute;gu&eacute; &agrave; la Protection des Donn&eacute;es (DPO) :</strong> <span class="placeholder">[NOM ET CONTACT DU DPO &Agrave; COMPL&Eacute;TER]</span></p>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>2. Donn&eacute;es collect&eacute;es</h2>
+  <p>Nous collectons les donn&eacute;es personnelles suivantes dans le cadre de notre activit&eacute; :</p>
+  <div class="table-wrap">
+   <table class="data-table">
+    <thead>
+     <tr><th>Cat&eacute;gorie</th><th>Donn&eacute;es</th><th>Caract&egrave;re</th></tr>
+    </thead>
+    <tbody>
+     <tr><td>Identit&eacute;</td><td>Nom, pr&eacute;nom</td><td>Obligatoire</td></tr>
+     <tr><td>Contact</td><td>Adresse e-mail, num&eacute;ro de t&eacute;l&eacute;phone</td><td>Obligatoire</td></tr>
+     <tr><td>Livraison</td><td>Adresse postale compl&egrave;te</td><td>Obligatoire</td></tr>
+     <tr><td>Paiement</td><td>Donn&eacute;es de carte bancaire (trait&eacute;es par Stripe)</td><td>Obligatoire</td></tr>
+     <tr><td>Navigation</td><td>Adresse IP, cookies, donn&eacute;es de navigation</td><td>Automatique</td></tr>
+     <tr><td>Communication</td><td>Historique des &eacute;changes (e-mails, formulaire)</td><td>Facultatif</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p>Nous ne collectons aucune donn&eacute;e dite &laquo; sensible &raquo; au sens de l'article 9 du RGPD (origines raciales ou ethniques, opinions politiques, convictions religieuses, donn&eacute;es de sant&eacute;, etc.).</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>3. Finalit&eacute;s du traitement</h2>
+  <p>Vos donn&eacute;es personnelles sont collect&eacute;es et trait&eacute;es pour les finalit&eacute;s suivantes :</p>
+  <div class="table-wrap">
+   <table class="data-table">
+    <thead>
+     <tr><th>Finalit&eacute;</th><th>Base juridique</th></tr>
+    </thead>
+    <tbody>
+     <tr><td>Gestion des commandes et livraison</td><td>Ex&eacute;cution du contrat (art. 6.1.b RGPD)</td></tr>
+     <tr><td>Gestion de la relation client (SAV, r&eacute;clamations)</td><td>Ex&eacute;cution du contrat (art. 6.1.b RGPD)</td></tr>
+     <tr><td>Gestion de la facturation et des paiements</td><td>Obligation l&eacute;gale (art. 6.1.c RGPD)</td></tr>
+     <tr><td>Envoi de newsletters et offres commerciales</td><td>Consentement (art. 6.1.a RGPD)</td></tr>
+     <tr><td>Am&eacute;lioration du Site et statistiques de navigation</td><td>Int&eacute;r&ecirc;t l&eacute;gitime (art. 6.1.f RGPD)</td></tr>
+     <tr><td>Pr&eacute;vention de la fraude</td><td>Int&eacute;r&ecirc;t l&eacute;gitime (art. 6.1.f RGPD)</td></tr>
+    </tbody>
+   </table>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>4. Dur&eacute;e de conservation</h2>
+  <p>Vos donn&eacute;es personnelles sont conserv&eacute;es pendant les dur&eacute;es suivantes :</p>
+  <ul>
+   <li><strong>Donn&eacute;es relatives aux commandes :</strong> 5 ans &agrave; compter de la derni&egrave;re commande (obligations comptables et fiscales)</li>
+   <li><strong>Donn&eacute;es de compte client :</strong> 3 ans &agrave; compter de la derni&egrave;re activit&eacute; du Client</li>
+   <li><strong>Donn&eacute;es de prospection commerciale :</strong> 3 ans &agrave; compter du dernier contact</li>
+   <li><strong>Cookies et donn&eacute;es de navigation :</strong> 13 mois maximum</li>
+   <li><strong>Donn&eacute;es de paiement :</strong> conformes aux obligations de Stripe (non stock&eacute;es par HomeVibe)</li>
+  </ul>
+  <p>Au-del&agrave; de ces dur&eacute;es, vos donn&eacute;es sont supprim&eacute;es ou anonymis&eacute;es.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>5. Destinataires des donn&eacute;es</h2>
+  <p>Vos donn&eacute;es personnelles peuvent &ecirc;tre transmises aux destinataires suivants, dans la stricte limite de ce qui est n&eacute;cessaire :</p>
+  <ul>
+   <li><strong>Stripe</strong> (prestataire de paiement) &ndash; pour le traitement s&eacute;curis&eacute; des paiements. Stripe est certifi&eacute; PCI DSS et dispose de ses propres politiques de confidentialit&eacute;.</li>
+   <li><strong>Nos entrep&ocirc;ts partenaires internationaux</strong> &ndash; pour la pr&eacute;paration et l'exp&eacute;dition de vos commandes (nom, adresse de livraison, t&eacute;l&eacute;phone).</li>
+   <li><strong>Transporteurs</strong> &ndash; pour la livraison de vos colis (nom, adresse, t&eacute;l&eacute;phone).</li>
+   <li><strong>Outils d'analyse</strong> &ndash; pour l'analyse de la fr&eacute;quentation du Site (donn&eacute;es anonymis&eacute;es).</li>
+   <li><strong>Prestataire d'h&eacute;bergement</strong> (GitHub Pages) &ndash; h&eacute;bergement du Site.</li>
+  </ul>
+  <p>Nous ne vendons jamais vos donn&eacute;es personnelles &agrave; des tiers.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>6. Transferts hors Union Europ&eacute;enne</h2>
+  <p>Dans le cadre de notre activit&eacute;, certaines donn&eacute;es personnelles peuvent &ecirc;tre transf&eacute;r&eacute;es en dehors de l'Union Europ&eacute;enne, notamment :</p>
+  <ul>
+   <li><strong>Stripe, Inc.</strong> (Etats-Unis) &ndash; pour le traitement des paiements. Stripe respecte le Data Privacy Framework (DPF) UE-&Eacute;tats-Unis.</li>
+   <li><strong>Entrep&ocirc;ts partenaires</strong> (Chine, Asie du Sud-Est) &ndash; pour la pr&eacute;paration des commandes. Seules les donn&eacute;es strictement n&eacute;cessaires &agrave; la livraison sont transmises (nom, adresse postale, t&eacute;l&eacute;phone).</li>
+   <li><strong>GitHub, Inc.</strong> (&Eacute;tats-Unis) &ndash; pour l'h&eacute;bergement du Site.</li>
+  </ul>
+  <p>Pour les transferts hors UE, nous mettons en place des garanties appropri&eacute;es conform&eacute;ment aux articles 46 et 49 du RGPD, notamment :</p>
+  <ul>
+   <li>Clauses contractuelles types de la Commission europ&eacute;enne</li>
+   <li>D&eacute;cisions d'ad&eacute;quation le cas &eacute;ch&eacute;ant</li>
+   <li>Data Privacy Framework pour les transferts vers les &Eacute;tats-Unis</li>
+  </ul>
+ </section>
+
+ <section class="legal-section">
+  <h2>7. Vos droits</h2>
+  <p>Conform&eacute;ment au RGPD et &agrave; la loi Informatique et Libert&eacute;s, vous disposez des droits suivants sur vos donn&eacute;es personnelles :</p>
+  <ul>
+   <li><strong>Droit d'acc&egrave;s</strong> (art. 15 RGPD) : obtenir la confirmation que vos donn&eacute;es sont trait&eacute;es et en obtenir une copie</li>
+   <li><strong>Droit de rectification</strong> (art. 16 RGPD) : demander la correction de donn&eacute;es inexactes ou incompl&egrave;tes</li>
+   <li><strong>Droit &agrave; l'effacement</strong> (art. 17 RGPD) : demander la suppression de vos donn&eacute;es dans les conditions pr&eacute;vues par la loi</li>
+   <li><strong>Droit &agrave; la limitation du traitement</strong> (art. 18 RGPD) : demander la suspension du traitement de vos donn&eacute;es</li>
+   <li><strong>Droit &agrave; la portabilit&eacute;</strong> (art. 20 RGPD) : recevoir vos donn&eacute;es dans un format structur&eacute; et lisible par machine</li>
+   <li><strong>Droit d'opposition</strong> (art. 21 RGPD) : vous opposer au traitement de vos donn&eacute;es pour motif l&eacute;gitime</li>
+   <li><strong>Droit de retrait du consentement</strong> : retirer votre consentement &agrave; tout moment pour les traitements fond&eacute;s sur celui-ci</li>
+   <li><strong>Droit de d&eacute;finir des directives post-mortem</strong> : d&eacute;finir des directives relatives au sort de vos donn&eacute;es apr&egrave;s votre d&eacute;c&egrave;s</li>
+  </ul>
+  <p>Pour exercer ces droits, veuillez nous contacter :</p>
+  <div class="info-box">
+   <p><strong>Par e-mail :</strong> contact@homevibe-shop.com</p>
+   <p><strong>Par courrier :</strong> <span class="placeholder">[ADRESSE POSTALE &Agrave; COMPL&Eacute;TER]</span></p>
+  </div>
+  <p>Nous nous engageons &agrave; r&eacute;pondre &agrave; votre demande dans un d&eacute;lai d'<strong>un mois</strong> &agrave; compter de sa r&eacute;ception. Ce d&eacute;lai peut &ecirc;tre prolong&eacute; de deux mois en cas de demande complexe.</p>
+  <p>En cas de r&eacute;ponse insatisfaisante, vous pouvez introduire une r&eacute;clamation aupr&egrave;s de la <strong>CNIL</strong> (Commission Nationale de l'Informatique et des Libert&eacute;s) :</p>
+  <div class="info-box">
+   <p><strong>CNIL</strong></p>
+   <p>3 Place de Fontenoy &ndash; TSA 80715</p>
+   <p>75334 Paris Cedex 07</p>
+   <p>Site : <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a></p>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>8. Cookies et traceurs</h2>
+  <h3>8.1 Qu'est-ce qu'un cookie ?</h3>
+  <p>Un cookie est un petit fichier texte d&eacute;pos&eacute; sur votre appareil lors de la visite d'un site web. Il permet au site de m&eacute;moriser des informations relatives &agrave; votre navigation.</p>
+  <h3>8.2 Types de cookies utilis&eacute;s</h3>
+  <div class="table-wrap">
+   <table class="data-table">
+    <thead>
+     <tr><th>Type</th><th>Finalit&eacute;</th><th>Dur&eacute;e</th></tr>
+    </thead>
+    <tbody>
+     <tr><td>Cookies essentiels</td><td>Fonctionnement du Site (panier, session)</td><td>Session / 30 jours</td></tr>
+     <tr><td>Cookies analytiques</td><td>Mesure d'audience et statistiques de navigation</td><td>13 mois maximum</td></tr>
+     <tr><td>Cookies de pr&eacute;f&eacute;rences</td><td>Personnalisation (th&egrave;me, langue)</td><td>12 mois</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <h3>8.3 Gestion des cookies</h3>
+  <p>Vous pouvez g&eacute;rer vos pr&eacute;f&eacute;rences en mati&egrave;re de cookies directement depuis les param&egrave;tres de votre navigateur :</p>
+  <ul>
+   <li><strong>Chrome :</strong> Param&egrave;tres &gt; Confidentialit&eacute; et s&eacute;curit&eacute; &gt; Cookies</li>
+   <li><strong>Firefox :</strong> Options &gt; Vie priv&eacute;e et s&eacute;curit&eacute; &gt; Cookies</li>
+   <li><strong>Safari :</strong> Pr&eacute;f&eacute;rences &gt; Confidentialit&eacute; &gt; Cookies</li>
+   <li><strong>Edge :</strong> Param&egrave;tres &gt; Confidentialit&eacute; &gt; Cookies</li>
+  </ul>
+  <p>La d&eacute;sactivation des cookies essentiels peut alt&eacute;rer le fonctionnement du Site (panier, connexion).</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>9. S&eacute;curit&eacute; des donn&eacute;es</h2>
+  <p>Nous mettons en &oelig;uvre les mesures techniques et organisationnelles suivantes pour prot&eacute;ger vos donn&eacute;es personnelles :</p>
+  <ul>
+   <li>Chiffrement SSL/TLS de toutes les communications</li>
+   <li>Paiements s&eacute;curis&eacute;s via Stripe (certifi&eacute; PCI DSS)</li>
+   <li>Acc&egrave;s restreint aux donn&eacute;es personnelles</li>
+   <li>Sauvegardes r&eacute;guli&egrave;res</li>
+   <li>Mise &agrave; jour r&eacute;guli&egrave;re des syst&egrave;mes de s&eacute;curit&eacute;</li>
+  </ul>
+  <p>En cas de violation de donn&eacute;es personnelles susceptible d'engendrer un risque &eacute;lev&eacute; pour vos droits et libert&eacute;s, nous nous engageons &agrave; vous en informer dans les meilleurs d&eacute;lais, conform&eacute;ment aux articles 33 et 34 du RGPD, ainsi qu'&agrave; notifier la CNIL dans un d&eacute;lai de 72 heures.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>10. Modifications de la politique</h2>
+  <p>Nous nous r&eacute;servons le droit de modifier la pr&eacute;sente Politique de Confidentialit&eacute; &agrave; tout moment. Toute modification substantielle sera port&eacute;e &agrave; votre connaissance par e-mail ou par un avis sur le Site. La date de derni&egrave;re mise &agrave; jour figure en haut de cette page.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>11. Contact</h2>
+  <p>Pour toute question relative &agrave; la pr&eacute;sente Politique de Confidentialit&eacute; ou pour exercer vos droits, veuillez nous contacter :</p>
+  <div class="info-box">
+   <p><strong>E-mail :</strong> contact@homevibe-shop.com</p>
+   <p><strong>DPO :</strong> <span class="placeholder">[NOM ET E-MAIL DU DPO &Agrave; COMPL&Eacute;TER]</span></p>
+   <p><strong>Adresse postale :</strong> <span class="placeholder">[ADRESSE &Agrave; COMPL&Eacute;TER]</span></p>
+  </div>
+ </section>
+
+ <footer class="legal-footer">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <p>&copy; 2026 HomeVibe. Tous droits r&eacute;serv&eacute;s.</p>
+  <div class="footer-links">
+   <a href="mentions-legales.html">Mentions L&eacute;gales</a>
+   <a href="cgv.html">CGV</a>
+   <a href="confidentialite.html">Confidentialit&eacute;</a>
+   <a href="livraison.html">Livraison</a>
+   <a href="retours.html">Retours</a>
+   <a href="faq.html">FAQ</a>
+   <a href="/shop/contact.html">Contact</a>
+  </div>
+ </footer>
+</main>
+
+</body>
+</html>

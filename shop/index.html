@@ -682,10 +682,9 @@ function toggleCart(open){
 }
 
 function handleCheckout(){
- showToast('Merci ! Redirection vers le paiement...');
- setTimeout(()=>{
-  cart=[];saveCart();updateCartUI();toggleCart(false);
- },2000);
+ if(cart.length===0){showToast('Votre panier est vide');return;}
+ showToast('Redirection vers le paiement...');
+ setTimeout(()=>{window.location.href='checkout/';},1000);
 }
 
 /* ── TOAST ── */
