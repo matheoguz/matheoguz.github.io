@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande Confirmee - HomeVibe</title>
+    <meta name="description" content="Votre commande HomeVibe a ete confirmee avec succes">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .success-header {
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-header .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        /* Conteneur principal */
+        .success-container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 40px 16px 60px;
+            text-align: center;
+        }
+
+        /* Animation checkmark */
+        .checkmark-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 28px;
+            position: relative;
+        }
+
+        .checkmark-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 32px rgba(46, 204, 113, 0.3);
+        }
+
+        .checkmark-circle svg {
+            width: 50px;
+            height: 50px;
+            color: #fff;
+        }
+
+        .checkmark-circle svg path {
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+            animation: drawCheck 0.5s 0.3s forwards ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Confettis */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall 3s ease-in-out forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Titre */
+        .success-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .success-subtitle {
+            font-size: 1.05rem;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        /* Carte de confirmation */
+        .confirmation-card {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            text-align: left;
+        }
+
+        .confirmation-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Numero de commande */
+        .order-number-display {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.12), rgba(0, 206, 201, 0.12));
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .order-number-label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .order-number-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .order-number-note {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        /* Resume des articles commandes */
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1a1a35, #252550);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .order-item-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .order-item-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .order-item-qty {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .order-item-price {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Totaux */
+        .order-totals {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 14px;
+            margin-top: 10px;
+        }
+
+        .order-total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .order-total-line .label { color: #888; }
+        .order-total-line .value { color: #ddd; }
+
+        .order-total-line.grand-total {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 12px;
+            margin-top: 4px;
+            font-size: 1.1rem;
+        }
+
+        .order-total-line.grand-total .label {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .order-total-line.grand-total .value {
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        /* Informations de suivi */
+        .info-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .info-card {
+            background: #12122a;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            text-align: left;
+        }
+
+        .info-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .info-card .title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .info-card .desc {
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: transparent;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+        }
+
+        /* Demo badge */
+        .demo-notice {
+            background: rgba(243, 156, 18, 0.08);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .success-container {
+                padding: 28px 16px 40px;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .order-number-value {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="success-header">
+        <a href="/shop/" class="logo">HomeVibe</a>
+    </header>
+
+    <!-- Contenu -->
+    <main class="success-container">
+
+        <!-- Checkmark anime -->
+        <div class="checkmark-container">
+            <div class="checkmark-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+        </div>
+
+        <h1 class="success-title">Merci pour votre commande !</h1>
+        <p class="success-subtitle">Votre paiement a ete traite avec succes.</p>
+
+        <!-- Notice demo -->
+        <div class="demo-notice" id="demoNotice" style="display:none;">
+            Ceci est une commande de demonstration. En production, un vrai paiement Stripe sera traite.
+        </div>
+
+        <!-- Numero de commande -->
+        <div class="order-number-display">
+            <div class="order-number-label">Numero de commande</div>
+            <div class="order-number-value" id="orderNumber">---</div>
+            <div class="order-number-note">Conservez ce numero pour le suivi de votre commande</div>
+        </div>
+
+        <!-- Articles commandes -->
+        <div class="confirmation-card" id="orderItemsCard">
+            <h3>Articles commandes</h3>
+            <div id="orderItems">
+                <!-- Rempli dynamiquement -->
+            </div>
+            <div class="order-totals" id="orderTotals">
+                <!-- Rempli dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Informations -->
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="icon">✉️</div>
+                <div class="title">Confirmation par email</div>
+                <div class="desc">Vous recevrez un email de confirmation a l'adresse indiquee lors de la commande.</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">🚚</div>
+                <div class="title">Expedition sous 24-48h</div>
+                <div class="desc">Votre commande sera preparee et expediee dans un delai de 24 a 48 heures ouvrees.</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">📦</div>
+                <div class="title">Suivi de colis</div>
+                <div class="desc">Un numero de suivi vous sera communique par email des l'expedition.</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">💬</div>
+                <div class="title">Support client</div>
+                <div class="desc">Une question ? Contactez-nous a support@homevibe.fr</div>
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="action-buttons">
+            <a href="/shop/" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Retour a la boutique
+            </a>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/shop/js/order-manager.js"></script>
+    <script>
+        // =====================================================================
+        // HomeVibe - Page de succes
+        // =====================================================================
+
+        var categoryIcons = {
+            'cuisine': '🍳',
+            'lumieres': '💡',
+            'organisation': '📦',
+            'tech': '🔌',
+            'default': '🛒'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verifier si mode demo
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('demo') === 'true') {
+                document.getElementById('demoNotice').style.display = 'block';
+            }
+
+            // Recuperer la derniere commande
+            var order = null;
+            if (typeof OrderManager !== 'undefined') {
+                order = OrderManager.getLastOrder();
+            }
+
+            if (order) {
+                renderOrder(order);
+            } else {
+                // Generer un numero de commande aleatoire si pas de commande trouvee
+                document.getElementById('orderNumber').textContent = generateFallbackOrderNumber();
+            }
+
+            // Vider le panier
+            try {
+                localStorage.removeItem('homevibe-cart');
+            } catch (e) {
+                // Silencieux
+            }
+
+            // Lancer les confettis
+            createConfetti();
+        });
+
+        function renderOrder(order) {
+            // Numero de commande
+            document.getElementById('orderNumber').textContent = order.orderNumber;
+
+            // Articles
+            var itemsHtml = '';
+            if (order.items && order.items.length > 0) {
+                for (var i = 0; i < order.items.length; i++) {
+                    var item = order.items[i];
+                    var price = parseFloat(item.price) || 0;
+                    var qty = parseInt(item.quantity) || 1;
+                    var icon = categoryIcons[item.category] || categoryIcons['default'];
+
+                    itemsHtml += '<div class="order-item">' +
+                        '<div class="order-item-icon">' + icon + '</div>' +
+                        '<div class="order-item-details">' +
+                            '<div class="order-item-name">' + escapeHtml(item.name || 'Produit') + '</div>' +
+                            '<div class="order-item-qty">Quantite : ' + qty + '</div>' +
+                        '</div>' +
+                        '<div class="order-item-price">' + formatEur(price * qty) + '</div>' +
+                    '</div>';
+                }
+            }
+            document.getElementById('orderItems').innerHTML = itemsHtml;
+
+            // Totaux
+            var subtotal = order.payment ? order.payment.subtotal : 0;
+            var deliveryFee = order.payment ? order.payment.deliveryFee : 0;
+            var total = order.payment ? order.payment.total : 0;
+            var deliveryLabel = deliveryFee === 0 ? 'Gratuit' : formatEur(deliveryFee);
+
+            document.getElementById('orderTotals').innerHTML =
+                '<div class="order-total-line">' +
+                    '<span class="label">Sous-total</span>' +
+                    '<span class="value">' + formatEur(subtotal) + '</span>' +
+                '</div>' +
+                '<div class="order-total-line">' +
+                    '<span class="label">Livraison</span>' +
+                    '<span class="value">' + deliveryLabel + '</span>' +
+                '</div>' +
+                '<div class="order-total-line grand-total">' +
+                    '<span class="label">Total paye</span>' +
+                    '<span class="value">' + formatEur(total) + '</span>' +
+                '</div>';
+        }
+
+        function generateFallbackOrderNumber() {
+            var year = new Date().getFullYear();
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var random = '';
+            for (var i = 0; i < 5; i++) {
+                random += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'HV-' + year + '-' + random;
+        }
+
+        // ---- Confettis ----
+        function createConfetti() {
+            var colors = ['#6C5CE7', '#00CEC9', '#2ecc71', '#f39c12', '#e74c3c', '#fff'];
+            for (var i = 0; i < 40; i++) {
+                var confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                confetti.style.width = (6 + Math.random() * 8) + 'px';
+                confetti.style.height = (6 + Math.random() * 8) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                document.body.appendChild(confetti);
+
+                // Supprimer apres l'animation
+                (function(el) {
+                    setTimeout(function() {
+                        if (el.parentNode) el.parentNode.removeChild(el);
+                    }, 5000);
+                })(confetti);
+            }
+        }
+
+        // ---- Utilitaires ----
+        function formatEur(amount) {
+            return amount.toFixed(2).replace('.', ',') + ' €';
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+    </script>
+
+</body>
+</html>

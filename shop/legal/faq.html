@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ - HomeVibe</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#e0e0e0;line-height:1.7}
+a{color:#00CEC9;text-decoration:none}
+a:hover{text-decoration:underline}
+.nav{background:rgba(15,15,35,0.95);backdrop-filter:blur(10px);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(108,92,231,0.3)}
+.nav-logo{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#6C5CE7,#00CEC9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links a{margin-left:1.5rem;color:#ccc;font-size:0.9rem}
+.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem 4rem}
+h1{font-size:2rem;margin:2rem 0 0.5rem;background:linear-gradient(135deg,#6C5CE7,#00CEC9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:#888;margin-bottom:2rem}
+.search-box{width:100%;padding:0.8rem 1.2rem;background:rgba(22,33,62,0.6);border:1px solid rgba(108,92,231,0.3);border-radius:10px;color:#fff;font-size:1rem;margin-bottom:2rem;outline:none;transition:border 0.3s}
+.search-box:focus{border-color:#6C5CE7}
+.search-box::placeholder{color:#666}
+.category{margin-bottom:2rem}
+.category-title{font-size:1.1rem;color:#6C5CE7;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(108,92,231,0.2);display:flex;align-items:center;gap:0.5rem}
+.faq-item{background:rgba(22,33,62,0.4);border:1px solid rgba(108,92,231,0.15);border-radius:10px;margin-bottom:0.8rem;overflow:hidden;transition:all 0.3s}
+.faq-item.active{border-color:rgba(108,92,231,0.4)}
+.faq-q{padding:1rem 1.2rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:#e0e0e0;transition:background 0.3s}
+.faq-q:hover{background:rgba(108,92,231,0.1)}
+.faq-q .arrow{transition:transform 0.3s;color:#6C5CE7;font-size:1.2rem;flex-shrink:0;margin-left:1rem}
+.faq-item.active .arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s;padding:0 1.2rem;color:#aaa;line-height:1.8}
+.faq-item.active .faq-a{max-height:500px;padding:0 1.2rem 1rem}
+.no-results{text-align:center;padding:3rem;color:#666;display:none}
+.footer{background:rgba(10,10,26,0.95);border-top:1px solid rgba(108,92,231,0.2);padding:2rem;text-align:center;color:#666;font-size:0.85rem;margin-top:3rem}
+.contact-cta{background:linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,206,201,0.2));border:1px solid rgba(108,92,231,0.3);border-radius:12px;padding:2rem;text-align:center;margin-top:2rem}
+.contact-cta h3{color:#fff;margin-bottom:0.5rem}
+.contact-cta a.btn{display:inline-block;margin-top:1rem;padding:0.7rem 2rem;background:linear-gradient(135deg,#6C5CE7,#00CEC9);color:#fff;border-radius:8px;font-weight:600}
+@media(max-width:768px){.container{padding:1rem 1rem 3rem}.nav-links{display:none}h1{font-size:1.5rem}.faq-q{font-size:0.95rem}}
+</style>
+</head>
+<body>
+<nav class="nav">
+<a href="/shop/" class="nav-logo">HomeVibe</a>
+<div class="nav-links">
+<a href="/shop/">Boutique</a>
+<a href="/shop/legal/cgv.html">CGV</a>
+<a href="/shop/contact.html">Contact</a>
+</div>
+</nav>
+<div class="container">
+<h1>Foire Aux Questions</h1>
+<p class="subtitle">Trouvez rapidement les reponses a vos questions</p>
+<input type="text" class="search-box" placeholder="Rechercher une question..." id="searchFaq">
+<div id="faqContainer">
+<div class="category">
+<div class="category-title">&#128722; Commandes</div>
+<div class="faq-item"><div class="faq-q">Comment passer une commande ?<span class="arrow">&#9660;</span></div><div class="faq-a">Parcourez notre catalogue, ajoutez les produits souhaites a votre panier, puis cliquez sur "Commander". Vous serez redirige vers notre page de paiement securisee pour finaliser votre achat.</div></div>
+<div class="faq-item"><div class="faq-q">Puis-je modifier ou annuler ma commande ?<span class="arrow">&#9660;</span></div><div class="faq-a">Vous pouvez modifier ou annuler votre commande dans les <strong>24 heures</strong> suivant l'achat en nous contactant par email a contact@homevibe-shop.com. Passe ce delai, la commande est en cours de preparation et ne peut plus etre modifiee.</div></div>
+<div class="faq-item"><div class="faq-q">Comment suivre ma commande ?<span class="arrow">&#9660;</span></div><div class="faq-a">Apres expedition, vous recevrez un email avec votre numero de suivi. Vous pouvez egalement consulter le statut de votre commande sur notre page de suivi ou en nous contactant avec votre numero de commande.</div></div>
+</div>
+<div class="category">
+<div class="category-title">&#128179; Paiement</div>
+<div class="faq-item"><div class="faq-q">Quels modes de paiement acceptez-vous ?<span class="arrow">&#9660;</span></div><div class="faq-a">Nous acceptons les cartes bancaires (Visa, Mastercard, American Express), Apple Pay et Google Pay. Tous les paiements sont traites de maniere securisee via Stripe, leader mondial du paiement en ligne.</div></div>
+<div class="faq-item"><div class="faq-q">Le paiement est-il securise ?<span class="arrow">&#9660;</span></div><div class="faq-a">Oui, absolument. Nous utilisons Stripe, un processeur de paiement certifie PCI DSS Niveau 1. Vos informations bancaires sont chiffrees et ne sont jamais stockees sur nos serveurs. La connexion est protegee par SSL/TLS.</div></div>
+<div class="faq-item"><div class="faq-q">Quand serai-je debite ?<span class="arrow">&#9660;</span></div><div class="faq-a">Votre carte est debitee immediatement lors de la validation de votre commande. En cas d'annulation avant expedition, le remboursement est effectue sous 5-10 jours ouvrables.</div></div>
+</div>
+<div class="category">
+<div class="category-title">&#128666; Livraison</div>
+<div class="faq-item"><div class="faq-q">Quels sont les delais de livraison ?<span class="arrow">&#9660;</span></div><div class="faq-a"><strong>Livraison Standard :</strong> 7-14 jours ouvrables (gratuite)<br><strong>Livraison Express :</strong> 3-7 jours ouvrables (9,99 &euro;)<br>Les delais commencent a partir de l'expedition du colis.</div></div>
+<div class="faq-item"><div class="faq-q">Livrez-vous a l'international ?<span class="arrow">&#9660;</span></div><div class="faq-a">Oui ! Nous livrons en France metropolitaine, dans les DOM-TOM, en Belgique, en Suisse et au Canada. Les delais peuvent varier selon la destination. Des frais de douane peuvent s'appliquer pour les livraisons hors UE.</div></div>
+<div class="faq-item"><div class="faq-q">Que faire si mon colis n'arrive pas ?<span class="arrow">&#9660;</span></div><div class="faq-a">Si votre colis n'est pas arrive dans le delai indique, contactez-nous avec votre numero de commande. Nous lancerons une enquete aupres du transporteur. Si le colis est confirme perdu, nous procedons a un renvoi ou un remboursement integral.</div></div>
+<div class="faq-item"><div class="faq-q">Mon colis est arrive endommage, que faire ?<span class="arrow">&#9660;</span></div><div class="faq-a">Contactez-nous dans les <strong>48 heures</strong> suivant la reception avec des photos du colis et du produit endommage. Nous vous proposerons un remboursement integral ou un renvoi du produit sans frais supplementaires.</div></div>
+</div>
+<div class="category">
+<div class="category-title">&#128260; Retours et Remboursements</div>
+<div class="faq-item"><div class="faq-q">Puis-je retourner un article ?<span class="arrow">&#9660;</span></div><div class="faq-a">Oui, vous disposez de <strong>14 jours</strong> apres reception pour retourner un article. Le produit doit etre dans son emballage d'origine, non utilise et accompagne de tous ses accessoires. Consultez notre <a href="/shop/legal/retours.html">politique de retours</a> pour plus de details.</div></div>
+<div class="faq-item"><div class="faq-q">Comment obtenir un remboursement ?<span class="arrow">&#9660;</span></div><div class="faq-a">Apres reception et verification du produit retourne, le remboursement est effectue sous <strong>14 jours</strong> par le meme moyen de paiement utilise lors de l'achat. Vous recevrez un email de confirmation.</div></div>
+<div class="faq-item"><div class="faq-q">Les frais de retour sont-ils a ma charge ?<span class="arrow">&#9660;</span></div><div class="faq-a">Oui, les frais de retour sont a la charge du client, sauf en cas de produit defectueux, endommage ou erreur de notre part. Dans ces cas, nous prenons en charge les frais de retour.</div></div>
+</div>
+<div class="category">
+<div class="category-title">&#128172; Service Client</div>
+<div class="faq-item"><div class="faq-q">Comment contacter le service client ?<span class="arrow">&#9660;</span></div><div class="faq-a">Vous pouvez nous contacter par email a <strong>contact@homevibe-shop.com</strong>. Notre equipe repond sous 24-48h ouvrables du lundi au vendredi, de 9h a 18h. Vous pouvez aussi utiliser notre <a href="/shop/contact.html">formulaire de contact</a>.</div></div>
+<div class="faq-item"><div class="faq-q">Avez-vous un numero de telephone ?<span class="arrow">&#9660;</span></div><div class="faq-a">Pour le moment, nous privilegions le contact par email afin de vous fournir des reponses detaillees et tracables. Cela nous permet de traiter votre demande plus efficacement.</div></div>
+<div class="faq-item"><div class="faq-q">Etes-vous presents sur les reseaux sociaux ?<span class="arrow">&#9660;</span></div><div class="faq-a">Oui ! Suivez-nous sur TikTok et Instagram @homevibe.shop pour decouvrir nos nouveautes, promotions exclusives et tutoriels produits.</div></div>
+</div>
+</div>
+<div class="no-results" id="noResults">
+<p>&#128269; Aucun resultat pour votre recherche.</p>
+<p>Contactez-nous directement pour obtenir de l'aide.</p>
+</div>
+<div class="contact-cta">
+<h3>Vous n'avez pas trouve votre reponse ?</h3>
+<p style="color:#aaa">Notre equipe est la pour vous aider</p>
+<a href="/shop/contact.html" class="btn">Nous Contacter</a>
+</div>
+</div>
+<div class="footer">
+<p>&copy; 2026 HomeVibe. Tous droits reserves. | <a href="/shop/legal/mentions-legales.html">Mentions Legales</a> | <a href="/shop/legal/cgv.html">CGV</a></p>
+</div>
+<script>
+document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const item=q.parentElement;const wasActive=item.classList.contains('active');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('active'));if(!wasActive)item.classList.add('active')})});
+document.getElementById('searchFaq').addEventListener('input',function(){const query=this.value.toLowerCase().trim();const items=document.querySelectorAll('.faq-item');const cats=document.querySelectorAll('.category');let found=0;items.forEach(item=>{const q=item.querySelector('.faq-q').textContent.toLowerCase();const a=item.querySelector('.faq-a').textContent.toLowerCase();if(q.includes(query)||a.includes(query)){item.style.display='';found++}else{item.style.display='none'}});cats.forEach(cat=>{const visible=cat.querySelectorAll('.faq-item[style=""],.faq-item:not([style])');let hasVisible=false;cat.querySelectorAll('.faq-item').forEach(i=>{if(i.style.display!=='none')hasVisible=true});cat.style.display=hasVisible?'':'none'});document.getElementById('noResults').style.display=found===0?'block':'none'});
+</script>
+</body>
+</html>

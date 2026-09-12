@@ -1,0 +1,215 @@
+{
+  "storeName": "HomeVibe",
+  "targetMarket": "Francophone (France, Belgique, Suisse, Canada, Afrique francophone)",
+  "lastUpdated": "2026-09-11",
+  "currency": "EUR",
+  "segments": [
+    {
+      "id": "cuisine",
+      "name": "Cuisine Intelligente",
+      "description": "Gadgets de cuisine intelligents et pratiques pour simplifier le quotidien",
+      "products": [
+        {
+          "id": "cuisine-1",
+          "name": "Mini Hachoir Electrique USB Rechargeable",
+          "description": "Preparez vos repas en un clin d'oeil avec ce mini hachoir electrique rechargeable. Compact et puissant, il hache legumes, ail, oignons et herbes en quelques secondes. Rechargeable par USB, il vous accompagne partout - meme en pique-nique. Fini les larmes en cuisine !",
+          "aliexpressPrice": "8.00 - 12.00 EUR",
+          "sellingPrice": "34.99 EUR",
+          "margin": "65-77%",
+          "trending": "Viral sur TikTok avec des demos satisfaisantes de hachage en 10 secondes. Plus de 50 000 commandes sur AliExpress. Le marche mondial des ustensiles de cuisine depasse 31 milliards USD en 2024 avec une croissance de 4% par an. Les modeles electriques commandent des prix plus eleves grace a leur fonctionnalite accrue.",
+          "tags": ["viral-tiktok", "cuisine", "rechargeable", "compact", "pratique", "best-seller"]
+        },
+        {
+          "id": "cuisine-2",
+          "name": "Mousseur a Lait Electrique 3 Vitesses Rechargeable",
+          "description": "Transformez votre cafe du matin en creation de barista ! Ce mousseur a lait electrique rechargeable a 3 vitesses cree une mousse onctueuse en 15 secondes. Parfait pour cappuccinos, lattes et chocolats chauds maison. Design elegant en inox, facile a nettoyer.",
+          "aliexpressPrice": "3.00 - 5.00 EUR",
+          "sellingPrice": "19.99 EUR",
+          "margin": "75-85%",
+          "trending": "Le cafe specialty a la maison est une mega-tendance 2025-2026. Les kits de preparation cafe (mousseurs, pour-over) sont dans le top des gadgets cuisine a forte marge. Rotation de 7000 RPM pour une mousse parfaite. Les accessoires cafe ont des marges de 50 a 65% en dropshipping.",
+          "tags": ["cafe", "barista", "rechargeable", "mousse", "latte-art", "forte-marge"]
+        },
+        {
+          "id": "cuisine-3",
+          "name": "Spray Huile de Cuisine en Verre - Brumisateur Alimentaire",
+          "description": "Cuisinez plus sain avec ce spray huile de cuisine ! Ce brumisateur en verre alimentaire diffuse une fine brume d'huile d'olive, vinaigre ou citron. Reduisez votre consommation d'huile de 90% sans sacrifier le gout. Compatible air fryer, plancha et salade.",
+          "aliexpressPrice": "2.00 - 4.00 EUR",
+          "sellingPrice": "14.99 EUR",
+          "margin": "73-87%",
+          "trending": "Produit star de la cuisine healthy et du mouvement air fryer. Tres populaire sur TikTok avec les recettes saines. Forte demande liee a la tendance bien-etre et alimentation equilibree. Un des articles les plus vendus dans la categorie cuisine sur AliExpress.",
+          "tags": ["healthy", "air-fryer", "huile-olive", "cuisine-saine", "viral", "eco-responsable"]
+        },
+        {
+          "id": "cuisine-4",
+          "name": "Mini Thermosoudeuse Alimentaire USB 3-en-1",
+          "description": "Ne jetez plus vos chips et cereales a moitie pleins ! Cette mini thermosoudeuse rechargeable USB scelle, ouvre et decoupe vos sachets en un geste. Ultra-compacte, elle se glisse dans un tiroir. L'outil anti-gaspillage indispensable pour garder vos aliments frais plus longtemps.",
+          "aliexpressPrice": "3.00 - 5.00 EUR",
+          "sellingPrice": "16.99 EUR",
+          "margin": "70-82%",
+          "trending": "Virale sur TikTok grace aux videos satisfaisantes de scellage de sachets. Produit anti-gaspillage dans l'air du temps. Petit prix source qui permet un excellent markup de 3 a 5x. Les mini sealers USB rechargeables sont parmi les gadgets les plus commandes sur AliExpress avec des milliers de ventes mensuelles.",
+          "tags": ["anti-gaspillage", "viral-tiktok", "USB", "compact", "conservation", "satisfaisant"]
+        }
+      ]
+    },
+    {
+      "id": "lumieres",
+      "name": "Lumieres & Ambiance",
+      "description": "Eclairage LED, projecteurs et lampes d'ambiance pour creer une atmosphere unique",
+      "products": [
+        {
+          "id": "lumieres-1",
+          "name": "Lampe Cristal Tactile LED Rechargeable",
+          "description": "Ajoutez une touche de luxe a votre interieur avec cette lampe cristal tactile rechargeable. Ses facettes en diamant projettent des reflets magiques sur vos murs. 3 niveaux de luminosite ajustables au toucher. Sans fil, elle se deplace de la table de nuit au salon en un instant. L'objet deco que tous vos invites voudront.",
+          "aliexpressPrice": "5.00 - 8.00 EUR",
+          "sellingPrice": "29.99 EUR",
+          "margin": "73-83%",
+          "trending": "Enormement virale sur TikTok et Instagram - les lampes cristal sont l'un des produits deco les plus partages en 2025-2026. L'esthetique 'cozy home' et cottagecore continue de dominer les reseaux sociaux. Produit a forte valeur percue avec un cout source tres bas. Des modeles similaires se vendent sur eBay a 4.99 EUR, prouvant la disponibilite a bas prix.",
+          "tags": ["viral-tiktok", "deco", "cristal", "rechargeable", "tactile", "cozy", "cadeau"]
+        },
+        {
+          "id": "lumieres-2",
+          "name": "Projecteur Galaxie Etoiles avec Telecommande",
+          "description": "Transformez votre chambre en planetarium ! Ce projecteur galaxie projette un ciel etoile fascinant avec nebuleuses colorees sur votre plafond et vos murs. Telecommande incluse, minuterie integree et mode son-reactif pour les soirees. Parfait pour les enfants, les couples ou la meditation.",
+          "aliexpressPrice": "8.00 - 14.00 EUR",
+          "sellingPrice": "39.99 EUR",
+          "margin": "65-80%",
+          "trending": "Les mini projecteurs restent populaires en 2026. Les projecteurs galaxie sont constamment dans le top des ventes TikTok Shop. Ideal pour le contenu UGC - chaque client partage des videos de sa chambre transformee. Les versions avec mode son-reactif et telecommande commandent les meilleurs prix de vente au detail (22-40 EUR).",
+          "tags": ["galaxie", "etoiles", "chambre", "enfants", "meditation", "viral", "cadeau-noel"]
+        },
+        {
+          "id": "lumieres-3",
+          "name": "Lampe Projecteur Coucher de Soleil LED",
+          "description": "Capturez la magie du golden hour a tout moment ! Cette lampe projette un magnifique halo de coucher de soleil sur vos murs. Rotation 180 degres pour l'angle parfait. L'accessoire photo et video prefere des createurs de contenu. Creez une ambiance chaleureuse et photogenique en un instant.",
+          "aliexpressPrice": "5.00 - 8.00 EUR",
+          "sellingPrice": "24.99 EUR",
+          "margin": "69-80%",
+          "trending": "Phenomene viral continu sur TikTok et Instagram depuis 2022, toujours en forte demande en 2026. Les createurs de contenu l'adorent pour leurs photos et videos. Les lampes sunset se vendent au detail entre 14 et 22 EUR, avec un cout source tres bas. Utilisation technologique LED avancee qui simule les teintes dorees naturelles.",
+          "tags": ["sunset", "golden-hour", "instagram", "photo", "createurs", "ambiance", "deco"]
+        },
+        {
+          "id": "lumieres-4",
+          "name": "Lampe Chauffe-Bougie Retro en Bois",
+          "description": "Profitez de vos bougies parfumees sans flamme ni fumee ! Cette lampe chauffe-bougie retro fond delicatement la cire pour liberer les aromes tout en servant de lampe d'ambiance elegante. Minuterie integree et intensite reglable. Plus sure, plus durable, plus chic qu'une bougie classique.",
+          "aliexpressPrice": "8.00 - 13.00 EUR",
+          "sellingPrice": "39.99 EUR",
+          "margin": "67-80%",
+          "trending": "Sensation virale TikTok 2025-2026 - les videos de cire fondant sous la lampe cumulent des millions de vues. Combine aromatherapie et eclairage d'ambiance. Produit a forte valeur emotionnelle et percue. Alternative sans flamme tres recherchee par les parents et proprietaires d'animaux. Double fonction : source de lumiere + diffuseur d'aromes.",
+          "tags": ["viral-tiktok", "bougie", "aromatherapie", "sans-flamme", "retro", "cozy", "securite"]
+        }
+      ]
+    },
+    {
+      "id": "organisation",
+      "name": "Organisation Maison",
+      "description": "Solutions de rangement et d'organisation pour une maison bien ordonnee",
+      "products": [
+        {
+          "id": "organisation-1",
+          "name": "Organisateur Refrigerateur Tiroir Transparent (Lot de 4)",
+          "description": "Fini le chaos dans votre frigo ! Ces tiroirs organisateurs transparents se fixent sous les etageres de votre refrigerateur pour doubler l'espace de rangement. Parfaits pour fruits, legumes, charcuterie et fromages. Materiau PP alimentaire, lavables au lave-vaisselle. Votre frigo n'a jamais ete aussi bien range.",
+          "aliexpressPrice": "4.00 - 7.00 EUR",
+          "sellingPrice": "22.99 EUR",
+          "margin": "70-83%",
+          "trending": "Les organisateurs de frigo sont parmi les produits maison les plus vendus en dropshipping 2025-2026. TikTok regorge de videos satisfaisantes de rangement de frigo (fridgeorganization). Materiau PP alimentaire de qualite superieure, solide et durable. Produit a achat repete - les clients en commandent souvent plusieurs lots.",
+          "tags": ["rangement", "frigo", "cuisine", "satisfaisant", "lot", "organisation", "tiktok"]
+        },
+        {
+          "id": "organisation-2",
+          "name": "Separateurs de Tiroir Extensibles en Bambou (Lot de 4)",
+          "description": "Organisez enfin vos tiroirs une bonne fois pour toutes ! Ces separateurs extensibles en bambou naturel s'adaptent a tous les tiroirs de 33 a 55 cm. Elegants et ecologiques, ils transforment le desordre en rangement parfait. Pour cuisine, salle de bain, bureau ou commode.",
+          "aliexpressPrice": "5.00 - 8.00 EUR",
+          "sellingPrice": "24.99 EUR",
+          "margin": "69-80%",
+          "trending": "Produit tendance dans le mouvement minimaliste et decluttering. Les separateurs extensibles en bambou sont particulierement recherches pour leur aspect eco-responsable. Les articles d'organisation maison avec un aspect naturel/bambou ont des marges de 40 a 65%. Videos de transformation de tiroirs tres populaires sur TikTok et Pinterest.",
+          "tags": ["bambou", "eco", "extensible", "minimaliste", "decluttering", "naturel", "polyvalent"]
+        },
+        {
+          "id": "organisation-3",
+          "name": "Poubelle Automatique a Capteur Intelligente 12L",
+          "description": "Ne touchez plus jamais votre poubelle ! Ce modele intelligent s'ouvre automatiquement grace a son capteur de mouvement infrarouge. Design slim et elegant en inox, fermeture silencieuse anti-odeur. Fonctionne avec piles ou USB rechargeable. L'hygiene rencontre le style dans votre cuisine ou salle de bain.",
+          "aliexpressPrice": "10.00 - 16.00 EUR",
+          "sellingPrice": "44.99 EUR",
+          "margin": "64-78%",
+          "trending": "Les poubelles automatiques sans contact sont devenues des incontournables post-pandemie. La tendance hygiene et maison intelligente continue en 2026. Forte valeur percue grace au capteur et au design premium. Les produits smart home pratiques et stylish se vendent particulierement bien en dropshipping avec des marges superieures a 60%.",
+          "tags": ["smart-home", "automatique", "capteur", "hygiene", "design", "inox", "sans-contact"]
+        },
+        {
+          "id": "organisation-4",
+          "name": "Aspirateur de Table Portable Mini USB",
+          "description": "Un bureau toujours impeccable en un passage ! Ce mini aspirateur de table rechargeable USB aspire miettes, poussiere, gomme et debris en un instant. Ultra-silencieux et compact, il se glisse dans un tiroir ou un sac. Parfait pour le bureau, le clavier, la table a manger ou la voiture.",
+          "aliexpressPrice": "4.00 - 7.00 EUR",
+          "sellingPrice": "19.99 EUR",
+          "margin": "71-80%",
+          "trending": "Gadget de nettoyage satisfaisant tres viral sur TikTok. Les mini aspirateurs portables sont dans le top des gadgets de bureau et maison les plus vendus. Fort attrait visuel pour les demonstrations en video. Le mouvement 'clean with me' sur les reseaux sociaux maintient une demande constante pour ce type de produit.",
+          "tags": ["mini", "portable", "bureau", "USB", "nettoyage", "satisfaisant", "compact"]
+        }
+      ]
+    },
+    {
+      "id": "tech",
+      "name": "Accessoires Tech",
+      "description": "Accessoires telephone, chargeurs sans fil et organisateurs de cables",
+      "products": [
+        {
+          "id": "tech-1",
+          "name": "Station de Charge Sans Fil 3-en-1 Magnetique Pliable",
+          "description": "Chargez telephone, montre et ecouteurs simultanement sur une seule station elegante ! Cette station 3-en-1 magnetique pliable se range a plat pour voyager. Charge rapide 15W, compatible MagSafe. Design premium qui fait de votre table de nuit un espace organise et moderne.",
+          "aliexpressPrice": "4.00 - 9.00 EUR",
+          "sellingPrice": "34.99 EUR",
+          "margin": "74-89%",
+          "trending": "Les stations de charge MagSafe 3-en-1 sont les accessoires tech les plus demandes en 2026. Le marche mondial des accessoires mobiles atteint 124 a 230 milliards USD. Les chargeurs sans fil sont achetes regulierement - ils s'usent, se perdent et sont souvent offerts en cadeau. Prix wholesale sur AliExpress Business a partir de 4.18 EUR avec remises jusqu'a 52%.",
+          "tags": ["magsafe", "charge-rapide", "3-en-1", "pliable", "voyage", "apple", "best-seller"]
+        },
+        {
+          "id": "tech-2",
+          "name": "Organisateur de Cables Magnetique Silicone (Lot de 5)",
+          "description": "Finies les cables emmeles sur votre bureau ! Ces clips magnetiques en silicone souple maintiennent vos cables USB, Lightning et jack bien en place. Adhesif 3M ultra-resistant, se fixe sur le bureau, la table de nuit ou le mur. Lot de 5 couleurs pour un bureau organise et colore.",
+          "aliexpressPrice": "1.50 - 3.00 EUR",
+          "sellingPrice": "12.99 EUR",
+          "margin": "77-88%",
+          "trending": "Produit petit prix a tres forte marge - parfait pour le dropshipping. Les accessoires de rangement tech sont tres recherches avec le teletravail. Produit d'achat impulsif ideal a moins de 15 EUR. Les clips cables magnetiques ont un cout source extremement bas pour une valeur percue elevee. Ideal pour les bundles et les ventes croisees.",
+          "tags": ["cables", "rangement", "bureau", "magnetique", "teletravail", "lot", "petit-prix"]
+        },
+        {
+          "id": "tech-3",
+          "name": "Reveil Projecteur LED Digital Multifonction",
+          "description": "L'heure projetee au plafond pour ne plus jamais chercher votre telephone la nuit ! Ce reveil LED projette l'heure et la temperature sur le mur ou le plafond. Luminosite reglable, double alarme, affichage grands chiffres. Un gadget tech futuriste qui remplace votre telephone sur la table de nuit.",
+          "aliexpressPrice": "6.00 - 10.00 EUR",
+          "sellingPrice": "29.99 EUR",
+          "margin": "67-80%",
+          "trending": "Les reveils projecteurs LED ont intrigue les utilisateurs TikTok grace a leur design futuriste et leur fonctionnalite unique. Tendance 'digital detox' - remplacer le telephone par un reveil sur la table de nuit. Combine utilite quotidienne et esthetique tech moderne. Ideal pour les cadeaux tech a prix abordable.",
+          "tags": ["projecteur", "reveil", "LED", "digital-detox", "futuriste", "cadeau", "chambre"]
+        },
+        {
+          "id": "tech-4",
+          "name": "Support Telephone Voiture Magnetique MagSafe Ventilation",
+          "description": "Fixez votre telephone en une seconde grace a la puissance magnetique MagSafe ! Ce support voiture ultra-fin s'attache a la grille de ventilation et maintient votre smartphone fermement, meme sur route cahoteuse. Rotation 360 degres pour GPS, musique ou appels mains-libres. Compatible tous smartphones avec coque magnetique.",
+          "aliexpressPrice": "2.00 - 5.00 EUR",
+          "sellingPrice": "17.99 EUR",
+          "margin": "72-89%",
+          "trending": "Les supports MagSafe voiture sont dans le top des accessoires telephone dropshipping 2026. Les produits MagSafe-compatibles dominent les meilleures ventes car l'ecosysteme Apple s'etend. Produit a achat repete et a recommandation. Un des accessoires auto les plus recherches avec tres peu de retours (moins de 3%).",
+          "tags": ["magsafe", "voiture", "magnetique", "GPS", "mains-libres", "auto", "pratique"]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "researchSources": [
+      "AliExpress & AliExpress Business",
+      "TikTok Shop & TikTok Trends",
+      "Shopify France Blog",
+      "CJDropshipping",
+      "Eprolo",
+      "AliDropship",
+      "AutoDS",
+      "Dropship Spy",
+      "SellTheTrend"
+    ],
+    "pricingNotes": "Les prix AliExpress sont des estimations basees sur les gammes de prix observees en septembre 2026. Les prix reels peuvent varier selon le fournisseur, la quantite commandee et les promotions en cours. Les prix de vente recommandes incluent une marge suffisante pour couvrir les frais publicitaires (Facebook Ads, TikTok Ads), les frais de plateforme et les retours.",
+    "marginCalculation": "Marge = (Prix de vente - Prix AliExpress) / Prix de vente * 100. Les marges indiquees sont brutes avant frais marketing et operationnels. Viser un ROAS de 3x minimum pour la rentabilite.",
+    "shippingNote": "Privilegier les fournisseurs avec AliExpress Standard Shipping ou ePacket pour la France (7 a 15 jours). Considerer un entrepot europeen (CJDropshipping EU, Eprolo EU) pour des delais de 3 a 7 jours.",
+    "totalProducts": 16,
+    "averageMarginRange": "64-89%",
+    "recommendedPriceRange": "12.99 - 44.99 EUR"
+  }
+}

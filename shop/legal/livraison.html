@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HomeVibe - Politique de Livraison. Zones, delais et frais de livraison pour vos commandes.">
+<title>HomeVibe - Politique de Livraison</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f14;--bg2:#1a1a24;--bg3:#24243a;--surface:#1e1e2e;--surface2:#2a2a3e;
+  --text:#f0f0f5;--text2:#a0a0b8;--text3:#6a6a80;
+  --accent:#6C5CE7;--accent2:#00CEC9;--accent-g:linear-gradient(135deg,#6C5CE7,#00CEC9);
+  --danger:#ff6b6b;--success:#00b894;--warning:#fdcb6e;
+  --glass:rgba(30,30,46,0.7);--glass-border:rgba(108,92,231,0.15);
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 8px 32px rgba(0,0,0,0.3);--shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+  --nav-h:64px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f5f5fa;--bg2:#ebebf2;--bg3:#e0e0ec;--surface:#ffffff;--surface2:#f0f0f8;
+  --text:#1a1a2e;--text2:#5a5a72;--text3:#8a8a9e;
+  --glass:rgba(255,255,255,0.75);--glass-border:rgba(108,92,231,0.12);
+  --shadow:0 8px 32px rgba(0,0,0,0.08);--shadow-sm:0 4px 12px rgba(0,0,0,0.06);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none;transition:var(--transition)}
+a:hover{color:var(--accent2)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:var(--glass);border-bottom:1px solid var(--glass-border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1200px;margin:0 auto;padding:0 16px}
+.nav-logo{font-size:1.4rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;text-decoration:none}
+.nav-logo span{font-weight:400;opacity:0.7}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:500;color:var(--text2);transition:var(--transition)}
+.nav-back:hover{color:var(--accent)}
+.page-wrapper{max-width:860px;margin:0 auto;padding:calc(var(--nav-h) + 40px) 16px 60px}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--glass-border)}
+.page-header h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.page-header h1 .gradient{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-header .updated{font-size:0.82rem;color:var(--text3)}
+.legal-section{margin-bottom:36px}
+.legal-section h2{font-size:1.25rem;font-weight:700;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:10px}
+.legal-section h2::before{content:'';width:4px;height:24px;background:var(--accent-g);border-radius:2px;flex-shrink:0}
+.legal-section h3{font-size:1.05rem;font-weight:600;margin:16px 0 8px;color:var(--text)}
+.legal-section p,.legal-section li{font-size:0.92rem;color:var(--text2);margin-bottom:8px}
+.legal-section ul{padding-left:20px;margin-bottom:12px}
+.legal-section ul li{list-style:disc;margin-bottom:6px}
+.legal-section ol{padding-left:20px;margin-bottom:12px}
+.legal-section ol li{list-style:decimal;margin-bottom:6px}
+.placeholder{background:rgba(253,203,110,0.15);border:1px solid rgba(253,203,110,0.4);border-radius:var(--radius-sm);padding:3px 8px;color:#fdcb6e;font-weight:600;font-size:0.88rem;display:inline}
+.info-box{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px;margin:20px 0}
+.info-box p{margin-bottom:6px}
+.info-box p:last-child{margin-bottom:0}
+
+/* SHIPPING CARDS */
+.ship-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:20px 0}
+.ship-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;text-align:center;transition:var(--transition)}
+.ship-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.ship-card .icon{font-size:2rem;margin-bottom:12px}
+.ship-card h3{font-size:1.05rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+.ship-card .price{font-size:1.3rem;font-weight:800;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.ship-card p{font-size:0.85rem;color:var(--text2)}
+
+/* ZONE TABLE */
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.88rem}
+.data-table th,.data-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--glass-border)}
+.data-table th{background:var(--surface);color:var(--text);font-weight:600;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.5px}
+.data-table td{color:var(--text2)}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:var(--radius);border:1px solid var(--glass-border)}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:16px;margin:20px 0}
+.step{display:flex;align-items:flex-start;gap:16px}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--accent-g);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:#fff;flex-shrink:0}
+.step-content h4{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.step-content p{font-size:0.88rem;color:var(--text2)}
+
+.legal-footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--glass-border);text-align:center}
+.legal-footer .nav-logo{font-size:1.2rem;display:inline-block;margin-bottom:12px}
+.legal-footer p{font-size:0.78rem;color:var(--text3);margin-bottom:4px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:16px}
+.footer-links a{font-size:0.82rem;color:var(--text3);transition:var(--transition)}
+.footer-links a:hover{color:var(--accent)}
+
+@media(max-width:600px){
+  .page-wrapper{padding:calc(var(--nav-h) + 24px) 16px 40px}
+  .legal-section h2{font-size:1.1rem}
+  .ship-grid{grid-template-columns:1fr}
+  .data-table th,.data-table td{padding:8px 10px;font-size:0.8rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+ <div class="nav-inner">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <a href="/shop/" class="nav-back">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+   Retour &agrave; la boutique
+  </a>
+ </div>
+</nav>
+
+<main class="page-wrapper">
+ <header class="page-header">
+  <h1>Politique de <span class="gradient">Livraison</span></h1>
+  <p class="updated">Derni&egrave;re mise &agrave; jour : <span class="placeholder">[DATE &Agrave; COMPL&Eacute;TER]</span></p>
+ </header>
+
+ <section class="legal-section">
+  <h2>Modes de livraison</h2>
+  <p>Nous proposons deux modes de livraison pour toutes vos commandes :</p>
+  <div class="ship-grid">
+   <div class="ship-card">
+    <div class="icon">&#x1F4E6;</div>
+    <h3>Livraison Standard</h3>
+    <div class="price">Gratuite</div>
+    <p>D&eacute;lai : 7 &agrave; 14 jours ouvr&eacute;s</p>
+    <p>Suivi de colis inclus</p>
+   </div>
+   <div class="ship-card">
+    <div class="icon">&#x26A1;</div>
+    <h3>Livraison Express</h3>
+    <div class="price">9,99 &euro;</div>
+    <p>D&eacute;lai : 3 &agrave; 7 jours ouvr&eacute;s</p>
+    <p>Suivi de colis inclus</p>
+   </div>
+  </div>
+ </section>
+
+ <section class="legal-section">
+  <h2>Zones de livraison</h2>
+  <p>Nous livrons actuellement dans les zones suivantes :</p>
+  <div class="table-wrap">
+   <table class="data-table">
+    <thead>
+     <tr><th>Zone</th><th>D&eacute;lai Standard</th><th>D&eacute;lai Express</th><th>Frais Standard</th><th>Frais Express</th></tr>
+    </thead>
+    <tbody>
+     <tr><td>France m&eacute;tropolitaine</td><td>7-14 jours ouvr&eacute;s</td><td>3-7 jours ouvr&eacute;s</td><td>Gratuit</td><td>9,99 &euro;</td></tr>
+     <tr><td>DOM-TOM</td><td>10-21 jours ouvr&eacute;s</td><td>7-14 jours ouvr&eacute;s</td><td>Gratuit</td><td>14,99 &euro;</td></tr>
+     <tr><td>Belgique</td><td>7-14 jours ouvr&eacute;s</td><td>3-7 jours ouvr&eacute;s</td><td>Gratuit</td><td>9,99 &euro;</td></tr>
+     <tr><td>Suisse</td><td>10-18 jours ouvr&eacute;s</td><td>5-10 jours ouvr&eacute;s</td><td>Gratuit</td><td>14,99 &euro;</td></tr>
+     <tr><td>Canada</td><td>12-21 jours ouvr&eacute;s</td><td>7-14 jours ouvr&eacute;s</td><td>Gratuit</td><td>19,99 &euro;</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p>Les d&eacute;lais indiqu&eacute;s sont estim&eacute;s &agrave; compter de la confirmation de votre commande. Ces d&eacute;lais peuvent varier en fonction de circonstances exceptionnelles (jours f&eacute;ri&eacute;s, p&eacute;riodes de forte demande, al&eacute;as logistiques).</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Exp&eacute;dition depuis nos entrep&ocirc;ts partenaires</h2>
+  <p>Afin de vous proposer les meilleurs produits aux prix les plus comp&eacute;titifs, nos articles sont exp&eacute;di&eacute;s depuis <strong>nos entrep&ocirc;ts partenaires internationaux</strong>. Ce mod&egrave;le nous permet de vous offrir :</p>
+  <ul>
+   <li>Un catalogue vari&eacute; et constamment renouvel&eacute;</li>
+   <li>Des prix accessibles gr&acirc;ce &agrave; une gestion optimis&eacute;e de la cha&icirc;ne logistique</li>
+   <li>La livraison gratuite en standard sur toutes les commandes</li>
+  </ul>
+  <p>Chaque produit est soigneusement s&eacute;lectionn&eacute; et contr&ocirc;l&eacute; par notre &eacute;quipe qualit&eacute; avant d'&ecirc;tre r&eacute;f&eacute;renc&eacute; sur notre site.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Suivi de votre commande</h2>
+  <p>D&egrave;s l'exp&eacute;dition de votre commande, vous recevez un e-mail contenant :</p>
+  <div class="steps">
+   <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+     <h4>Confirmation d'exp&eacute;dition</h4>
+     <p>Un e-mail de confirmation avec votre num&eacute;ro de suivi est envoy&eacute; d&egrave;s la prise en charge de votre colis.</p>
+    </div>
+   </div>
+   <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+     <h4>Suivi en temps r&eacute;el</h4>
+     <p>Gr&acirc;ce &agrave; votre num&eacute;ro de tracking, vous pouvez suivre l'acheminement de votre colis sur le site du transporteur.</p>
+    </div>
+   </div>
+   <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+     <h4>Notification de livraison</h4>
+     <p>Vous &ecirc;tes inform&eacute;(e) par e-mail ou SMS de la livraison imminente de votre colis.</p>
+    </div>
+   </div>
+  </div>
+  <p>Veuillez noter que l'activation du num&eacute;ro de suivi peut prendre 2 &agrave; 5 jours ouvr&eacute;s apr&egrave;s l'exp&eacute;dition.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Colis non re&ccedil;u</h2>
+  <p>Si vous n'avez pas re&ccedil;u votre colis dans les d&eacute;lais indiqu&eacute;s, nous vous invitons &agrave; suivre la proc&eacute;dure suivante :</p>
+  <ol>
+   <li><strong>V&eacute;rifiez le suivi :</strong> consultez le statut de votre colis &agrave; l'aide du num&eacute;ro de tracking re&ccedil;u par e-mail.</li>
+   <li><strong>Patientez quelques jours :</strong> des retards peuvent survenir en cas de transit international ou de p&eacute;riodes de forte activit&eacute;.</li>
+   <li><strong>Contactez-nous :</strong> si votre commande n'est pas arriv&eacute;e apr&egrave;s 21 jours (standard) ou 14 jours (express), envoyez-nous un e-mail &agrave; <strong>contact@homevibe-shop.com</strong> avec votre num&eacute;ro de commande.</li>
+   <li><strong>Enqu&ecirc;te transporteur :</strong> nous ouvrons une enqu&ecirc;te aupr&egrave;s du transporteur. Si le colis est d&eacute;clar&eacute; perdu, nous proc&eacute;dons &agrave; un renvoi ou &agrave; un remboursement int&eacute;gral.</li>
+  </ol>
+  <p>Conform&eacute;ment &agrave; l'article L.216-2 du Code de la consommation, si la livraison n'a pas eu lieu dans un d&eacute;lai de <strong>30 jours</strong> &agrave; compter de la date de commande, vous pouvez demander l'annulation de la commande et le remboursement int&eacute;gral.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Frais de douane et taxes</h2>
+  <p>Pour les livraisons en <strong>Suisse</strong> et au <strong>Canada</strong>, les commandes sont susceptibles d'&ecirc;tre soumises &agrave; des droits de douane et/ou taxes locales d'importation lors de l'entr&eacute;e sur le territoire national.</p>
+  <p>Ces frais sont :</p>
+  <ul>
+   <li>D&eacute;termin&eacute;s par les autorit&eacute;s douani&egrave;res du pays de destination</li>
+   <li>Hors du contr&ocirc;le de HomeVibe</li>
+   <li><strong>&Agrave; la charge exclusive du Client</strong></li>
+   <li>Non inclus dans le prix de vente ni dans les frais de livraison</li>
+  </ul>
+  <p>Pour les livraisons au sein de l'Union Europ&eacute;enne (France m&eacute;tropolitaine, Belgique), aucun frais de douane suppl&eacute;mentaire n'est appliqu&eacute;.</p>
+  <p>Nous vous conseillons de vous renseigner aupr&egrave;s de vos autorit&eacute;s douani&egrave;res locales pour conna&icirc;tre les &eacute;ventuels frais applicables.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Colis endommag&eacute;</h2>
+  <p>Si votre colis arrive endommag&eacute; :</p>
+  <ul>
+   <li><strong>&Eacute;mettez des r&eacute;serves</strong> aupr&egrave;s du livreur au moment de la r&eacute;ception.</li>
+   <li><strong>Prenez des photos</strong> du colis et du produit endommag&eacute;.</li>
+   <li><strong>Contactez-nous</strong> dans les 48 heures suivant la r&eacute;ception &agrave; contact@homevibe-shop.com en joignant les photos.</li>
+  </ul>
+  <p>Nous vous proposerons un renvoi du produit ou un remboursement int&eacute;gral apr&egrave;s v&eacute;rification.</p>
+ </section>
+
+ <section class="legal-section">
+  <h2>Questions fr&eacute;quentes</h2>
+  <p>Pour plus d'informations sur la livraison, consultez notre <a href="faq.html">Foire Aux Questions</a> ou contactez-nous &agrave; <strong>contact@homevibe-shop.com</strong>.</p>
+ </section>
+
+ <footer class="legal-footer">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <p>&copy; 2026 HomeVibe. Tous droits r&eacute;serv&eacute;s.</p>
+  <div class="footer-links">
+   <a href="mentions-legales.html">Mentions L&eacute;gales</a>
+   <a href="cgv.html">CGV</a>
+   <a href="confidentialite.html">Confidentialit&eacute;</a>
+   <a href="livraison.html">Livraison</a>
+   <a href="retours.html">Retours</a>
+   <a href="faq.html">FAQ</a>
+   <a href="/shop/contact.html">Contact</a>
+  </div>
+ </footer>
+</main>
+
+</body>
+</html>
