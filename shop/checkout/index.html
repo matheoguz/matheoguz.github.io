@@ -765,7 +765,7 @@
         // Icones par categorie de produit
         var categoryIcons = {
             'cuisine': '🍳',
-            'lumieres': '💡',
+            'lumiere': '💡',
             'organisation': '📦',
             'tech': '🔌',
             'default': '🛒'
@@ -806,9 +806,9 @@
             for (var i = 0; i < cartItems.length; i++) {
                 var item = cartItems[i];
                 var price = parseFloat(item.price) || 0;
-                var qty = parseInt(item.quantity) || 1;
+                var qty = parseInt(item.qty) || 1;
                 var itemTotal = price * qty;
-                var icon = categoryIcons[item.category] || categoryIcons['default'];
+                var icon = categoryIcons[item.cat] || categoryIcons['default'];
 
                 html += '<div class="summary-item">' +
                     '<div class="summary-item-image">' + icon + '</div>' +

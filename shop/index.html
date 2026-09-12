@@ -560,6 +560,8 @@ function init(){
  applyTheme();
 }
 
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
 /* ── RENDER PRODUCTS ── */
 function renderProducts(){
  const grid=document.getElementById('productGrid');
@@ -633,7 +635,7 @@ function addToCart(id){
  if(!p) return;
  const existing=cart.find(x=>x.id===id);
  if(existing){existing.qty++;}
- else{cart.push({id:p.id,name:p.name,price:p.price,bg:p.bg,qty:1});}
+ else{cart.push({id:p.id,name:p.name,price:p.price,bg:p.bg,qty:1,cat:p.cat});}
  saveCart();
  updateCartUI();
  showToast('Ajoute au panier : '+p.name);
@@ -690,7 +692,7 @@ function updateCartUI(){
   <div class="cart-item">
    <div class="cart-item-img" style="background:${item.bg};border-radius:var(--radius-sm)"></div>
    <div class="cart-item-info">
-    <div class="cart-item-name">${item.name}</div>
+    <div class="cart-item-name">${escapeHtml(item.name)}</div>
     <div class="cart-item-price">${(item.price*item.qty).toFixed(2).replace('.',',')} &euro;</div>
     <div class="cart-item-actions">
      <button class="qty-btn" onclick="updateQty(${item.id},-1)" aria-label="Reduire">-</button>
