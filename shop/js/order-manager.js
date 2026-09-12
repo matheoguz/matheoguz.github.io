@@ -18,7 +18,7 @@ var OrderManager = (function() {
 
     // Cle de stockage dans localStorage
     var ORDERS_STORAGE_KEY = 'homevibe-orders';
-    var CART_STORAGE_KEY = 'homevibe-cart';
+    var CART_STORAGE_KEY = 'hv_cart';
 
     // Statuts possibles d'une commande
     var ORDER_STATUS = {

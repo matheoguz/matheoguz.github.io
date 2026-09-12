@@ -463,7 +463,7 @@
 
         var categoryIcons = {
             'cuisine': '🍳',
-            'lumieres': '💡',
+            'lumiere': '💡',
             'organisation': '📦',
             'tech': '🔌',
             'default': '🛒'
@@ -491,7 +491,7 @@
 
             // Vider le panier
             try {
-                localStorage.removeItem('homevibe-cart');
+                localStorage.removeItem('hv_cart');
             } catch (e) {
                 // Silencieux
             }
@@ -510,8 +510,8 @@
                 for (var i = 0; i < order.items.length; i++) {
                     var item = order.items[i];
                     var price = parseFloat(item.price) || 0;
-                    var qty = parseInt(item.quantity) || 1;
-                    var icon = categoryIcons[item.category] || categoryIcons['default'];
+                    var qty = parseInt(item.qty) || 1;
+                    var icon = categoryIcons[item.cat] || categoryIcons['default'];
 
                     itemsHtml += '<div class="order-item">' +
                         '<div class="order-item-icon">' + icon + '</div>' +

@@ -25,7 +25,7 @@
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_VOTRE_CLE_ICI';
 
 // Cle de stockage du panier dans localStorage
-const CART_STORAGE_KEY = 'homevibe-cart';
+const CART_STORAGE_KEY = 'hv_cart';
 
 // Variable globale pour l'instance Stripe
 let stripeInstance = null;
