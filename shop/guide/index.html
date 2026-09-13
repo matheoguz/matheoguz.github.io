@@ -8,21 +8,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f0f14;--bg2:#1a1a24;--bg3:#24243a;--surface:#1e1e2e;--surface2:#2a2a3e;
-  --text:#f0f0f5;--text2:#a0a0b8;--text3:#6a6a80;
-  --accent:#6C5CE7;--accent2:#00CEC9;--accent-g:linear-gradient(135deg,#6C5CE7,#00CEC9);
-  --danger:#ff6b6b;--success:#00b894;--warning:#fdcb6e;
-  --glass:rgba(30,30,46,0.7);--glass-border:rgba(108,92,231,0.15);
+  --bg:#FFFFFF;--bg2:#F9FAFB;--bg3:#F3F4F6;--surface:#FFFFFF;--surface2:#F9FAFB;
+  --text:#111827;--text2:#4B5563;--text3:#9CA3AF;
+  --accent:#E85D04;--accent2:#D35400;--accent-g:linear-gradient(135deg,#E85D04,#F59E0B);
+  --danger:#DC2626;--success:#059669;--warning:#F59E0B;
+  --glass:rgba(255,255,255,0.95);--glass-border:rgba(229,231,235,0.8);
   --radius:14px;--radius-sm:8px;--radius-lg:20px;
-  --shadow:0 8px 32px rgba(0,0,0,0.3);--shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  --shadow:0 8px 32px rgba(0,0,0,0.06);--shadow-sm:0 4px 12px rgba(0,0,0,0.04);
   --transition:0.3s cubic-bezier(0.4,0,0.2,1);
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
-}
-[data-theme="light"]{
-  --bg:#f5f5fa;--bg2:#ebebf2;--bg3:#e0e0ec;--surface:#ffffff;--surface2:#f0f0f8;
-  --text:#1a1a2e;--text2:#5a5a72;--text3:#8a8a9e;
-  --glass:rgba(255,255,255,0.75);--glass-border:rgba(108,92,231,0.12);
-  --shadow:0 8px 32px rgba(0,0,0,0.08);--shadow-sm:0 4px 12px rgba(0,0,0,0.06);
 }
 html{scroll-behavior:smooth;font-size:16px}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:80px}
@@ -42,7 +36,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ── HERO ── */
 .guide-hero{text-align:center;padding:40px 0 32px;position:relative}
-.guide-hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(108,92,231,0.12),transparent 70%);pointer-events:none;z-index:0}
+.guide-hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(232,93,4,0.12),transparent 70%);pointer-events:none;z-index:0}
 .guide-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;margin-bottom:8px;position:relative;z-index:1}
 .guide-hero h1 span{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .guide-hero p{color:var(--text2);font-size:1.05rem;max-width:560px;margin:0 auto;position:relative;z-index:1}
@@ -60,7 +54,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ── STEP CARD ── */
 .step-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--glass-border);margin-bottom:16px;overflow:hidden;transition:var(--transition)}
-.step-card.completed{border-color:rgba(0,184,148,0.3)}
+.step-card.completed{border-color:rgba(5,150,105,0.3)}
 .step-header{display:flex;align-items:center;gap:14px;padding:18px 20px;cursor:pointer;transition:var(--transition);user-select:none}
 .step-header:hover{background:var(--surface2)}
 .step-num{width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;transition:var(--transition)}
