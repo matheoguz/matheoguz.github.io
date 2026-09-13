@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" rx="12" fill="#E8EAF6"/>
+  <ellipse cx="200" cy="270" rx="130" ry="30" fill="#5C6BC0" opacity="0.2"/>
+  <rect x="80" y="240" width="240" height="32" rx="10" fill="#5C6BC0"/>
+  <rect x="85" y="242" width="230" height="28" rx="8" fill="#7986CB" opacity="0.2"/>
+  <rect x="100" y="260" width="200" height="2" rx="1" fill="#E85D04" opacity="0.6"/>
+  <rect x="105" y="140" width="65" height="105" rx="8" fill="#78909C" opacity="0.6"/>
+  <rect x="110" y="148" width="55" height="85" rx="4" fill="#fff" opacity="0.5"/>
+  <rect x="115" y="155" width="45" height="20" rx="3" fill="#E85D04" opacity="0.15"/>
+  <line x1="137" y1="200" x2="137" y2="215" stroke="#E85D04" stroke-width="2" opacity="0.5"/>
+  <polygon points="133,205 141,205 137,195" fill="#E85D04" opacity="0.5"/>
+  <circle cx="200" cy="190" r="28" fill="#78909C" opacity="0.5"/>
+  <circle cx="200" cy="190" r="22" fill="#fff" opacity="0.5"/>
+  <line x1="200" y1="178" x2="200" y2="190" stroke="#E85D04" stroke-width="2" opacity="0.6"/>
+  <line x1="200" y1="190" x2="210" y2="195" stroke="#5C6BC0" stroke-width="1.5" opacity="0.5"/>
+  <rect x="194" y="160" width="12" height="10" rx="2" fill="#78909C" opacity="0.4"/>
+  <rect x="194" y="218" width="12" height="10" rx="2" fill="#78909C" opacity="0.4"/>
+  <rect x="250" y="170" width="50" height="65" rx="22" fill="#78909C" opacity="0.5"/>
+  <rect x="255" y="175" width="40" height="55" rx="18" fill="#fff" opacity="0.4"/>
+  <circle cx="275" cy="200" r="3" fill="#E85D04"/>
+  <path d="M137,238 Q137,230 137,225" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
+  <path d="M200,238 Q200,230 200,222" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
+  <path d="M275,238 Q275,232 275,228" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
+</svg>

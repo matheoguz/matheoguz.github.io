@@ -1,33 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <defs>
-    <radialGradient id="bg3" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#1a1a24"/>
-      <stop offset="100%" stop-color="#0f0f14"/>
-    </radialGradient>
-    <filter id="glow3">
-      <feGaussianBlur stdDeviation="5" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-  <rect width="400" height="400" fill="url(#bg3)"/>
-  <!-- Scale platform -->
-  <ellipse cx="200" cy="210" rx="110" ry="20" fill="#a29bfe" opacity="0.3"/>
-  <rect x="100" y="200" width="200" height="60" rx="10" fill="#6C5CE7"/>
-  <rect x="100" y="195" width="200" height="15" rx="5" fill="#a29bfe"/>
-  <!-- Display screen -->
-  <rect x="145" y="220" width="110" height="30" rx="6" fill="#0f0f14"/>
-  <rect x="150" y="224" width="100" height="22" rx="4" fill="#1a1a24"/>
-  <!-- Digital numbers -->
-  <text x="200" y="242" text-anchor="middle" font-family="monospace" font-size="16" fill="#00CEC9" filter="url(#glow3)">0.00 kg</text>
-  <!-- Buttons -->
-  <circle cx="155" cy="255" r="4" fill="#00CEC9"/>
-  <circle cx="170" cy="255" r="4" fill="#81ecec" opacity="0.6"/>
-  <!-- Top surface -->
-  <rect x="120" y="160" width="160" height="40" rx="8" fill="#a29bfe" opacity="0.4"/>
-  <rect x="125" y="163" width="150" height="34" rx="6" fill="#1a1a24" opacity="0.3"/>
-  <!-- Item on scale -->
-  <circle cx="200" cy="155" r="20" fill="#00CEC9" opacity="0.5"/>
-  <circle cx="200" cy="155" r="14" fill="#81ecec" opacity="0.3"/>
-  <!-- Bottom edge glow -->
-  <ellipse cx="200" cy="265" rx="90" ry="8" fill="#6C5CE7" opacity="0.2" filter="url(#glow3)"/>
+  <rect width="400" height="400" rx="12" fill="#FCE4EC"/>
+  <ellipse cx="200" cy="210" rx="110" ry="20" fill="#E91E63" opacity="0.15"/>
+  <rect x="100" y="200" width="200" height="60" rx="10" fill="#E91E63" opacity="0.8"/>
+  <rect x="100" y="195" width="200" height="15" rx="5" fill="#F48FB1"/>
+  <rect x="145" y="220" width="110" height="30" rx="6" fill="#fff"/>
+  <rect x="150" y="224" width="100" height="22" rx="4" fill="#FAFAFA"/>
+  <text x="200" y="242" text-anchor="middle" font-family="monospace" font-size="16" fill="#E91E63">0.00 kg</text>
+  <circle cx="155" cy="255" r="4" fill="#E85D04"/>
+  <circle cx="170" cy="255" r="4" fill="#F48FB1"/>
+  <rect x="120" y="160" width="160" height="40" rx="8" fill="#F48FB1" opacity="0.3"/>
+  <rect x="125" y="163" width="150" height="34" rx="6" fill="#fff" opacity="0.3"/>
+  <circle cx="200" cy="155" r="20" fill="#E85D04" opacity="0.3"/>
+  <circle cx="200" cy="155" r="14" fill="#FF8A65" opacity="0.2"/>
+  <ellipse cx="200" cy="265" rx="90" ry="8" fill="#E91E63" opacity="0.1"/>
 </svg>

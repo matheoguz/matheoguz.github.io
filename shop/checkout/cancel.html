@@ -6,287 +6,71 @@
     <title>Paiement Annule - HomeVibe</title>
     <meta name="description" content="Votre paiement a ete annule. Votre panier est toujours disponible.">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg:#FFFFFF;--bg-alt:#F9FAFB;--bg-warm:#FFF7ED;
+            --surface:#FFFFFF;--surface-alt:#F3F4F6;
+            --text:#111827;--text2:#4B5563;--text3:#9CA3AF;
+            --accent:#E85D04;--accent-hover:#D35400;--accent-light:#FFF7ED;
+            --success:#059669;--success-light:#ECFDF5;
+            --danger:#DC2626;--star:#F59E0B;
+            --border:#E5E7EB;--border-light:#F3F4F6;
         }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg-alt);color:var(--text);line-height:1.6;min-height:100vh}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #0a0a1a;
-            color: #e0e0e0;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        .cancel-header{background:var(--bg);padding:16px 24px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border)}
+        .cancel-header .logo{font-size:1.5rem;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:-.5px}
+        .cancel-header .logo em{font-style:normal;color:var(--accent)}
 
-        /* Header */
-        .cancel-header {
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .cancel-container{max-width:580px;margin:0 auto;padding:60px 16px 80px;text-align:center}
 
-        .cancel-header .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
+        .cancel-icon{width:90px;height:90px;margin:0 auto 28px;border-radius:50%;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;animation:fadeIn .5s ease}
+        .cancel-icon svg{width:44px;height:44px;color:#d97706}
+        @keyframes fadeIn{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
 
-        /* Conteneur principal */
-        .cancel-container {
-            max-width: 580px;
-            margin: 0 auto;
-            padding: 60px 16px 80px;
-            text-align: center;
-        }
+        .cancel-title{font-size:1.8rem;font-weight:800;color:var(--text);margin-bottom:12px}
+        .cancel-subtitle{font-size:1rem;color:var(--text2);margin-bottom:36px;max-width:400px;margin-left:auto;margin-right:auto}
 
-        /* Icone d'annulation */
-        .cancel-icon {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 28px;
-            border-radius: 50%;
-            background: rgba(243, 156, 18, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.5s ease;
-        }
+        .cart-preserved-card{background:var(--bg);border-radius:14px;padding:24px;margin-bottom:32px;border:1px solid var(--border);text-align:left}
+        .cart-preserved-card .icon-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+        .cart-preserved-card .icon-circle{width:40px;height:40px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .cart-preserved-card .icon-circle svg{width:20px;height:20px;color:var(--success)}
+        .cart-preserved-card .icon-text{font-weight:700;color:var(--text);font-size:.95rem}
+        .cart-preserved-card p{font-size:.85rem;color:var(--text2);line-height:1.5}
 
-        .cancel-icon svg {
-            width: 44px;
-            height: 44px;
-            color: #f39c12;
-        }
+        .reasons{background:var(--bg);border-radius:14px;padding:24px;margin-bottom:32px;border:1px solid var(--border);text-align:left}
+        .reasons h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:14px}
+        .reasons ul{list-style:none;padding:0}
+        .reasons li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:.85rem;color:var(--text2)}
+        .reasons li::before{content:'\2022';color:var(--accent);font-size:1.2rem;line-height:1.2;flex-shrink:0}
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        .action-buttons{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+        .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 32px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-size:1rem;font-weight:700;transition:background .2s,transform .15s,box-shadow .15s;border:none;cursor:pointer}
+        .btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,93,4,.25)}
+        .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:12px;background:transparent;color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:600;border:1px solid var(--border);transition:background .2s,color .2s;cursor:pointer}
+        .btn-secondary:hover{background:var(--surface-alt);color:var(--text)}
 
-        /* Titres */
-        .cancel-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 12px;
-        }
+        .help-section{margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+        .help-section h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:14px}
+        .help-contacts{display:flex;flex-direction:column;gap:10px;align-items:center}
+        .help-contact{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-size:.85rem;text-decoration:none;transition:color .2s}
+        .help-contact:hover{color:var(--accent)}
+        .help-contact svg{width:16px;height:16px;flex-shrink:0}
 
-        .cancel-subtitle {
-            font-size: 1rem;
-            color: #888;
-            margin-bottom: 36px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Carte info panier -->  */
-        .cart-preserved-card {
-            background: #12122a;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(108, 92, 231, 0.15);
-            text-align: left;
-        }
-
-        .cart-preserved-card .icon-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .cart-preserved-card .icon-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(46, 204, 113, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .cart-preserved-card .icon-circle svg {
-            width: 20px;
-            height: 20px;
-            color: #2ecc71;
-        }
-
-        .cart-preserved-card .icon-text {
-            font-weight: 700;
-            color: #fff;
-            font-size: 0.95rem;
-        }
-
-        .cart-preserved-card p {
-            font-size: 0.85rem;
-            color: #888;
-            line-height: 1.5;
-        }
-
-        /* Raisons possibles */
-        .reasons {
-            background: #12122a;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(108, 92, 231, 0.1);
-            text-align: left;
-        }
-
-        .reasons h3 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-
-        .reasons ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .reasons li {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 8px 0;
-            font-size: 0.85rem;
-            color: #aaa;
-        }
-
-        .reasons li::before {
-            content: '\2022';
-            color: #6C5CE7;
-            font-size: 1.2rem;
-            line-height: 1.2;
-            flex-shrink: 0;
-        }
-
-        /* Boutons */
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 16px 32px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            color: #fff;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: transform 0.15s, box-shadow 0.15s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
-        }
-
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px 28px;
-            border-radius: 12px;
-            background: transparent;
-            color: #aaa;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: background 0.2s, color 0.2s;
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.04);
-            color: #fff;
-        }
-
-        /* Section aide -->  */
-        .help-section {
-            margin-top: 40px;
-            padding-top: 32px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .help-section h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-
-        .help-contacts {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .help-contact {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #888;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .help-contact:hover {
-            color: #00CEC9;
-        }
-
-        .help-contact svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .cancel-container {
-                padding: 40px 16px 60px;
-            }
-
-            .cancel-title {
-                font-size: 1.4rem;
-            }
+        @media(max-width:600px){
+            .cancel-container{padding:40px 16px 60px}
+            .cancel-title{font-size:1.4rem}
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="cancel-header">
-        <a href="/shop/" class="logo">HomeVibe</a>
+        <a href="/shop/" class="logo">Home<em>Vibe</em></a>
     </header>
 
-    <!-- Contenu -->
     <main class="cancel-container">
 
-        <!-- Icone -->
         <div class="cancel-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
@@ -298,7 +82,6 @@
         <h1 class="cancel-title">Paiement annule</h1>
         <p class="cancel-subtitle">Pas d'inquietude, aucun montant n'a ete debite de votre compte.</p>
 
-        <!-- Panier conserve -->
         <div class="cart-preserved-card">
             <div class="icon-row">
                 <div class="icon-circle">
@@ -311,7 +94,6 @@
             <p>Tous vos articles ont ete conserves. Vous pouvez reprendre votre commande a tout moment en retournant a la page de paiement.</p>
         </div>
 
-        <!-- Raisons possibles -->
         <div class="reasons">
             <h3>Vous avez peut-etre annule parce que :</h3>
             <ul>
@@ -322,7 +104,6 @@
             </ul>
         </div>
 
-        <!-- Boutons -->
         <div class="action-buttons">
             <a href="/shop/checkout/" class="btn-primary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
@@ -334,7 +115,6 @@
             </a>
         </div>
 
-        <!-- Section aide -->
         <div class="help-section">
             <h3>Besoin d'aide ?</h3>
             <div class="help-contacts">

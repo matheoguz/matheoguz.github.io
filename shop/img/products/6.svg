@@ -1,39 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <defs>
-    <radialGradient id="bg6" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#1a1a24"/>
-      <stop offset="100%" stop-color="#0f0f14"/>
-    </radialGradient>
-    <filter id="glow6">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="glow6s">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-  <rect width="400" height="400" fill="url(#bg6)"/>
-  <!-- RGB glow backdrop -->
-  <ellipse cx="200" cy="200" rx="130" ry="130" fill="#6C5CE7" opacity="0.08" filter="url(#glow6)"/>
-  <!-- LED strip coil - outer ring -->
-  <ellipse cx="200" cy="210" rx="100" ry="50" fill="none" stroke="#6C5CE7" stroke-width="8" stroke-dasharray="12 6" filter="url(#glow6s)"/>
-  <!-- LED strip coil - middle ring -->
-  <ellipse cx="200" cy="200" rx="75" ry="38" fill="none" stroke="#00CEC9" stroke-width="8" stroke-dasharray="12 6" filter="url(#glow6s)"/>
-  <!-- LED strip coil - inner ring -->
-  <ellipse cx="200" cy="190" rx="50" ry="25" fill="none" stroke="#a29bfe" stroke-width="8" stroke-dasharray="12 6" filter="url(#glow6s)"/>
-  <!-- LED dots on strip -->
-  <circle cx="110" cy="195" r="4" fill="#00CEC9" filter="url(#glow6s)"/>
-  <circle cx="145" cy="230" r="4" fill="#6C5CE7" filter="url(#glow6s)"/>
-  <circle cx="200" cy="260" r="4" fill="#81ecec" filter="url(#glow6s)"/>
-  <circle cx="255" cy="230" r="4" fill="#a29bfe" filter="url(#glow6s)"/>
-  <circle cx="290" cy="195" r="4" fill="#00CEC9" filter="url(#glow6s)"/>
-  <circle cx="135" cy="175" r="4" fill="#a29bfe" filter="url(#glow6s)"/>
-  <circle cx="200" cy="163" r="4" fill="#6C5CE7" filter="url(#glow6s)"/>
-  <circle cx="265" cy="175" r="4" fill="#81ecec" filter="url(#glow6s)"/>
-  <!-- Tail end of strip -->
-  <path d="M290,210 Q320,210 330,180 L340,170" fill="none" stroke="#6C5CE7" stroke-width="6" stroke-linecap="round"/>
-  <!-- Connector box -->
-  <rect x="330" y="155" width="30" height="20" rx="4" fill="#6C5CE7"/>
-  <rect x="335" y="160" width="8" height="10" rx="2" fill="#00CEC9"/>
+  <rect width="400" height="400" rx="12" fill="#F3E5F5"/>
+  <ellipse cx="200" cy="200" rx="130" ry="130" fill="#CE93D8" opacity="0.08"/>
+  <ellipse cx="200" cy="210" rx="100" ry="50" fill="none" stroke="#E85D04" stroke-width="8" stroke-dasharray="12 6" opacity="0.7"/>
+  <ellipse cx="200" cy="200" rx="75" ry="38" fill="none" stroke="#059669" stroke-width="8" stroke-dasharray="12 6" opacity="0.6"/>
+  <ellipse cx="200" cy="190" rx="50" ry="25" fill="none" stroke="#3B82F6" stroke-width="8" stroke-dasharray="12 6" opacity="0.6"/>
+  <circle cx="110" cy="195" r="4" fill="#E85D04"/>
+  <circle cx="145" cy="230" r="4" fill="#059669"/>
+  <circle cx="200" cy="260" r="4" fill="#3B82F6"/>
+  <circle cx="255" cy="230" r="4" fill="#E85D04"/>
+  <circle cx="290" cy="195" r="4" fill="#059669"/>
+  <circle cx="135" cy="175" r="4" fill="#3B82F6"/>
+  <circle cx="200" cy="163" r="4" fill="#E85D04"/>
+  <circle cx="265" cy="175" r="4" fill="#059669"/>
+  <path d="M290,210 Q320,210 330,180 L340,170" fill="none" stroke="#E85D04" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+  <rect x="330" y="155" width="30" height="20" rx="4" fill="#666"/>
+  <rect x="335" y="160" width="8" height="10" rx="2" fill="#E85D04"/>
 </svg>

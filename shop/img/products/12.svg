@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" rx="12" fill="#E3F2FD"/>
+  <rect x="60" y="60" width="280" height="300" rx="4" fill="#90CAF9" opacity="0.08"/>
+  <rect x="90" y="100" width="220" height="8" rx="3" fill="#1565C0" opacity="0.6"/>
+  <g>
+    <rect x="100" y="115" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="105" y="120" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M115,155 Q115,140 130,138 L160,138 Q170,138 170,148 L170,155" fill="#E85D04" opacity="0.4"/>
+  </g>
+  <g>
+    <rect x="215" y="115" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="220" y="120" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M230,155 Q230,140 245,138 L275,138 Q285,138 285,148 L285,155" fill="#42A5F5" opacity="0.4"/>
+  </g>
+  <rect x="90" y="185" width="220" height="8" rx="3" fill="#1565C0" opacity="0.6"/>
+  <g>
+    <rect x="100" y="200" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="105" y="205" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M115,240 Q115,225 130,223 L160,223 Q170,223 170,233 L170,240" fill="#059669" opacity="0.4"/>
+  </g>
+  <g>
+    <rect x="215" y="200" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="220" y="205" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M230,240 Q230,225 245,223 L275,223 Q285,223 285,233 L285,240" fill="#E85D04" opacity="0.35"/>
+  </g>
+  <rect x="90" y="270" width="220" height="8" rx="3" fill="#1565C0" opacity="0.6"/>
+  <g>
+    <rect x="100" y="285" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="105" y="290" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M115,325 Q115,310 130,308 L160,308 Q170,308 170,318 L170,325" fill="#42A5F5" opacity="0.35"/>
+  </g>
+  <g>
+    <rect x="215" y="285" width="85" height="55" rx="4" fill="#1565C0" opacity="0.3"/>
+    <rect x="220" y="290" width="75" height="45" rx="3" fill="#fff" opacity="0.4"/>
+    <path d="M230,325 Q230,310 245,308 L275,308 Q285,308 285,318 L285,325" fill="#059669" opacity="0.35"/>
+  </g>
+</svg>
