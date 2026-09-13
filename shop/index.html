@@ -155,6 +155,10 @@ a.product-name:hover{color:var(--accent)!important}
 .product-discount{position:absolute;top:10px;right:10px;background:var(--danger);color:#fff;font-size:0.72rem;font-weight:700;padding:4px 8px;border-radius:var(--radius-sm);z-index:2}
 .product-body{padding:14px 16px}
 .product-cat{font-size:0.72rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.product-source{display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.65rem;font-weight:600;margin-top:4px}
+.source-aliexpress{background:#FFE4E1;color:#E85D04}
+.source-tiktok-shop{background:#E0F7FA;color:#0891B2}
+.source-amazon{background:#FFF7ED;color:#92400E}
 .product-name{font-weight:700;font-size:0.92rem;margin-bottom:6px;line-height:1.3;color:var(--text);display:block}
 .product-rating{display:flex;align-items:center;gap:4px;margin-bottom:10px}
 .product-rating .stars{color:var(--star);font-size:0.78rem;letter-spacing:1px}
@@ -519,42 +523,9 @@ a.product-name:hover{color:var(--accent)!important}
  <button class="cookie-btn refuse" onclick="refuseCookies()">Refuser</button>
 </div>
 
+<script src="/shop/data/products.js"></script>
 <script>
-/* ── DATA ── */
-const products=[
-{id:1,name:"Coupe-Legumes Multifonction",price:29.99,oldPrice:59.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.8,reviews:234,trend:true,
- bg:"#E8F5E9"},
-{id:2,name:"Mixeur Portable USB",price:24.99,oldPrice:49.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.6,reviews:189,trend:false,
- bg:"#E0F7FA"},
-{id:3,name:"Balance Cuisine Digitale",price:19.99,oldPrice:39.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.5,reviews:156,trend:false,
- bg:"#FCE4EC"},
-{id:4,name:"Ouvre-Bocal Electrique",price:22.99,oldPrice:44.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.7,reviews:201,trend:true,
- bg:"#FFF8E1"},
-{id:5,name:"Projecteur Galaxy LED",price:34.99,oldPrice:69.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.9,reviews:512,trend:true,
- bg:"#EDE7F6"},
-{id:6,name:"Ruban LED RGB Intelligent",price:19.99,oldPrice:39.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.7,reviews:378,trend:true,
- bg:"#FFF3E0"},
-{id:7,name:"Lampe Lune 3D",price:27.99,oldPrice:54.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.8,reviews:298,trend:false,
- bg:"#F3E5F5"},
-{id:8,name:"Veilleuse Coucher de Soleil",price:24.99,oldPrice:49.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.6,reviews:267,trend:false,
- bg:"#FBE9E7"},
-{id:9,name:"Organisateur Tiroir Modulable",price:14.99,oldPrice:29.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.4,reviews:145,trend:false,
- bg:"#E0F2F1"},
-{id:10,name:"Support Mural Magnetique",price:17.99,oldPrice:34.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.5,reviews:178,trend:false,
- bg:"#ECEFF1"},
-{id:11,name:"Boite Rangement Pliable (lot 3)",price:22.99,oldPrice:44.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.6,reviews:213,trend:true,
- bg:"#FFF3E0"},
-{id:12,name:"Porte-Chaussures Mural",price:19.99,oldPrice:39.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.3,reviews:134,trend:false,
- bg:"#E3F2FD"},
-{id:13,name:"Chargeur Sans Fil 3-en-1",price:29.99,oldPrice:59.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.8,reviews:445,trend:true,
- bg:"#F3E5F5"},
-{id:14,name:"Support Telephone Voiture Magnetique",price:14.99,oldPrice:29.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.5,reviews:267,trend:false,
- bg:"#ECEFF1"},
-{id:15,name:"Organisateur Cables Bureau",price:12.99,oldPrice:24.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.4,reviews:189,trend:false,
- bg:"#E0F7FA"},
-{id:16,name:"Ecouteurs Bluetooth Mini",price:19.99,oldPrice:39.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.7,reviews:356,trend:true,
- bg:"#EDE7F6"}
-];
+/* ── DATA (loaded from /shop/data/products.js) ── */
 
 let cart=[];
 let currentCat='all';
@@ -587,6 +558,7 @@ function renderProducts(){
    </a>
    <div class="product-body">
     <div class="product-cat">${p.catLabel}</div>
+    <div class="product-source source-${p.source.toLowerCase().replace(/\\s+/g,'-')}">${escapeHtml(p.source)}</div>
     <a href="product.html?id=${p.id}" class="product-name">${p.name}</a>
     <div class="product-rating">
      <span class="stars">${stars}</span>

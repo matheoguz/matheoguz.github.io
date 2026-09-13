@@ -120,6 +120,16 @@ ul{list-style:none}
 .pd-discount{background:var(--success-light);color:var(--success);font-size:0.82rem;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm)}
 .pd-desc{font-size:0.95rem;color:var(--text2);line-height:1.8}
 
+/* ── SOURCE BADGE ── */
+.pd-source{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:600;margin-left:8px;vertical-align:middle}
+.pd-source-aliexpress{background:#FFE4E1;color:#E85D04}
+.pd-source-tiktok-shop{background:#E0F7FA;color:#0891B2}
+.pd-source-amazon{background:#FFF7ED;color:#92400E}
+
+/* ── FEATURES ── */
+.pd-features{margin:16px 0 24px;display:flex;flex-wrap:wrap;gap:8px}
+.pd-features li{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text2);background:var(--success-light);padding:4px 12px;border-radius:20px}
+
 /* ── QTY + ADD TO CART ── */
 .pd-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .pd-qty{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
@@ -226,6 +236,35 @@ ul{list-style:none}
 .footer-pay span{background:#1F2937;padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;color:#9CA3AF}
 @media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr;gap:24px}}
 @media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+
+/* ── CUSTOMER REVIEWS ── */
+.reviews-section{padding:48px 0;background:var(--bg-alt)}
+.reviews-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.reviews-header h2{font-size:1.4rem;color:var(--text)}
+.reviews-count{color:var(--text3);font-size:0.9rem}
+.reviews-summary{display:flex;gap:32px;margin-bottom:32px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.reviews-avg{text-align:center;min-width:120px}
+.reviews-avg .big-rating{font-size:3rem;font-weight:800;color:var(--text);line-height:1}
+.reviews-avg .avg-stars{color:var(--star);margin:4px 0}
+.reviews-avg .avg-label{color:var(--text3);font-size:0.8rem}
+.reviews-bars{flex:1}
+.review-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.85rem}
+.review-bar-row .bar-label{min-width:55px;color:var(--text2)}
+.review-bar-row .bar-track{flex:1;height:8px;background:var(--border-light);border-radius:4px;overflow:hidden}
+.review-bar-row .bar-fill{height:100%;background:var(--star);border-radius:4px;transition:width 0.6s ease}
+.review-bar-row .bar-pct{min-width:35px;color:var(--text3);text-align:right}
+.reviews-list{display:grid;gap:16px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.review-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.review-author{font-weight:600;color:var(--text)}
+.review-verified{display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--success);background:var(--success-light);padding:2px 8px;border-radius:4px}
+.review-stars{color:var(--star);display:flex;gap:1px}
+.review-date{font-size:0.8rem;color:var(--text3)}
+.review-text{color:var(--text2);font-size:0.9rem;line-height:1.7}
+@media(max-width:640px){
+  .reviews-summary{flex-direction:column;gap:16px}
+  .reviews-avg{min-width:auto}
+}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:14px 24px;border-radius:var(--radius);font-size:0.88rem;font-weight:600;z-index:3000;box-shadow:var(--shadow-lg);transition:var(--transition);display:flex;align-items:center;gap:8px;white-space:nowrap}
@@ -384,59 +423,8 @@ ul{list-style:none}
  <button class="cookie-btn refuse" onclick="refuseCookies()">Refuser</button>
 </div>
 
+<script src="/shop/data/products.js"></script>
 <script>
-/* ── PRODUCT DATA ── */
-const products=[
-{id:1,name:"Coupe-Legumes Multifonction",price:29.99,oldPrice:59.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.8,reviews:234,trend:true,
- bg:"#E8F5E9",
- desc:"Un coupe-legumes revolutionnaire qui transforme votre preparation en un jeu d'enfant. Avec ses 5 lames interchangeables en acier inoxydable, decoupez, rapez et emincez tous vos legumes en quelques secondes. Design ergonomique et antiderapant pour une utilisation securisee au quotidien."},
-{id:2,name:"Mixeur Portable USB",price:24.99,oldPrice:49.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.6,reviews:189,trend:false,
- bg:"#E0F7FA",
- desc:"Emportez vos smoothies partout avec ce mixeur rechargeable par USB. Puissant moteur de 380ml qui mixe fruits, legumes et glace en 30 secondes. Parfait pour le bureau, la salle de sport ou en voyage. Batterie longue duree pour jusqu'a 15 utilisations."},
-{id:3,name:"Balance Cuisine Digitale",price:19.99,oldPrice:39.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.5,reviews:156,trend:false,
- bg:"#FCE4EC",
- desc:"Precision au gramme pres pour des recettes toujours reussies. Ecran LED retroeclaire, fonction tare automatique et conversion instantanee entre grammes, onces et millilitres. Surface en verre trempe ultra-fine et elegante qui s'integre parfaitement dans votre cuisine."},
-{id:4,name:"Ouvre-Bocal Electrique",price:22.99,oldPrice:44.99,cat:"cuisine",catLabel:"Cuisine Intelligente",rating:4.7,reviews:201,trend:true,
- bg:"#FFF8E1",
- desc:"Fini les bocaux impossibles a ouvrir ! Cet ouvre-bocal electrique s'adapte a tous les formats de couvercles de 3 a 9 cm. Un simple appui suffit pour ouvrir meme les bocaux les plus recalcitrants. Indispensable pour les personnes agees et tous ceux qui veulent gagner du temps."},
-{id:5,name:"Projecteur Galaxy LED",price:34.99,oldPrice:69.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.9,reviews:512,trend:true,
- bg:"#EDE7F6",
- desc:"Transformez votre chambre en galaxie avec ce projecteur LED nouvelle generation. 16 millions de couleurs, rotation a 360 degres et synchronisation musicale via Bluetooth. Commande par telecommande ou application smartphone. L'experience immersive la plus virale de TikTok."},
-{id:6,name:"Ruban LED RGB Intelligent",price:19.99,oldPrice:39.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.7,reviews:378,trend:true,
- bg:"#F3E5F5",
- desc:"10 metres de lumiere RGB intelligente, decoupable et adhesif pour s'adapter a toutes vos surfaces. Compatible Alexa et Google Home, controlez vos lumieres a la voix ou via l'application. Plus de 300 modes d'eclairage et synchronisation musicale pour des soirees inoubliables."},
-{id:7,name:"Lampe Lune 3D",price:27.99,oldPrice:54.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.8,reviews:298,trend:false,
- bg:"#FFF3E0",
- desc:"Reproduction fidele de la surface lunaire imprimee en 3D avec un rendu ultra-realiste. 16 couleurs ajustables par telecommande, intensite variable pour une ambiance douce et apaisante. Rechargeable par USB avec une autonomie de 8 heures. Le cadeau parfait pour les reveurs."},
-{id:8,name:"Veilleuse Coucher de Soleil",price:24.99,oldPrice:49.99,cat:"lumiere",catLabel:"Lumieres & Ambiance",rating:4.6,reviews:267,trend:false,
- bg:"#FFEBEE",
- desc:"Recreez les couleurs magiques d'un coucher de soleil dans votre interieur. Projection LED haute definition avec rotation ajustable pour un effet panoramique saisissant. Ideale pour la meditation, le yoga ou simplement creer une ambiance chaleureuse et photogenique."},
-{id:9,name:"Organisateur Tiroir Modulable",price:14.99,oldPrice:29.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.4,reviews:145,trend:false,
- bg:"#E8F5E9",
- desc:"Systeme modulable de rangement qui s'adapte a tous vos tiroirs. Separateurs ajustables en bambou ecologique et durable. Organisez cuisine, bureau, salle de bain ou dressing en quelques minutes. Fini le desordre, chaque objet trouve enfin sa place."},
-{id:10,name:"Support Mural Magnetique",price:17.99,oldPrice:34.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.5,reviews:178,trend:false,
- bg:"#ECEFF1",
- desc:"Support mural a aimants ultra-puissants pour ranger couteaux, outils ou cles sans percer. Installation adhesive en 30 secondes, tient jusqu'a 5 kg par aimant. Design minimaliste en acier brosse qui s'integre a tous les interieurs. Liberez votre plan de travail."},
-{id:11,name:"Boite Rangement Pliable (lot 3)",price:22.99,oldPrice:44.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.6,reviews:213,trend:true,
- bg:"#FBE9E7",
- desc:"Lot de 3 boites de rangement pliables en tissu premium avec poignees renforcees. Se replient a plat quand vous n'en avez pas besoin. Parfaites pour vetements, jouets, livres ou accessoires. Structure rigide avec couvercle pour un empilage facile et un interieur toujours ordonne."},
-{id:12,name:"Porte-Chaussures Mural",price:19.99,oldPrice:39.99,cat:"organisation",catLabel:"Organisation Maison",rating:4.3,reviews:134,trend:false,
- bg:"#E3F2FD",
- desc:"Rangez jusqu'a 6 paires de chaussures sur votre mur avec ce systeme adhesif innovant. Aucun percage necessaire, installation en 2 minutes. Design moderne et epure qui transforme votre entree. Supporte baskets, talons et chaussures de ville. Economisez un espace precieux au sol."},
-{id:13,name:"Chargeur Sans Fil 3-en-1",price:29.99,oldPrice:59.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.8,reviews:445,trend:true,
- bg:"#E8EAF6",
- desc:"Station de charge sans fil pour smartphone, montre connectee et ecouteurs simultanement. Compatible Qi universel avec charge rapide 15W. LED indicatrice discrete et protection contre la surchauffe. Le hub de charge elegant qui remplace tous vos cables sur votre table de nuit."},
-{id:14,name:"Support Telephone Voiture Magnetique",price:14.99,oldPrice:29.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.5,reviews:267,trend:false,
- bg:"#ECEFF1",
- desc:"Aimant neodyme ultra-puissant compatible avec tous les smartphones. Fixation sur grille de ventilation avec clip universel renforce. Rotation 360 degres pour une orientation parfaite. Installation en 5 secondes, prise en main securisee meme sur routes sinueuses."},
-{id:15,name:"Organisateur Cables Bureau",price:12.99,oldPrice:24.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.4,reviews:189,trend:false,
- bg:"#E0F2F1",
- desc:"Dites adieu au chaos des cables sur votre bureau. Cet organisateur en silicone souple accueille jusqu'a 7 cables de differentes tailles. Base adhesive repositionnable et design compact. Gardez vos cables USB, chargeurs et ecouteurs toujours a portee de main, sans noeuds."},
-{id:16,name:"Ecouteurs Bluetooth Mini",price:19.99,oldPrice:39.99,cat:"tech",catLabel:"Accessoires Tech",rating:4.7,reviews:356,trend:true,
- bg:"#EDE7F6",
- desc:"Ecouteurs true wireless ultra-compacts avec son stereo haute fidelite et reduction de bruit passive. 24 heures d'autonomie totale avec le boitier de charge. Etanches IPX5 pour le sport et la pluie. Appairage instantane Bluetooth 5.3 et microphone integre pour vos appels."}
-];
-
 /* ── HELPERS ── */
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
@@ -471,11 +459,12 @@ function renderStars(rating){
 
 /* Gallery color variations */
 function getGalleryVariants(product){
+ const labels = product.imageLabels || ['Vue principale','Vue laterale','Vue arriere','Vue detail'];
  return [
-  {filter:'none',label:'Vue principale'},
-  {filter:'hue-rotate(30deg) saturate(1.2)',label:'Vue laterale'},
-  {filter:'hue-rotate(-20deg) brightness(1.05)',label:'Vue arriere'},
-  {filter:'hue-rotate(60deg) saturate(0.9)',label:'Vue detail'}
+  {filter:'none',label:labels[0]},
+  {filter:'hue-rotate(30deg) saturate(1.2)',label:labels[1]},
+  {filter:'hue-rotate(-20deg) brightness(1.05)',label:labels[2]},
+  {filter:'hue-rotate(60deg) saturate(0.9)',label:labels[3]}
  ];
 }
 
@@ -532,6 +521,7 @@ function renderProductPage(product){
      <!-- Right: Info -->
      <div class="pd-info fade-in">
       <div class="pd-cat">${product.catLabel}</div>
+      <span class="pd-source pd-source-${product.source.toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(product.source)}</span>
       <h1 class="pd-title">${escapeHtml(product.name)}</h1>
 
       <div class="pd-rating">
@@ -547,6 +537,8 @@ function renderProductPage(product){
       </div>
 
       <p class="pd-desc">${escapeHtml(product.desc)}</p>
+
+      ${product.features ? '<ul class="pd-features">'+product.features.map(f=>'<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'+escapeHtml(f)+'</li>').join('')+'</ul>' : ''}
 
       <!-- Qty + Add to Cart -->
       <div class="pd-actions">
@@ -598,9 +590,13 @@ function renderProductPage(product){
 
   <!-- Related Products -->
   <section class="related-section" id="relatedSection"></section>
+
+  <!-- Customer Reviews -->
+  <section class="reviews-section" id="reviewsSection"></section>
  `;
 
  renderRelated(product);
+ renderReviews(product);
  setupObserver();
 }
 
@@ -650,6 +646,67 @@ function renderRelated(product){
   </div>
  `;
  setupObserver();
+}
+
+/* ── FORMAT DATE FRENCH ── */
+function formatDateFr(dateStr){
+ const months=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+ const d=new Date(dateStr);
+ return d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+}
+
+/* ── RENDER REVIEWS ── */
+function renderReviews(product){
+ const reviews=product.customerReviews;
+ if(!reviews||!reviews.length) return;
+ const section=document.getElementById('reviewsSection');
+
+ /* Calculate rating distribution */
+ const dist={5:0,4:0,3:0,2:0,1:0};
+ let total=0;
+ reviews.forEach(r=>{dist[r.rating]++;total+=r.rating;});
+ const avg=(total/reviews.length).toFixed(1);
+
+ /* Sort by date newest first */
+ const sorted=[...reviews].sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+ section.innerHTML=`
+  <div class="container">
+   <div class="reviews-header fade-in">
+    <h2>Avis Clients Verifies</h2>
+    <span class="reviews-count">${reviews.length} avis</span>
+   </div>
+   <div class="reviews-summary fade-in">
+    <div class="reviews-avg">
+     <div class="big-rating">${avg}</div>
+     <div class="avg-stars">${renderStars(parseFloat(avg))}</div>
+     <div class="avg-label">sur ${reviews.length} avis</div>
+    </div>
+    <div class="reviews-bars">
+     ${[5,4,3,2,1].map(s=>{
+      const count=dist[s];
+      const pct=reviews.length?Math.round(count/reviews.length*100):0;
+      return '<div class="review-bar-row"><span class="bar-label">'+s+' etoile'+(s>1?'s':'')+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><span class="bar-pct">'+pct+'%</span></div>';
+     }).join('')}
+    </div>
+   </div>
+   <div class="reviews-list fade-in">
+    ${sorted.map(r=>`
+     <div class="review-card">
+      <div class="review-top">
+       <div>
+        <span class="review-author">${escapeHtml(r.name)}</span>
+        ${r.verified?'<span class="review-verified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Verifie</span>':''}
+       </div>
+       <span class="review-date">${formatDateFr(r.date)}</span>
+      </div>
+      <div class="review-stars">${renderStars(r.rating)}</div>
+      <p class="review-text">${escapeHtml(r.text)}</p>
+     </div>
+    `).join('')}
+   </div>
+  </div>
+ `;
 }
 
 /* ── RENDER NOT FOUND ── */
