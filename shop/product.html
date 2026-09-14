@@ -8,6 +8,9 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="HomeVibe">
 <meta name="theme-color" content="#E85D04">
+<!-- Google Analytics 4 — remplacez G-XXXXXXXXXX par votre ID de mesure -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 <title>HomeVibe - Produit</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -361,9 +364,9 @@ ul{list-style:none}
     <div class="nav-logo">Home<span>Vibe</span></div>
     <p>Votre destination pour les gadgets maison &amp; lifestyle les plus tendance. Qualite, design et prix accessibles.</p>
     <div class="footer-social">
-     <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.28 0 .56.04.82.12V9a6.34 6.34 0 1 0 5.43 6.28V9.41a8.16 8.16 0 0 0 4.78 1.53V7.5a4.82 4.82 0 0 1-.93-.81z"/></svg></a>
-     <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-     <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+     <a href="https://www.tiktok.com/@homevibe.shop" target="_blank" rel="noopener" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.28 0 .56.04.82.12V9a6.34 6.34 0 1 0 5.43 6.28V9.41a8.16 8.16 0 0 0 4.78 1.53V7.5a4.82 4.82 0 0 1-.93-.81z"/></svg></a>
+     <a href="https://www.instagram.com/homevibe.shop" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+     <a href="https://www.facebook.com/homevibe.shop" target="_blank" rel="noopener" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
     </div>
    </div>
    <div>
@@ -490,6 +493,32 @@ function renderProductPage(product){
  const imgSrc=hasRealImages?product.images[0]:'/shop/img/products/'+product.id+'.svg';
 
  document.title='HomeVibe - '+product.name;
+
+ // JSON-LD structured data for SEO
+ const jsonLd=document.createElement('script');
+ jsonLd.type='application/ld+json';
+ jsonLd.textContent=JSON.stringify({
+  "@context":"https://schema.org",
+  "@type":"Product",
+  "name":product.name,
+  "description":product.desc,
+  "image":product.images&&product.images[0]?product.images[0]:'',
+  "brand":{"@type":"Brand","name":"HomeVibe"},
+  "offers":{
+   "@type":"Offer",
+   "url":"https://matheoguz.github.io/shop/product.html?id="+product.id,
+   "priceCurrency":"EUR",
+   "price":product.price,
+   "availability":"https://schema.org/InStock",
+   "seller":{"@type":"Organization","name":"HomeVibe"}
+  },
+  "aggregateRating":{
+   "@type":"AggregateRating",
+   "ratingValue":product.rating,
+   "reviewCount":product.reviews
+  }
+ });
+ document.head.appendChild(jsonLd);
 
  const main=document.getElementById('mainContent');
  main.innerHTML=`
