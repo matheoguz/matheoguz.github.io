@@ -1,18 +1,102 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <rect width="400" height="400" rx="12" fill="#E0F2F1"/>
-  <rect x="60" y="260" width="280" height="12" rx="3" fill="#80CBC4" opacity="0.2"/>
-  <rect x="130" y="170" width="140" height="90" rx="10" fill="#00897B"/>
-  <rect x="135" y="175" width="130" height="80" rx="8" fill="#4DB6AC" opacity="0.2"/>
-  <rect x="155" y="166" width="12" height="12" rx="6" fill="#fff" opacity="0.7"/>
-  <rect x="195" y="166" width="12" height="12" rx="6" fill="#fff" opacity="0.7"/>
-  <rect x="235" y="166" width="12" height="12" rx="6" fill="#fff" opacity="0.7"/>
-  <path d="M161,166 Q161,140 140,120 Q120,100 100,100" fill="none" stroke="#E85D04" stroke-width="3" stroke-linecap="round"/>
-  <path d="M201,166 Q201,130 200,110 Q200,90 200,80" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
-  <path d="M241,166 Q241,140 260,120 Q280,100 300,100" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-  <rect x="90" y="96" width="15" height="8" rx="2" fill="#E85D04" opacity="0.6"/>
-  <rect x="195" y="74" width="10" height="10" rx="2" fill="#059669" opacity="0.6"/>
-  <rect x="295" y="96" width="15" height="8" rx="2" fill="#3B82F6" opacity="0.6"/>
-  <rect x="170" y="200" width="60" height="20" rx="4" fill="#E85D04" opacity="0.15"/>
-  <circle cx="150" cy="262" r="4" fill="#00897B" opacity="0.4"/>
-  <circle cx="250" cy="262" r="4" fill="#00897B" opacity="0.4"/>
+  <defs>
+    <linearGradient id="desk15" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D7CCC8"/>
+      <stop offset="100%" stop-color="#BCAAA4"/>
+    </linearGradient>
+    <linearGradient id="silicone15" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="40%" stop-color="#EEEEEE"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <filter id="cableShad15">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <filter id="holderShad15">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="400" height="400" rx="12" fill="#E0F7FA"/>
+
+  <!-- Desk surface -->
+  <rect x="20" y="180" width="360" height="200" rx="4" fill="url(#desk15)"/>
+  <rect x="20" y="180" width="360" height="6" rx="2" fill="#A1887F"/>
+  <!-- Wood grain -->
+  <line x1="40" y1="200" x2="370" y2="200" stroke="#C4A882" stroke-width="0.5" opacity="0.5"/>
+  <line x1="30" y1="230" x2="380" y2="230" stroke="#C4A882" stroke-width="0.5" opacity="0.4"/>
+  <line x1="35" y1="260" x2="375" y2="260" stroke="#C4A882" stroke-width="0.5" opacity="0.3"/>
+  <line x1="25" y1="290" x2="380" y2="290" stroke="#C4A882" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Wall above desk -->
+  <rect x="20" y="30" width="360" height="150" rx="4" fill="#F5F5F5"/>
+
+  <!-- Cable organizer (silicone clip on desk edge) -->
+  <g filter="url(#holderShad15)">
+    <!-- Base block -->
+    <rect x="100" y="165" width="200" height="30" rx="8" fill="url(#silicone15)"/>
+    <!-- Individual cable slots (curved cutouts on top) -->
+    <!-- Slot 1 -->
+    <path d="M125 165 Q125 152 132 152 Q139 152 139 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+    <!-- Slot 2 -->
+    <path d="M155 165 Q155 150 163 150 Q171 150 171 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+    <!-- Slot 3 -->
+    <path d="M185 165 Q185 152 192 152 Q199 152 199 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+    <!-- Slot 4 -->
+    <path d="M215 165 Q215 150 223 150 Q231 150 231 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+    <!-- Slot 5 -->
+    <path d="M245 165 Q245 152 252 152 Q259 152 259 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+    <!-- Slot 6 -->
+    <path d="M272 165 Q272 150 280 150 Q288 150 288 165" fill="url(#silicone15)" stroke="#DDD" stroke-width="0.5"/>
+
+    <!-- Adhesive strip on bottom -->
+    <rect x="120" y="192" width="160" height="4" rx="2" fill="#BDBDBD"/>
+  </g>
+
+  <!-- Cables going UP from slots to desk items -->
+  <!-- Cable 1: White Lightning/USB-C (going to left) -->
+  <path d="M132 155 Q132 120 90 90" fill="none" stroke="#F5F5F5" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M132 155 Q132 120 90 90" fill="none" stroke="#E0E0E0" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0.5,6"/>
+  <!-- USB-C connector end -->
+  <rect x="85" y="85" width="12" height="8" rx="2" fill="#C0C0C0"/>
+
+  <!-- Cable 2: Black USB cable -->
+  <path d="M163 153 Q163 115 145 80" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+  <rect x="140" y="74" width="12" height="8" rx="2" fill="#222"/>
+
+  <!-- Cable 3: Red cable -->
+  <path d="M192 155 Q192 125 200 85" fill="none" stroke="#E53935" stroke-width="3" stroke-linecap="round"/>
+  <rect x="195" y="78" width="12" height="8" rx="2" fill="#C62828"/>
+
+  <!-- Cable 4: White cable -->
+  <path d="M223 153 Q223 118 240 80" fill="none" stroke="#F5F5F5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M223 153 Q223 118 240 80" fill="none" stroke="#E0E0E0" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.5,6"/>
+  <rect x="235" y="73" width="12" height="8" rx="2" fill="#C0C0C0"/>
+
+  <!-- Cable 5: Dark gray micro USB -->
+  <path d="M252 155 Q252 120 280 90" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="276" y="85" width="10" height="7" rx="1.5" fill="#444"/>
+
+  <!-- Cable 6: Blue cable -->
+  <path d="M280 153 Q280 115 310 85" fill="none" stroke="#1565C0" stroke-width="3" stroke-linecap="round"/>
+  <rect x="306" y="79" width="12" height="8" rx="2" fill="#0D47A1"/>
+
+  <!-- Cables dangling DOWN from slots -->
+  <!-- Cable 1 dangle -->
+  <path d="M132 195 Q128 260 120 310 Q118 340 125 370" fill="none" stroke="#F5F5F5" stroke-width="3.5" stroke-linecap="round" filter="url(#cableShad15)"/>
+
+  <!-- Cable 2 dangle -->
+  <path d="M163 195 Q158 255 155 310 Q153 345 160 375" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" filter="url(#cableShad15)"/>
+
+  <!-- Cable 3 dangle -->
+  <path d="M192 195 Q190 260 192 315 Q194 350 190 380" fill="none" stroke="#E53935" stroke-width="3" stroke-linecap="round" filter="url(#cableShad15)"/>
+
+  <!-- Cable 4 dangle -->
+  <path d="M223 195 Q220 265 225 320 Q228 355 222 385" fill="none" stroke="#F5F5F5" stroke-width="3" stroke-linecap="round" filter="url(#cableShad15)"/>
+
+  <!-- Cable 5 dangle -->
+  <path d="M252 195 Q248 258 250 318 Q252 350 248 378" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round" filter="url(#cableShad15)"/>
+
+  <!-- Cable 6 dangle -->
+  <path d="M280 195 Q278 262 282 322 Q284 352 278 382" fill="none" stroke="#1565C0" stroke-width="3" stroke-linecap="round" filter="url(#cableShad15)"/>
 </svg>

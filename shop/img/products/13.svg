@@ -1,24 +1,127 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="base13" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="50%" stop-color="#EEEEEE"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <linearGradient id="phoneScr13" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A237E"/>
+      <stop offset="50%" stop-color="#283593"/>
+      <stop offset="100%" stop-color="#1A237E"/>
+    </linearGradient>
+    <linearGradient id="watchFace13" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <linearGradient id="padSurf13" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FAFAFA"/>
+      <stop offset="100%" stop-color="#E8E8E8"/>
+    </linearGradient>
+    <filter id="devShad13">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+    <filter id="softGlow13">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
   <rect width="400" height="400" rx="12" fill="#E8EAF6"/>
-  <ellipse cx="200" cy="270" rx="130" ry="30" fill="#5C6BC0" opacity="0.2"/>
-  <rect x="80" y="240" width="240" height="32" rx="10" fill="#5C6BC0"/>
-  <rect x="85" y="242" width="230" height="28" rx="8" fill="#7986CB" opacity="0.2"/>
-  <rect x="100" y="260" width="200" height="2" rx="1" fill="#E85D04" opacity="0.6"/>
-  <rect x="105" y="140" width="65" height="105" rx="8" fill="#78909C" opacity="0.6"/>
-  <rect x="110" y="148" width="55" height="85" rx="4" fill="#fff" opacity="0.5"/>
-  <rect x="115" y="155" width="45" height="20" rx="3" fill="#E85D04" opacity="0.15"/>
-  <line x1="137" y1="200" x2="137" y2="215" stroke="#E85D04" stroke-width="2" opacity="0.5"/>
-  <polygon points="133,205 141,205 137,195" fill="#E85D04" opacity="0.5"/>
-  <circle cx="200" cy="190" r="28" fill="#78909C" opacity="0.5"/>
-  <circle cx="200" cy="190" r="22" fill="#fff" opacity="0.5"/>
-  <line x1="200" y1="178" x2="200" y2="190" stroke="#E85D04" stroke-width="2" opacity="0.6"/>
-  <line x1="200" y1="190" x2="210" y2="195" stroke="#5C6BC0" stroke-width="1.5" opacity="0.5"/>
-  <rect x="194" y="160" width="12" height="10" rx="2" fill="#78909C" opacity="0.4"/>
-  <rect x="194" y="218" width="12" height="10" rx="2" fill="#78909C" opacity="0.4"/>
-  <rect x="250" y="170" width="50" height="65" rx="22" fill="#78909C" opacity="0.5"/>
-  <rect x="255" y="175" width="40" height="55" rx="18" fill="#fff" opacity="0.4"/>
-  <circle cx="275" cy="200" r="3" fill="#E85D04"/>
-  <path d="M137,238 Q137,230 137,225" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
-  <path d="M200,238 Q200,230 200,222" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
-  <path d="M275,238 Q275,232 275,228" stroke="#E85D04" stroke-width="1" opacity="0.3" fill="none"/>
+
+  <!-- Shadow under charging station -->
+  <ellipse cx="200" cy="345" rx="150" ry="16" fill="#000" opacity="0.08"/>
+
+  <!-- Base pad (angled 3D perspective) -->
+  <path d="M40 290 Q40 270 60 260 L340 260 Q360 270 360 290 L360 320 Q360 340 340 345 L60 345 Q40 340 40 320 Z" fill="url(#base13)" filter="url(#devShad13)"/>
+  <!-- Top surface -->
+  <path d="M50 275 Q50 262 65 258 L335 258 Q350 262 350 275 L350 285 Q350 290 335 292 L65 292 Q50 290 50 285 Z" fill="url(#padSurf13)"/>
+  <!-- Surface ring for phone charging area -->
+  <ellipse cx="140" cy="276" rx="35" ry="8" fill="none" stroke="#E0E0E0" stroke-width="1.5"/>
+  <!-- Surface ring for watch area -->
+  <ellipse cx="250" cy="276" rx="18" ry="6" fill="none" stroke="#E0E0E0" stroke-width="1.5"/>
+  <!-- Surface pad for earbuds area -->
+  <ellipse cx="320" cy="276" rx="20" ry="6" fill="none" stroke="#E0E0E0" stroke-width="1.5"/>
+
+  <!-- Phone stand (angled upright) -->
+  <g filter="url(#devShad13)">
+    <!-- Phone back -->
+    <rect x="108" y="95" width="68" height="170" rx="8" fill="#1A1A1A"/>
+    <!-- Phone screen -->
+    <rect x="112" y="100" width="60" height="158" rx="6" fill="url(#phoneScr13)"/>
+    <!-- Time display -->
+    <text x="142" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#FFF" font-weight="300">10:30</text>
+    <!-- Date -->
+    <text x="142" y="162" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#90CAF9">Monday, Sep 14</text>
+    <!-- Notification cards -->
+    <rect x="118" y="175" width="48" height="20" rx="4" fill="#FFF" opacity="0.15"/>
+    <rect x="118" y="200" width="48" height="20" rx="4" fill="#FFF" opacity="0.1"/>
+    <!-- Camera notch -->
+    <rect x="132" y="102" width="20" height="6" rx="3" fill="#111"/>
+    <circle cx="142" cy="105" r="2" fill="#333"/>
+    <!-- Charging indicator -->
+    <path d="M138 228 L142 222 L140 225 L144 225 L140 232 L142 228 Z" fill="#4CAF50" opacity="0.8"/>
+    <!-- Bottom home bar -->
+    <rect x="128" y="250" width="28" height="3" rx="1.5" fill="#444"/>
+  </g>
+
+  <!-- Smartwatch on circular pad -->
+  <g filter="url(#devShad13)">
+    <!-- Watch body -->
+    <rect x="236" y="185" width="32" height="38" rx="8" fill="#333"/>
+    <!-- Watch screen -->
+    <rect x="239" y="189" width="26" height="30" rx="6" fill="url(#watchFace13)"/>
+    <!-- Watch face elements -->
+    <circle cx="252" cy="204" r="10" fill="none" stroke="#333" stroke-width="0.5"/>
+    <!-- Hour markers -->
+    <line x1="252" y1="195" x2="252" y2="197" stroke="#333" stroke-width="1"/>
+    <line x1="252" y1="211" x2="252" y2="213" stroke="#333" stroke-width="1"/>
+    <line x1="243" y1="204" x2="245" y2="204" stroke="#333" stroke-width="1"/>
+    <line x1="259" y1="204" x2="261" y2="204" stroke="#333" stroke-width="1"/>
+    <!-- Watch hands -->
+    <line x1="252" y1="204" x2="252" y2="198" stroke="#333" stroke-width="1.2"/>
+    <line x1="252" y1="204" x2="257" y2="202" stroke="#333" stroke-width="0.8"/>
+    <circle cx="252" cy="204" r="1.5" fill="#E53935"/>
+    <!-- Watch crown button -->
+    <rect x="268" y="200" width="4" height="8" rx="2" fill="#555"/>
+    <!-- Watch band top -->
+    <rect x="240" y="168" width="24" height="20" rx="3" fill="#424242"/>
+    <!-- Watch band bottom -->
+    <rect x="240" y="221" width="24" height="20" rx="3" fill="#424242"/>
+    <!-- Band holes -->
+    <circle cx="252" cy="174" r="1" fill="#555"/>
+    <circle cx="252" cy="179" r="1" fill="#555"/>
+    <circle cx="252" cy="228" r="1" fill="#555"/>
+    <circle cx="252" cy="233" r="1" fill="#555"/>
+  </g>
+
+  <!-- Earbuds case -->
+  <g filter="url(#devShad13)">
+    <!-- Case body (pill shape, slightly open) -->
+    <ellipse cx="322" cy="225" rx="28" ry="18" fill="#F5F5F5"/>
+    <!-- Case lid (slightly open) -->
+    <path d="M295 218 Q295 200 322 198 Q349 200 349 218" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="0.5"/>
+    <!-- Hinge -->
+    <rect x="310" y="216" width="24" height="3" rx="1" fill="#E0E0E0"/>
+    <!-- Left earbud in case -->
+    <ellipse cx="311" cy="225" rx="8" ry="7" fill="#EEEEEE" stroke="#DDD" stroke-width="0.5"/>
+    <circle cx="311" cy="224" r="3" fill="#333" opacity="0.3"/>
+    <!-- Right earbud in case -->
+    <ellipse cx="333" cy="225" rx="8" ry="7" fill="#EEEEEE" stroke="#DDD" stroke-width="0.5"/>
+    <circle cx="333" cy="224" r="3" fill="#333" opacity="0.3"/>
+    <!-- LED on case front -->
+    <circle cx="322" cy="237" r="2" fill="#4CAF50" opacity="0.8"/>
+    <circle cx="322" cy="237" r="4" fill="#4CAF50" opacity="0.15"/>
+  </g>
+
+  <!-- LED indicator dots on base -->
+  <circle cx="140" cy="310" r="2.5" fill="#4CAF50" opacity="0.9"/>
+  <circle cx="140" cy="310" r="5" fill="#4CAF50" opacity="0.15"/>
+  <circle cx="250" cy="310" r="2.5" fill="#4CAF50" opacity="0.9"/>
+  <circle cx="250" cy="310" r="5" fill="#4CAF50" opacity="0.15"/>
+  <circle cx="320" cy="310" r="2.5" fill="#FF9800" opacity="0.9"/>
+  <circle cx="320" cy="310" r="5" fill="#FF9800" opacity="0.15"/>
+
+  <!-- Brand text on base front -->
+  <text x="200" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#BDBDBD" letter-spacing="3">CHARGE</text>
 </svg>

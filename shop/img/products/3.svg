@@ -1,16 +1,81 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <rect width="400" height="400" rx="12" fill="#FCE4EC"/>
-  <ellipse cx="200" cy="210" rx="110" ry="20" fill="#E91E63" opacity="0.15"/>
-  <rect x="100" y="200" width="200" height="60" rx="10" fill="#E91E63" opacity="0.8"/>
-  <rect x="100" y="195" width="200" height="15" rx="5" fill="#F48FB1"/>
-  <rect x="145" y="220" width="110" height="30" rx="6" fill="#fff"/>
-  <rect x="150" y="224" width="100" height="22" rx="4" fill="#FAFAFA"/>
-  <text x="200" y="242" text-anchor="middle" font-family="monospace" font-size="16" fill="#E91E63">0.00 kg</text>
-  <circle cx="155" cy="255" r="4" fill="#E85D04"/>
-  <circle cx="170" cy="255" r="4" fill="#F48FB1"/>
-  <rect x="120" y="160" width="160" height="40" rx="8" fill="#F48FB1" opacity="0.3"/>
-  <rect x="125" y="163" width="150" height="34" rx="6" fill="#fff" opacity="0.3"/>
-  <circle cx="200" cy="155" r="20" fill="#E85D04" opacity="0.3"/>
-  <circle cx="200" cy="155" r="14" fill="#FF8A65" opacity="0.2"/>
-  <ellipse cx="200" cy="265" rx="90" ry="8" fill="#E91E63" opacity="0.1"/>
+  <defs>
+    <linearGradient id="scaleTop3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <linearGradient id="scaleBody3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#BDBDBD"/>
+    </linearGradient>
+    <linearGradient id="glass3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.1)"/>
+    </linearGradient>
+    <linearGradient id="display3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A237E"/>
+      <stop offset="100%" stop-color="#0D1B3E"/>
+    </linearGradient>
+    <filter id="sh3">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <filter id="glow3">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="20" fill="#FCE4EC"/>
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="320" rx="120" ry="16" fill="rgba(0,0,0,0.06)"/>
+  <!-- Scale body - main platform -->
+  <ellipse cx="200" cy="260" rx="140" ry="28" fill="url(#scaleBody3)" filter="url(#sh3)"/>
+  <!-- Scale body side -->
+  <rect x="60" y="248" width="280" height="20" rx="0" fill="url(#scaleBody3)"/>
+  <ellipse cx="200" cy="268" rx="140" ry="28" fill="#BDBDBD"/>
+  <ellipse cx="200" cy="265" rx="138" ry="26" fill="#D5D5D5"/>
+  <!-- Thin profile edge -->
+  <rect x="62" y="258" width="276" height="14" fill="url(#scaleBody3)"/>
+  <!-- Bottom ellipse -->
+  <ellipse cx="200" cy="272" rx="138" ry="26" fill="#C0C0C0"/>
+  <!-- Glass weighing surface -->
+  <ellipse cx="200" cy="248" rx="130" ry="24" fill="url(#scaleTop3)"/>
+  <ellipse cx="200" cy="246" rx="126" ry="22" fill="url(#glass3)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+  <!-- Glass surface subtle reflection -->
+  <ellipse cx="175" cy="240" rx="50" ry="8" fill="white" opacity="0.15" transform="rotate(-5,175,240)"/>
+  <!-- LED Display area -->
+  <rect x="148" y="182" width="104" height="44" rx="8" fill="url(#display3)" filter="url(#sh3)"/>
+  <!-- Display inner border -->
+  <rect x="152" y="186" width="96" height="36" rx="6" fill="#0D1B3E"/>
+  <!-- LED digits "0.0g" with glow -->
+  <g filter="url(#glow3)">
+    <text x="200" y="212" text-anchor="middle" font-family="'Courier New', monospace" font-size="24" fill="#4FC3F7" font-weight="bold" letter-spacing="2">0.0</text>
+    <text x="248" y="212" text-anchor="end" font-family="'Courier New', monospace" font-size="14" fill="#4FC3F7">g</text>
+  </g>
+  <!-- Small indicator dots on display -->
+  <circle cx="160" cy="192" r="2" fill="#4FC3F7" opacity="0.6"/>
+  <circle cx="240" cy="192" r="2" fill="#4FC3F7" opacity="0.3"/>
+  <!-- Control buttons below display -->
+  <circle cx="172" cy="238" r="6" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="172" y="241" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#757575" font-weight="bold">T</text>
+  <circle cx="200" cy="238" r="6" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="200" y="241" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#757575" font-weight="bold">ON</text>
+  <circle cx="228" cy="238" r="6" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="228" y="241" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#757575" font-weight="bold">U</text>
+  <!-- Non-slip feet -->
+  <ellipse cx="130" cy="280" rx="10" ry="4" fill="#9E9E9E"/>
+  <ellipse cx="270" cy="280" rx="10" ry="4" fill="#9E9E9E"/>
+  <ellipse cx="170" cy="285" rx="8" ry="3" fill="#9E9E9E"/>
+  <ellipse cx="230" cy="285" rx="8" ry="3" fill="#9E9E9E"/>
+  <!-- Apple on scale for context -->
+  <g transform="translate(200,200)">
+    <ellipse cx="0" cy="0" rx="30" ry="26" fill="#E53935"/>
+    <ellipse cx="-8" cy="-4" rx="10" ry="12" fill="#EF5350" opacity="0.5"/>
+    <path d="M0,-26 C2,-36 8,-40 14,-38" fill="none" stroke="#5D4037" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="6" cy="-30" rx="8" ry="4" fill="#4CAF50" transform="rotate(25,6,-30)"/>
+    <!-- Apple highlight -->
+    <ellipse cx="-10" cy="-10" rx="6" ry="8" fill="white" opacity="0.15" transform="rotate(-20,-10,-10)"/>
+  </g>
 </svg>

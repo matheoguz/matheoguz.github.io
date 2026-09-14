@@ -1,30 +1,106 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <rect width="400" height="400" rx="12" fill="#FBE9E7"/>
-  <g transform="translate(-20, -10)">
-    <rect x="85" y="150" width="100" height="80" rx="6" fill="#E85D04" opacity="0.6"/>
-    <rect x="85" y="150" width="100" height="15" rx="4" fill="#FF8A65" opacity="0.4"/>
-    <line x1="95" y1="175" x2="95" y2="225" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="115" y1="175" x2="115" y2="225" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="135" y1="175" x2="135" y2="225" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="155" y1="175" x2="155" y2="225" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <rect x="115" y="155" width="40" height="6" rx="3" fill="#fff" opacity="0.5"/>
+  <defs>
+    <linearGradient id="box1g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D7CCC8"/>
+      <stop offset="100%" stop-color="#BCAAA4"/>
+    </linearGradient>
+    <linearGradient id="box2g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B0BEC5"/>
+      <stop offset="100%" stop-color="#90A4AE"/>
+    </linearGradient>
+    <linearGradient id="box3g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A1887F"/>
+      <stop offset="100%" stop-color="#8D6E63"/>
+    </linearGradient>
+    <filter id="boxShad11">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+    <filter id="softShad11">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="400" height="400" rx="12" fill="#FFF3E0"/>
+
+  <!-- Shadow under boxes -->
+  <ellipse cx="200" cy="355" rx="160" ry="14" fill="#000" opacity="0.06"/>
+
+  <!-- Box 1 (beige, back left) -->
+  <g filter="url(#boxShad11)">
+    <!-- Back face -->
+    <rect x="40" y="100" width="120" height="120" rx="6" fill="url(#box1g)"/>
+    <!-- Front face -->
+    <rect x="40" y="100" width="120" height="120" rx="6" fill="#D7CCC8"/>
+    <!-- Top edge fold line -->
+    <line x1="46" y1="108" x2="154" y2="108" stroke="#C4B4A8" stroke-width="1"/>
+    <!-- Fabric texture lines -->
+    <line x1="60" y1="115" x2="60" y2="218" stroke="#C8B8A8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="80" y1="115" x2="80" y2="218" stroke="#C8B8A8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="100" y1="115" x2="100" y2="218" stroke="#C8B8A8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="120" y1="115" x2="120" y2="218" stroke="#C8B8A8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="140" y1="115" x2="140" y2="218" stroke="#C8B8A8" stroke-width="0.5" opacity="0.4"/>
+    <!-- Handle -->
+    <rect x="72" y="155" width="56" height="16" rx="3" fill="#8D6E63"/>
+    <rect x="78" y="158" width="44" height="10" rx="2" fill="#A1887F" opacity="0.6"/>
+    <!-- Label tag -->
+    <rect x="80" y="192" width="40" height="18" rx="2" fill="#FFF8E1" stroke="#D7CCC8" stroke-width="1"/>
+    <line x1="90" y1="198" x2="110" y2="198" stroke="#BCAAA4" stroke-width="1"/>
+    <line x1="88" y1="203" x2="108" y2="203" stroke="#BCAAA4" stroke-width="0.8"/>
   </g>
-  <g transform="translate(30, 20)">
-    <rect x="115" y="155" width="100" height="80" rx="6" fill="#059669" opacity="0.5"/>
-    <rect x="115" y="155" width="100" height="15" rx="4" fill="#6EE7B7" opacity="0.3"/>
-    <line x1="125" y1="180" x2="125" y2="230" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="145" y1="180" x2="145" y2="230" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="165" y1="180" x2="165" y2="230" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="185" y1="180" x2="185" y2="230" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <rect x="145" y="160" width="40" height="6" rx="3" fill="#fff" opacity="0.5"/>
+
+  <!-- Box 2 (gray, middle, slightly open) -->
+  <g filter="url(#boxShad11)">
+    <!-- Box body -->
+    <rect x="140" y="120" width="120" height="130" rx="6" fill="url(#box2g)"/>
+    <!-- Open top flap -->
+    <path d="M140 120 Q140 105 155 100 L245 100 Q260 105 260 120" fill="#B0BEC5" stroke="#90A4AE" stroke-width="0.5"/>
+    <path d="M145 118 Q145 108 157 104 L243 104 Q255 108 255 118" fill="#CFD8DC" opacity="0.5"/>
+    <!-- Items peeking out -->
+    <rect x="158" y="106" width="30" height="18" rx="3" fill="#EF5350" opacity="0.7" transform="rotate(-8 173 115)"/>
+    <rect x="195" y="108" width="25" height="20" rx="3" fill="#42A5F5" opacity="0.6" transform="rotate(5 207 118)"/>
+    <circle cx="225" cy="112" r="8" fill="#FFC107" opacity="0.6"/>
+    <!-- Fabric texture -->
+    <line x1="160" y1="130" x2="160" y2="248" stroke="#9EAFB8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="180" y1="130" x2="180" y2="248" stroke="#9EAFB8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="200" y1="130" x2="200" y2="248" stroke="#9EAFB8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="220" y1="130" x2="220" y2="248" stroke="#9EAFB8" stroke-width="0.5" opacity="0.4"/>
+    <line x1="240" y1="130" x2="240" y2="248" stroke="#9EAFB8" stroke-width="0.5" opacity="0.4"/>
+    <!-- Handle -->
+    <rect x="172" y="175" width="56" height="16" rx="3" fill="#546E7A"/>
+    <rect x="178" y="178" width="44" height="10" rx="2" fill="#607D8B" opacity="0.6"/>
+    <!-- Label tag -->
+    <rect x="180" y="215" width="40" height="18" rx="2" fill="#FFF8E1" stroke="#B0BEC5" stroke-width="1"/>
+    <line x1="190" y1="221" x2="210" y2="221" stroke="#90A4AE" stroke-width="1"/>
+    <line x1="188" y1="226" x2="208" y2="226" stroke="#90A4AE" stroke-width="0.8"/>
   </g>
-  <g transform="translate(80, 50)">
-    <rect x="120" y="160" width="100" height="80" rx="6" fill="#3B82F6" opacity="0.5"/>
-    <rect x="120" y="160" width="100" height="15" rx="4" fill="#93C5FD" opacity="0.3"/>
-    <line x1="130" y1="185" x2="130" y2="235" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="150" y1="185" x2="150" y2="235" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="170" y1="185" x2="170" y2="235" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <line x1="190" y1="185" x2="190" y2="235" stroke="#fff" stroke-width="0.5" opacity="0.3"/>
-    <rect x="150" y="165" width="40" height="6" rx="3" fill="#fff" opacity="0.5"/>
+
+  <!-- Box 3 (brown, right front) -->
+  <g filter="url(#boxShad11)">
+    <rect x="240" y="140" width="120" height="120" rx="6" fill="url(#box3g)"/>
+    <!-- Top edge fold line -->
+    <line x1="246" y1="148" x2="354" y2="148" stroke="#7B5B4E" stroke-width="1"/>
+    <!-- Fabric texture -->
+    <line x1="260" y1="155" x2="260" y2="258" stroke="#7D5F52" stroke-width="0.5" opacity="0.4"/>
+    <line x1="280" y1="155" x2="280" y2="258" stroke="#7D5F52" stroke-width="0.5" opacity="0.4"/>
+    <line x1="300" y1="155" x2="300" y2="258" stroke="#7D5F52" stroke-width="0.5" opacity="0.4"/>
+    <line x1="320" y1="155" x2="320" y2="258" stroke="#7D5F52" stroke-width="0.5" opacity="0.4"/>
+    <line x1="340" y1="155" x2="340" y2="258" stroke="#7D5F52" stroke-width="0.5" opacity="0.4"/>
+    <!-- Handle -->
+    <rect x="272" y="195" width="56" height="16" rx="3" fill="#4E342E"/>
+    <rect x="278" y="198" width="44" height="10" rx="2" fill="#5D4037" opacity="0.6"/>
+    <!-- Label tag -->
+    <rect x="280" y="232" width="40" height="18" rx="2" fill="#FFF8E1" stroke="#8D6E63" stroke-width="1"/>
+    <line x1="290" y1="238" x2="310" y2="238" stroke="#8D6E63" stroke-width="1"/>
+    <line x1="288" y1="243" x2="308" y2="243" stroke="#8D6E63" stroke-width="0.8"/>
+    <!-- Reinforced bottom edge -->
+    <rect x="240" y="252" width="120" height="8" rx="3" fill="#795548" opacity="0.5"/>
   </g>
+
+  <!-- Bottom reinforced edges on other boxes -->
+  <rect x="40" y="212" width="120" height="8" rx="3" fill="#A1887F" opacity="0.4"/>
+  <rect x="140" y="242" width="120" height="8" rx="3" fill="#78909C" opacity="0.4"/>
+
+  <!-- "x3" badge -->
+  <circle cx="55" cy="85" r="18" fill="#FF7043" opacity="0.9"/>
+  <text x="55" y="91" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#FFF" font-weight="700">x3</text>
 </svg>

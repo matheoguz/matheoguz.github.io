@@ -1,22 +1,96 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
   <defs>
-    <linearGradient id="sunset8" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#E85D04" stop-opacity="0.5"/>
-      <stop offset="40%" stop-color="#FF8A65" stop-opacity="0.3"/>
-      <stop offset="70%" stop-color="#FFB74D" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#FFF3E0" stop-opacity="0.1"/>
+    <linearGradient id="sunsetProj" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#FF6F00" stop-opacity="0.5"/>
+      <stop offset="25%" stop-color="#FF8F00" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#FFA726" stop-opacity="0.25"/>
+      <stop offset="75%" stop-color="#FFCC80" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFF8E1" stop-opacity="0.05"/>
     </linearGradient>
+    <linearGradient id="sunsetBand1" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#D84315" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FF6F00" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="sunsetBand2" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#FF6F00" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FFA726" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="sunsetBand3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#FFA726" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFCC80" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="lampBody8" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <linearGradient id="lampInner8" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE0B2"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+    <filter id="sh8">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <filter id="warmGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="projClip">
+      <rect x="30" y="30" width="340" height="240"/>
+    </clipPath>
   </defs>
-  <rect width="400" height="400" rx="12" fill="#FFEBEE"/>
-  <ellipse cx="200" cy="130" rx="120" ry="90" fill="url(#sunset8)"/>
-  <rect x="100" y="80" width="200" height="8" rx="4" fill="#E85D04" opacity="0.15"/>
-  <rect x="90" y="100" width="220" height="6" rx="3" fill="#FF8A65" opacity="0.12"/>
-  <rect x="95" y="120" width="210" height="8" rx="4" fill="#FFB74D" opacity="0.12"/>
-  <rect x="105" y="140" width="190" height="6" rx="3" fill="#FFCC80" opacity="0.1"/>
-  <rect x="175" y="230" width="50" height="90" rx="25" fill="#E85D04"/>
-  <rect x="180" y="235" width="40" height="80" rx="20" fill="#FF8A65" opacity="0.3"/>
-  <circle cx="200" cy="230" r="18" fill="#FFB74D" opacity="0.7"/>
-  <circle cx="200" cy="230" r="12" fill="#FFCC80" opacity="0.5"/>
-  <ellipse cx="200" cy="325" rx="35" ry="8" fill="#E85D04" opacity="0.3"/>
-  <polygon points="185,225 215,225 280,80 120,80" fill="#FF8A65" opacity="0.03"/>
+  <rect width="400" height="400" rx="20" fill="#FBE9E7"/>
+  <!-- Projected sunset light bands on ceiling/wall -->
+  <g clip-path="url(#projClip)">
+    <!-- Warm ambient glow -->
+    <ellipse cx="200" cy="160" rx="170" ry="130" fill="url(#sunsetProj)"/>
+    <!-- Individual color bands -->
+    <ellipse cx="200" cy="200" rx="140" ry="40" fill="url(#sunsetBand1)" transform="rotate(-3,200,200)"/>
+    <ellipse cx="200" cy="170" rx="150" ry="35" fill="url(#sunsetBand2)" transform="rotate(2,200,170)"/>
+    <ellipse cx="200" cy="140" rx="145" ry="30" fill="url(#sunsetBand3)" transform="rotate(-1,200,140)"/>
+    <ellipse cx="200" cy="115" rx="130" ry="25" fill="#FFCC80" opacity="0.12" transform="rotate(1,200,115)"/>
+    <ellipse cx="200" cy="95" rx="110" ry="20" fill="#FFF8E1" opacity="0.1"/>
+    <!-- Extra warm band -->
+    <ellipse cx="200" cy="220" rx="120" ry="25" fill="#D84315" opacity="0.08" transform="rotate(-2,200,220)"/>
+  </g>
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="358" rx="50" ry="10" fill="rgba(0,0,0,0.08)"/>
+  <!-- Lamp body - cylindrical/pill shape -->
+  <rect x="170" y="260" width="60" height="90" rx="30" fill="url(#lampBody8)" filter="url(#sh8)"/>
+  <!-- Body highlight -->
+  <rect x="172" y="268" width="15" height="70" rx="7" fill="white" opacity="0.15"/>
+  <!-- Lens / projection window at top -->
+  <ellipse cx="200" cy="265" rx="28" ry="10" fill="#E0E0E0"/>
+  <ellipse cx="200" cy="263" rx="24" ry="8" fill="url(#lampInner8)" opacity="0.9"/>
+  <!-- Lens glow effect -->
+  <g filter="url(#warmGlow)">
+    <ellipse cx="200" cy="262" rx="16" ry="5" fill="#FF8F00" opacity="0.6"/>
+    <ellipse cx="200" cy="261" rx="8" ry="3" fill="#FFE0B2" opacity="0.4"/>
+  </g>
+  <!-- Lens glass detail -->
+  <ellipse cx="200" cy="262" rx="20" ry="6" fill="none" stroke="#FFCC80" stroke-width="0.5" opacity="0.5"/>
+  <!-- Light beam projecting upward (visible cone) -->
+  <polygon points="178,258 222,258 310,100 90,100" fill="#FF8F00" opacity="0.02"/>
+  <polygon points="182,258 218,258 280,120 120,120" fill="#FFA726" opacity="0.02"/>
+  <!-- Body decorative ring -->
+  <ellipse cx="200" cy="305" rx="30" ry="5" fill="none" stroke="#BDBDBD" stroke-width="1"/>
+  <!-- Bottom base -->
+  <ellipse cx="200" cy="348" rx="30" ry="6" fill="#BDBDBD"/>
+  <ellipse cx="200" cy="346" rx="28" ry="5" fill="#D5D5D5"/>
+  <!-- Non-slip ring on base -->
+  <ellipse cx="200" cy="348" rx="26" ry="4" fill="none" stroke="#9E9E9E" stroke-width="0.5"/>
+  <!-- Touch control button -->
+  <circle cx="200" cy="330" r="6" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="1"/>
+  <circle cx="200" cy="330" r="3" fill="#FF8F00" opacity="0.6"/>
+  <!-- USB port on back -->
+  <rect x="195" y="350" width="10" height="4" rx="1.5" fill="#9E9E9E"/>
+  <rect x="197" y="351" width="6" height="2" rx="1" fill="#757575"/>
+  <!-- Ambient light rays (decorative) -->
+  <line x1="200" y1="255" x2="200" y2="80" stroke="#FF8F00" stroke-width="0.5" opacity="0.06"/>
+  <line x1="200" y1="255" x2="130" y2="90" stroke="#FF8F00" stroke-width="0.5" opacity="0.05"/>
+  <line x1="200" y1="255" x2="270" y2="90" stroke="#FF8F00" stroke-width="0.5" opacity="0.05"/>
+  <line x1="200" y1="255" x2="100" y2="120" stroke="#FFA726" stroke-width="0.4" opacity="0.04"/>
+  <line x1="200" y1="255" x2="300" y2="120" stroke="#FFA726" stroke-width="0.4" opacity="0.04"/>
 </svg>
