@@ -116,9 +116,17 @@ h1{font-size:2rem;margin:2rem 0 0.5rem;color:var(--text)}
 </div>
 </div>
 <div class="toast" id="toast">Message envoye avec succes !</div>
-<div class="footer">
-<p>&copy; 2026 HomeVibe. Tous droits reserves. | <a href="/shop/legal/mentions-legales.html">Mentions Legales</a> | <a href="/shop/legal/cgv.html">CGV</a></p>
-</div>
+<footer style="background:var(--bg-alt);border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:0.85rem;margin-top:3rem">
+<p>&copy; 2026 HomeVibe. Tous droits réservés.</p>
+<p style="margin-top:0.5rem">
+<a href="/shop/legal/mentions-legales.html" style="color:var(--accent);margin:0 8px">Mentions Légales</a> |
+<a href="/shop/legal/cgv.html" style="color:var(--accent);margin:0 8px">CGV</a> |
+<a href="/shop/legal/confidentialite.html" style="color:var(--accent);margin:0 8px">Confidentialité</a> |
+<a href="/shop/legal/livraison.html" style="color:var(--accent);margin:0 8px">Livraison</a> |
+<a href="/shop/legal/retours.html" style="color:var(--accent);margin:0 8px">Retours</a> |
+<a href="/shop/legal/faq.html" style="color:var(--accent);margin:0 8px">FAQ</a>
+</p>
+</footer>
 <script>
 document.getElementById('contactForm').addEventListener('submit',function(e){e.preventDefault();const toast=document.getElementById('toast');toast.classList.add('show');this.reset();setTimeout(()=>toast.classList.remove('show'),3000)});
 </script>
