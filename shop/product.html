@@ -472,7 +472,8 @@ function getGalleryVariants(product){
 function renderProductPage(product){
  const disc=calcDiscount(product.price,product.oldPrice);
  const variants=getGalleryVariants(product);
- const imgSrc='/shop/img/products/'+product.id+'.svg';
+ const hasRealImages=product.images&&product.images[0]&&!product.images[0].endsWith('.svg');
+ const imgSrc=hasRealImages?product.images[0]:'/shop/img/products/'+product.id+'.svg';
 
  document.title='HomeVibe - '+product.name;
 
@@ -493,28 +494,35 @@ function renderProductPage(product){
     <div class="pd-grid">
      <!-- Left: Media -->
      <div class="fade-in">
-      <!-- Video Area -->
-      <div class="pd-video" id="pdVideo" onclick="playVideo()">
+      <!-- Main Image Area -->
+      <div class="pd-video" id="pdVideo" onclick="${product.video?'playVideo()':''}">
        <div class="pd-video-bg" style="background:${product.bg}">
-        <img src="${imgSrc}" alt="${escapeHtml(product.name)}" onerror="this.style.display='none'">
+        <img src="${imgSrc}" alt="${escapeHtml(product.name)}" style="width:100%;height:100%;object-fit:contain" onerror="this.style.display='none'">
        </div>
-       <div class="pd-video-overlay">
+       ${product.video?`<div class="pd-video-overlay">
         <div class="play-btn">
          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
         <span class="pd-video-label">Voir la video produit</span>
-       </div>
+       </div>`:''}
       </div>
 
       <!-- Gallery Thumbnails -->
       <div class="pd-gallery">
-       ${variants.map((v,i)=>`
-        <div class="pd-thumb ${i===0?'active':''}" onclick="selectThumb(${i})" title="${v.label}">
-         <div class="pd-thumb-inner" style="background:${product.bg};${v.filter!=='none'?'filter:'+v.filter+';':''}border-radius:var(--radius-sm)">
-          <img src="${imgSrc}" alt="${v.label}" ${v.filter!=='none'?'style="filter:'+v.filter+'"':''} onerror="this.style.display='none'">
-         </div>
-        </div>
-       `).join('')}
+       ${(hasRealImages?product.images:variants).map((v,i)=>{
+        if(hasRealImages){
+         const label=(product.imageLabels&&product.imageLabels[i])||'Vue '+(i+1);
+         return '<div class="pd-thumb '+(i===0?'active':'')+'" onclick="selectThumb('+i+')" title="'+label+'">' +
+          '<div class="pd-thumb-inner" style="background:'+product.bg+';border-radius:var(--radius-sm)">' +
+          '<img src="'+v+'" alt="'+label+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'">' +
+          '</div></div>';
+        } else {
+         return '<div class="pd-thumb '+(i===0?'active':'')+'" onclick="selectThumb('+i+')" title="'+v.label+'">' +
+          '<div class="pd-thumb-inner" style="background:'+product.bg+';'+(v.filter!=='none'?'filter:'+v.filter+';':'')+'border-radius:var(--radius-sm)">' +
+          '<img src="'+imgSrc+'" alt="'+v.label+'" '+(v.filter!=='none'?'style="filter:'+v.filter+'"':'')+'  onerror="this.style.display=\'none\'">' +
+          '</div></div>';
+        }
+       }).join('')}
       </div>
      </div>
 
@@ -617,8 +625,9 @@ function renderRelated(product){
      const stars='&#9733;'.repeat(Math.floor(p.rating))+(p.rating%1>=0.5?'&#9734;':'');
      return `
      <a href="product.html?id=${p.id}" class="product-card">
-      <div class="product-img">
-       <div class="product-img-bg" style="background:${p.bg}"></div>
+      <div class="product-img" style="overflow:hidden">
+       <img src="${p.images&&p.images[0]?p.images[0]:'/shop/img/products/'+p.id+'.svg'}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">
+       <div class="product-img-bg" style="background:${p.bg};display:none"></div>
        ${p.trend?'<div class="product-badge">&#x1F525; Populaire</div>':''}
        <div class="product-discount-badge">-${disc}%</div>
       </div>
@@ -730,10 +739,17 @@ function selectThumb(idx){
  currentThumb=idx;
  const product=currentProduct;
  if(!product) return;
- const variants=getGalleryVariants(product);
- const v=variants[idx];
+ const hasRealImages=product.images&&product.images[0]&&!product.images[0].endsWith('.svg');
  const videoEl=document.querySelector('.pd-video-bg');
- if(videoEl) videoEl.style.filter=v.filter;
+ if(hasRealImages&&product.images[idx]){
+  const img=videoEl?videoEl.querySelector('img'):null;
+  if(img){img.src=product.images[idx];img.style.display='';}
+  if(videoEl) videoEl.style.filter='none';
+ } else {
+  const variants=getGalleryVariants(product);
+  const v=variants[idx];
+  if(videoEl) videoEl.style.filter=v.filter;
+ }
  document.querySelectorAll('.pd-thumb').forEach((t,i)=>{
   t.classList.toggle('active',i===idx);
  });

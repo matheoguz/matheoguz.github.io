@@ -551,7 +551,7 @@ function renderProducts(){
   return `
   <div class="product-card fade-in" data-cat="${p.cat}" data-id="${p.id}" data-name="${p.name.toLowerCase()}">
    <a href="product.html?id=${p.id}" class="product-img" style="display:block;cursor:pointer">
-    <img src="img/products/${p.id}.svg" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">
+    <img src="${p.images&&p.images[0]?p.images[0]:'img/products/'+p.id+'.svg'}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display=''">
     <div class="product-img-bg" style="background:${p.bg};display:none"></div>
     ${p.trend?'<div class="product-badge">&#x1F525; Populaire</div>':''}
     <div class="product-discount">-${disc}%</div>
