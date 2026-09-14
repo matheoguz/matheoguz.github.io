@@ -85,25 +85,38 @@ ul{list-style:none}
   .pd-grid{grid-template-columns:1fr;gap:24px}
 }
 
-/* ── VIDEO AREA ── */
-.pd-video{position:relative;width:100%;aspect-ratio:16/10;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;border:1px solid var(--border)}
-.pd-video-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.pd-video-bg img{width:60%;height:60%;object-fit:contain}
-.pd-video-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:var(--transition)}
-.pd-video:hover .pd-video-overlay{background:rgba(0,0,0,0.15)}
-.play-btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;transition:var(--transition);box-shadow:var(--shadow-lg)}
-.pd-video:hover .play-btn{transform:scale(1.1);background:var(--accent)}
-.pd-video:hover .play-btn svg{color:#fff}
-.play-btn svg{margin-left:4px;color:var(--accent)}
-.pd-video-label{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:0.5px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,0.3)}
+/* ── CAROUSEL ── */
+.pd-carousel{position:relative;width:100%;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);background:var(--bg-alt)}
+.pd-carousel-track{display:flex;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);will-change:transform}
+.pd-carousel-track.dragging{transition:none}
+.pd-carousel-slide{min-width:100%;aspect-ratio:1/1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pd-carousel-slide img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.pd-carousel-slide video{width:100%;height:100%;object-fit:contain;background:#000}
+.pd-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:var(--transition);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.pd-carousel-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 16px rgba(232,93,4,0.3)}
+.pd-carousel-arrow:hover svg{stroke:#fff}
+.pd-carousel-arrow svg{stroke:var(--text);width:20px;height:20px}
+.pd-carousel-arrow.prev{left:10px}
+.pd-carousel-arrow.next{right:10px}
+.pd-carousel-dots{display:flex;justify-content:center;gap:8px;padding:14px 0}
+.pd-carousel-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:var(--transition);border:none}
+.pd-carousel-dot.active{background:var(--accent);transform:scale(1.2)}
+.pd-carousel-dot:hover{background:var(--accent-hover)}
+.pd-carousel-counter{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;z-index:5}
 
-/* ── GALLERY ── */
-.pd-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+/* ── THUMBNAILS ── */
+.pd-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .pd-thumb{aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;border:2px solid transparent;transition:var(--transition);position:relative}
 .pd-thumb.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,93,4,0.2)}
 .pd-thumb:hover{border-color:var(--accent)}
 .pd-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.pd-thumb-inner img{width:70%;height:70%;object-fit:contain}
+.pd-thumb-inner img{width:100%;height:100%;object-fit:cover}
+
+@media(max-width:868px){
+  .pd-carousel-arrow{width:36px;height:36px}
+  .pd-carousel-arrow.prev{left:6px}
+  .pd-carousel-arrow.next{right:6px}
+}
 
 /* ── PRODUCT INFO ── */
 .pd-info{display:flex;flex-direction:column;gap:16px}
@@ -494,34 +507,40 @@ function renderProductPage(product){
     <div class="pd-grid">
      <!-- Left: Media -->
      <div class="fade-in">
-      <!-- Main Image Area -->
-      <div class="pd-video" id="pdVideo" onclick="${product.video?'playVideo()':''}">
-       <div class="pd-video-bg" style="background:${product.bg}">
-        <img src="${imgSrc}" alt="${escapeHtml(product.name)}" style="width:100%;height:100%;object-fit:contain" onerror="this.style.display='none'">
+      <!-- Image/Video Carousel -->
+      <div class="pd-carousel" id="pdCarousel">
+       <div class="pd-carousel-track" id="pdTrack">
+        ${(hasRealImages?product.images:[imgSrc]).map((src,i)=>{
+         const label=(product.imageLabels&&product.imageLabels[i])||'Vue '+(i+1);
+         return '<div class="pd-carousel-slide" style="background:'+product.bg+'">' +
+          '<img src="'+src+'" alt="'+escapeHtml(product.name)+' - '+label+'" onerror="this.style.display=\'none\'">' +
+         '</div>';
+        }).join('')}
+        ${product.video?'<div class="pd-carousel-slide" style="background:#000"><video src="'+product.video+'" controls playsinline preload="metadata" poster="'+imgSrc+'"></video></div>':''}
        </div>
-       ${product.video?`<div class="pd-video-overlay">
-        <div class="play-btn">
-         <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-        <span class="pd-video-label">Voir la video produit</span>
-       </div>`:''}
+       <button class="pd-carousel-arrow prev" onclick="carouselNav(-1)" aria-label="Image precedente">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+       </button>
+       <button class="pd-carousel-arrow next" onclick="carouselNav(1)" aria-label="Image suivante">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+       </button>
+       <div class="pd-carousel-counter" id="pdCounter">1 / ${(hasRealImages?product.images.length:1)+(product.video?1:0)}</div>
+      </div>
+      <div class="pd-carousel-dots" id="pdDots">
+       ${(hasRealImages?product.images:[imgSrc]).map((_,i)=>
+        '<button class="pd-carousel-dot '+(i===0?'active':'')+'" onclick="carouselGo('+i+')" aria-label="Image '+(i+1)+'"></button>'
+       ).join('')}
+       ${product.video?'<button class="pd-carousel-dot" onclick="carouselGo('+(hasRealImages?product.images.length:1)+')" aria-label="Video"></button>':''}
       </div>
 
       <!-- Gallery Thumbnails -->
       <div class="pd-gallery">
-       ${(hasRealImages?product.images:variants).map((v,i)=>{
-        if(hasRealImages){
-         const label=(product.imageLabels&&product.imageLabels[i])||'Vue '+(i+1);
-         return '<div class="pd-thumb '+(i===0?'active':'')+'" onclick="selectThumb('+i+')" title="'+label+'">' +
-          '<div class="pd-thumb-inner" style="background:'+product.bg+';border-radius:var(--radius-sm)">' +
-          '<img src="'+v+'" alt="'+label+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'">' +
-          '</div></div>';
-        } else {
-         return '<div class="pd-thumb '+(i===0?'active':'')+'" onclick="selectThumb('+i+')" title="'+v.label+'">' +
-          '<div class="pd-thumb-inner" style="background:'+product.bg+';'+(v.filter!=='none'?'filter:'+v.filter+';':'')+'border-radius:var(--radius-sm)">' +
-          '<img src="'+imgSrc+'" alt="'+v.label+'" '+(v.filter!=='none'?'style="filter:'+v.filter+'"':'')+'  onerror="this.style.display=\'none\'">' +
-          '</div></div>';
-        }
+       ${(hasRealImages?product.images:[imgSrc]).map((src,i)=>{
+        const label=(product.imageLabels&&product.imageLabels[i])||'Vue '+(i+1);
+        return '<div class="pd-thumb '+(i===0?'active':'')+'" onclick="carouselGo('+i+')" title="'+label+'">' +
+         '<div class="pd-thumb-inner" style="background:'+product.bg+'">' +
+         '<img src="'+src+'" alt="'+label+'" onerror="this.style.display=\'none\'">' +
+         '</div></div>';
        }).join('')}
       </div>
      </div>
@@ -734,30 +753,54 @@ function renderNotFound(){
 }
 
 /* ── GALLERY INTERACTION ── */
-let currentThumb=0;
-function selectThumb(idx){
- currentThumb=idx;
- const product=currentProduct;
- if(!product) return;
- const hasRealImages=product.images&&product.images[0]&&!product.images[0].endsWith('.svg');
- const videoEl=document.querySelector('.pd-video-bg');
- if(hasRealImages&&product.images[idx]){
-  const img=videoEl?videoEl.querySelector('img'):null;
-  if(img){img.src=product.images[idx];img.style.display='';}
-  if(videoEl) videoEl.style.filter='none';
- } else {
-  const variants=getGalleryVariants(product);
-  const v=variants[idx];
-  if(videoEl) videoEl.style.filter=v.filter;
- }
- document.querySelectorAll('.pd-thumb').forEach((t,i)=>{
-  t.classList.toggle('active',i===idx);
- });
+/* ── CAROUSEL LOGIC ── */
+let carouselIdx=0;
+let carouselTotal=0;
+
+function carouselGo(idx){
+ const track=document.getElementById('pdTrack');
+ if(!track) return;
+ carouselTotal=track.children.length;
+ if(idx<0) idx=carouselTotal-1;
+ if(idx>=carouselTotal) idx=0;
+ carouselIdx=idx;
+ track.style.transform='translateX(-'+idx*100+'%)';
+ document.querySelectorAll('.pd-carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+ document.querySelectorAll('.pd-thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+ const counter=document.getElementById('pdCounter');
+ if(counter) counter.textContent=(idx+1)+' / '+carouselTotal;
 }
 
-function playVideo(){
- showToast('Apercu video bientot disponible');
+function carouselNav(dir){
+ carouselGo(carouselIdx+dir);
 }
+
+(function(){
+ var startX=0,startY=0,isDragging=false;
+ document.addEventListener('touchstart',function(e){
+  var carousel=document.getElementById('pdCarousel');
+  if(!carousel||!carousel.contains(e.target)) return;
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+  isDragging=true;
+ },{passive:true});
+ document.addEventListener('touchend',function(e){
+  if(!isDragging) return;
+  isDragging=false;
+  var dx=e.changedTouches[0].clientX-startX;
+  var dy=e.changedTouches[0].clientY-startY;
+  if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){
+   carouselNav(dx<0?1:-1);
+  }
+ },{passive:true});
+})();
+
+document.addEventListener('keydown',function(e){
+ var carousel=document.getElementById('pdCarousel');
+ if(!carousel) return;
+ if(e.key==='ArrowLeft') carouselNav(-1);
+ if(e.key==='ArrowRight') carouselNav(1);
+});
 
 /* ── QUANTITY ── */
 let qty=1;
