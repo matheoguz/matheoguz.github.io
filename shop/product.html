@@ -92,6 +92,7 @@ ul{list-style:none}
 .pd-carousel-slide{min-width:100%;aspect-ratio:1/1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pd-carousel-slide img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
 .pd-carousel-slide video{width:100%;height:100%;object-fit:contain;background:#000}
+.pd-carousel-slide iframe{width:100%;height:100%;border:none;background:#000}
 .pd-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:var(--transition);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 .pd-carousel-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 16px rgba(232,93,4,0.3)}
 .pd-carousel-arrow:hover svg{stroke:#fff}
@@ -516,7 +517,7 @@ function renderProductPage(product){
           '<img src="'+src+'" alt="'+escapeHtml(product.name)+' - '+label+'" onerror="this.style.display=\'none\'">' +
          '</div>';
         }).join('')}
-        ${product.video?'<div class="pd-carousel-slide" style="background:#000"><video src="'+product.video+'" controls playsinline preload="metadata" poster="'+imgSrc+'"></video></div>':''}
+        ${product.video?'<div class="pd-carousel-slide" style="background:#000">'+(product.video.includes('youtube.com/embed')?'<iframe src="'+product.video+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe>':'<video src="'+product.video+'" controls playsinline preload="metadata" poster="'+imgSrc+'"></video>')+'</div>':''}
        </div>
        <button class="pd-carousel-arrow prev" onclick="carouselNav(-1)" aria-label="Image precedente">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -542,6 +543,7 @@ function renderProductPage(product){
          '<img src="'+src+'" alt="'+label+'" onerror="this.style.display=\'none\'">' +
          '</div></div>';
        }).join('')}
+       ${product.video?'<div class="pd-thumb" onclick="carouselGo('+(hasRealImages?product.images.length:1)+')" title="Vidéo"><div class="pd-thumb-inner" style="background:#000;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="#E85D04"><polygon points="5,3 19,12 5,21"/></svg></div></div>':''}
       </div>
      </div>
 
