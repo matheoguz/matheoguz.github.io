@@ -19,10 +19,10 @@ const products=[
   desc:"Un coupe-légumes révolutionnaire qui transforme votre préparation en un jeu d'enfant. Avec ses 5 lames interchangeables en acier inoxydable, découpez, râpez et émincez tous vos légumes en quelques secondes. Design ergonomique et antidérapant pour une utilisation sécurisée au quotidien.",
   features:["5 lames interchangeables","Acier inoxydable","Base antidérapante","Récipient 1.5L intégré","Compatible lave-vaisselle"],
   images:[
-    "/shop/img/products/1.svg",
-    "/shop/img/products/1.svg",
-    "/shop/img/products/1.svg",
-    "/shop/img/products/1.svg"
+    "https://m.media-amazon.com/images/I/8188vceUukL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71k8MzBCPvL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/81mI8stM1CL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71lGo6LSURL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Vue latérale","Vue arrière","Détail lames"],
   video:null,
@@ -49,10 +49,10 @@ const products=[
   desc:"Emportez vos smoothies partout avec ce mixeur rechargeable par USB. Puissant moteur de 380ml qui mixe fruits, légumes et glace en 30 secondes. Parfait pour le bureau, la salle de sport ou en voyage. Batterie longue durée pour jusqu'à 15 utilisations.",
   features:["Rechargeable USB-C","Capacité 380ml","6 lames en inox","Autonomie 15 smoothies","Étanche et portable"],
   images:[
-    "/shop/img/products/2.svg",
-    "/shop/img/products/2.svg",
-    "/shop/img/products/2.svg",
-    "/shop/img/products/2.svg"
+    "https://m.media-amazon.com/images/I/71emWdAZ+5L.jpg",
+    "https://m.media-amazon.com/images/I/712iyQPKNiL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71Bo4i5L2ML._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61vVIqHSf6L._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","En utilisation","Accessoires","Vue de côté"],
   video:null,
@@ -79,10 +79,10 @@ const products=[
   desc:"Précision au gramme près pour des recettes toujours réussies. Écran LED rétroéclairé, fonction tare automatique et conversion instantanée entre grammes, onces et millilitres. Surface en verre trempé ultra-fine et élégante qui s'intègre parfaitement dans votre cuisine.",
   features:["Précision 1g","Écran LED rétroéclairé","Fonction tare","4 unités de mesure","Surface verre trempé"],
   images:[
-    "/shop/img/products/3.svg",
-    "/shop/img/products/3.svg",
-    "/shop/img/products/3.svg",
-    "/shop/img/products/3.svg"
+    "https://m.media-amazon.com/images/I/71UfJtu3sYL.jpg",
+    "https://m.media-amazon.com/images/I/811+6YF8W5L.jpg",
+    "https://m.media-amazon.com/images/I/71goJOfmHPL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61J6qGjDEQL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue dessus","Vue profil","Écran digital","En utilisation"],
   video:null,
@@ -108,10 +108,10 @@ const products=[
   desc:"Fini les bocaux impossibles à ouvrir ! Cet ouvre-bocal électrique s'adapte à tous les formats de couvercles de 3 à 9 cm. Un simple appui suffit pour ouvrir même les bocaux les plus récalcitrants. Indispensable pour les personnes âgées et tous ceux qui veulent gagner du temps.",
   features:["Ouverture automatique","Couvercles 3-9 cm","Batterie rechargeable","1 bouton suffit","Idéal seniors"],
   images:[
-    "/shop/img/products/4.svg",
-    "/shop/img/products/4.svg",
-    "/shop/img/products/4.svg",
-    "/shop/img/products/4.svg"
+    "https://m.media-amazon.com/images/I/71eo+8hI+fL.jpg",
+    "https://m.media-amazon.com/images/I/61E-Ig+YP3L._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71XGe4JZMIL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61vBvE2NOGL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","En action","Taille ajustable","Vue de dessous"],
   video:null,
@@ -138,10 +138,10 @@ const products=[
   desc:"Transformez votre chambre en galaxie avec ce projecteur LED nouvelle génération. 16 millions de couleurs, rotation à 360 degrés et synchronisation musicale via Bluetooth. Commande par télécommande ou application smartphone. L'expérience immersive la plus virale de TikTok.",
   features:["16 millions de couleurs","Bluetooth & musique","Télécommande incluse","Rotation 360°","Minuterie programmable"],
   images:[
-    "/shop/img/products/5.svg",
-    "/shop/img/products/5.svg",
-    "/shop/img/products/5.svg",
-    "/shop/img/products/5.svg"
+    "https://m.media-amazon.com/images/I/71uynzePIxL.jpg",
+    "https://m.media-amazon.com/images/I/91hIlAZuQjL._AC_UL450_SY450_QL70_.jpg",
+    "https://m.media-amazon.com/images/I/71TVxRl5RJL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71VDvSXnURL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Le projecteur","Ambiance chambre","Couleurs variées","Mode galaxie"],
   video:null,
@@ -169,10 +169,10 @@ const products=[
   desc:"10 mètres de lumière RGB intelligente, découpable et adhésif pour s'adapter à toutes vos surfaces. Compatible Alexa et Google Home, contrôlez vos lumières à la voix ou via l'application. Plus de 300 modes d'éclairage et synchronisation musicale pour des soirées inoubliables.",
   features:["10 mètres","Compatible Alexa/Google","300+ modes","Découpable","Adhésif 3M"],
   images:[
-    "/shop/img/products/6.svg",
-    "/shop/img/products/6.svg",
-    "/shop/img/products/6.svg",
-    "/shop/img/products/6.svg"
+    "https://sc04.alicdn.com/kf/H50a101de5a4a49318b1a9dd7fd17d0036.jpeg",
+    "https://m.media-amazon.com/images/I/71WGTrdfX1L._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/81tXlYfKB0L._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71UVtQHbGIL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Le rouleau","Installation murale","Mode ambiance","Application"],
   video:null,
@@ -199,10 +199,10 @@ const products=[
   desc:"Reproduction fidèle de la surface lunaire imprimée en 3D avec un rendu ultra-réaliste. 16 couleurs ajustables par télécommande, intensité variable pour une ambiance douce et apaisante. Rechargeable par USB avec une autonomie de 8 heures. Le cadeau parfait pour les rêveurs.",
   features:["Impression 3D réaliste","16 couleurs","Télécommande","Autonomie 8h","Rechargeable USB"],
   images:[
-    "/shop/img/products/7.svg",
-    "/shop/img/products/7.svg",
-    "/shop/img/products/7.svg",
-    "/shop/img/products/7.svg"
+    "https://m.media-amazon.com/images/I/51NlSnOaDDL.jpg",
+    "https://m.media-amazon.com/images/I/61+OwdeP+oL._AC_UF1000,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71hxJXn-LBL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61vIel6yGLL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Détail texture","Mode chaud","Avec support"],
   video:null,
@@ -228,10 +228,10 @@ const products=[
   desc:"Recréez les couleurs magiques d'un coucher de soleil dans votre intérieur. Projection LED haute définition avec rotation ajustable pour un effet panoramique saisissant. Idéale pour la méditation, le yoga ou simplement créer une ambiance chaleureuse et photogénique.",
   features:["Projection LED HD","Rotation 180°","USB alimenté","4 filtres couleur","Idéal photos/vidéos"],
   images:[
-    "/shop/img/products/8.svg",
-    "/shop/img/products/8.svg",
-    "/shop/img/products/8.svg",
-    "/shop/img/products/8.svg"
+    "https://images-na.ssl-images-amazon.com/images/I/714XY3e2EBS.jpg",
+    "https://m.media-amazon.com/images/I/61B8bbnMBVL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71m5Rj5bfGL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71oFnlWvQzL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["La veilleuse","Ambiance salon","Mode coucher de soleil","Filtre arc-en-ciel"],
   video:null,
@@ -257,10 +257,10 @@ const products=[
   desc:"Système modulable de rangement qui s'adapte à tous vos tiroirs. Séparateurs ajustables en bambou écologique et durable. Organisez cuisine, bureau, salle de bain ou dressing en quelques minutes. Fini le désordre, chaque objet trouve enfin sa place.",
   features:["Bambou écologique","Modulable","S'adapte à tout tiroir","Facile à installer","Lot de 6 séparateurs"],
   images:[
-    "/shop/img/products/9.svg",
-    "/shop/img/products/9.svg",
-    "/shop/img/products/9.svg",
-    "/shop/img/products/9.svg"
+    "https://m.media-amazon.com/images/I/71ezvI0OlnL.jpg",
+    "https://m.media-amazon.com/images/I/81uHq7xhdFL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71YbGK4YURL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71jIY+DwVCL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue ensemble","Dans tiroir cuisine","Configuration bureau","Détail bambou"],
   video:null,
@@ -286,10 +286,10 @@ const products=[
   desc:"Support mural à aimants ultra-puissants pour ranger couteaux, outils ou clés sans percer. Installation adhésive en 30 secondes, tient jusqu'à 5 kg par aimant. Design minimaliste en acier brossé qui s'intègre à tous les intérieurs. Libérez votre plan de travail.",
   features:["Aimants néodyme","Tient 5 kg","Sans percer","Acier brossé","Installation 30 sec"],
   images:[
-    "/shop/img/products/10.svg",
-    "/shop/img/products/10.svg",
-    "/shop/img/products/10.svg",
-    "/shop/img/products/10.svg"
+    "https://i.etsystatic.com/12328946/r/il/365631/3942801370/il_fullxfull.3942801370_713h.jpg",
+    "https://m.media-amazon.com/images/I/71xSKVJBTjL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71E2FjGNt1L._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61Kk8xwYBXL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Avec couteaux","Installation","Vue de profil"],
   video:null,
@@ -315,10 +315,10 @@ const products=[
   desc:"Lot de 3 boîtes de rangement pliables en tissu premium avec poignées renforcées. Se replient à plat quand vous n'en avez pas besoin. Parfaites pour vêtements, jouets, livres ou accessoires. Structure rigide avec couvercle pour un empilage facile et un intérieur toujours ordonné.",
   features:["Lot de 3","Pliables à plat","Tissu premium","Poignées renforcées","Couvercle intégré"],
   images:[
-    "/shop/img/products/11.svg",
-    "/shop/img/products/11.svg",
-    "/shop/img/products/11.svg",
-    "/shop/img/products/11.svg"
+    "https://m.media-amazon.com/images/I/81zVIUftMTL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/81JxXcIqFqL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71F-HxGLFnL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/81B2y-iLaeL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Lot de 3","Pliées à plat","Avec contenu","Empilées"],
   video:null,
@@ -345,10 +345,10 @@ const products=[
   desc:"Rangez jusqu'à 6 paires de chaussures sur votre mur avec ce système adhésif innovant. Aucun perçage nécessaire, installation en 2 minutes. Design moderne et épuré qui transforme votre entrée. Supporte baskets, talons et chaussures de ville. Économisez un espace précieux au sol.",
   features:["6 paires max","Sans percer","Adhésif ultra-fort","Design épuré","Installation 2 min"],
   images:[
-    "/shop/img/products/12.svg",
-    "/shop/img/products/12.svg",
-    "/shop/img/products/12.svg",
-    "/shop/img/products/12.svg"
+    "https://m.media-amazon.com/images/I/71zoS9N-onL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/816nFZrXiyL.jpg",
+    "https://m.media-amazon.com/images/I/71Oqx-V+xzL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71L7nJcrWYL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Installé au mur","Avec chaussures","Vue de côté"],
   video:null,
@@ -374,10 +374,10 @@ const products=[
   desc:"Station de charge sans fil pour smartphone, montre connectée et écouteurs simultanément. Compatible Qi universel avec charge rapide 15W. LED indicatrice discrète et protection contre la surchauffe. Le hub de charge élégant qui remplace tous vos câbles sur votre table de nuit.",
   features:["3 appareils en même temps","Charge rapide 15W","Compatible Qi","Anti-surchauffe","LED discrète"],
   images:[
-    "/shop/img/products/13.svg",
-    "/shop/img/products/13.svg",
-    "/shop/img/products/13.svg",
-    "/shop/img/products/13.svg"
+    "https://m.media-amazon.com/images/I/61PLq4YcMKL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71Mhv1CUYeL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61m9xRRKdsL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61PVPGnIG2L._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Avec appareils","Vue de profil","LED indicatrice"],
   video:null,
@@ -404,10 +404,10 @@ const products=[
   desc:"Aimant néodyme ultra-puissant compatible avec tous les smartphones. Fixation sur grille de ventilation avec clip universel renforcé. Rotation 360 degrés pour une orientation parfaite. Installation en 5 secondes, prise en main sécurisée même sur routes sinueuses.",
   features:["Aimant néodyme","Clip grille ventilation","Rotation 360°","Compatible tous téléphones","Installation 5 sec"],
   images:[
-    "/shop/img/products/14.svg",
-    "/shop/img/products/14.svg",
-    "/shop/img/products/14.svg",
-    "/shop/img/products/14.svg"
+    "https://m.media-amazon.com/images/I/61aewgh52uL.jpg",
+    "https://www.syncwire.com/cdn/shop/files/Magnetic-Phone-Car-Mount-Universal-Dashboard-Windshield-Car-Phone-Holder.webp?v=1714027746",
+    "https://m.media-amazon.com/images/I/71K8GJg8SQL._AC_UF894,1000_QL80_.jpg",
+    "https://www.syncwire.com/cdn/shop/files/Syncwire-Magnetic-Car-Phone-Holder-for-Dashboard-Black.webp?v=1714027629"
   ],
   imageLabels:["Vue principale","Installé en voiture","Rotation","Aimant détail"],
   video:null,
@@ -434,10 +434,10 @@ const products=[
   desc:"Dites adieu au chaos des câbles sur votre bureau. Cet organisateur en silicone souple accueille jusqu'à 7 câbles de différentes tailles. Base adhésive repositionnable et design compact. Gardez vos câbles USB, chargeurs et écouteurs toujours à portée de main, sans nœuds.",
   features:["7 emplacements","Silicone souple","Adhésif repositionnable","Design compact","Compatible tous câbles"],
   images:[
-    "/shop/img/products/15.svg",
-    "/shop/img/products/15.svg",
-    "/shop/img/products/15.svg",
-    "/shop/img/products/15.svg"
+    "https://m.media-amazon.com/images/I/61-eX0v9tiL.jpg",
+    "https://m.media-amazon.com/images/I/61ny-K6-AAL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71u7LW2hNsL._AC_UF894,1000_QL80_.jpg",
+    "https://i.ebayimg.com/images/g/o4YAAOSwv5JiILap/s-l1200.jpg"
   ],
   imageLabels:["Vue principale","Sur bureau","Avec câbles","Détail silicone"],
   video:null,
@@ -463,10 +463,10 @@ const products=[
   desc:"Écouteurs true wireless ultra-compacts avec son stéréo haute fidélité et réduction de bruit passive. 24 heures d'autonomie totale avec le boîtier de charge. Étanches IPX5 pour le sport et la pluie. Appairage instantané Bluetooth 5.3 et microphone intégré pour vos appels.",
   features:["Bluetooth 5.3","24h autonomie totale","IPX5 étanche","Réduction de bruit","Micro intégré"],
   images:[
-    "/shop/img/products/16.svg",
-    "/shop/img/products/16.svg",
-    "/shop/img/products/16.svg",
-    "/shop/img/products/16.svg"
+    "https://m.media-amazon.com/images/I/510VJ7tnsfL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/51wWddxmdnL._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/61Wy8BTYXML._AC_UF894,1000_QL80_.jpg",
+    "https://m.media-amazon.com/images/I/71zny7BTRhL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Boîtier et écouteurs","Dans l'oreille","Boîtier ouvert","Vue de dessus"],
   video:null,
