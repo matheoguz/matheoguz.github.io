@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="jar4" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(200,230,255,0.5)"/>
+      <stop offset="25%" stop-color="rgba(255,255,255,0.2)"/>
+      <stop offset="75%" stop-color="rgba(200,230,255,0.1)"/>
+      <stop offset="100%" stop-color="rgba(200,230,255,0.4)"/>
+    </linearGradient>
+    <linearGradient id="device4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#BDBDBD"/>
+    </linearGradient>
+    <linearGradient id="grip4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E0E0E0"/>
+      <stop offset="100%" stop-color="#9E9E9E"/>
+    </linearGradient>
+    <linearGradient id="jarContent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C62828"/>
+      <stop offset="100%" stop-color="#8E2020"/>
+    </linearGradient>
+    <linearGradient id="lid4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD54F"/>
+      <stop offset="100%" stop-color="#F9A825"/>
+    </linearGradient>
+    <filter id="sh4">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.13"/>
+    </filter>
+    <clipPath id="jarClip">
+      <rect x="135" y="190" width="130" height="155" rx="12"/>
+    </clipPath>
+  </defs>
+  <rect width="400" height="400" rx="20" fill="#FFF8E1"/>
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="355" rx="90" ry="14" fill="rgba(0,0,0,0.07)"/>
+  <!-- Glass jar body -->
+  <rect x="135" y="190" width="130" height="155" rx="12" fill="rgba(220,240,255,0.3)" stroke="rgba(176,196,222,0.4)" stroke-width="1.5" filter="url(#sh4)"/>
+  <!-- Jar content (jam/sauce) -->
+  <g clip-path="url(#jarClip)">
+    <rect x="137" y="240" width="126" height="103" fill="url(#jarContent)" opacity="0.8"/>
+    <!-- Content texture -->
+    <circle cx="165" cy="280" r="6" fill="#D32F2F" opacity="0.4"/>
+    <circle cx="200" cy="300" r="5" fill="#B71C1C" opacity="0.3"/>
+    <circle cx="230" cy="270" r="7" fill="#D32F2F" opacity="0.3"/>
+  </g>
+  <!-- Jar glass shine -->
+  <rect x="140" y="195" width="16" height="120" rx="8" fill="white" opacity="0.2"/>
+  <!-- Jar neck -->
+  <rect x="155" y="178" width="90" height="16" rx="3" fill="rgba(200,220,240,0.4)" stroke="rgba(176,196,222,0.4)" stroke-width="1"/>
+  <!-- Thread ridges on jar neck -->
+  <line x1="155" y1="182" x2="245" y2="182" stroke="rgba(176,196,222,0.3)" stroke-width="1"/>
+  <line x1="155" y1="186" x2="245" y2="186" stroke="rgba(176,196,222,0.3)" stroke-width="1"/>
+  <line x1="155" y1="190" x2="245" y2="190" stroke="rgba(176,196,222,0.3)" stroke-width="1"/>
+  <!-- Jar label -->
+  <rect x="150" y="260" width="100" height="50" rx="4" fill="#FFF8E1" opacity="0.8"/>
+  <rect x="155" y="265" width="90" height="40" rx="2" fill="none" stroke="#F9A825" stroke-width="1"/>
+  <text x="200" y="282" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#5D4037">CONFITURE</text>
+  <text x="200" y="296" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#8D6E63">Fraise Maison</text>
+  <!-- Lid (being gripped by opener) -->
+  <ellipse cx="200" cy="175" rx="48" ry="8" fill="url(#lid4)"/>
+  <ellipse cx="200" cy="173" rx="46" ry="7" fill="#FFE082"/>
+  <!-- Lid ridges -->
+  <ellipse cx="200" cy="175" rx="48" ry="8" fill="none" stroke="#F9A825" stroke-width="0.5" stroke-dasharray="3,2"/>
+  <!-- Electric opener device -->
+  <path d="M145,170 L145,100 C145,82 160,68 180,68 L220,68 C240,68 255,82 255,100 L255,170" fill="url(#device4)" filter="url(#sh4)"/>
+  <!-- Device inner shape -->
+  <path d="M150,168 L150,102 C150,87 162,74 180,74 L220,74 C238,74 250,87 250,102 L250,168" fill="#F0F0F0"/>
+  <!-- Grip mechanism (rubber ring around lid) -->
+  <ellipse cx="200" cy="170" rx="52" ry="12" fill="url(#grip4)" opacity="0.8"/>
+  <ellipse cx="200" cy="168" rx="50" ry="10" fill="#BDBDBD"/>
+  <!-- Grip texture -->
+  <ellipse cx="200" cy="168" rx="50" ry="10" fill="none" stroke="#9E9E9E" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <!-- Power button on top -->
+  <circle cx="200" cy="82" r="14" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="2"/>
+  <circle cx="200" cy="82" r="11" fill="#4CAF50"/>
+  <!-- Power icon -->
+  <path d="M200,74 L200,80" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M194,76 A8,8 0 1,0 206,76" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <!-- LED indicator -->
+  <circle cx="200" cy="102" r="3" fill="#4CAF50" opacity="0.9"/>
+  <circle cx="200" cy="102" r="5" fill="#4CAF50" opacity="0.2"/>
+  <!-- Side texture lines on device -->
+  <line x1="148" y1="120" x2="148" y2="160" stroke="#E0E0E0" stroke-width="2"/>
+  <line x1="252" y1="120" x2="252" y2="160" stroke="#E0E0E0" stroke-width="2"/>
+  <!-- Ergonomic side grips -->
+  <rect x="142" y="115" width="6" height="50" rx="3" fill="#BDBDBD"/>
+  <rect x="252" y="115" width="6" height="50" rx="3" fill="#BDBDBD"/>
+  <!-- Brand area on device -->
+  <rect x="175" y="110" width="50" height="14" rx="3" fill="#E8E8E8"/>
+  <text x="200" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#9E9E9E" font-weight="bold">AUTO</text>
+  <!-- Rotation arrows around grip -->
+  <path d="M145,158 C130,150 130,180 145,178" fill="none" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/>
+  <path d="M145,178 L148,174 L141,175" fill="#FF9800"/>
+  <path d="M255,178 C270,180 270,150 255,158" fill="none" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/>
+  <path d="M255,158 L252,162 L259,161" fill="#FF9800"/>
+</svg>

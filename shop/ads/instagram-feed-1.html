@@ -14,9 +14,9 @@
     width: 1080px;
     height: 1080px;
     overflow: hidden;
-    background: #0d0d1a;
+    background: #FFFFFF;
     position: relative;
-    color: #fff;
+    color: #111827;
   }
 
   /* Background gradient blobs */
@@ -28,17 +28,17 @@
   }
   .bg-blob-1 {
     width: 600px; height: 600px;
-    background: rgba(108,92,231,0.35);
+    background: rgba(232,93,4,0.08);
     top: -200px; left: -150px;
   }
   .bg-blob-2 {
     width: 500px; height: 500px;
-    background: rgba(0,206,201,0.25);
+    background: rgba(245,158,11,0.08);
     bottom: -150px; right: -100px;
   }
   .bg-blob-3 {
     width: 300px; height: 300px;
-    background: rgba(108,92,231,0.2);
+    background: rgba(232,93,4,0.06);
     bottom: 200px; left: 300px;
   }
 
@@ -55,13 +55,14 @@
   .logo {
     font-size: 36px;
     font-weight: 900;
-    background: linear-gradient(135deg, #fff, #00CEC9);
+    background: linear-gradient(135deg, #111827, #E85D04);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .flash-badge {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: #E85D04;
+    color: #FFFFFF;
     padding: 14px 32px;
     border-radius: 50px;
     font-size: 18px;
@@ -92,14 +93,14 @@
     margin-bottom: 8px;
   }
   .headline h1 .gradient-text {
-    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(135deg, #E85D04, #F59E0B);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .headline .subtitle {
     font-size: 22px;
-    color: rgba(255,255,255,0.5);
+    color: #6B7280;
     font-weight: 500;
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -116,9 +117,8 @@
     gap: 24px;
   }
   .product-card {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-radius: 28px;
     padding: 30px;
     display: flex;
@@ -128,6 +128,7 @@
     position: relative;
     overflow: hidden;
     transition: transform 0.3s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   }
   .product-card::after {
     content: '';
@@ -135,18 +136,19 @@
     top: 0; left: 0;
     width: 100%;
     height: 3px;
-    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(90deg, #E85D04, #F59E0B);
   }
   .product-emoji {
     font-size: 80px;
     margin-bottom: 16px;
-    filter: drop-shadow(0 8px 20px rgba(0,206,201,0.3));
+    filter: drop-shadow(0 8px 20px rgba(232,93,4,0.15));
   }
   .product-title {
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 12px;
     line-height: 1.2;
+    color: #111827;
   }
   .price-row {
     display: flex;
@@ -155,20 +157,21 @@
   }
   .old-price {
     font-size: 22px;
-    color: rgba(255,255,255,0.35);
+    color: #9CA3AF;
     text-decoration: line-through;
     font-weight: 600;
   }
   .new-price {
     font-size: 30px;
     font-weight: 900;
-    color: #00CEC9;
+    color: #E85D04;
   }
   .discount-tag {
     position: absolute;
     top: 18px;
     right: 18px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: #E85D04;
+    color: #FFFFFF;
     padding: 6px 14px;
     border-radius: 10px;
     font-size: 14px;
@@ -187,20 +190,21 @@
   }
   .tagline {
     font-size: 18px;
-    color: rgba(255,255,255,0.4);
+    color: #9CA3AF;
     font-weight: 600;
     letter-spacing: 4px;
     text-transform: uppercase;
   }
   .shop-btn {
-    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(135deg, #E85D04, #F59E0B);
+    color: #FFFFFF;
     padding: 20px 50px;
     border-radius: 50px;
     font-size: 20px;
     font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
-    box-shadow: 0 10px 40px rgba(108,92,231,0.4);
+    box-shadow: 0 10px 40px rgba(232,93,4,0.25);
   }
 
   /* Timer bar */
@@ -217,7 +221,7 @@
   .timer-dot {
     width: 10px;
     height: 10px;
-    background: #ff6b6b;
+    background: #D35400;
     border-radius: 50%;
     animation: blink 1s ease-in-out infinite;
   }
@@ -228,7 +232,7 @@
   .timer-text {
     font-size: 16px;
     font-weight: 700;
-    color: #ff6b6b;
+    color: #D35400;
     letter-spacing: 3px;
     text-transform: uppercase;
   }
@@ -238,7 +242,7 @@
     position: absolute;
     width: 100px;
     height: 100px;
-    border: 2px solid rgba(108,92,231,0.2);
+    border: 2px solid rgba(232,93,4,0.15);
   }
   .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; border-radius: 10px 0 0 0; }
   .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; border-radius: 0 10px 0 0; }

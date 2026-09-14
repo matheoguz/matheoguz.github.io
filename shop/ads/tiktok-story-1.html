@@ -14,35 +14,35 @@
     width: 1080px;
     height: 1920px;
     overflow: hidden;
-    background: linear-gradient(135deg, #6C5CE7 0%, #1a1a2e 40%, #0d0d1a 60%, #00CEC9 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF7ED 40%, #FFFFFF 60%, #FFF7ED 100%);
     position: relative;
-    color: #fff;
+    color: #111827;
   }
 
   /* Animated geometric shapes */
   .geo {
     position: absolute;
     border-radius: 20px;
-    opacity: 0.12;
+    opacity: 0.10;
     animation: float 6s ease-in-out infinite;
   }
   .geo-1 {
     width: 300px; height: 300px;
-    background: #6C5CE7;
+    background: #E85D04;
     top: 80px; left: -60px;
     transform: rotate(45deg);
     animation-delay: 0s;
   }
   .geo-2 {
     width: 200px; height: 200px;
-    background: #00CEC9;
+    background: #F59E0B;
     top: 400px; right: -40px;
     transform: rotate(30deg);
     animation-delay: 1s;
   }
   .geo-3 {
     width: 250px; height: 250px;
-    background: #6C5CE7;
+    background: #E85D04;
     bottom: 500px; left: 60px;
     transform: rotate(60deg);
     border-radius: 50%;
@@ -50,18 +50,18 @@
   }
   .geo-4 {
     width: 180px; height: 180px;
-    background: #00CEC9;
+    background: #F59E0B;
     bottom: 200px; right: 80px;
     transform: rotate(15deg);
     animation-delay: 0.5s;
   }
   .geo-5 {
     width: 120px; height: 120px;
-    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(135deg, #E85D04, #F59E0B);
     top: 250px; right: 200px;
     transform: rotate(22deg);
     border-radius: 50%;
-    opacity: 0.18;
+    opacity: 0.12;
     animation-delay: 3s;
   }
 
@@ -75,8 +75,8 @@
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(108,92,231,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(108,92,231,0.06) 1px, transparent 1px);
+      linear-gradient(rgba(232,93,4,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,93,4,0.05) 1px, transparent 1px);
     background-size: 80px 80px;
     pointer-events: none;
   }
@@ -95,21 +95,21 @@
     font-size: 42px;
     font-weight: 900;
     letter-spacing: -1px;
-    background: linear-gradient(135deg, #fff 0%, #00CEC9 100%);
+    background: linear-gradient(135deg, #111827 0%, #E85D04 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .badge {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(232,93,4,0.1);
+    border: 1px solid rgba(232,93,4,0.2);
     padding: 12px 28px;
     border-radius: 50px;
     font-size: 20px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
+    color: #E85D04;
   }
 
   /* Main headline */
@@ -123,7 +123,7 @@
   .headline-sub {
     font-size: 32px;
     font-weight: 600;
-    color: #00CEC9;
+    color: #E85D04;
     letter-spacing: 8px;
     text-transform: uppercase;
     margin-bottom: 20px;
@@ -136,7 +136,7 @@
     text-transform: uppercase;
   }
   .headline .accent {
-    background: linear-gradient(135deg, #00CEC9, #6C5CE7);
+    background: linear-gradient(135deg, #E85D04, #F59E0B);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -144,7 +144,7 @@
   .headline-line {
     width: 120px;
     height: 6px;
-    background: linear-gradient(90deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(90deg, #E85D04, #F59E0B);
     margin: 30px auto;
     border-radius: 3px;
   }
@@ -163,24 +163,24 @@
   .product-card {
     width: 700px;
     height: 500px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-radius: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   }
   .product-card::before {
     content: '';
     position: absolute;
     top: -2px; left: -2px; right: -2px; bottom: -2px;
-    background: linear-gradient(135deg, #6C5CE7, transparent, #00CEC9);
+    background: linear-gradient(135deg, #E85D04, transparent, #F59E0B);
     border-radius: 42px;
     z-index: -1;
-    opacity: 0.5;
+    opacity: 0.3;
   }
   .product-placeholder {
     text-align: center;
@@ -188,16 +188,17 @@
   .product-icon {
     font-size: 120px;
     margin-bottom: 20px;
-    filter: drop-shadow(0 10px 30px rgba(0,206,201,0.3));
+    filter: drop-shadow(0 10px 30px rgba(232,93,4,0.2));
   }
   .product-name {
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 10px;
+    color: #111827;
   }
   .product-desc {
     font-size: 22px;
-    color: rgba(255,255,255,0.6);
+    color: #6B7280;
   }
 
   /* Price section */
@@ -209,15 +210,14 @@
   }
   .price-old {
     font-size: 36px;
-    color: rgba(255,255,255,0.4);
+    color: #9CA3AF;
     text-decoration: line-through;
     font-weight: 600;
   }
   .price-new {
     font-size: 52px;
     font-weight: 900;
-    color: #00CEC9;
-    text-shadow: 0 0 30px rgba(0,206,201,0.4);
+    color: #E85D04;
   }
 
   /* Features strip */
@@ -236,19 +236,19 @@
   .feature-icon {
     width: 80px;
     height: 80px;
-    background: rgba(255,255,255,0.1);
+    background: #FFF7ED;
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 36px;
     margin: 0 auto 12px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid #E5E7EB;
   }
   .feature-text {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(255,255,255,0.7);
+    color: #6B7280;
   }
 
   /* CTA */
@@ -261,24 +261,25 @@
   }
   .cta-btn {
     display: inline-block;
-    background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+    background: linear-gradient(135deg, #E85D04, #F59E0B);
+    color: #FFFFFF;
     padding: 30px 100px;
     border-radius: 60px;
     font-size: 36px;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    box-shadow: 0 20px 60px rgba(108,92,231,0.4);
+    box-shadow: 0 20px 60px rgba(232,93,4,0.3);
     animation: pulse 2s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 20px 60px rgba(108,92,231,0.4); }
-    50% { transform: scale(1.03); box-shadow: 0 25px 70px rgba(108,92,231,0.6); }
+    0%, 100% { transform: scale(1); box-shadow: 0 20px 60px rgba(232,93,4,0.3); }
+    50% { transform: scale(1.03); box-shadow: 0 25px 70px rgba(232,93,4,0.4); }
   }
   .cta-sub {
     margin-top: 24px;
     font-size: 22px;
-    color: rgba(255,255,255,0.5);
+    color: #9CA3AF;
     font-weight: 500;
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -292,7 +293,7 @@
     right: 0;
     text-align: center;
     font-size: 20px;
-    color: rgba(255,255,255,0.3);
+    color: #9CA3AF;
     letter-spacing: 6px;
     text-transform: uppercase;
     font-weight: 600;
@@ -302,14 +303,14 @@
   .dot {
     position: absolute;
     border-radius: 50%;
-    background: #00CEC9;
+    background: #F59E0B;
     animation: twinkle 3s ease-in-out infinite;
   }
   .dot-1 { width: 8px; height: 8px; top: 180px; left: 200px; animation-delay: 0s; }
   .dot-2 { width: 6px; height: 6px; top: 520px; right: 150px; animation-delay: 1s; }
   .dot-3 { width: 10px; height: 10px; bottom: 700px; left: 300px; animation-delay: 0.5s; }
-  .dot-4 { width: 5px; height: 5px; top: 350px; left: 100px; animation-delay: 2s; background: #6C5CE7; }
-  .dot-5 { width: 7px; height: 7px; bottom: 380px; right: 250px; animation-delay: 1.5s; background: #6C5CE7; }
+  .dot-4 { width: 5px; height: 5px; top: 350px; left: 100px; animation-delay: 2s; background: #E85D04; }
+  .dot-5 { width: 7px; height: 7px; bottom: 380px; right: 250px; animation-delay: 1.5s; background: #E85D04; }
 
   @keyframes twinkle {
     0%, 100% { opacity: 0.3; }

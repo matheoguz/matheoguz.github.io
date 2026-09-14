@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HomeVibe - Decouvrez nos produits tendance pour votre maison. Livraison gratuite, paiement securise.">
+<meta property="og:type" content="product">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="HomeVibe">
+<meta name="theme-color" content="#E85D04">
+<title>HomeVibe - Produit</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FFFFFF;--bg-alt:#F9FAFB;--bg-warm:#FFF7ED;
+  --surface:#FFFFFF;--surface-alt:#F3F4F6;
+  --text:#111827;--text2:#4B5563;--text3:#9CA3AF;
+  --accent:#E85D04;--accent-hover:#D35400;--accent-light:#FFF7ED;
+  --success:#059669;--success-light:#ECFDF5;
+  --danger:#DC2626;--star:#F59E0B;
+  --border:#E5E7EB;--border-light:#F3F4F6;
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-lg:0 10px 25px -5px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.05);
+  --transition:0.2s ease;
+  --nav-h:60px;--trust-h:36px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 16px}
+
+/* ── TRUST BANNER ── */
+.trust-banner{background:#111827;color:#fff;font-size:0.78rem;height:var(--trust-h);display:flex;align-items:center;justify-content:center;gap:24px;letter-spacing:0.3px;font-weight:500}
+.trust-banner span{display:inline-flex;align-items:center;gap:6px}
+.trust-banner svg{flex-shrink:0}
+@media(max-width:640px){
+  .trust-banner{gap:16px;font-size:0.7rem;padding:0 12px}
+  .trust-banner .hide-mobile{display:none}
+}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:1000;height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--border);transition:box-shadow var(--transition)}
+.nav.scrolled{box-shadow:var(--shadow-md)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1200px;margin:0 auto;padding:0 16px}
+.nav-logo{font-size:1.5rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:0.9rem;font-weight:500;color:var(--text2);transition:var(--transition)}
+.nav-links a:hover{color:var(--accent)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.nav-btn{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;transition:var(--transition);position:relative;color:var(--text2)}
+.nav-btn:hover{background:var(--surface-alt);color:var(--text)}
+.cart-count{position:absolute;top:2px;right:2px;background:var(--accent);color:#fff;font-size:0.65rem;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:scale(0);transition:var(--transition)}
+.cart-count.show{transform:scale(1)}
+.hamburger{display:none;flex-direction:column;gap:5px;width:22px}
+.hamburger span{height:2px;background:var(--text);border-radius:2px;transition:var(--transition)}
+
+.mobile-nav{position:fixed;top:calc(var(--trust-h) + var(--nav-h));left:0;right:0;bottom:0;background:var(--bg);z-index:999;transform:translateX(100%);transition:transform 0.3s ease;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
+.mobile-nav.open{transform:translateX(0)}
+.mobile-nav a{display:block;padding:14px 16px;font-size:1.05rem;font-weight:500;border-radius:var(--radius-sm);transition:var(--transition);color:var(--text)}
+.mobile-nav a:hover{background:var(--surface-alt)}
+
+@media(max-width:768px){
+  .nav-links{display:none!important}
+  .hamburger{display:flex}
+}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{padding:16px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.breadcrumb a{font-size:0.82rem;color:var(--text3);transition:var(--transition)}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb .sep{font-size:0.72rem;color:var(--text3)}
+.breadcrumb .current{font-size:0.82rem;color:var(--text2);font-weight:600}
+
+/* ── PRODUCT DETAIL LAYOUT ── */
+.pd-wrap{padding-top:8px;padding-bottom:64px}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+@media(max-width:868px){
+  .pd-grid{grid-template-columns:1fr;gap:24px}
+}
+
+/* ── VIDEO AREA ── */
+.pd-video{position:relative;width:100%;aspect-ratio:16/10;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;border:1px solid var(--border)}
+.pd-video-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.pd-video-bg img{width:60%;height:60%;object-fit:contain}
+.pd-video-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:var(--transition)}
+.pd-video:hover .pd-video-overlay{background:rgba(0,0,0,0.15)}
+.play-btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;transition:var(--transition);box-shadow:var(--shadow-lg)}
+.pd-video:hover .play-btn{transform:scale(1.1);background:var(--accent)}
+.pd-video:hover .play-btn svg{color:#fff}
+.play-btn svg{margin-left:4px;color:var(--accent)}
+.pd-video-label{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:0.5px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,0.3)}
+
+/* ── GALLERY ── */
+.pd-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.pd-thumb{aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;border:2px solid transparent;transition:var(--transition);position:relative}
+.pd-thumb.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,93,4,0.2)}
+.pd-thumb:hover{border-color:var(--accent)}
+.pd-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.pd-thumb-inner img{width:70%;height:70%;object-fit:contain}
+
+/* ── PRODUCT INFO ── */
+.pd-info{display:flex;flex-direction:column;gap:16px}
+.pd-cat{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:0.75rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;width:fit-content}
+.pd-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.5px;line-height:1.2;color:var(--text)}
+.pd-rating{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pd-stars{display:flex;gap:2px}
+.pd-stars svg{color:var(--star)}
+.pd-rating-val{font-size:0.9rem;font-weight:700;color:var(--text)}
+.pd-rating-count{font-size:0.85rem;color:var(--text3)}
+.pd-pricing{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pd-price{font-size:2rem;font-weight:800;color:var(--accent)}
+.pd-old-price{font-size:1.1rem;color:var(--text3);text-decoration:line-through}
+.pd-discount{background:var(--success-light);color:var(--success);font-size:0.82rem;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm)}
+.pd-desc{font-size:0.95rem;color:var(--text2);line-height:1.8}
+
+/* ── SOURCE BADGE ── */
+.pd-source{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:600;margin-left:8px;vertical-align:middle}
+.pd-source-aliexpress{background:#FFE4E1;color:#E85D04}
+.pd-source-tiktok-shop{background:#E0F7FA;color:#0891B2}
+.pd-source-amazon{background:#FFF7ED;color:#92400E}
+
+/* ── FEATURES ── */
+.pd-features{margin:16px 0 24px;display:flex;flex-wrap:wrap;gap:8px}
+.pd-features li{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text2);background:var(--success-light);padding:4px 12px;border-radius:20px}
+
+/* ── QTY + ADD TO CART ── */
+.pd-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pd-qty{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.pd-qty button{width:44px;height:48px;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:var(--transition);color:var(--text2)}
+.pd-qty button:hover{background:var(--accent);color:#fff}
+.pd-qty .qty-display{width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;border-left:1px solid var(--border);border-right:1px solid var(--border);color:var(--text)}
+.btn-add-cart{flex:1;min-width:200px;background:var(--accent);color:#fff;font-weight:700;font-size:1rem;padding:14px 28px;border-radius:var(--radius);transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(232,93,4,0.25)}
+.btn-add-cart:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,93,4,0.3)}
+.btn-add-cart.added{background:var(--success);box-shadow:0 4px 14px rgba(5,150,105,0.25)}
+
+/* ── DELIVERY INFO ── */
+.pd-delivery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.pd-del-item{display:flex;align-items:center;gap:10px;padding:14px;background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius);transition:var(--transition)}
+.pd-del-item:hover{border-color:var(--accent)}
+.pd-del-icon{width:40px;height:40px;border-radius:var(--radius-sm);background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pd-del-text h4{font-size:0.78rem;font-weight:700;white-space:nowrap;color:var(--text)}
+.pd-del-text p{font-size:0.68rem;color:var(--text3);white-space:nowrap}
+@media(max-width:560px){
+  .pd-delivery{grid-template-columns:1fr}
+}
+
+/* ── RELATED PRODUCTS ── */
+.related-section{padding:64px 0;border-top:1px solid var(--border)}
+.section-head{text-align:center;margin-bottom:40px}
+.section-head h2{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;color:var(--text)}
+.section-head p{color:var(--text2);font-size:0.95rem;max-width:500px;margin:0 auto}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:var(--transition);position:relative;cursor:pointer}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--border)}
+.product-img{height:180px;position:relative;overflow:hidden}
+.product-img-bg{width:100%;height:100%;transition:transform 0.5s ease}
+.product-card:hover .product-img-bg{transform:scale(1.05)}
+.product-badge{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:999px;z-index:2;display:flex;align-items:center;gap:4px}
+.product-discount-badge{position:absolute;top:12px;right:12px;background:var(--success-light);color:var(--success);font-size:0.72rem;font-weight:700;padding:4px 8px;border-radius:var(--radius-sm);z-index:2}
+.product-body{padding:16px}
+.product-cat{font-size:0.72rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.product-name{font-weight:700;font-size:0.95rem;margin-bottom:8px;line-height:1.3;color:var(--text)}
+.product-rating{display:flex;align-items:center;gap:4px;margin-bottom:10px}
+.product-rating .stars{color:var(--star);font-size:0.8rem;letter-spacing:1px}
+.product-rating span{font-size:0.75rem;color:var(--text3)}
+.product-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.product-price{display:flex;align-items:baseline;gap:6px}
+.price-current{font-size:1.15rem;font-weight:800;color:var(--accent)}
+.price-old{font-size:0.8rem;color:var(--text3);text-decoration:line-through}
+.btn-cart{background:var(--accent);color:#fff;font-size:0.8rem;font-weight:600;padding:10px 16px;border-radius:var(--radius-sm);transition:var(--transition);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.btn-cart:hover{background:var(--accent-hover);transform:scale(1.02)}
+@media(max-width:600px){
+  .related-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .product-img{height:150px}
+  .product-body{padding:10px}
+  .product-name{font-size:0.82rem}
+  .price-current{font-size:1rem}
+  .price-old{font-size:0.7rem}
+  .btn-cart{padding:8px 10px;font-size:0.72rem}
+  .btn-cart .btn-text{display:none}
+}
+
+/* ── CART SIDEBAR ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:2000;opacity:0;pointer-events:none;transition:var(--transition)}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-sidebar{position:fixed;top:0;right:0;bottom:0;width:min(400px,90vw);background:var(--bg);z-index:2001;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;border-left:1px solid var(--border)}
+.cart-sidebar.open{transform:translateX(0)}
+.cart-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--border)}
+.cart-header h3{font-size:1.1rem;font-weight:700;color:var(--text)}
+.cart-close{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;transition:var(--transition);color:var(--text2)}
+.cart-close:hover{background:var(--surface-alt)}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-empty{text-align:center;padding:40px 16px;color:var(--text3)}
+.cart-empty .empty-icon{font-size:3rem;margin-bottom:12px;opacity:0.5}
+.cart-item{display:flex;gap:12px;padding:12px;background:var(--bg-alt);border-radius:var(--radius);margin-bottom:10px;border:1px solid var(--border)}
+.cart-item-img{width:60px;height:60px;border-radius:var(--radius-sm);flex-shrink:0}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-name{font-size:0.85rem;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.cart-item-price{font-size:0.82rem;color:var(--accent);font-weight:700}
+.cart-item-actions{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty-btn{width:26px;height:26px;border-radius:6px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;transition:var(--transition);color:var(--text2)}
+.qty-btn:hover{background:var(--accent);color:#fff}
+.qty-val{font-size:0.85rem;font-weight:700;min-width:20px;text-align:center;color:var(--text)}
+.cart-item-remove{margin-left:auto;color:var(--text3);font-size:0.75rem;transition:var(--transition)}
+.cart-item-remove:hover{color:var(--danger)}
+.cart-footer{padding:20px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;margin-bottom:16px}
+.cart-total span:first-child{color:var(--text2)}
+.cart-total span:last-child{font-size:1.2rem;font-weight:800;color:var(--text)}
+.btn-checkout{width:100%;background:var(--accent);color:#fff;font-weight:700;font-size:1rem;padding:16px;border-radius:var(--radius);transition:var(--transition);text-align:center}
+.btn-checkout:hover{background:var(--accent-hover);transform:translateY(-1px)}
+
+/* ── FOOTER ── */
+.footer{padding:48px 0 24px;background:#111827;color:#D1D5DB}
+.footer-grid{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:32px;margin-bottom:32px}
+.footer-brand .nav-logo{font-size:1.3rem;display:inline-block;margin-bottom:12px;color:#fff}
+.footer-brand .nav-logo span{color:var(--accent)}
+.footer-brand p{color:#9CA3AF;font-size:0.82rem;line-height:1.7;max-width:280px}
+.footer-social{display:flex;gap:10px;margin-top:16px}
+.footer-social a{width:36px;height:36px;border-radius:var(--radius-sm);background:#1F2937;display:flex;align-items:center;justify-content:center;transition:var(--transition);color:#9CA3AF;font-size:0.85rem}
+.footer-social a:hover{background:var(--accent);color:#fff}
+.footer h4{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#D1D5DB;margin-bottom:16px}
+.footer ul li{margin-bottom:10px}
+.footer ul a{font-size:0.85rem;color:#9CA3AF;transition:var(--transition)}
+.footer ul a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid #374151;padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:0.78rem;color:#6B7280}
+.footer-pay{display:flex;gap:8px}
+.footer-pay span{background:#1F2937;padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;color:#9CA3AF}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr;gap:24px}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+
+/* ── CUSTOMER REVIEWS ── */
+.reviews-section{padding:48px 0;background:var(--bg-alt)}
+.reviews-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.reviews-header h2{font-size:1.4rem;color:var(--text)}
+.reviews-count{color:var(--text3);font-size:0.9rem}
+.reviews-summary{display:flex;gap:32px;margin-bottom:32px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.reviews-avg{text-align:center;min-width:120px}
+.reviews-avg .big-rating{font-size:3rem;font-weight:800;color:var(--text);line-height:1}
+.reviews-avg .avg-stars{color:var(--star);margin:4px 0}
+.reviews-avg .avg-label{color:var(--text3);font-size:0.8rem}
+.reviews-bars{flex:1}
+.review-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.85rem}
+.review-bar-row .bar-label{min-width:55px;color:var(--text2)}
+.review-bar-row .bar-track{flex:1;height:8px;background:var(--border-light);border-radius:4px;overflow:hidden}
+.review-bar-row .bar-fill{height:100%;background:var(--star);border-radius:4px;transition:width 0.6s ease}
+.review-bar-row .bar-pct{min-width:35px;color:var(--text3);text-align:right}
+.reviews-list{display:grid;gap:16px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.review-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.review-author{font-weight:600;color:var(--text)}
+.review-verified{display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--success);background:var(--success-light);padding:2px 8px;border-radius:4px}
+.review-stars{color:var(--star);display:flex;gap:1px}
+.review-date{font-size:0.8rem;color:var(--text3)}
+.review-text{color:var(--text2);font-size:0.9rem;line-height:1.7}
+@media(max-width:640px){
+  .reviews-summary{flex-direction:column;gap:16px}
+  .reviews-avg{min-width:auto}
+}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:14px 24px;border-radius:var(--radius);font-size:0.88rem;font-weight:600;z-index:3000;box-shadow:var(--shadow-lg);transition:var(--transition);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── COOKIE BANNER ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:var(--surface);border-top:1px solid var(--border);padding:16px;box-shadow:0 -4px 24px rgba(0,0,0,0.1);transform:translateY(100%);transition:transform 0.4s ease;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.cookie-banner.show{transform:translateY(0)}
+.cookie-banner p{font-size:0.85rem;color:var(--text2);max-width:600px;text-align:center}
+.cookie-banner p a{color:var(--accent);text-decoration:underline}
+.cookie-btn{padding:8px 20px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:600;transition:var(--transition)}
+.cookie-btn.accept{background:var(--accent);color:#fff}
+.cookie-btn.accept:hover{background:var(--accent-hover)}
+.cookie-btn.refuse{border:1px solid var(--border);color:var(--text2)}
+.cookie-btn.refuse:hover{border-color:var(--accent);color:var(--text)}
+
+/* ── FADE IN ── */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ── LOADING STATE ── */
+.pd-loading{display:flex;align-items:center;justify-content:center;min-height:60vh}
+.pd-loading .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── NOT FOUND ── */
+.pd-not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
+.pd-not-found .nf-icon{font-size:4rem;opacity:0.4}
+.pd-not-found h2{font-size:1.4rem;font-weight:700;color:var(--text)}
+.pd-not-found p{color:var(--text3);max-width:400px}
+.pd-not-found a{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:600;padding:12px 24px;border-radius:var(--radius);transition:var(--transition)}
+.pd-not-found a:hover{background:var(--accent-hover);transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<!-- TRUST BANNER -->
+<div class="trust-banner">
+ <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Livraison gratuite</span>
+ <span class="hide-mobile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Paiement securise</span>
+ <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Retour 14 jours</span>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+ <div class="nav-inner">
+  <a href="/shop/" class="nav-logo">Home<span>Vibe</span></a>
+  <div class="nav-links">
+   <a href="/shop/#categories">Categories</a>
+   <a href="/shop/#produits">Produits</a>
+   <a href="/shop/contact.html">Contact</a>
+  </div>
+  <div class="nav-actions">
+   <button class="nav-btn" id="cartToggle" aria-label="Ouvrir le panier">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    <span class="cart-count" id="cartCount">0</span>
+   </button>
+   <button class="hamburger" id="menuToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+   </button>
+  </div>
+ </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+ <a href="/shop/#categories" onclick="closeMobileNav()">Categories</a>
+ <a href="/shop/#produits" onclick="closeMobileNav()">Produits</a>
+ <a href="/shop/contact.html" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- MAIN CONTENT (injected by JS) -->
+<main id="mainContent"></main>
+
+<!-- FOOTER -->
+<footer class="footer" id="footer">
+ <div class="container">
+  <div class="footer-grid">
+   <div class="footer-brand">
+    <div class="nav-logo">Home<span>Vibe</span></div>
+    <p>Votre destination pour les gadgets maison &amp; lifestyle les plus tendance. Qualite, design et prix accessibles.</p>
+    <div class="footer-social">
+     <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.28 0 .56.04.82.12V9a6.34 6.34 0 1 0 5.43 6.28V9.41a8.16 8.16 0 0 0 4.78 1.53V7.5a4.82 4.82 0 0 1-.93-.81z"/></svg></a>
+     <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+     <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+    </div>
+   </div>
+   <div>
+    <h4>Boutique</h4>
+    <ul>
+     <li><a href="/shop/#produits">Nouveautes</a></li>
+     <li><a href="/shop/#produits">Meilleures Ventes</a></li>
+     <li><a href="/shop/#categories">Categories</a></li>
+     <li><a href="/shop/#produits">Promotions</a></li>
+    </ul>
+   </div>
+   <div>
+    <h4>Informations</h4>
+    <ul>
+     <li><a href="/shop/legal/livraison.html">Livraison</a></li>
+     <li><a href="/shop/legal/faq.html">FAQ</a></li>
+     <li><a href="/shop/contact.html">Nous Contacter</a></li>
+     <li><a href="/shop/legal/retours.html">Retours</a></li>
+    </ul>
+   </div>
+   <div>
+    <h4>Legal</h4>
+    <ul>
+     <li><a href="/shop/legal/mentions-legales.html">Mentions Legales</a></li>
+     <li><a href="/shop/legal/cgv.html">CGV</a></li>
+     <li><a href="/shop/legal/confidentialite.html">Politique de Confidentialite</a></li>
+     <li><a href="/shop/legal/retours.html">Retours & Remboursements</a></li>
+    </ul>
+   </div>
+  </div>
+  <div class="footer-bottom">
+   <p>&copy; 2026 HomeVibe. Tous droits reserves.</p>
+   <div class="footer-pay">
+    <span>Visa</span><span>Mastercard</span><span>PayPal</span><span>Apple Pay</span>
+   </div>
+  </div>
+ </div>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+ <div class="cart-header">
+  <h3>Mon Panier (<span id="cartItemCount">0</span>)</h3>
+  <button class="cart-close" id="cartClose" aria-label="Fermer le panier">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+ </div>
+ <div class="cart-items" id="cartItems">
+  <div class="cart-empty" id="cartEmpty">
+   <div class="empty-icon">&#x1F6D2;</div>
+   <p>Votre panier est vide</p>
+  </div>
+ </div>
+ <div class="cart-footer" id="cartFooter" style="display:none">
+  <div class="cart-total">
+   <span>Total</span>
+   <span id="cartTotal">0,00 &euro;</span>
+  </div>
+  <button class="btn-checkout" onclick="handleCheckout()">Commander</button>
+ </div>
+</aside>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- COOKIE CONSENT RGPD -->
+<div class="cookie-banner" id="cookieBanner">
+ <p>Nous utilisons des cookies pour ameliorer votre experience. En continuant, vous acceptez notre <a href="/shop/legal/confidentialite.html">politique de confidentialite</a>.</p>
+ <button class="cookie-btn accept" onclick="acceptCookies()">Accepter</button>
+ <button class="cookie-btn refuse" onclick="refuseCookies()">Refuser</button>
+</div>
+
+<script src="/shop/data/products.js"></script>
+<script>
+/* ── HELPERS ── */
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function getProductId(){
+ const params=new URLSearchParams(window.location.search);
+ return parseInt(params.get('id'),10);
+}
+
+function getProduct(id){return products.find(p=>p.id===id);}
+
+function getRelated(product){
+ return products.filter(p=>p.cat===product.cat&&p.id!==product.id);
+}
+
+function calcDiscount(price,oldPrice){return Math.round((1-price/oldPrice)*100);}
+
+function formatPrice(n){return n.toFixed(2).replace('.',',');}
+
+function renderStars(rating){
+ let html='';
+ for(let i=1;i<=5;i++){
+  if(i<=Math.floor(rating)){
+   html+='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  } else if(i===Math.ceil(rating)&&rating%1>=0.3){
+   html+='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" opacity="0.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  } else {
+   html+='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  }
+ }
+ return html;
+}
+
+/* Gallery color variations */
+function getGalleryVariants(product){
+ const labels = product.imageLabels || ['Vue principale','Vue laterale','Vue arriere','Vue detail'];
+ return [
+  {filter:'none',label:labels[0]},
+  {filter:'hue-rotate(30deg) saturate(1.2)',label:labels[1]},
+  {filter:'hue-rotate(-20deg) brightness(1.05)',label:labels[2]},
+  {filter:'hue-rotate(60deg) saturate(0.9)',label:labels[3]}
+ ];
+}
+
+/* ── RENDER PRODUCT PAGE ── */
+function renderProductPage(product){
+ const disc=calcDiscount(product.price,product.oldPrice);
+ const variants=getGalleryVariants(product);
+ const imgSrc='/shop/img/products/'+product.id+'.svg';
+
+ document.title='HomeVibe - '+product.name;
+
+ const main=document.getElementById('mainContent');
+ main.innerHTML=`
+  <div class="pd-wrap">
+   <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+     <a href="/shop/">Accueil</a>
+     <span class="sep"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+     <a href="/shop/#produits">Produits</a>
+     <span class="sep"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+     <span class="current">${escapeHtml(product.name)}</span>
+    </nav>
+
+    <!-- Product Grid -->
+    <div class="pd-grid">
+     <!-- Left: Media -->
+     <div class="fade-in">
+      <!-- Video Area -->
+      <div class="pd-video" id="pdVideo" onclick="playVideo()">
+       <div class="pd-video-bg" style="background:${product.bg}">
+        <img src="${imgSrc}" alt="${escapeHtml(product.name)}" onerror="this.style.display='none'">
+       </div>
+       <div class="pd-video-overlay">
+        <div class="play-btn">
+         <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <span class="pd-video-label">Voir la video produit</span>
+       </div>
+      </div>
+
+      <!-- Gallery Thumbnails -->
+      <div class="pd-gallery">
+       ${variants.map((v,i)=>`
+        <div class="pd-thumb ${i===0?'active':''}" onclick="selectThumb(${i})" title="${v.label}">
+         <div class="pd-thumb-inner" style="background:${product.bg};${v.filter!=='none'?'filter:'+v.filter+';':''}border-radius:var(--radius-sm)">
+          <img src="${imgSrc}" alt="${v.label}" ${v.filter!=='none'?'style="filter:'+v.filter+'"':''} onerror="this.style.display='none'">
+         </div>
+        </div>
+       `).join('')}
+      </div>
+     </div>
+
+     <!-- Right: Info -->
+     <div class="pd-info fade-in">
+      <div class="pd-cat">${product.catLabel}</div>
+      <span class="pd-source pd-source-${product.source.toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(product.source)}</span>
+      <h1 class="pd-title">${escapeHtml(product.name)}</h1>
+
+      <div class="pd-rating">
+       <div class="pd-stars">${renderStars(product.rating)}</div>
+       <span class="pd-rating-val">${product.rating}</span>
+       <span class="pd-rating-count">(${product.reviews} avis)</span>
+      </div>
+
+      <div class="pd-pricing">
+       <span class="pd-price">${formatPrice(product.price)} &euro;</span>
+       <span class="pd-old-price">${formatPrice(product.oldPrice)} &euro;</span>
+       <span class="pd-discount">-${disc}%</span>
+      </div>
+
+      <p class="pd-desc">${escapeHtml(product.desc)}</p>
+
+      ${product.features ? '<ul class="pd-features">'+product.features.map(f=>'<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'+escapeHtml(f)+'</li>').join('')+'</ul>' : ''}
+
+      <!-- Qty + Add to Cart -->
+      <div class="pd-actions">
+       <div class="pd-qty">
+        <button onclick="changeQty(-1)" aria-label="Diminuer la quantite">-</button>
+        <div class="qty-display" id="qtyDisplay">1</div>
+        <button onclick="changeQty(1)" aria-label="Augmenter la quantite">+</button>
+       </div>
+       <button class="btn-add-cart" id="btnAddCart" onclick="addProductToCart()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span>Ajouter au panier</span>
+       </button>
+      </div>
+
+      <!-- Delivery Info -->
+      <div class="pd-delivery">
+       <div class="pd-del-item">
+        <div class="pd-del-icon">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="pd-del-text">
+         <h4>Livraison Gratuite</h4>
+         <p>Expedition sous 48h</p>
+        </div>
+       </div>
+       <div class="pd-del-item">
+        <div class="pd-del-icon">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="pd-del-text">
+         <h4>Paiement Securise</h4>
+         <p>SSL 256-bit</p>
+        </div>
+       </div>
+       <div class="pd-del-item">
+        <div class="pd-del-icon">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </div>
+        <div class="pd-del-text">
+         <h4>Retour 14 Jours</h4>
+         <p>Satisfait ou rembourse</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Related Products -->
+  <section class="related-section" id="relatedSection"></section>
+
+  <!-- Customer Reviews -->
+  <section class="reviews-section" id="reviewsSection"></section>
+ `;
+
+ renderRelated(product);
+ renderReviews(product);
+ setupObserver();
+}
+
+/* ── RENDER RELATED ── */
+function renderRelated(product){
+ const related=getRelated(product);
+ if(!related.length) return;
+ const section=document.getElementById('relatedSection');
+ section.innerHTML=`
+  <div class="container">
+   <div class="section-head fade-in">
+    <h2>Produits Similaires</h2>
+    <p>Vous aimerez aussi ces produits de la categorie ${escapeHtml(product.catLabel)}</p>
+   </div>
+   <div class="related-grid fade-in">
+    ${related.map(p=>{
+     const disc=calcDiscount(p.price,p.oldPrice);
+     const stars='&#9733;'.repeat(Math.floor(p.rating))+(p.rating%1>=0.5?'&#9734;':'');
+     return `
+     <a href="product.html?id=${p.id}" class="product-card">
+      <div class="product-img">
+       <div class="product-img-bg" style="background:${p.bg}"></div>
+       ${p.trend?'<div class="product-badge">&#x1F525; Populaire</div>':''}
+       <div class="product-discount-badge">-${disc}%</div>
+      </div>
+      <div class="product-body">
+       <div class="product-cat">${p.catLabel}</div>
+       <div class="product-name">${escapeHtml(p.name)}</div>
+       <div class="product-rating">
+        <span class="stars">${stars}</span>
+        <span>${p.rating} (${p.reviews})</span>
+       </div>
+       <div class="product-footer">
+        <div class="product-price">
+         <span class="price-current">${formatPrice(p.price)} &euro;</span>
+         <span class="price-old">${formatPrice(p.oldPrice)} &euro;</span>
+        </div>
+        <button class="btn-cart" onclick="event.preventDefault();event.stopPropagation();addToCartById(${p.id})" aria-label="Ajouter ${escapeHtml(p.name)} au panier">
+         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+         <span class="btn-text">Ajouter</span>
+        </button>
+       </div>
+      </div>
+     </a>`;
+    }).join('')}
+   </div>
+  </div>
+ `;
+ setupObserver();
+}
+
+/* ── FORMAT DATE FRENCH ── */
+function formatDateFr(dateStr){
+ const months=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+ const d=new Date(dateStr);
+ return d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+}
+
+/* ── RENDER REVIEWS ── */
+function renderReviews(product){
+ const reviews=product.customerReviews;
+ if(!reviews||!reviews.length) return;
+ const section=document.getElementById('reviewsSection');
+
+ /* Calculate rating distribution */
+ const dist={5:0,4:0,3:0,2:0,1:0};
+ let total=0;
+ reviews.forEach(r=>{dist[r.rating]++;total+=r.rating;});
+ const avg=(total/reviews.length).toFixed(1);
+
+ /* Sort by date newest first */
+ const sorted=[...reviews].sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+ section.innerHTML=`
+  <div class="container">
+   <div class="reviews-header fade-in">
+    <h2>Avis Clients Verifies</h2>
+    <span class="reviews-count">${reviews.length} avis</span>
+   </div>
+   <div class="reviews-summary fade-in">
+    <div class="reviews-avg">
+     <div class="big-rating">${avg}</div>
+     <div class="avg-stars">${renderStars(parseFloat(avg))}</div>
+     <div class="avg-label">sur ${reviews.length} avis</div>
+    </div>
+    <div class="reviews-bars">
+     ${[5,4,3,2,1].map(s=>{
+      const count=dist[s];
+      const pct=reviews.length?Math.round(count/reviews.length*100):0;
+      return '<div class="review-bar-row"><span class="bar-label">'+s+' etoile'+(s>1?'s':'')+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><span class="bar-pct">'+pct+'%</span></div>';
+     }).join('')}
+    </div>
+   </div>
+   <div class="reviews-list fade-in">
+    ${sorted.map(r=>`
+     <div class="review-card">
+      <div class="review-top">
+       <div>
+        <span class="review-author">${escapeHtml(r.name)}</span>
+        ${r.verified?'<span class="review-verified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Verifie</span>':''}
+       </div>
+       <span class="review-date">${formatDateFr(r.date)}</span>
+      </div>
+      <div class="review-stars">${renderStars(r.rating)}</div>
+      <p class="review-text">${escapeHtml(r.text)}</p>
+     </div>
+    `).join('')}
+   </div>
+  </div>
+ `;
+}
+
+/* ── RENDER NOT FOUND ── */
+function renderNotFound(){
+ document.getElementById('mainContent').innerHTML=`
+  <div class="pd-not-found">
+   <div class="nf-icon">&#x1F50D;</div>
+   <h2>Produit introuvable</h2>
+   <p>Ce produit n'existe pas ou a ete retire de notre catalogue.</p>
+   <a href="/shop/">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Retour a la boutique
+   </a>
+  </div>
+ `;
+}
+
+/* ── GALLERY INTERACTION ── */
+let currentThumb=0;
+function selectThumb(idx){
+ currentThumb=idx;
+ const product=currentProduct;
+ if(!product) return;
+ const variants=getGalleryVariants(product);
+ const v=variants[idx];
+ const videoEl=document.querySelector('.pd-video-bg');
+ if(videoEl) videoEl.style.filter=v.filter;
+ document.querySelectorAll('.pd-thumb').forEach((t,i)=>{
+  t.classList.toggle('active',i===idx);
+ });
+}
+
+function playVideo(){
+ showToast('Apercu video bientot disponible');
+}
+
+/* ── QUANTITY ── */
+let qty=1;
+function changeQty(delta){
+ qty=Math.max(1,Math.min(99,qty+delta));
+ const el=document.getElementById('qtyDisplay');
+ if(el) el.textContent=qty;
+}
+
+/* ── CART (compatible with main store) ── */
+let cart=[];
+let currentProduct=null;
+
+function loadCart(){
+ try{cart=JSON.parse(localStorage.getItem('hv_cart'))||[];}catch(e){cart=[];}
+}
+function saveCart(){
+ try{localStorage.setItem('hv_cart',JSON.stringify(cart));}catch(e){}
+}
+
+function addProductToCart(){
+ const p=currentProduct;
+ if(!p) return;
+ const existing=cart.find(x=>x.id===p.id);
+ if(existing){existing.qty+=qty;}
+ else{cart.push({id:p.id,name:p.name,price:p.price,bg:p.bg,qty:qty,cat:p.cat});}
+ saveCart();
+ updateCartUI();
+ showToast('Ajoute au panier : '+p.name);
+
+ const btn=document.getElementById('btnAddCart');
+ if(btn){
+  btn.classList.add('added');
+  btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Ajoute !</span>';
+  setTimeout(()=>{
+   btn.classList.remove('added');
+   btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> <span>Ajouter au panier</span>';
+  },1500);
+ }
+}
+
+function addToCartById(id){
+ const p=products.find(x=>x.id===id);
+ if(!p) return;
+ const existing=cart.find(x=>x.id===id);
+ if(existing){existing.qty++;}
+ else{cart.push({id:p.id,name:p.name,price:p.price,bg:p.bg,qty:1,cat:p.cat});}
+ saveCart();
+ updateCartUI();
+ showToast('Ajoute au panier : '+p.name);
+}
+
+function removeFromCart(id){
+ cart=cart.filter(x=>x.id!==id);
+ saveCart();
+ updateCartUI();
+}
+
+function updateQty(id,delta){
+ const item=cart.find(x=>x.id===id);
+ if(!item) return;
+ item.qty+=delta;
+ if(item.qty<1) return removeFromCart(id);
+ saveCart();
+ updateCartUI();
+}
+
+function updateCartUI(){
+ const countEl=document.getElementById('cartCount');
+ const itemsEl=document.getElementById('cartItems');
+ const footerEl=document.getElementById('cartFooter');
+ const totalEl=document.getElementById('cartTotal');
+ const itemCountEl=document.getElementById('cartItemCount');
+ const totalQty=cart.reduce((s,i)=>s+i.qty,0);
+ const totalPrice=cart.reduce((s,i)=>s+i.price*i.qty,0);
+
+ countEl.textContent=totalQty;
+ countEl.classList.toggle('show',totalQty>0);
+ itemCountEl.textContent=totalQty;
+
+ if(cart.length===0){
+  footerEl.style.display='none';
+  itemsEl.innerHTML='<div class="cart-empty"><div class="empty-icon">&#x1F6D2;</div><p>Votre panier est vide</p></div>';
+  return;
+ }
+ footerEl.style.display='';
+ totalEl.textContent=formatPrice(totalPrice)+' €';
+ itemsEl.innerHTML=cart.map(item=>`
+  <div class="cart-item">
+   <div class="cart-item-img" style="background:${item.bg}"></div>
+   <div class="cart-item-info">
+    <div class="cart-item-name">${escapeHtml(item.name)}</div>
+    <div class="cart-item-price">${formatPrice(item.price*item.qty)} &euro;</div>
+    <div class="cart-item-actions">
+     <button class="qty-btn" onclick="updateQty(${item.id},-1)" aria-label="Reduire">-</button>
+     <span class="qty-val">${item.qty}</span>
+     <button class="qty-btn" onclick="updateQty(${item.id},1)" aria-label="Augmenter">+</button>
+     <button class="cart-item-remove" onclick="removeFromCart(${item.id})" aria-label="Supprimer">Supprimer</button>
+    </div>
+   </div>
+  </div>
+ `).join('');
+}
+
+function toggleCart(open){
+ const overlay=document.getElementById('cartOverlay');
+ const sidebar=document.getElementById('cartSidebar');
+ if(open===undefined) open=!sidebar.classList.contains('open');
+ overlay.classList.toggle('open',open);
+ sidebar.classList.toggle('open',open);
+ document.body.style.overflow=open?'hidden':'';
+}
+
+function handleCheckout(){
+ if(cart.length===0){showToast('Votre panier est vide');return;}
+ showToast('Redirection vers le paiement...');
+ setTimeout(()=>{window.location.href='/shop/checkout/';},1000);
+}
+
+/* ── TOAST ── */
+function showToast(msg){
+ const t=document.getElementById('toast');
+ t.textContent=msg;
+ t.classList.add('show');
+ setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll',()=>{
+ document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
+},{passive:true});
+
+/* ── MOBILE NAV ── */
+function closeMobileNav(){
+ document.getElementById('mobileNav').classList.remove('open');
+ document.body.style.overflow='';
+}
+
+/* ── INTERSECTION OBSERVER ── */
+function setupObserver(){
+ const els=document.querySelectorAll('.fade-in:not(.visible)');
+ if(!els.length) return;
+ const obs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+   if(e.isIntersecting){
+    setTimeout(()=>e.target.classList.add('visible'),i*80);
+    obs.unobserve(e.target);
+   }
+  });
+ },{threshold:0.1});
+ els.forEach(el=>obs.observe(el));
+}
+
+/* ── LISTENERS ── */
+function setupListeners(){
+ document.getElementById('cartToggle').addEventListener('click',()=>toggleCart(true));
+ document.getElementById('cartClose').addEventListener('click',()=>toggleCart(false));
+ document.getElementById('cartOverlay').addEventListener('click',()=>toggleCart(false));
+
+ const menuToggle=document.getElementById('menuToggle');
+ const mobileNav=document.getElementById('mobileNav');
+ menuToggle.addEventListener('click',()=>{
+  const open=mobileNav.classList.toggle('open');
+  document.body.style.overflow=open?'hidden':'';
+ });
+
+ document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){toggleCart(false);closeMobileNav();}
+ });
+}
+
+/* ── COOKIE CONSENT ── */
+function showCookieBanner(){
+ try{if(localStorage.getItem('hv_cookies'))return;}catch(e){}
+ setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'),1500);
+}
+function acceptCookies(){
+ try{localStorage.setItem('hv_cookies','accepted');}catch(e){}
+ document.getElementById('cookieBanner').classList.remove('show');
+}
+function refuseCookies(){
+ try{localStorage.setItem('hv_cookies','refused');}catch(e){}
+ document.getElementById('cookieBanner').classList.remove('show');
+}
+
+/* ── INIT ── */
+function init(){
+ loadCart();
+ updateCartUI();
+ setupListeners();
+
+ const id=getProductId();
+ const product=getProduct(id);
+
+ if(!product){
+  renderNotFound();
+  showCookieBanner();
+  return;
+ }
+
+ currentProduct=product;
+ renderProductPage(product);
+ showCookieBanner();
+}
+
+init();
+</script>
+</body>
+</html>

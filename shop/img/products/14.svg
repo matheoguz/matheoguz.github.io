@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="mount14" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+    <linearGradient id="phoneBk14" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A1A2E"/>
+      <stop offset="100%" stop-color="#16213E"/>
+    </linearGradient>
+    <linearGradient id="mapBg14" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E3F2FD"/>
+      <stop offset="30%" stop-color="#BBDEFB"/>
+      <stop offset="60%" stop-color="#E1F5FE"/>
+      <stop offset="100%" stop-color="#B3E5FC"/>
+    </linearGradient>
+    <linearGradient id="vent14" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9E9E9E"/>
+      <stop offset="100%" stop-color="#757575"/>
+    </linearGradient>
+    <filter id="mountShad14">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="400" height="400" rx="12" fill="#ECEFF1"/>
+
+  <!-- Car dashboard area (dark) -->
+  <rect x="30" y="240" width="340" height="130" rx="8" fill="#37474F"/>
+  <rect x="30" y="240" width="340" height="8" fill="#455A64"/>
+
+  <!-- Air vent area -->
+  <rect x="80" y="258" width="240" height="55" rx="6" fill="#546E7A"/>
+  <rect x="85" y="260" width="230" height="51" rx="4" fill="#37474F"/>
+  <!-- Vent slats -->
+  <rect x="90" y="266" width="220" height="3" rx="1" fill="url(#vent14)"/>
+  <rect x="90" y="274" width="220" height="3" rx="1" fill="url(#vent14)"/>
+  <rect x="90" y="282" width="220" height="3" rx="1" fill="url(#vent14)"/>
+  <rect x="90" y="290" width="220" height="3" rx="1" fill="url(#vent14)"/>
+  <rect x="90" y="298" width="220" height="3" rx="1" fill="url(#vent14)"/>
+  <!-- Vent control knob -->
+  <circle cx="310" cy="284" r="8" fill="#607D8B" stroke="#78909C" stroke-width="1"/>
+  <line x1="310" y1="278" x2="310" y2="284" stroke="#90A4AE" stroke-width="1.5"/>
+
+  <!-- Mount clip on vent -->
+  <g filter="url(#mountShad14)">
+    <!-- Clip arm reaching into vent -->
+    <rect x="185" y="260" width="30" height="18" rx="3" fill="#333"/>
+    <!-- Clip teeth -->
+    <rect x="190" y="276" width="8" height="6" rx="1" fill="#555"/>
+    <rect x="202" y="276" width="8" height="6" rx="1" fill="#555"/>
+    <!-- Ball joint -->
+    <circle cx="200" cy="252" r="10" fill="#444"/>
+    <circle cx="200" cy="252" r="7" fill="#555"/>
+    <!-- Arm -->
+    <rect x="194" y="230" width="12" height="25" rx="4" fill="url(#mount14)"/>
+    <!-- Magnetic pad -->
+    <circle cx="200" cy="222" r="22" fill="#333"/>
+    <circle cx="200" cy="222" r="20" fill="#444"/>
+    <!-- Magnetic ring indicator -->
+    <circle cx="200" cy="222" r="15" fill="none" stroke="#555" stroke-width="1"/>
+    <circle cx="200" cy="222" r="10" fill="none" stroke="#555" stroke-width="0.5"/>
+    <!-- Center magnet dot -->
+    <circle cx="200" cy="222" r="4" fill="#666"/>
+  </g>
+
+  <!-- Phone attached to mount -->
+  <g filter="url(#mountShad14)">
+    <!-- Phone body -->
+    <rect x="140" y="60" width="120" height="200" rx="12" fill="url(#phoneBk14)"/>
+    <!-- Phone screen -->
+    <rect x="145" y="68" width="110" height="185" rx="10" fill="url(#mapBg14)"/>
+
+    <!-- Map content -->
+    <!-- Roads -->
+    <line x1="150" y1="140" x2="250" y2="140" stroke="#CFD8DC" stroke-width="6"/>
+    <line x1="200" y1="70" x2="200" y2="250" stroke="#CFD8DC" stroke-width="6"/>
+    <line x1="155" y1="100" x2="245" y2="100" stroke="#CFD8DC" stroke-width="3"/>
+    <line x1="155" y1="180" x2="245" y2="180" stroke="#CFD8DC" stroke-width="3"/>
+    <line x1="170" y1="72" x2="170" y2="248" stroke="#CFD8DC" stroke-width="3"/>
+    <line x1="230" y1="72" x2="230" y2="248" stroke="#CFD8DC" stroke-width="3"/>
+
+    <!-- Buildings/blocks -->
+    <rect x="152" y="105" width="14" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="175" y="105" width="20" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="206" y="105" width="18" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="152" y="145" width="14" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="175" y="145" width="20" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="206" y="145" width="18" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="235" y="105" width="12" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+    <rect x="235" y="145" width="12" height="30" rx="2" fill="#E0E0E0" opacity="0.6"/>
+
+    <!-- Navigation route (blue line) -->
+    <path d="M200 230 L200 140 L230 140 L230 100" fill="none" stroke="#1565C0" stroke-width="4" stroke-linecap="round"/>
+    <!-- Location pin -->
+    <circle cx="200" cy="230" r="6" fill="#1565C0"/>
+    <circle cx="200" cy="230" r="3" fill="#FFF"/>
+    <!-- Direction arrow at destination -->
+    <circle cx="230" cy="100" r="5" fill="#E53935"/>
+    <circle cx="230" cy="100" r="2" fill="#FFF"/>
+
+    <!-- Navigation bar at bottom -->
+    <rect x="145" y="225" width="110" height="28" rx="0 0 10 10" fill="#1565C0" opacity="0.9"/>
+    <text x="200" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#FFF" font-weight="600">12 min - 4.2 km</text>
+
+    <!-- Top status bar -->
+    <rect x="145" y="68" width="110" height="16" rx="10 10 0 0" fill="#FFF" opacity="0.3"/>
+    <text x="200" y="79" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#333">10:30</text>
+
+    <!-- Camera notch -->
+    <rect x="180" y="69" width="40" height="8" rx="4" fill="#1A1A2E"/>
+    <circle cx="200" cy="73" r="2.5" fill="#2A2A3E"/>
+  </g>
+
+  <!-- Windshield hint at top -->
+  <path d="M30 30 Q200 50 370 30 L370 60 Q200 80 30 60 Z" fill="#90CAF9" opacity="0.1"/>
+</svg>

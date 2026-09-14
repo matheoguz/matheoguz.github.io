@@ -5,596 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paiement - HomeVibe</title>
     <meta name="description" content="Finalisez votre commande HomeVibe en toute securite">
-    <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
     <style>
-        /* =================================================================
-           HomeVibe - Page de Paiement
-           Theme: Fond sombre avec accents gradient violet-teal
-           ================================================================= */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #0a0a1a;
-            color: #e0e0e0;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .checkout-header {
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .checkout-header .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-
-        .checkout-header .back-link {
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .checkout-header .back-link:hover {
-            color: #fff;
-        }
-
-        /* Mode demo badge */
-        .demo-badge {
-            background: linear-gradient(135deg, #f39c12, #e74c3c);
-            color: #fff;
-            padding: 8px 20px;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        /* Conteneur principal */
-        .checkout-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 16px;
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 32px;
-            align-items: start;
-        }
-
-        /* Sections de formulaire */
-        .form-section {
-            background: #12122a;
-            border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(108, 92, 231, 0.15);
-        }
-
-        .form-section h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-section h2 .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        /* Champs de formulaire */
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .form-row.single {
-            grid-template-columns: 1fr;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #a0a0c0;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(108, 92, 231, 0.25);
-            background: #1a1a35;
-            color: #fff;
-            font-size: 0.95rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #6C5CE7;
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
-        }
-
-        .form-group input::placeholder {
-            color: #555;
-        }
-
-        .form-group select option {
-            background: #1a1a35;
-            color: #fff;
-        }
-
-        /* Methodes de livraison */
-        .delivery-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .delivery-option {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            border-radius: 12px;
-            border: 2px solid rgba(108, 92, 231, 0.2);
-            background: #1a1a35;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-        }
-
-        .delivery-option:hover {
-            border-color: rgba(108, 92, 231, 0.4);
-        }
-
-        .delivery-option.selected {
-            border-color: #6C5CE7;
-            background: rgba(108, 92, 231, 0.08);
-        }
-
-        .delivery-option input[type="radio"] {
-            display: none;
-        }
-
-        .delivery-radio {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid #555;
-            margin-right: 14px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: border-color 0.2s;
-        }
-
-        .delivery-option.selected .delivery-radio {
-            border-color: #6C5CE7;
-        }
-
-        .delivery-option.selected .delivery-radio::after {
-            content: '';
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-        }
-
-        .delivery-info {
-            flex: 1;
-        }
-
-        .delivery-info .name {
-            font-weight: 600;
-            color: #fff;
-            font-size: 0.95rem;
-        }
-
-        .delivery-info .desc {
-            font-size: 0.8rem;
-            color: #888;
-            margin-top: 2px;
-        }
-
-        .delivery-price {
-            font-weight: 700;
-            font-size: 1rem;
-            color: #00CEC9;
-        }
-
-        .delivery-price.free {
-            color: #2ecc71;
-        }
-
-        /* ---- Sidebar: Recapitulatif ---- */
-        .order-summary {
-            background: #12122a;
-            border-radius: 16px;
-            padding: 28px;
-            border: 1px solid rgba(108, 92, 231, 0.15);
-            position: sticky;
-            top: 24px;
-        }
-
-        .order-summary h2 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 20px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .summary-items {
-            max-height: 280px;
-            overflow-y: auto;
-            margin-bottom: 16px;
-            padding-right: 4px;
-        }
-
-        .summary-items::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .summary-items::-webkit-scrollbar-thumb {
-            background: rgba(108, 92, 231, 0.3);
-            border-radius: 4px;
-        }
-
-        .summary-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
-        }
-
-        .summary-item-image {
-            width: 52px;
-            height: 52px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #1a1a35, #252550);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-
-        .summary-item-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .summary-item-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #ddd;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .summary-item-qty {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: 2px;
-        }
-
-        .summary-item-price {
-            font-weight: 700;
-            color: #fff;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        /* Totaux */
-        .summary-totals {
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 16px;
-            margin-top: 8px;
-        }
-
-        .summary-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .summary-line .label {
-            color: #888;
-        }
-
-        .summary-line .value {
-            color: #ddd;
-            font-weight: 500;
-        }
-
-        .summary-line.total {
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 14px;
-            margin-top: 6px;
-            font-size: 1.15rem;
-        }
-
-        .summary-line.total .label {
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .summary-line.total .value {
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            font-size: 1.3rem;
-        }
-
-        /* Bouton payer */
-        .pay-button {
-            width: 100%;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            color: #fff;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            letter-spacing: 0.3px;
-        }
-
-        .pay-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
-        }
-
-        .pay-button:active {
-            transform: translateY(0);
-        }
-
-        .pay-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .pay-button svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Spinner de chargement */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Securite et paiement */
-        .security-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .security-badges {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .security-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(46, 204, 113, 0.1);
-            color: #2ecc71;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .security-badge svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        .payment-methods {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .payment-icon {
-            background: #1a1a35;
-            border-radius: 6px;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #aaa;
-            border: 1px solid rgba(255,255,255,0.06);
-            min-width: 48px;
-            height: 32px;
-        }
-
-        .payment-icon.visa { color: #1a1f71; background: #fff; }
-        .payment-icon.mastercard { color: #eb001b; background: #fff; }
-        .payment-icon.applepay { color: #000; background: #fff; }
-        .payment-icon.googlepay { color: #4285f4; background: #fff; }
-
-        .powered-by {
-            font-size: 0.7rem;
-            color: #555;
-            margin-top: 10px;
-        }
-
-        /* Panier vide */
-        .empty-cart {
-            text-align: center;
-            padding: 60px 20px;
-            grid-column: 1 / -1;
-        }
-
-        .empty-cart svg {
-            width: 80px;
-            height: 80px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .empty-cart h2 {
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .empty-cart p {
-            color: #888;
-            margin-bottom: 24px;
-        }
-
-        .empty-cart a {
-            display: inline-block;
-            padding: 12px 32px;
-            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        /* Message d'erreur */
-        .error-message {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            margin-top: 12px;
-            display: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .checkout-container {
-                grid-template-columns: 1fr;
-                padding: 20px 16px;
-                gap: 20px;
-            }
-
-            .order-summary {
-                position: static;
-                order: -1;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .form-section {
-                padding: 20px;
-            }
-
-            .checkout-header {
-                padding: 14px 16px;
-            }
+        :root {
+            --bg:#FFFFFF;--bg-alt:#F9FAFB;--bg-warm:#FFF7ED;
+            --surface:#FFFFFF;--surface-alt:#F3F4F6;
+            --text:#111827;--text2:#4B5563;--text3:#9CA3AF;
+            --accent:#E85D04;--accent-hover:#D35400;--accent-light:#FFF7ED;
+            --success:#059669;--success-light:#ECFDF5;
+            --danger:#DC2626;--star:#F59E0B;
+            --border:#E5E7EB;--border-light:#F3F4F6;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg-alt);color:var(--text);line-height:1.6;min-height:100vh}
+
+        .trust-bar{background:var(--success);color:#fff;text-align:center;padding:8px 16px;font-size:.78rem;font-weight:500;letter-spacing:.3px}
+        .trust-bar span{margin:0 12px;opacity:.85}
+
+        .checkout-header{background:var(--bg);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+        .checkout-header .logo{font-size:1.5rem;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:-.5px}
+        .checkout-header .logo em{font-style:normal;color:var(--accent)}
+        .checkout-header .back-link{color:var(--text2);text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:4px;transition:color .2s}
+        .checkout-header .back-link:hover{color:var(--accent)}
+
+        .demo-badge{background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff;padding:8px 20px;text-align:center;font-size:.85rem;font-weight:600;letter-spacing:.5px}
+
+        .checkout-container{max-width:1100px;margin:0 auto;padding:32px 16px;display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start}
+
+        .form-section{background:var(--bg);border-radius:14px;padding:28px;margin-bottom:20px;border:1px solid var(--border)}
+        .form-section h2{font-size:1.15rem;font-weight:700;margin-bottom:18px;color:var(--text);display:flex;align-items:center;gap:10px}
+        .form-section h2 .step-number{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:.85rem;font-weight:700;flex-shrink:0}
+
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+        .form-row.single{grid-template-columns:1fr}
+        .form-group{display:flex;flex-direction:column}
+        .form-group label{font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+        .form-group input,.form-group select{padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.95rem;transition:border-color .2s,box-shadow .2s;outline:none}
+        .form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,93,4,.1)}
+        .form-group input::placeholder{color:var(--text3)}
+        .form-group select option{background:var(--bg);color:var(--text)}
+
+        .delivery-options{display:flex;flex-direction:column;gap:12px}
+        .delivery-option{display:flex;align-items:center;padding:16px;border-radius:12px;border:2px solid var(--border);background:var(--bg);cursor:pointer;transition:border-color .2s,background .2s}
+        .delivery-option:hover{border-color:var(--accent);background:var(--accent-light)}
+        .delivery-option.selected{border-color:var(--accent);background:var(--accent-light)}
+        .delivery-option input[type="radio"]{display:none}
+        .delivery-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--text3);margin-right:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
+        .delivery-option.selected .delivery-radio{border-color:var(--accent)}
+        .delivery-option.selected .delivery-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent)}
+        .delivery-info{flex:1}
+        .delivery-info .name{font-weight:600;color:var(--text);font-size:.95rem}
+        .delivery-info .desc{font-size:.8rem;color:var(--text3);margin-top:2px}
+        .delivery-price{font-weight:700;font-size:1rem;color:var(--accent)}
+        .delivery-price.free{color:var(--success)}
+
+        .order-summary{background:var(--bg);border-radius:14px;padding:28px;border:1px solid var(--border);position:sticky;top:70px}
+        .order-summary h2{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border-light)}
+
+        .summary-items{max-height:280px;overflow-y:auto;margin-bottom:16px;padding-right:4px}
+        .summary-items::-webkit-scrollbar{width:4px}
+        .summary-items::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+        .summary-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light)}
+        .summary-item:last-child{border-bottom:none}
+        .summary-item-image{width:52px;height:52px;border-radius:10px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+        .summary-item-details{flex:1;min-width:0}
+        .summary-item-name{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .summary-item-qty{font-size:.75rem;color:var(--text3);margin-top:2px}
+        .summary-item-price{font-weight:700;color:var(--text);font-size:.9rem;flex-shrink:0}
+
+        .summary-totals{border-top:1px solid var(--border);padding-top:16px;margin-top:8px}
+        .summary-line{display:flex;justify-content:space-between;margin-bottom:10px;font-size:.9rem}
+        .summary-line .label{color:var(--text3)}
+        .summary-line .value{color:var(--text);font-weight:500}
+        .summary-line.total{border-top:1px solid var(--border);padding-top:14px;margin-top:6px;font-size:1.15rem}
+        .summary-line.total .label{color:var(--text);font-weight:700}
+        .summary-line.total .value{color:var(--accent);font-weight:800;font-size:1.3rem}
+
+        .pay-button{width:100%;padding:16px 24px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;transition:background .2s,transform .15s,box-shadow .15s;margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.3px}
+        .pay-button:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,93,4,.25)}
+        .pay-button:active{transform:translateY(0)}
+        .pay-button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+        .pay-button svg{width:20px;height:20px}
+
+        .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .security-section{margin-top:20px;text-align:center}
+        .security-badges{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+        .security-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:var(--success-light);color:var(--success);font-size:.7rem;font-weight:600}
+        .security-badge svg{width:12px;height:12px}
+        .payment-methods{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+        .payment-icon{background:var(--surface-alt);border-radius:6px;padding:6px 12px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text3);border:1px solid var(--border);min-width:48px;height:32px}
+        .payment-icon.visa{color:#1a1f71;background:#fff;border-color:#e0e0e0}
+        .payment-icon.mastercard{color:#eb001b;background:#fff;border-color:#e0e0e0}
+        .payment-icon.applepay{color:#000;background:#fff;border-color:#e0e0e0}
+        .payment-icon.googlepay{color:#4285f4;background:#fff;border-color:#e0e0e0}
+        .powered-by{font-size:.7rem;color:var(--text3);margin-top:10px}
+
+        .empty-cart{text-align:center;padding:60px 20px;grid-column:1/-1}
+        .empty-cart svg{width:80px;height:80px;color:var(--text3);margin-bottom:20px}
+        .empty-cart h2{color:var(--text);margin-bottom:10px}
+        .empty-cart p{color:var(--text2);margin-bottom:24px}
+        .empty-cart a{display:inline-block;padding:12px 32px;background:var(--accent);color:#fff;text-decoration:none;border-radius:10px;font-weight:600;transition:background .2s}
+        .empty-cart a:hover{background:var(--accent-hover)}
+
+        .error-message{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);color:var(--danger);padding:12px 16px;border-radius:10px;font-size:.85rem;margin-top:12px;display:none}
+
+        @media(max-width:768px){
+            .checkout-container{grid-template-columns:1fr;padding:20px 16px;gap:20px}
+            .order-summary{position:static;order:-1}
+            .form-row{grid-template-columns:1fr}
+            .form-section{padding:20px}
+            .checkout-header{padding:14px 16px}
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <div class="trust-bar">
+        <span>&#128274; Paiement 100% Securise</span>
+        <span>&#128666; Livraison Suivie</span>
+        <span>&#10004;&#65039; Satisfait ou Rembourse</span>
+    </div>
+
     <header class="checkout-header">
-        <a href="/shop/" class="logo">HomeVibe</a>
+        <a href="/shop/" class="logo">Home<em>Vibe</em></a>
         <a href="/shop/" class="back-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
             Retour a la boutique
         </a>
     </header>
 
-    <!-- Badge mode demo (affiche si Stripe non configure) -->
     <div class="demo-badge" id="demoBadge" style="display:none;">
         Mode Demo - Paiement Simule | Configurez votre cle Stripe pour activer les vrais paiements
     </div>
 
-    <!-- Contenu principal -->
     <main class="checkout-container" id="checkoutContent">
 
-        <!-- Panier vide (affiche si pas d'articles) -->
         <div class="empty-cart" id="emptyCart" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             <h2>Votre panier est vide</h2>
@@ -602,10 +149,8 @@
             <a href="/shop/">Decouvrir nos produits</a>
         </div>
 
-        <!-- Colonne gauche: Formulaire -->
         <div id="formColumn" style="display:none;">
 
-            <!-- Informations personnelles -->
             <div class="form-section">
                 <h2><span class="step-number">1</span> Informations personnelles</h2>
                 <div class="form-row">
@@ -630,7 +175,6 @@
                 </div>
             </div>
 
-            <!-- Adresse de livraison -->
             <div class="form-section">
                 <h2><span class="step-number">2</span> Adresse de livraison</h2>
                 <div class="form-row single">
@@ -668,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- Livraison -->
             <div class="form-section">
                 <h2><span class="step-number">3</span> Mode de livraison</h2>
                 <div class="delivery-options">
@@ -694,13 +237,10 @@
             </div>
         </div>
 
-        <!-- Colonne droite: Recapitulatif -->
         <aside class="order-summary" id="orderSummary" style="display:none;">
             <h2>Recapitulatif de la commande</h2>
 
-            <div class="summary-items" id="summaryItems">
-                <!-- Rempli dynamiquement par JS -->
-            </div>
+            <div class="summary-items" id="summaryItems"></div>
 
             <div class="summary-totals">
                 <div class="summary-line">
@@ -717,7 +257,6 @@
                 </div>
             </div>
 
-            <!-- Bouton de paiement -->
             <button class="pay-button" id="payButton" onclick="handlePayment()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                 <span id="payButtonText">Payer avec Stripe</span>
@@ -726,7 +265,6 @@
 
             <div class="error-message" id="errorMessage"></div>
 
-            <!-- Securite -->
             <div class="security-section">
                 <div class="security-badges">
                     <span class="security-badge">
@@ -750,19 +288,12 @@
 
     </main>
 
-    <!-- Scripts -->
     <script src="/shop/js/order-manager.js"></script>
     <script src="/shop/js/stripe-integration.js"></script>
     <script>
-        // =====================================================================
-        // HomeVibe - Logique de la page de paiement
-        // =====================================================================
-
-        // Etat local de la page
         var currentDelivery = 'standard';
         var cartItems = [];
 
-        // Icones par categorie de produit
         var categoryIcons = {
             'cuisine': '🍳',
             'lumiere': '💡',
@@ -771,15 +302,12 @@
             'default': '🛒'
         };
 
-        // ---- Initialisation ----
         document.addEventListener('DOMContentLoaded', function() {
-            // Verifier le mode demo
             if (HomeVibeStripe.isDemoMode()) {
                 document.getElementById('demoBadge').style.display = 'block';
                 document.getElementById('payButtonText').textContent = 'Payer (Mode Demo)';
             }
 
-            // Charger le panier
             cartItems = HomeVibeStripe.getCart();
 
             if (cartItems.length === 0) {
@@ -794,11 +322,9 @@
                 updateTotals();
             }
 
-            // Initialiser Stripe
             HomeVibeStripe.init();
         });
 
-        // ---- Affichage des articles du panier ----
         function renderCartItems() {
             var container = document.getElementById('summaryItems');
             var html = '';
@@ -823,27 +349,21 @@
             container.innerHTML = html;
         }
 
-        // ---- Selection de la livraison ----
         function selectDelivery(method) {
             currentDelivery = method;
-
             document.getElementById('deliveryStandard').classList.toggle('selected', method === 'standard');
             document.getElementById('deliveryExpress').classList.toggle('selected', method === 'express');
-
             updateTotals();
         }
 
-        // ---- Mise a jour des totaux ----
         function updateTotals() {
             var totals = HomeVibeStripe.calculateTotal(cartItems, currentDelivery);
-
             document.getElementById('subtotalValue').textContent = formatEur(totals.subtotal);
             document.getElementById('deliveryValue').textContent =
                 totals.delivery === 0 ? 'Gratuit' : formatEur(totals.delivery);
             document.getElementById('totalValue').textContent = formatEur(totals.total);
         }
 
-        // ---- Validation du formulaire ----
         function validateForm() {
             var fields = ['lastName', 'firstName', 'email', 'address', 'postalCode', 'city'];
             for (var i = 0; i < fields.length; i++) {
@@ -865,7 +385,6 @@
             return true;
         }
 
-        // ---- Collecter les informations client ----
         function getCustomerInfo() {
             return {
                 lastName: document.getElementById('lastName').value.trim(),
@@ -879,12 +398,9 @@
             };
         }
 
-        // ---- Gestion du paiement ----
         async function handlePayment() {
-            // Validation
             if (!validateForm()) return;
 
-            // Desactiver le bouton
             var btn = document.getElementById('payButton');
             var btnText = document.getElementById('payButtonText');
             var spinner = document.getElementById('paySpinner');
@@ -896,7 +412,6 @@
             try {
                 var customerInfo = getCustomerInfo();
 
-                // Sauvegarder la commande avant de rediriger
                 if (typeof OrderManager !== 'undefined') {
                     var totals = HomeVibeStripe.calculateTotal(cartItems, currentDelivery);
                     OrderManager.createOrder({
@@ -911,7 +426,6 @@
                     });
                 }
 
-                // Lancer le paiement (ou la simulation demo)
                 await HomeVibeStripe.createCheckoutSession(cartItems, customerInfo, currentDelivery);
 
             } catch (error) {
@@ -923,7 +437,6 @@
             }
         }
 
-        // ---- Utilitaires ----
         function formatEur(amount) {
             return amount.toFixed(2).replace('.', ',') + ' €';
         }

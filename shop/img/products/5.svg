@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="nebula5a" cx="35%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#7C4DFF" stop-opacity="0.35"/>
+      <stop offset="40%" stop-color="#CE93D8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="nebula5b" cx="65%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#F06292" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#E040FB" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="nebula5c" cx="50%" cy="25%" r="45%">
+      <stop offset="0%" stop-color="#40C4FF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="projBody5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="100%" stop-color="#212121"/>
+    </linearGradient>
+    <linearGradient id="lens5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7C4DFF"/>
+      <stop offset="50%" stop-color="#B388FF"/>
+      <stop offset="100%" stop-color="#E040FB"/>
+    </linearGradient>
+    <filter id="sh5">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+    <filter id="starGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="projGlow">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="20" fill="#EDE7F6"/>
+  <!-- Projected light effects - nebula clouds -->
+  <ellipse cx="200" cy="120" rx="170" ry="110" fill="url(#nebula5a)"/>
+  <ellipse cx="200" cy="130" rx="150" ry="90" fill="url(#nebula5b)"/>
+  <ellipse cx="200" cy="110" rx="130" ry="80" fill="url(#nebula5c)"/>
+  <!-- Light beam cone from projector -->
+  <polygon points="185,240 215,240 320,50 80,50" fill="#B388FF" opacity="0.04"/>
+  <polygon points="190,240 210,240 290,70 110,70" fill="#7C4DFF" opacity="0.03"/>
+  <!-- Stars scattered -->
+  <g filter="url(#starGlow)">
+    <circle cx="100" cy="65" r="2.5" fill="#E1BEE7"/>
+    <circle cx="300" cy="55" r="2" fill="#CE93D8"/>
+    <circle cx="150" cy="45" r="1.8" fill="white" opacity="0.9"/>
+    <circle cx="260" cy="80" r="2.2" fill="#E1BEE7"/>
+    <circle cx="330" cy="110" r="1.5" fill="#B388FF"/>
+    <circle cx="75" cy="120" r="1.8" fill="white" opacity="0.8"/>
+    <circle cx="200" cy="55" r="2.8" fill="white"/>
+    <circle cx="130" cy="100" r="1.5" fill="#CE93D8"/>
+    <circle cx="280" cy="135" r="2" fill="#E1BEE7"/>
+    <circle cx="170" cy="75" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="235" cy="60" r="1.5" fill="#B388FF"/>
+    <circle cx="110" cy="150" r="1.3" fill="white" opacity="0.6"/>
+    <circle cx="310" cy="85" r="1.8" fill="#E1BEE7"/>
+    <circle cx="85" cy="90" r="1" fill="white" opacity="0.5"/>
+    <circle cx="340" cy="140" r="1.5" fill="#CE93D8" opacity="0.7"/>
+    <circle cx="60" cy="160" r="1.2" fill="white" opacity="0.5"/>
+    <circle cx="220" cy="100" r="1.8" fill="white" opacity="0.8"/>
+    <circle cx="160" cy="130" r="1" fill="#E1BEE7" opacity="0.6"/>
+  </g>
+  <!-- Twinkling star crosses -->
+  <g fill="white" opacity="0.9">
+    <path d="M200,52 L200,58 M197,55 L203,55" stroke="white" stroke-width="1"/>
+    <path d="M100,62 L100,68 M97,65 L103,65" stroke="white" stroke-width="0.8"/>
+    <path d="M300,52 L300,58 M297,55 L303,55" stroke="white" stroke-width="0.8"/>
+  </g>
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="355" rx="70" ry="12" fill="rgba(0,0,0,0.1)"/>
+  <!-- Projector body - egg/dome shape -->
+  <ellipse cx="200" cy="290" rx="58" ry="68" fill="url(#projBody5)" filter="url(#sh5)"/>
+  <!-- Body highlight -->
+  <ellipse cx="182" cy="275" rx="18" ry="40" fill="white" opacity="0.06"/>
+  <!-- Lens opening at top -->
+  <ellipse cx="200" cy="235" rx="22" ry="8" fill="#1A1A1A"/>
+  <ellipse cx="200" cy="234" rx="18" ry="6" fill="url(#lens5)" opacity="0.8"/>
+  <!-- Lens glow -->
+  <ellipse cx="200" cy="234" rx="14" ry="4" fill="#B388FF" opacity="0.5"/>
+  <ellipse cx="200" cy="234" rx="8" ry="2.5" fill="white" opacity="0.3"/>
+  <!-- Ventilation slots -->
+  <rect x="170" y="310" width="60" height="2" rx="1" fill="#333" opacity="0.5"/>
+  <rect x="172" y="316" width="56" height="2" rx="1" fill="#333" opacity="0.5"/>
+  <rect x="174" y="322" width="52" height="2" rx="1" fill="#333" opacity="0.5"/>
+  <!-- Control ring -->
+  <ellipse cx="200" cy="295" rx="45" ry="6" fill="none" stroke="#555" stroke-width="1.5"/>
+  <!-- Touch controls / buttons -->
+  <circle cx="180" cy="340" r="4" fill="#333" stroke="#555" stroke-width="0.5"/>
+  <circle cx="200" cy="343" r="4" fill="#333" stroke="#555" stroke-width="0.5"/>
+  <circle cx="220" cy="340" r="4" fill="#333" stroke="#555" stroke-width="0.5"/>
+  <!-- Power indicator -->
+  <circle cx="200" cy="343" r="2" fill="#7C4DFF" opacity="0.8"/>
+  <!-- Base flat bottom -->
+  <ellipse cx="200" cy="352" rx="45" ry="6" fill="#1A1A1A"/>
+  <!-- Brand text -->
+  <text x="200" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#666" letter-spacing="3">GALAXY</text>
+</svg>

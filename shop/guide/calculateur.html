@@ -6,52 +6,52 @@
 <title>Calculateur de Profits - HomeVibe</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#e0e0e0;line-height:1.7}
-a{color:#00CEC9;text-decoration:none}
-.nav{background:rgba(15,15,35,0.95);backdrop-filter:blur(10px);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(108,92,231,0.3)}
-.nav-logo{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#6C5CE7,#00CEC9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links a{margin-left:1.5rem;color:#ccc;font-size:0.9rem}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#FFFFFF;color:#111827;line-height:1.7}
+a{color:#E85D04;text-decoration:none}
+.nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid #E5E7EB}
+.nav-logo{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#E85D04,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links a{margin-left:1.5rem;color:#4B5563;font-size:0.9rem}
 .container{max-width:1000px;margin:0 auto;padding:2rem 1.5rem 4rem}
-h1{font-size:2rem;margin:2rem 0 0.5rem;background:linear-gradient(135deg,#6C5CE7,#00CEC9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.subtitle{color:#888;margin-bottom:2rem}
+h1{font-size:2rem;margin:2rem 0 0.5rem;background:linear-gradient(135deg,#E85D04,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:#9CA3AF;margin-bottom:2rem}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
-.card{background:rgba(22,33,62,0.5);border:1px solid rgba(108,92,231,0.2);border-radius:14px;padding:1.5rem}
-.card h2{color:#6C5CE7;font-size:1.2rem;margin-bottom:1rem}
+.card{background:#FFFFFF;border:1px solid #E5E7EB;border-radius:14px;padding:1.5rem}
+.card h2{color:#E85D04;font-size:1.2rem;margin-bottom:1rem}
 .input-group{margin-bottom:1rem}
-.input-group label{display:block;font-size:0.9rem;color:#aaa;margin-bottom:0.3rem}
-.input-group input{width:100%;padding:0.6rem 1rem;background:rgba(10,10,26,0.6);border:1px solid rgba(108,92,231,0.3);border-radius:8px;color:#fff;font-size:1rem;outline:none}
-.input-group input:focus{border-color:#6C5CE7}
-.input-group .unit{color:#666;font-size:0.85rem;margin-top:0.2rem}
+.input-group label{display:block;font-size:0.9rem;color:#4B5563;margin-bottom:0.3rem}
+.input-group input{width:100%;padding:0.6rem 1rem;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:8px;color:#111827;font-size:1rem;outline:none}
+.input-group input:focus{border-color:#E85D04}
+.input-group .unit{color:#9CA3AF;font-size:0.85rem;margin-top:0.2rem}
 .results{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
-.result-tile{background:rgba(10,10,26,0.5);border:1px solid rgba(108,92,231,0.15);border-radius:10px;padding:1rem;text-align:center}
-.result-tile .label{font-size:0.8rem;color:#888;margin-bottom:0.3rem}
+.result-tile{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;text-align:center}
+.result-tile .label{font-size:0.8rem;color:#9CA3AF;margin-bottom:0.3rem}
 .result-tile .value{font-size:1.5rem;font-weight:700}
-.result-tile .value.green{color:#00b894}
-.result-tile .value.purple{color:#6C5CE7}
-.result-tile .value.teal{color:#00CEC9}
-.result-tile .value.orange{color:#fdcb6e}
-.result-tile .value.red{color:#e17055}
+.result-tile .value.green{color:#059669}
+.result-tile .value.purple{color:#E85D04}
+.result-tile .value.teal{color:#D35400}
+.result-tile .value.orange{color:#F59E0B}
+.result-tile .value.red{color:#DC2626}
 .bar-chart{margin-top:1.5rem}
 .bar-row{display:flex;align-items:center;margin-bottom:0.8rem}
-.bar-label{width:120px;font-size:0.85rem;color:#aaa;flex-shrink:0}
-.bar-track{flex:1;height:28px;background:rgba(10,10,26,0.5);border-radius:6px;overflow:hidden;position:relative}
+.bar-label{width:120px;font-size:0.85rem;color:#4B5563;flex-shrink:0}
+.bar-track{flex:1;height:28px;background:#F3F4F6;border-radius:6px;overflow:hidden;position:relative}
 .bar-fill{height:100%;border-radius:6px;transition:width 0.6s ease;display:flex;align-items:center;padding-left:0.5rem;font-size:0.8rem;font-weight:600;color:#fff;min-width:fit-content}
-.bar-fill.revenue{background:linear-gradient(90deg,#6C5CE7,#a29bfe)}
-.bar-fill.cost{background:linear-gradient(90deg,#e17055,#fab1a0)}
-.bar-fill.stripe{background:linear-gradient(90deg,#fdcb6e,#ffeaa7)}
-.bar-fill.ads{background:linear-gradient(90deg,#00CEC9,#81ecec)}
-.bar-fill.profit{background:linear-gradient(90deg,#00b894,#55efc4)}
+.bar-fill.revenue{background:linear-gradient(90deg,#E85D04,#F59E0B)}
+.bar-fill.cost{background:linear-gradient(90deg,#DC2626,#F87171)}
+.bar-fill.stripe{background:linear-gradient(90deg,#F59E0B,#FCD34D)}
+.bar-fill.ads{background:linear-gradient(90deg,#D35400,#E85D04)}
+.bar-fill.profit{background:linear-gradient(90deg,#059669,#34D399)}
 .scenarios{margin-top:2rem}
-.scenarios h2{color:#6C5CE7;font-size:1.2rem;margin-bottom:1rem}
+.scenarios h2{color:#E85D04;font-size:1.2rem;margin-bottom:1rem}
 .scenario-table{width:100%;border-collapse:collapse}
-.scenario-table th{text-align:left;padding:0.8rem;color:#aaa;font-size:0.85rem;border-bottom:1px solid rgba(108,92,231,0.2)}
-.scenario-table td{padding:0.8rem;border-bottom:1px solid rgba(108,92,231,0.1);font-size:0.95rem}
-.scenario-table tr:hover{background:rgba(108,92,231,0.05)}
+.scenario-table th{text-align:left;padding:0.8rem;color:#9CA3AF;font-size:0.85rem;border-bottom:1px solid #E5E7EB}
+.scenario-table td{padding:0.8rem;border-bottom:1px solid #F3F4F6;font-size:0.95rem;color:#111827}
+.scenario-table tr:hover{background:rgba(232,93,4,0.03)}
 .tag{display:inline-block;padding:0.15rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
-.tag.pessimiste{background:rgba(225,112,85,0.2);color:#e17055}
-.tag.realiste{background:rgba(108,92,231,0.2);color:#a29bfe}
-.tag.optimiste{background:rgba(0,184,148,0.2);color:#00b894}
-.footer{background:rgba(10,10,26,0.95);border-top:1px solid rgba(108,92,231,0.2);padding:2rem;text-align:center;color:#666;font-size:0.85rem;margin-top:3rem}
+.tag.pessimiste{background:rgba(220,38,38,0.1);color:#DC2626}
+.tag.realiste{background:rgba(232,93,4,0.1);color:#E85D04}
+.tag.optimiste{background:rgba(5,150,105,0.1);color:#059669}
+.footer{background:#F9FAFB;border-top:1px solid #E5E7EB;padding:2rem;text-align:center;color:#9CA3AF;font-size:0.85rem;margin-top:3rem}
 @media(max-width:768px){.calc-grid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}.container{padding:1rem 1rem 3rem}.nav-links{display:none}h1{font-size:1.5rem}.bar-label{width:80px;font-size:0.75rem}.scenario-table{font-size:0.8rem}.scenario-table th,.scenario-table td{padding:0.5rem}}
 </style>
 </head>
@@ -87,7 +87,7 @@ h1{font-size:2rem;margin:2rem 0 0.5rem;background:linear-gradient(135deg,#6C5CE7
 <div class="result-tile"><div class="label">Couts AliExpress</div><div class="value orange" id="rCoutsAli">--</div></div>
 <div class="result-tile"><div class="label">Frais Stripe (1.4% + 0.25)</div><div class="value orange" id="rFraisStripe">--</div></div>
 <div class="result-tile"><div class="label">Budget Pub</div><div class="value orange" id="rPub">--</div></div>
-<div class="result-tile" style="grid-column:1/3;border:1px solid rgba(0,184,148,0.3)"><div class="label">BENEFICE NET MENSUEL</div><div class="value green" id="rBenefice" style="font-size:2rem">--</div></div>
+<div class="result-tile" style="grid-column:1/3;border:1px solid rgba(5,150,105,0.3)"><div class="label">BENEFICE NET MENSUEL</div><div class="value green" id="rBenefice" style="font-size:2rem">--</div></div>
 </div>
 </div>
 <div class="card" style="margin-top:1rem">
@@ -154,7 +154,7 @@ const sr=pv*sv;
 const sc=(ca+fl)*sv+(pv*0.014+0.25)*sv+bp;
 const sn=sr-sc;
 const sm=sr>0?(sn/sr*100):0;
-tbody+=`<tr><td><span class="tag ${s.tag}">${s.name}</span></td><td>${sv}</td><td>${sr.toFixed(2)} €</td><td>${sc.toFixed(2)} €</td><td style="color:${sn>=0?'#00b894':'#e17055'};font-weight:700">${sn.toFixed(2)} €</td><td>${sm.toFixed(1)}%</td></tr>`
+tbody+=`<tr><td><span class="tag ${s.tag}">${s.name}</span></td><td>${sv}</td><td>${sr.toFixed(2)} €</td><td>${sc.toFixed(2)} €</td><td style="color:${sn>=0?'#059669':'#DC2626'};font-weight:700">${sn.toFixed(2)} €</td><td>${sm.toFixed(1)}%</td></tr>`
 });
 document.getElementById('scenarioBody').innerHTML=tbody;
 }

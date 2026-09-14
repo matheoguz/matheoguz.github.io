@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="body1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E0E0E0"/>
+    </linearGradient>
+    <linearGradient id="lid1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#BDBDBD"/>
+    </linearGradient>
+    <linearGradient id="handle1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="blade1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#CFD8DC"/>
+      <stop offset="50%" stop-color="#ECEFF1"/>
+      <stop offset="100%" stop-color="#B0BEC5"/>
+    </linearGradient>
+    <filter id="sh1">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.13"/>
+    </filter>
+    <filter id="sh1b">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="20" fill="#E8F5E9"/>
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="348" rx="105" ry="14" fill="rgba(0,0,0,0.07)"/>
+  <!-- Container body -->
+  <rect x="105" y="195" width="190" height="148" rx="10" fill="url(#body1)" filter="url(#sh1)"/>
+  <!-- Inner rim -->
+  <rect x="112" y="202" width="176" height="134" rx="6" fill="#F5F5F5"/>
+  <!-- Container interior -->
+  <rect x="116" y="206" width="168" height="126" rx="4" fill="#FAFAFA"/>
+  <!-- Chopped vegetable cubes - layer 1 (bottom) -->
+  <rect x="122" y="290" width="20" height="20" rx="3" fill="#FF7043"/>
+  <rect x="144" y="292" width="20" height="20" rx="3" fill="#FFA726"/>
+  <rect x="166" y="288" width="20" height="20" rx="3" fill="#66BB6A"/>
+  <rect x="188" y="291" width="20" height="20" rx="3" fill="#EF5350"/>
+  <rect x="210" y="289" width="20" height="20" rx="3" fill="#FFCA28"/>
+  <rect x="232" y="292" width="20" height="20" rx="3" fill="#FF7043"/>
+  <rect x="254" y="290" width="20" height="20" rx="3" fill="#66BB6A"/>
+  <!-- Layer 2 -->
+  <rect x="130" y="270" width="20" height="20" rx="3" fill="#FFCA28"/>
+  <rect x="152" y="268" width="20" height="20" rx="3" fill="#EF5350"/>
+  <rect x="174" y="272" width="20" height="20" rx="3" fill="#FF7043"/>
+  <rect x="196" y="269" width="20" height="20" rx="3" fill="#66BB6A"/>
+  <rect x="218" y="271" width="20" height="20" rx="3" fill="#FFA726"/>
+  <rect x="240" y="268" width="20" height="20" rx="3" fill="#EF5350"/>
+  <!-- Layer 3 (top visible) -->
+  <rect x="136" y="250" width="20" height="20" rx="3" fill="#66BB6A"/>
+  <rect x="158" y="248" width="20" height="20" rx="3" fill="#FFA726"/>
+  <rect x="180" y="252" width="20" height="20" rx="3" fill="#EF5350"/>
+  <rect x="202" y="249" width="20" height="20" rx="3" fill="#FF7043"/>
+  <rect x="224" y="251" width="20" height="20" rx="3" fill="#FFCA28"/>
+  <!-- Cube highlights -->
+  <rect x="136" y="250" width="20" height="6" rx="2" fill="white" opacity="0.2"/>
+  <rect x="158" y="248" width="20" height="6" rx="2" fill="white" opacity="0.2"/>
+  <rect x="180" y="252" width="20" height="6" rx="2" fill="white" opacity="0.2"/>
+  <rect x="202" y="249" width="20" height="6" rx="2" fill="white" opacity="0.2"/>
+  <rect x="224" y="251" width="20" height="6" rx="2" fill="white" opacity="0.2"/>
+  <!-- Container rim top -->
+  <rect x="103" y="190" width="194" height="10" rx="5" fill="#BDBDBD"/>
+  <rect x="103" y="190" width="194" height="5" rx="3" fill="#D5D5D5"/>
+  <!-- Blade grid frame -->
+  <rect x="103" y="138" width="194" height="56" rx="8" fill="url(#lid1)" filter="url(#sh1b)"/>
+  <!-- Blade grid - vertical lines -->
+  <line x1="135" y1="144" x2="135" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="157" y1="144" x2="157" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="179" y1="144" x2="179" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="201" y1="144" x2="201" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="223" y1="144" x2="223" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="245" y1="144" x2="245" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="267" y1="144" x2="267" y2="188" stroke="url(#blade1)" stroke-width="2"/>
+  <!-- Blade grid - horizontal lines -->
+  <line x1="109" y1="155" x2="291" y2="155" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="109" y1="166" x2="291" y2="166" stroke="url(#blade1)" stroke-width="2"/>
+  <line x1="109" y1="177" x2="291" y2="177" stroke="url(#blade1)" stroke-width="2"/>
+  <!-- Blade shine -->
+  <line x1="135" y1="144" x2="135" y2="188" stroke="white" stroke-width="0.7" opacity="0.4"/>
+  <line x1="179" y1="144" x2="179" y2="188" stroke="white" stroke-width="0.7" opacity="0.4"/>
+  <line x1="223" y1="144" x2="223" y2="188" stroke="white" stroke-width="0.7" opacity="0.4"/>
+  <line x1="267" y1="144" x2="267" y2="188" stroke="white" stroke-width="0.7" opacity="0.4"/>
+  <!-- Pusher handle -->
+  <rect x="155" y="72" width="90" height="66" rx="12" fill="url(#handle1)" filter="url(#sh1)"/>
+  <!-- Handle grip lines -->
+  <line x1="168" y1="84" x2="232" y2="84" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="168" y1="93" x2="232" y2="93" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="168" y1="102" x2="232" y2="102" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="168" y1="111" x2="232" y2="111" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="168" y1="120" x2="232" y2="120" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="168" y1="129" x2="232" y2="129" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Handle highlight -->
+  <rect x="155" y="72" width="20" height="66" rx="12" fill="white" opacity="0.1"/>
+  <!-- Pusher rod -->
+  <rect x="185" y="134" width="30" height="8" rx="3" fill="#9E9E9E"/>
+  <rect x="185" y="134" width="30" height="3" rx="2" fill="#BDBDBD"/>
+  <!-- Non-slip feet -->
+  <rect x="115" y="340" width="24" height="7" rx="3.5" fill="#757575"/>
+  <rect x="261" y="340" width="24" height="7" rx="3.5" fill="#757575"/>
+  <!-- Latch clips on sides -->
+  <rect x="97" y="210" width="10" height="30" rx="3" fill="#9E9E9E"/>
+  <rect x="293" y="210" width="10" height="30" rx="3" fill="#9E9E9E"/>
+</svg>
