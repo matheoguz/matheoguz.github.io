@@ -25,7 +25,7 @@ const products=[
     "https://m.media-amazon.com/images/I/81GZZyozv-L._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","Vue latérale","Vue arrière","Détail lames"],
-  video:null,
+  video:"https://www.youtube.com/embed/73C5jOMZvOI",
   customerReviews:[
     {name:"Marie L.",rating:5,date:"2026-08-12",verified:true,text:"Excellente qualité ! Je l'utilise tous les jours pour préparer mes salades. Les lames sont très tranchantes et le nettoyage est facile."},
     {name:"Thomas D.",rating:5,date:"2026-07-28",verified:true,text:"Reçu en 10 jours, bien emballé. Le coupe-légumes est robuste et coupe super bien. Très content de mon achat."},
@@ -55,7 +55,7 @@ const products=[
     "https://i5.walmartimages.com/asr/b9c699a3-504d-4056-932a-d2cdbdc1714e.86ae2ada63aad96085086f2f64bf1a90.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF"
   ],
   imageLabels:["Vue principale","En utilisation","Accessoires","Vue de côté"],
-  video:null,
+  video:"https://www.youtube.com/embed/Y1CoyBjQqv0",
   customerReviews:[
     {name:"Léa B.",rating:5,date:"2026-08-05",verified:true,text:"Viral sur TikTok et pour une bonne raison ! Ce mixeur est incroyable, je fais mes smoothies au bureau maintenant."},
     {name:"Marc V.",rating:4,date:"2026-07-22",verified:true,text:"Bon produit, la batterie tient bien. Mixe bien les fruits mous mais galère un peu avec la glace."},
@@ -85,7 +85,7 @@ const products=[
     "https://m.media-amazon.com/images/I/81ZcLKNEjoL.jpg"
   ],
   imageLabels:["Vue dessus","Vue profil","Écran digital","En utilisation"],
-  video:null,
+  video:"https://www.youtube.com/embed/ql2w0UEI2ug",
   customerReviews:[
     {name:"Antoine F.",rating:5,date:"2026-08-01",verified:true,text:"Super balance, très précise et le design est top. L'écran est bien visible et la tare fonctionne parfaitement."},
     {name:"Nathalie H.",rating:4,date:"2026-07-20",verified:true,text:"Belle balance, pratique au quotidien. Le seul truc c'est que la pile n'était pas incluse mais pour ce prix c'est normal."},
@@ -114,7 +114,7 @@ const products=[
     "https://m.media-amazon.com/images/I/81+j5LvEwCL._AC_UF894,1000_QL80_.jpg"
   ],
   imageLabels:["Vue principale","En action","Taille ajustable","Vue de dessous"],
-  video:null,
+  video:"https://www.youtube.com/embed/RDw7p0EHZOc",
   customerReviews:[
     {name:"Monique T.",rating:5,date:"2026-08-10",verified:true,text:"Enfin je peux ouvrir mes bocaux toute seule ! À 72 ans c'est un soulagement. Simple et efficace."},
     {name:"François R.",rating:5,date:"2026-07-25",verified:true,text:"Acheté pour ma grand-mère, elle est ravie. Fonctionne sur tous ses bocaux de confiture."},
@@ -144,7 +144,7 @@ const products=[
     "https://mobileimages.lowes.com/productimages/ef407d41-4031-4f6a-8a0e-aee0b736996c/83688034.jpeg?size=pdhism"
   ],
   imageLabels:["Le projecteur","Ambiance chambre","Couleurs variées","Mode galaxie"],
-  video:null,
+  video:"https://www.youtube.com/embed/IGVpCCcvFBY",
   customerReviews:[
     {name:"Jade M.",rating:5,date:"2026-08-15",verified:true,text:"WOW ! Ma chambre est devenue un planétarium. Les couleurs sont magnifiques et la sync avec la musique c'est le top. Vu sur TikTok, pas déçue !"},
     {name:"Hugo A.",rating:5,date:"2026-08-02",verified:true,text:"Meilleur achat de l'année. L'ambiance est dingue, mes potes sont tous bluffés. La télécommande est pratique."},
@@ -175,7 +175,7 @@ const products=[
     "https://roomtery.com/cdn/shop/files/led-strip-tape-light-remote-controll-aesthetic-room-decor-roomtery122.jpg?v=1728294417&width=1946"
   ],
   imageLabels:["Le rouleau","Installation murale","Mode ambiance","Application"],
-  video:null,
+  video:"https://www.youtube.com/embed/pHOO2m4w724",
   customerReviews:[
     {name:"Yanis K.",rating:5,date:"2026-08-08",verified:true,text:"10 mètres c'est largement suffisant pour tout le tour de ma chambre. L'appli fonctionne bien et le rendu est superbe."},
     {name:"Inès F.",rating:4,date:"2026-07-24",verified:true,text:"Belles couleurs et facile à installer. L'adhésif tient bien au mur. Un peu de mal avec la connexion Alexa au début mais ça marche."},
@@ -205,7 +205,7 @@ const products=[
     "https://m.media-amazon.com/images/I/710HBVsIK9L.jpg"
   ],
   imageLabels:["Vue principale","Détail texture","Mode chaud","Avec support"],
-  video:null,
+  video:"https://www.youtube.com/embed/AsXPO3yz3Go",
   customerReviews:[
     {name:"Clara H.",rating:5,date:"2026-08-06",verified:true,text:"C'est magnifique ! La texture est très réaliste, on dirait vraiment la lune. Parfait comme veilleuse."},
     {name:"Maxime P.",rating:5,date:"2026-07-22",verified:true,text:"Offert à ma copine pour son anniversaire, elle était aux anges. La qualité d'impression 3D est bluffante."},
@@ -234,7 +234,7 @@ const products=[
     "https://m.media-amazon.com/images/I/61TppK0o88L._AC_UL450_SY450_QL70_.jpg"
   ],
   imageLabels:["La veilleuse","Ambiance salon","Mode coucher de soleil","Filtre arc-en-ciel"],
-  video:null,
+  video:"https://www.youtube.com/embed/l7pduF3A_EU",
   customerReviews:[
     {name:"Océane T.",rating:5,date:"2026-08-03",verified:true,text:"Parfait pour mes photos Instagram ! L'effet coucher de soleil est super réaliste. Mes abonnés adorent."},
     {name:"Victor M.",rating:4,date:"2026-07-19",verified:true,text:"Belle ambiance pour la méditation. Le rendu dépend beaucoup de la couleur du mur par contre."},
@@ -263,7 +263,7 @@ const products=[
     "https://www.ecotradecompany.com/cdn/shop/products/71la8Pn3rqL._AC_SL1498.jpg?v=1616509605&width=1498"
   ],
   imageLabels:["Vue ensemble","Dans tiroir cuisine","Configuration bureau","Détail bambou"],
-  video:null,
+  video:"https://www.youtube.com/embed/EDrwEizBe4Q",
   customerReviews:[
     {name:"Sandrine B.",rating:5,date:"2026-07-30",verified:true,text:"Mes tiroirs n'ont jamais été aussi bien rangés ! Le bambou est de bonne qualité et s'ajuste facilement."},
     {name:"Olivier G.",rating:4,date:"2026-07-15",verified:true,text:"Bon produit, fait le boulot. Les séparateurs tiennent bien en place. J'aurais aimé en avoir 8 au lieu de 6."},
@@ -292,7 +292,7 @@ const products=[
     "https://images.thdstatic.com/productImages/d1df2783-1388-4d3f-afae-1de303a6c4e9/svn/brown-numhew-knife-blocks-storage-w2r0p5d7-c3_600.jpg"
   ],
   imageLabels:["Vue principale","Avec couteaux","Installation","Vue de profil"],
-  video:null,
+  video:"https://www.youtube.com/embed/hg85XOgiIfc",
   customerReviews:[
     {name:"Philippe A.",rating:5,date:"2026-08-02",verified:true,text:"Tient parfaitement ! Mes 6 couteaux sont bien maintenus. Le design en acier brossé est classe."},
     {name:"Valérie M.",rating:4,date:"2026-07-18",verified:true,text:"Très pratique, libère du plan de travail. L'adhésif tient bien sur le carrelage. Pour les murs peints, mieux vaut visser."},
@@ -321,7 +321,7 @@ const products=[
     "https://ak1.ostkcdn.com/images/products/is/images/direct/e68e1886abff411acd0f13fb7951b2b706b7e731/SONGMICS-Cube-Storage-Bin-6-Foldable-Fabric-Cube-Organizer-Bin-with-Double-Handles-Storage-Box-for-Living-Room.jpg?impolicy=medium"
   ],
   imageLabels:["Lot de 3","Pliées à plat","Avec contenu","Empilées"],
-  video:null,
+  video:"https://www.youtube.com/embed/2k1slfK6pck",
   customerReviews:[
     {name:"Céline F.",rating:5,date:"2026-08-09",verified:true,text:"Super boîtes ! Solides, belles et pratiques. J'ai rangé tout le bazar de la chambre des enfants en 30 minutes."},
     {name:"Grégory P.",rating:4,date:"2026-07-26",verified:true,text:"Bon rapport qualité/prix pour un lot de 3. Le tissu est épais et les coutures sont solides."},
@@ -351,7 +351,7 @@ const products=[
     "https://i5.walmartimages.com/asr/b578cf04-347d-457d-98a4-0f785aa0cc07.bafbe95304e7c880c9795f4a4cb23ca0.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF"
   ],
   imageLabels:["Vue principale","Installé au mur","Avec chaussures","Vue de côté"],
-  video:null,
+  video:"https://www.youtube.com/embed/P7KRldC02TQ",
   customerReviews:[
     {name:"Anaïs G.",rating:5,date:"2026-08-04",verified:true,text:"Gain de place énorme dans mon petit appart ! L'adhésif est costaud, ça tient super bien au mur."},
     {name:"Youssef K.",rating:4,date:"2026-07-21",verified:true,text:"Pratique et pas cher. Tient bien les baskets mais les chaussures en cuir lisse glissent un peu."},
@@ -380,7 +380,7 @@ const products=[
     "https://images.thdstatic.com/productImages/79373d25-f572-403a-b960-8f6c4f5f0d82/svn/white-xtreme-tablets-accessories-xwc8-1046-wht-66_600.jpg"
   ],
   imageLabels:["Vue principale","Avec appareils","Vue de profil","LED indicatrice"],
-  video:null,
+  video:"https://www.youtube.com/embed/aCI8-cu4nCg",
   customerReviews:[
     {name:"Alexandre D.",rating:5,date:"2026-08-13",verified:true,text:"Fini le bazar de câbles ! Je charge mon iPhone, mon Apple Watch et mes AirPods en même temps. Design élégant en plus."},
     {name:"Margaux S.",rating:5,date:"2026-07-29",verified:true,text:"Indispensable sur ma table de nuit. La charge rapide 15W fonctionne bien avec mon Samsung. La LED n'est pas gênante pour dormir."},
@@ -410,7 +410,7 @@ const products=[
     "https://www.syncwire.com/cdn/shop/files/Syncwire-Magnetic-Car-Phone-Holder-for-Dashboard-Black.webp?v=1714027629"
   ],
   imageLabels:["Vue principale","Installé en voiture","Rotation","Aimant détail"],
-  video:null,
+  video:"https://www.youtube.com/embed/FC36404tBZk",
   customerReviews:[
     {name:"Christophe L.",rating:5,date:"2026-08-07",verified:true,text:"L'aimant est super puissant, mon iPhone 15 Pro Max tient sans problème. Installation en 2 secondes sur la grille."},
     {name:"Audrey P.",rating:4,date:"2026-07-23",verified:true,text:"Très pratique au quotidien. Mon téléphone tient bien mais ça gêne un peu la ventilation selon la position."},
@@ -440,7 +440,7 @@ const products=[
     "https://i.ebayimg.com/images/g/o4YAAOSwv5JiILap/s-l1200.jpg"
   ],
   imageLabels:["Vue principale","Sur bureau","Avec câbles","Détail silicone"],
-  video:null,
+  video:"https://www.youtube.com/embed/NlRudaU4np8",
   customerReviews:[
     {name:"William T.",rating:5,date:"2026-08-11",verified:true,text:"Vu sur TikTok et c'est vraiment utile ! Mon bureau est enfin propre. Le silicone tient bien les câbles."},
     {name:"Élise M.",rating:4,date:"2026-07-27",verified:true,text:"Simple mais efficace. Les câbles fins type Lightning tiennent bien, les gros câbles HDMI sont un peu serrés."},
@@ -469,7 +469,7 @@ const products=[
     "https://i5.walmartimages.com/seo/Findtime-SK19-Noise-Cancelling-Wireless-In-Ear-Earbuds-Black_57f1e5a3-3f14-487e-81d6-96b810d4d5c0.edfcc0178e48333a370451b9eaac18ba.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF"
   ],
   imageLabels:["Boîtier et écouteurs","Dans l'oreille","Boîtier ouvert","Vue de dessus"],
-  video:null,
+  video:"https://www.youtube.com/embed/tL-ioXChl_M",
   customerReviews:[
     {name:"Killian B.",rating:5,date:"2026-08-14",verified:true,text:"Pour 20€ c'est incroyable ! Le son est clair, les basses sont correctes et la batterie tient super longtemps."},
     {name:"Lucie V.",rating:5,date:"2026-07-30",verified:true,text:"Parfait pour le sport ! Ils ne tombent pas en courant et résistent à la transpiration. L'appairage Bluetooth est instantané."},
