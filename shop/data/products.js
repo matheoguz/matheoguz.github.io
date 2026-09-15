@@ -1,6 +1,6 @@
 /*
  * HomeVibe - Données produits enrichies
- * Sources multiples : AliExpress, TikTok Shop, Amazon, etc.
+ * Catalogue produits HomeVibe
  * Chaque produit : photos multiples, vidéo, avis clients
  */
 const products=[
@@ -15,7 +15,6 @@ const products=[
   reviews:234,
   trend:true,
   bg:"#E8F5E9",
-  source:"AliExpress",
   desc:"Un coupe-légumes révolutionnaire qui transforme votre préparation en un jeu d'enfant. Avec ses 5 lames interchangeables en acier inoxydable, découpez, râpez et émincez tous vos légumes en quelques secondes. Design ergonomique et antidérapant pour une utilisation sécurisée au quotidien.",
   features:["5 lames interchangeables","Acier inoxydable","Base antidérapante","Récipient 1.5L intégré","Compatible lave-vaisselle"],
   images:[
@@ -45,7 +44,6 @@ const products=[
   reviews:189,
   trend:false,
   bg:"#E0F7FA",
-  source:"TikTok Shop",
   desc:"Emportez vos smoothies partout avec ce mixeur rechargeable par USB. Puissant moteur de 380ml qui mixe fruits, légumes et glace en 30 secondes. Parfait pour le bureau, la salle de sport ou en voyage. Batterie longue durée pour jusqu'à 15 utilisations.",
   features:["Rechargeable USB-C","Capacité 380ml","6 lames en inox","Autonomie 15 smoothies","Étanche et portable"],
   images:[
@@ -75,7 +73,6 @@ const products=[
   reviews:156,
   trend:false,
   bg:"#FCE4EC",
-  source:"Amazon",
   desc:"Précision au gramme près pour des recettes toujours réussies. Écran LED rétroéclairé, fonction tare automatique et conversion instantanée entre grammes, onces et millilitres. Surface en verre trempé ultra-fine et élégante qui s'intègre parfaitement dans votre cuisine.",
   features:["Précision 1g","Écran LED rétroéclairé","Fonction tare","4 unités de mesure","Surface verre trempé"],
   images:[
@@ -104,7 +101,6 @@ const products=[
   reviews:201,
   trend:true,
   bg:"#FFF8E1",
-  source:"AliExpress",
   desc:"Fini les bocaux impossibles à ouvrir ! Cet ouvre-bocal électrique s'adapte à tous les formats de couvercles de 3 à 9 cm. Un simple appui suffit pour ouvrir même les bocaux les plus récalcitrants. Indispensable pour les personnes âgées et tous ceux qui veulent gagner du temps.",
   features:["Ouverture automatique","Couvercles 3-9 cm","Batterie rechargeable","1 bouton suffit","Idéal seniors"],
   images:[
@@ -134,7 +130,6 @@ const products=[
   reviews:512,
   trend:true,
   bg:"#EDE7F6",
-  source:"TikTok Shop",
   desc:"Transformez votre chambre en galaxie avec ce projecteur LED nouvelle génération. 16 millions de couleurs, rotation à 360 degrés et synchronisation musicale via Bluetooth. Commande par télécommande ou application smartphone. L'expérience immersive la plus virale de TikTok.",
   features:["16 millions de couleurs","Bluetooth & musique","Télécommande incluse","Rotation 360°","Minuterie programmable"],
   images:[
@@ -165,7 +160,6 @@ const products=[
   reviews:378,
   trend:true,
   bg:"#FFF3E0",
-  source:"AliExpress",
   desc:"10 mètres de lumière RGB intelligente, découpable et adhésif pour s'adapter à toutes vos surfaces. Compatible Alexa et Google Home, contrôlez vos lumières à la voix ou via l'application. Plus de 300 modes d'éclairage et synchronisation musicale pour des soirées inoubliables.",
   features:["10 mètres","Compatible Alexa/Google","300+ modes","Découpable","Adhésif 3M"],
   images:[
@@ -195,7 +189,6 @@ const products=[
   reviews:298,
   trend:false,
   bg:"#F3E5F5",
-  source:"Amazon",
   desc:"Reproduction fidèle de la surface lunaire imprimée en 3D avec un rendu ultra-réaliste. 16 couleurs ajustables par télécommande, intensité variable pour une ambiance douce et apaisante. Rechargeable par USB avec une autonomie de 8 heures. Le cadeau parfait pour les rêveurs.",
   features:["Impression 3D réaliste","16 couleurs","Télécommande","Autonomie 8h","Rechargeable USB"],
   images:[
@@ -224,7 +217,6 @@ const products=[
   reviews:267,
   trend:false,
   bg:"#FBE9E7",
-  source:"TikTok Shop",
   desc:"Recréez les couleurs magiques d'un coucher de soleil dans votre intérieur. Projection LED haute définition avec rotation ajustable pour un effet panoramique saisissant. Idéale pour la méditation, le yoga ou simplement créer une ambiance chaleureuse et photogénique.",
   features:["Projection LED HD","Rotation 180°","USB alimenté","4 filtres couleur","Idéal photos/vidéos"],
   images:[
@@ -253,7 +245,6 @@ const products=[
   reviews:145,
   trend:false,
   bg:"#E0F2F1",
-  source:"Amazon",
   desc:"Système modulable de rangement qui s'adapte à tous vos tiroirs. Séparateurs ajustables en bambou écologique et durable. Organisez cuisine, bureau, salle de bain ou dressing en quelques minutes. Fini le désordre, chaque objet trouve enfin sa place.",
   features:["Bambou écologique","Modulable","S'adapte à tout tiroir","Facile à installer","Lot de 6 séparateurs"],
   images:[
@@ -282,7 +273,6 @@ const products=[
   reviews:178,
   trend:false,
   bg:"#ECEFF1",
-  source:"AliExpress",
   desc:"Support mural à aimants ultra-puissants pour ranger couteaux, outils ou clés sans percer. Installation adhésive en 30 secondes, tient jusqu'à 5 kg par aimant. Design minimaliste en acier brossé qui s'intègre à tous les intérieurs. Libérez votre plan de travail.",
   features:["Aimants néodyme","Tient 5 kg","Sans percer","Acier brossé","Installation 30 sec"],
   images:[
@@ -311,7 +301,6 @@ const products=[
   reviews:213,
   trend:true,
   bg:"#FFF3E0",
-  source:"Amazon",
   desc:"Lot de 3 boîtes de rangement pliables en tissu premium avec poignées renforcées. Se replient à plat quand vous n'en avez pas besoin. Parfaites pour vêtements, jouets, livres ou accessoires. Structure rigide avec couvercle pour un empilage facile et un intérieur toujours ordonné.",
   features:["Lot de 3","Pliables à plat","Tissu premium","Poignées renforcées","Couvercle intégré"],
   images:[
@@ -341,7 +330,6 @@ const products=[
   reviews:134,
   trend:false,
   bg:"#E3F2FD",
-  source:"TikTok Shop",
   desc:"Rangez jusqu'à 6 paires de chaussures sur votre mur avec ce système adhésif innovant. Aucun perçage nécessaire, installation en 2 minutes. Design moderne et épuré qui transforme votre entrée. Supporte baskets, talons et chaussures de ville. Économisez un espace précieux au sol.",
   features:["6 paires max","Sans percer","Adhésif ultra-fort","Design épuré","Installation 2 min"],
   images:[
@@ -370,7 +358,6 @@ const products=[
   reviews:445,
   trend:true,
   bg:"#E8EAF6",
-  source:"Amazon",
   desc:"Station de charge sans fil pour smartphone, montre connectée et écouteurs simultanément. Compatible Qi universel avec charge rapide 15W. LED indicatrice discrète et protection contre la surchauffe. Le hub de charge élégant qui remplace tous vos câbles sur votre table de nuit.",
   features:["3 appareils en même temps","Charge rapide 15W","Compatible Qi","Anti-surchauffe","LED discrète"],
   images:[
@@ -400,7 +387,6 @@ const products=[
   reviews:267,
   trend:false,
   bg:"#ECEFF1",
-  source:"AliExpress",
   desc:"Aimant néodyme ultra-puissant compatible avec tous les smartphones. Fixation sur grille de ventilation avec clip universel renforcé. Rotation 360 degrés pour une orientation parfaite. Installation en 5 secondes, prise en main sécurisée même sur routes sinueuses.",
   features:["Aimant néodyme","Clip grille ventilation","Rotation 360°","Compatible tous téléphones","Installation 5 sec"],
   images:[
@@ -430,7 +416,6 @@ const products=[
   reviews:189,
   trend:false,
   bg:"#E0F7FA",
-  source:"TikTok Shop",
   desc:"Dites adieu au chaos des câbles sur votre bureau. Cet organisateur en silicone souple accueille jusqu'à 7 câbles de différentes tailles. Base adhésive repositionnable et design compact. Gardez vos câbles USB, chargeurs et écouteurs toujours à portée de main, sans nœuds.",
   features:["7 emplacements","Silicone souple","Adhésif repositionnable","Design compact","Compatible tous câbles"],
   images:[
@@ -459,7 +444,6 @@ const products=[
   reviews:356,
   trend:true,
   bg:"#EDE7F6",
-  source:"AliExpress",
   desc:"Écouteurs true wireless ultra-compacts avec son stéréo haute fidélité et réduction de bruit passive. 24 heures d'autonomie totale avec le boîtier de charge. Étanches IPX5 pour le sport et la pluie. Appairage instantané Bluetooth 5.3 et microphone intégré pour vos appels.",
   features:["Bluetooth 5.3","24h autonomie totale","IPX5 étanche","Réduction de bruit","Micro intégré"],
   images:[

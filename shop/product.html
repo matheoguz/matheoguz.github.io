@@ -137,11 +137,6 @@ ul{list-style:none}
 .pd-discount{background:var(--success-light);color:var(--success);font-size:0.82rem;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm)}
 .pd-desc{font-size:0.95rem;color:var(--text2);line-height:1.8}
 
-/* ── SOURCE BADGE ── */
-.pd-source{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:600;margin-left:8px;vertical-align:middle}
-.pd-source-aliexpress{background:#FFE4E1;color:#E85D04}
-.pd-source-tiktok-shop{background:#E0F7FA;color:#0891B2}
-.pd-source-amazon{background:#FFF7ED;color:#92400E}
 
 /* ── FEATURES ── */
 .pd-features{margin:16px 0 24px;display:flex;flex-wrap:wrap;gap:8px}
@@ -579,7 +574,6 @@ function renderProductPage(product){
      <!-- Right: Info -->
      <div class="pd-info fade-in">
       <div class="pd-cat">${product.catLabel}</div>
-      <span class="pd-source pd-source-${product.source.toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(product.source)}</span>
       <h1 class="pd-title">${escapeHtml(product.name)}</h1>
 
       <div class="pd-rating">
