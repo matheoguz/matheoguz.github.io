@@ -55,24 +55,25 @@ header{
 }
 header.scrolled{border-bottom-color:var(--line);}
 nav{
-  display:flex;align-items:center;justify-content:space-between;
-  max-width:1360px;margin:0 auto;padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  max-width:1440px;margin:0 auto;padding:16px 24px;
 }
-.logo{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:0.02em;flex-shrink:0;}
+.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:0.01em;flex-shrink:0;white-space:nowrap;}
 .logo span{color:var(--accent);-webkit-text-stroke:0.5px var(--ink);}
-.navlinks{display:flex;gap:22px;list-style:none;align-items:center;flex-wrap:nowrap;}
+.navlinks{display:flex;gap:16px;list-style:none;align-items:center;flex-wrap:nowrap;flex:1;justify-content:flex-end;min-width:0;}
 .navlinks a{
-  font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;
-  color:var(--ink);position:relative;padding:6px 0;opacity:.6;
+  font-size:11px;text-transform:uppercase;letter-spacing:0.045em;font-weight:600;
+  color:var(--ink);position:relative;padding:6px 1px;opacity:.55;
   transition:opacity .2s ease;white-space:nowrap;
 }
-.navlinks a.active,.navlinks a:hover{opacity:1;}
+.navlinks a.active{opacity:1;color:var(--accent-ink,var(--ink));}
+.navlinks a.active{background:var(--accent);color:var(--on-accent);padding:6px 9px;margin:0 -4px;}
+.navlinks a:hover{opacity:1;}
 .navlinks a::after{
   content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--accent);
   transition:width .25s ease;
 }
-.navlinks a.active::after{width:100%;}
-.navlinks a:hover::after{width:100%;}
+.navlinks a:not(.active):hover::after{width:100%;}
 .nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
 .nav-cta{
   font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;
@@ -278,7 +279,22 @@ footer{background:var(--paper);border-top:1px solid var(--line);color:var(--mute
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
-@media(max-width:1080px){
+/* Tablette large : le menu reste visible, on resserre juste un peu */
+@media(max-width:1180px){
+  .navlinks{gap:12px;}
+  .navlinks a{font-size:10px;}
+  .navlinks a.active{padding:5px 7px;}
+  .logo{font-size:17px;}
+}
+/* Tablette : le menu reste visible, on continue de resserrer */
+@media(max-width:980px){
+  nav{padding:14px 20px;}
+  .navlinks{gap:9px;}
+  .navlinks a{font-size:9.5px;letter-spacing:0.03em;}
+  .nav-cta{display:none;}
+}
+/* Mobile uniquement : bascule sur le menu hamburger */
+@media(max-width:720px){
   .navlinks{display:none;}
   .burger{display:flex;}
 }
