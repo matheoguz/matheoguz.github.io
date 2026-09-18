@@ -343,6 +343,16 @@ section{padding:100px 0;position:relative;}
 .skill-chain-row b{color:var(--ink);font-weight:600;}
 .skill-chain-row .yr{margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;padding:2px 8px;border:1px solid var(--line);}
 
+/* ---------- SKILL BARS (Matières / Langues / Outils) ---------- */
+.skillbar-list{display:flex;flex-direction:column;gap:28px;}
+.skillbar-row{max-width:680px;}
+.skillbar-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:12px;}
+.skillbar-name{font-family:'Fraunces',serif;font-size:17px;color:var(--ink);}
+.skillbar-pct{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);white-space:nowrap;}
+.skillbar-track{width:100%;height:6px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden;}
+.skillbar-fill{height:100%;background:var(--accent);transition:width 1s ease;}
+.skillbar-justify{font-size:13.5px;color:var(--muted);margin-top:10px;}
+
 /* ---------- EXPERIENCES ---------- */
 .exp-card{border:1px solid var(--line);padding:32px;margin-bottom:20px;transition:border-color .3s ease;}
 .exp-card:hover{border-color:var(--ink);}
