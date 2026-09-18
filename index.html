@@ -3,23 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathéo Guzzi — Techniques de Commercialisation</title>
-<meta name="description" content="Portfolio de Mathéo Guzzi, étudiant en BUT Techniques de Commercialisation — marketing, vente, communication & stratégie commerciale.">
+<title>Mathéo Guzzi — Portfolio BUT Techniques de Commercialisation</title>
+<meta name="description" content="Portfolio de Mathéo Guzzi, étudiant en BUT Techniques de Commercialisation — vente, marketing, communication, e-commerce et entrepreneuriat.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#161512;
     --paper:#f7f4ee;
     --paper-2:#efeae0;
     --line:#dcd5c6;
-    --accent:#7a4b2c;   /* terre cuite / bronze — pro, chaleureux, pas d'IA-violet */
-    --accent-2:#3f4a3a; /* vert sauge profond */
+    --accent:#7a4b2c;
+    --accent-2:#3f4a3a;
     --muted:#6b665c;
     --white:#ffffff;
-    --radius:2px;
     --maxw:1180px;
+    --shadow:0 20px 50px -20px rgba(22,21,18,0.15);
+  }
+  html[data-theme="dark"]{
+    --ink:#f1efe8;
+    --paper:#141310;
+    --paper-2:#1c1a15;
+    --line:#332f27;
+    --accent:#d6a878;
+    --accent-2:#8ba084;
+    --muted:#a8a196;
+    --white:#1c1a15;
+    --shadow:0 20px 50px -20px rgba(0,0,0,0.5);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
@@ -30,6 +41,7 @@
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+    transition:background .4s ease, color .4s ease;
   }
   h1,h2,h3,h4,.serif{font-family:'Fraunces',serif;font-weight:500;letter-spacing:-0.01em;}
   a{color:inherit;text-decoration:none;}
@@ -37,10 +49,13 @@
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
   ::selection{background:var(--accent);color:var(--white);}
 
+  /* progress bar */
+  #progress{position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:200;width:0%;transition:width .1s linear;}
+
   /* ---------- NAV ---------- */
   header{
     position:fixed;top:0;left:0;right:0;z-index:100;
-    background:rgba(247,244,238,0.86);backdrop-filter:blur(10px);
+    background:color-mix(in srgb, var(--paper) 88%, transparent);backdrop-filter:blur(10px);
     border-bottom:1px solid transparent;
     transition:border-color .3s ease, background .3s ease;
   }
@@ -51,21 +66,31 @@
   }
   .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:0.02em;}
   .logo span{color:var(--accent);}
-  .navlinks{display:flex;gap:36px;list-style:none;}
+  .navlinks{display:flex;gap:32px;list-style:none;align-items:center;}
   .navlinks a{
     font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    color:var(--ink);position:relative;padding-bottom:4px;
+    color:var(--ink);position:relative;padding-bottom:4px;opacity:.65;
+    transition:opacity .2s ease;
   }
+  .navlinks a.active,.navlinks a:hover{opacity:1;}
   .navlinks a::after{
     content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);
     transition:width .25s ease;
   }
-  .navlinks a:hover::after{width:100%;}
+  .navlinks a.active::after,.navlinks a:hover::after{width:100%;}
+  .nav-right{display:flex;align-items:center;gap:18px;}
   .nav-cta{
     font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
     border:1px solid var(--ink);padding:10px 20px;transition:all .25s ease;
   }
   .nav-cta:hover{background:var(--ink);color:var(--paper);}
+  .theme-toggle{
+    width:38px;height:38px;border:1px solid var(--line);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;
+    color:var(--ink);transition:border-color .2s ease, transform .2s ease;
+  }
+  .theme-toggle:hover{border-color:var(--accent);transform:rotate(20deg);}
+  .theme-toggle svg{width:16px;height:16px;}
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
   .burger span{width:24px;height:1px;background:var(--ink);display:block;}
 
@@ -74,40 +99,27 @@
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
     position:relative;padding-top:100px;
   }
-  .hero-grid{
-    display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;
-  }
+  .hero-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;}
   .eyebrow{
     font-size:13px;text-transform:uppercase;letter-spacing:0.16em;color:var(--accent);
-    margin-bottom:24px;font-weight:600;
+    margin-bottom:24px;font-weight:600;display:flex;align-items:center;gap:10px;
   }
-  .eyebrow::before{content:'— ';}
-  h1.hero-title{
-    font-size:clamp(42px,7vw,92px);
-    line-height:0.98;
-    max-width:900px;
-  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+  h1.hero-title{font-size:clamp(40px,7vw,88px);line-height:0.98;max-width:920px;}
   h1.hero-title em{font-style:italic;color:var(--accent);font-weight:400;}
-  .hero-sub{
-    max-width:520px;font-size:18px;color:var(--muted);margin-top:28px;
-  }
-  .hero-meta{
-    text-align:right;font-size:13px;color:var(--muted);
-    display:flex;flex-direction:column;gap:6px;
-  }
+  .hero-sub{max-width:540px;font-size:18px;color:var(--muted);margin-top:28px;}
+  .hero-meta{text-align:right;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;}
   .hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;}
   .btn{
     display:inline-flex;align-items:center;gap:10px;
     padding:15px 30px;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    border:1px solid var(--ink);transition:all .3s ease;
+    border:1px solid var(--ink);transition:all .3s ease;cursor:pointer;
   }
   .btn-solid{background:var(--ink);color:var(--paper);}
-  .btn-solid:hover{background:var(--accent);border-color:var(--accent);}
+  .btn-solid:hover{background:var(--accent);border-color:var(--accent);color:var(--white);}
   .btn-ghost:hover{background:var(--ink);color:var(--paper);}
-  .scroll-cue{
-    position:absolute;bottom:40px;left:32px;font-size:12px;color:var(--muted);
-    display:flex;align-items:center;gap:10px;
-  }
+  .scroll-cue{position:absolute;bottom:40px;left:32px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px;}
   .scroll-cue .line{width:40px;height:1px;background:var(--muted);animation:pulse 2s infinite;}
   @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
 
@@ -118,10 +130,7 @@
     margin-bottom:64px;gap:40px;flex-wrap:wrap;
     border-bottom:1px solid var(--line);padding-bottom:28px;
   }
-  .kicker{
-    font-size:13px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);
-    font-weight:600;margin-bottom:14px;
-  }
+  .kicker{font-size:13px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:600;margin-bottom:14px;}
   .section-title{font-size:clamp(30px,4vw,48px);}
   .section-note{max-width:340px;font-size:14px;color:var(--muted);text-align:right;}
 
@@ -129,316 +138,400 @@
   .about-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:80px;}
   .about-grid p{font-size:17px;color:var(--muted);margin-bottom:20px;max-width:520px;}
   .about-grid .lede{font-family:'Fraunces',serif;font-size:26px;color:var(--ink);line-height:1.4;margin-bottom:28px;font-weight:400;}
+  .about-block-title{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin:28px 0 8px;font-weight:600;}
+  .interest-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+  .interest-tag{
+    font-size:13px;padding:8px 16px;border:1px solid var(--line);border-radius:30px;color:var(--muted);
+    transition:all .25s ease;
+  }
+  .interest-tag:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
   .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
   .stat{border-top:1px solid var(--ink);padding-top:16px;}
   .stat .num{font-family:'Fraunces',serif;font-size:40px;color:var(--accent);}
   .stat .label{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-top:6px;}
   .portrait-frame{
     aspect-ratio:4/5;background:var(--paper-2);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;
-    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
   }
-  .portrait-frame .ph-label{
-    font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);
-    text-align:center;padding:20px;
+  .portrait-frame .ph-label{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:center;padding:20px;}
+  .portrait-frame::before{content:'';position:absolute;inset:14px;border:1px solid var(--accent);opacity:.4;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{position:relative;border-top:1px solid var(--line);}
+  .tl-item{
+    display:grid;grid-template-columns:140px 32px 1fr;gap:0 28px;
+    padding:36px 0;border-bottom:1px solid var(--line);position:relative;
   }
-  .portrait-frame::before{
-    content:'';position:absolute;inset:14px;border:1px solid var(--accent);opacity:.4;
-  }
+  .tl-date{font-family:'Fraunces',serif;font-size:16px;color:var(--accent);padding-top:2px;}
+  .tl-node-col{display:flex;flex-direction:column;align-items:center;}
+  .tl-dot{width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--accent);margin-top:4px;flex-shrink:0;transition:background .3s ease;}
+  .tl-item:hover .tl-dot{background:var(--accent);}
+  .tl-line{flex:1;width:1px;background:var(--line);margin-top:8px;}
+  .tl-content h4{font-size:19px;margin-bottom:4px;}
+  .tl-content .tl-place{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;}
+  .tl-content p{font-size:14px;color:var(--muted);margin-bottom:14px;max-width:600px;}
+  .tl-skills{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;border:1px solid var(--line);padding:5px 10px;color:var(--muted);}
 
   /* ---------- SKILLS ---------- */
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
-  .skill-card{background:var(--paper);padding:40px;transition:background .3s ease;}
-  .skill-card:hover{background:var(--white);}
-  .skill-num{font-family:'Fraunces',serif;font-size:14px;color:var(--accent);margin-bottom:20px;}
-  .skill-card h3{font-size:20px;margin-bottom:12px;}
-  .skill-card p{font-size:14px;color:var(--muted);margin-bottom:18px;}
-  .tag-row{display:flex;flex-wrap:wrap;gap:8px;}
-  .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;border:1px solid var(--line);padding:5px 10px;color:var(--muted);}
+  .skill-card{background:var(--paper);padding:36px;transition:background .3s ease, transform .3s ease;}
+  .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
+  .skill-num{font-family:'Fraunces',serif;font-size:14px;color:var(--accent);margin-bottom:18px;}
+  .skill-card h3{font-size:20px;margin-bottom:10px;}
+  .skill-card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+  .skill-link{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);border-bottom:1px solid var(--accent);padding-bottom:2px;display:inline-block;}
+  .skill-link.disabled{color:var(--muted);border-color:var(--line);opacity:.7;}
 
   /* ---------- PROJECTS ---------- */
-  .project{
-    display:grid;grid-template-columns:0.55fr 1fr;gap:60px;
-    padding:56px 0;border-bottom:1px solid var(--line);align-items:center;
+  .project-card{
+    border:1px solid var(--line);margin-bottom:24px;overflow:hidden;
+    transition:box-shadow .3s ease, border-color .3s ease;cursor:pointer;
   }
-  .project:first-of-type{padding-top:0;}
-  .project-visual{
-    aspect-ratio:16/11;background:var(--paper-2);border:1px solid var(--line);
-    position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  .project-card:hover{box-shadow:var(--shadow);border-color:var(--accent);}
+  .project-head{
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+    padding:32px;
   }
-  .project-visual .tone{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-2),transparent 70%);opacity:.12;}
-  .project-visual span{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
-  .project-index{font-size:13px;color:var(--accent);margin-bottom:12px;letter-spacing:0.08em;}
-  .project h3{font-size:32px;margin-bottom:14px;}
-  .project p{color:var(--muted);margin-bottom:20px;max-width:520px;}
-  .project-tags{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
-  .project-link{
-    font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    border-bottom:1px solid var(--ink);padding-bottom:4px;display:inline-flex;gap:8px;align-items:center;
-    transition:opacity .2s;
+  .project-head h3{font-size:26px;}
+  .project-head .p-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .project-toggle{
+    width:34px;height:34px;border:1px solid var(--line);border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .3s ease, border-color .3s ease;
   }
-  .project-link:hover{opacity:.6;}
+  .project-card.open .project-toggle{transform:rotate(45deg);border-color:var(--accent);}
+  .project-body{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .project-card.open .project-body{max-height:900px;}
+  .project-body-inner{padding:0 32px 36px;display:grid;grid-template-columns:repeat(2,1fr);gap:28px;border-top:1px solid var(--line);padding-top:28px;}
+  .pb-block h5{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;}
+  .pb-block p{font-size:14px;color:var(--muted);}
 
   /* ---------- EXPERIENCE TIMELINE ---------- */
-  .timeline{border-top:1px solid var(--line);}
-  .tl-row{
-    display:grid;grid-template-columns:160px 1fr 200px;gap:32px;
-    padding:32px 0;border-bottom:1px solid var(--line);align-items:baseline;
-  }
-  .tl-date{font-family:'Fraunces',serif;font-size:16px;color:var(--accent);}
-  .tl-role h4{font-size:19px;margin-bottom:6px;}
-  .tl-role p{font-size:14px;color:var(--muted);}
-  .tl-place{font-size:13px;color:var(--muted);text-align:right;text-transform:uppercase;letter-spacing:0.06em;}
+  /* (reuses .timeline styles above) */
 
   /* ---------- CONTACT / CTA ---------- */
   .cta-section{background:var(--ink);color:var(--paper);}
-  .cta-section .kicker{color:#c99b6f;}
+  html[data-theme="dark"] .cta-section{background:var(--paper-2);}
+  .cta-section .kicker{color:var(--accent);}
   .cta-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:end;}
   .cta-title{font-size:clamp(34px,5vw,58px);max-width:640px;}
-  .cta-title em{font-style:italic;color:#c99b6f;font-weight:400;}
+  .cta-title em{font-style:italic;color:var(--accent);font-weight:400;}
   .contact-list{display:flex;flex-direction:column;gap:0;}
   .contact-list a{
     display:flex;justify-content:space-between;align-items:center;
-    padding:20px 0;border-bottom:1px solid rgba(247,244,238,0.18);
+    padding:20px 0;border-bottom:1px solid rgba(150,140,120,0.25);
     font-size:15px;transition:padding-left .25s ease;
   }
   .contact-list a:hover{padding-left:10px;}
-  .contact-list span:last-child{color:#a8a297;font-size:13px;}
+  .contact-list span:last-child{color:var(--muted);font-size:13px;}
   .cta-section .btn-solid{background:var(--paper);color:var(--ink);border-color:var(--paper);margin-top:40px;}
-  .cta-section .btn-solid:hover{background:var(--accent);color:var(--paper);border-color:var(--accent);}
+  .cta-section .btn-solid:hover{background:var(--accent);color:var(--white);border-color:var(--accent);}
 
-  footer{background:var(--ink);color:#a8a297;padding:32px 0;font-size:12px;}
+  footer{background:var(--ink);color:var(--muted);padding:32px 0;font-size:12px;}
+  html[data-theme="dark"] footer{background:var(--paper-2);}
   .footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-  .footer-row a{border-bottom:1px solid transparent;}
-  .footer-row a:hover{border-color:#a8a297;}
+  .footer-row a:hover{text-decoration:underline;}
 
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
   .reveal.visible{opacity:1;transform:translateY(0);}
 
   @media(max-width:900px){
-    .navlinks,.nav-cta{display:none;}
+    .navlinks{display:none;}
     .burger{display:flex;}
     .hero-grid{grid-template-columns:1fr;}
     .hero-meta{text-align:left;flex-direction:row;flex-wrap:wrap;gap:20px;}
     .about-grid{grid-template-columns:1fr;}
     .about-grid .portrait-frame{order:-1;max-width:320px;}
     .skills-grid{grid-template-columns:1fr;}
-    .project{grid-template-columns:1fr;}
     .stat-row{grid-template-columns:1fr 1fr;}
-    .tl-row{grid-template-columns:1fr;gap:8px;}
-    .tl-place{text-align:left;}
+    .tl-item{grid-template-columns:32px 1fr;}
+    .tl-date{grid-column:1/-1;padding-top:0;margin-bottom:8px;}
     .cta-grid{grid-template-columns:1fr;}
+    .project-body-inner{grid-template-columns:1fr;}
+    .project-head{flex-direction:row;align-items:flex-start;}
     section{padding:90px 0;}
   }
 </style>
 </head>
 <body>
 
+<div id="progress"></div>
+
 <header id="siteHeader">
   <nav>
     <a href="#top" class="logo">Mathéo <span>Guzzi</span></a>
-    <ul class="navlinks">
-      <li><a href="#top">Accueil</a></li>
-      <li><a href="#apropos">À propos</a></li>
-      <li><a href="#parcours">Parcours</a></li>
-      <li><a href="#competences">Compétences</a></li>
-      <li><a href="#projets">Projets SAE</a></li>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="#top" data-sec="top">Accueil</a></li>
+      <li><a href="#apropos" data-sec="apropos">À propos</a></li>
+      <li><a href="#parcours" data-sec="parcours">Parcours</a></li>
+      <li><a href="#competences" data-sec="competences">Compétences</a></li>
+      <li><a href="#projets" data-sec="projets">Projets SAE</a></li>
     </ul>
-    <a href="#contact" class="nav-cta">Contact</a>
-    <button class="burger" aria-label="Menu" onclick="document.getElementById('mnav').classList.toggle('open')">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a href="#contact" class="nav-cta">Contact</a>
+      <button class="burger" aria-label="Menu" onclick="document.getElementById('mnav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
 </header>
 
-<!-- mobile menu -->
-<div id="mnav" style="position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:28px;padding:32px;">
-  <a href="#top" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Accueil</a>
-  <a href="#apropos" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">À propos</a>
-  <a href="#parcours" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Parcours</a>
-  <a href="#competences" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
-  <a href="#projets" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets SAE</a>
-  <a href="#contact" style="font-family:'Fraunces',serif;font-size:28px;color:var(--accent);" onclick="document.getElementById('mnav').classList.remove('open')">Contact</a>
+<div id="mnav" style="position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:26px;padding:32px;">
+  <a href="#top" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Accueil</a>
+  <a href="#apropos" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">À propos</a>
+  <a href="#parcours" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Parcours</a>
+  <a href="#competences" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
+  <a href="#projets" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets SAE</a>
+  <a href="#contact" style="font-family:'Fraunces',serif;font-size:26px;color:var(--accent);" onclick="document.getElementById('mnav').classList.remove('open')">Contact</a>
 </div>
 <style>#mnav.open{display:flex !important;}</style>
 
 <main id="top">
 
-  <!-- HERO -->
+  <!-- ==================== 1. ACCUEIL ==================== -->
   <section class="hero wrap" style="padding-top:0;">
     <div class="hero-grid">
       <div>
-        <p class="eyebrow">BUT Techniques de Commercialisation — [ANNÉE / ÉTABLISSEMENT À COMPLÉTER]</p>
-        <h1 class="hero-title">Vente, marketing<br>&amp; <em>relation client,</em><br>pensés pour durer.</h1>
-        <p class="hero-sub">[À COMPLÉTER — phrase de positionnement en 1-2 lignes : ce qui te distingue, ton ambition professionnelle, ton domaine de prédilection (ex : développement commercial B2B, marketing digital, négociation...)]</p>
+        <p class="eyebrow"><span class="dot"></span>BUT Techniques de Commercialisation — 1ère année</p>
+        <h1 class="hero-title">La vente est un <em>sport</em><br>de combat mental.</h1>
+        <p class="hero-sub">[À COMPLÉTER — ton nom complet + phrase d'accroche personnelle en 1-2 lignes : ce qui te définit, ton ambition dans le commerce/marketing. Exemple de ton à garder : direct, énergique, sans jargon scolaire.]</p>
         <div class="hero-actions">
+          <a href="#parcours" class="btn btn-ghost">Mon parcours</a>
           <a href="#projets" class="btn btn-solid">Voir mes projets</a>
-          <a href="#contact" class="btn btn-ghost">Me contacter</a>
         </div>
       </div>
       <div class="hero-meta">
         <span>[Ville, France]</span>
         <span>[email@exemple.com]</span>
-        <span>[Disponible pour stage / alternance — dates à préciser]</span>
+        <span>[Disponible pour stage / alternance]</span>
       </div>
     </div>
     <div class="scroll-cue"><span class="line"></span><span>Défiler</span></div>
   </section>
 
-  <!-- ABOUT -->
+  <!-- ==================== 2. À PROPOS ==================== -->
   <section id="apropos" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">01 — Présentation</p>
         <h2 class="section-title">Qui je suis</h2>
       </div>
-      <p class="section-note">Étudiant en Techniques de Commercialisation, orienté résultats et relation humaine.</p>
+      <p class="section-note">Étudiant en BUT TC, discipliné par le sport, moteur par la vente.</p>
     </div>
     <div class="about-grid">
       <div class="portrait-frame">
         <p class="ph-label">[Photo professionnelle<br>à insérer ici]</p>
       </div>
       <div>
-        <p class="lede">[À COMPLÉTER — accroche personnelle en 2-3 phrases : parcours en quelques mots, ce qui te motive dans le commerce/marketing, ta vision du métier.]</p>
-        <p>[À COMPLÉTER — paragraphe sur ta formation actuelle : établissement, spécialisation/parcours choisi au sein du BUT TC, matières ou approche qui te correspondent le plus.]</p>
-        <p>[À COMPLÉTER — paragraphe sur ta personnalité professionnelle : qualités humaines, méthode de travail, ce que les recruteurs/professionnels retiennent de toi.]</p>
+        <p class="lede">[À COMPLÉTER — accroche personnelle en 2-3 phrases : qui tu es, ce qui t'a mené vers le BUT TC, ta vision du métier de commercial/marketeur.]</p>
+
+        <p class="about-block-title">Formation</p>
+        <p>[À COMPLÉTER — établissement, ville, spécialisation ou parcours choisi au sein du BUT TC, matières qui te correspondent le plus.]</p>
+
+        <p class="about-block-title">Personnalité</p>
+        <p>[À COMPLÉTER — 2-3 traits de personnalité illustrés par une situation concrète si possible (ex : rigueur héritée de la boxe, esprit de compétition, sens du contact).]</p>
+
+        <p class="about-block-title">Objectifs professionnels</p>
+        <p>[À COMPLÉTER — le métier ou secteur visé après le BUT TC : vente, marketing digital, e-commerce, entrepreneuriat... précise si tu as déjà une idée de poursuite d'études.]</p>
+
+        <p class="about-block-title">Centres d'intérêt</p>
+        <div class="interest-tags">
+          <span class="interest-tag">🥊 Boxe</span>
+          <span class="interest-tag">🏋️ Musculation</span>
+          <span class="interest-tag">[Intérêt à compléter]</span>
+          <span class="interest-tag">[Intérêt à compléter]</span>
+        </div>
+
         <div class="stat-row">
-          <div class="stat"><div class="num">[X]</div><div class="label">Stages / expériences</div></div>
-          <div class="stat"><div class="num">[X]</div><div class="label">Projets / SAE menés</div></div>
-          <div class="stat"><div class="num">[X]</div><div class="label">Langues parlées</div></div>
+          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Expériences</div></div>
+          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Projets / SAE</div></div>
+          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Langues parlées</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- TIMELINE -->
+  <!-- ==================== 3. PARCOURS ==================== -->
   <section id="parcours" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">02 — Parcours</p>
         <h2 class="section-title">Formation &amp; Expériences</h2>
       </div>
-      <p class="section-note">Un parcours construit pas à pas vers le monde de l'entreprise.</p>
+      <p class="section-note">Chaque étape construit une compétence utile pour demain.</p>
     </div>
     <div class="timeline">
-      <div class="tl-row">
+      <div class="tl-item">
         <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>BUT Techniques de Commercialisation</h4><p>[À COMPLÉTER — nom de l'établissement, spécialisation, points forts de la formation.]</p></div>
-        <div class="tl-place">[Ville]</div>
+        <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <h4>BUT Techniques de Commercialisation — 1ère année</h4>
+          <p class="tl-place">[Établissement, Ville]</p>
+          <p>[À COMPLÉTER — ce que couvre cette première année, options ou orientation prises.]</p>
+          <div class="tl-skills"><span class="tag">[Compétence développée]</span><span class="tag">[Compétence développée]</span></div>
+        </div>
       </div>
-      <div class="tl-row">
+      <div class="tl-item">
         <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>[Intitulé du stage / job / SAE]</h4><p>[À COMPLÉTER — entreprise, missions principales, compétences développées.]</p></div>
-        <div class="tl-place">[Entreprise]</div>
+        <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <h4>[Intitulé du stage / job étudiant]</h4>
+          <p class="tl-place">[Entreprise, Ville]</p>
+          <p>[À COMPLÉTER — missions principales confiées durant cette expérience.]</p>
+          <div class="tl-skills"><span class="tag">[Compétence développée]</span><span class="tag">[Compétence développée]</span></div>
+        </div>
       </div>
-      <div class="tl-row">
+      <div class="tl-item">
         <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>[Baccalauréat / formation antérieure]</h4><p>[À COMPLÉTER — filière, mention, établissement.]</p></div>
-        <div class="tl-place">[Établissement]</div>
+        <div class="tl-node-col"><div class="tl-dot"></div></div>
+        <div class="tl-content">
+          <h4>[Baccalauréat / formation antérieure]</h4>
+          <p class="tl-place">[Établissement, Ville]</p>
+          <p>[À COMPLÉTER — filière, mention, spécialités.]</p>
+          <div class="tl-skills"><span class="tag">[Compétence développée]</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SKILLS -->
+  <!-- ==================== 4. COMPÉTENCES ==================== -->
   <section id="competences" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">03 — Savoir-faire</p>
         <h2 class="section-title">Compétences clés</h2>
       </div>
-      <p class="section-note">Un socle technique et humain construit pour le terrain commercial.</p>
+      <p class="section-note">Chaque compétence s'appuie sur une expérience ou un projet réel.</p>
     </div>
     <div class="skills-grid">
       <div class="skill-card">
         <div class="skill-num">01</div>
-        <h3>Vente &amp; Négociation</h3>
-        <p>[À COMPLÉTER — décris ton niveau/expérience réelle en prospection, négociation B2B/B2C, closing.]</p>
-        <div class="tag-row"><span class="tag">Prospection</span><span class="tag">Négociation</span><span class="tag">CRM</span></div>
+        <h3>Vente</h3>
+        <p>[À COMPLÉTER — ton niveau/expérience réelle en prospection, argumentation, négociation, closing.]</p>
+        <span class="skill-link disabled">Lié à : [expérience / projet à préciser]</span>
       </div>
       <div class="skill-card">
         <div class="skill-num">02</div>
-        <h3>Marketing &amp; Communication</h3>
-        <p>[À COMPLÉTER — outils réels utilisés : réseaux sociaux, campagnes, études de marché, communication de marque.]</p>
-        <div class="tag-row"><span class="tag">Marketing digital</span><span class="tag">Réseaux sociaux</span><span class="tag">Branding</span></div>
+        <h3>Marketing</h3>
+        <p>[À COMPLÉTER — actions marketing réelles menées : campagnes, études de marché, positionnement produit.]</p>
+        <a href="#projets" class="skill-link">Lié au projet HomeVibe →</a>
       </div>
       <div class="skill-card">
         <div class="skill-num">03</div>
-        <h3>Analyse &amp; Stratégie</h3>
-        <p>[À COMPLÉTER — études de marché menées, analyse de données commerciales, outils type Excel/Power BI.]</p>
-        <div class="tag-row"><span class="tag">Études de marché</span><span class="tag">Excel</span><span class="tag">Reporting</span></div>
+        <h3>Communication</h3>
+        <p>[À COMPLÉTER — communication écrite/orale, réseaux sociaux, prise de parole, création de contenu.]</p>
+        <a href="#projets" class="skill-link">Lié au projet Quitus →</a>
       </div>
       <div class="skill-card">
         <div class="skill-num">04</div>
         <h3>Relation client</h3>
-        <p>[À COMPLÉTER — expérience en accueil, fidélisation, gestion de la satisfaction client.]</p>
-        <div class="tag-row"><span class="tag">Fidélisation</span><span class="tag">SAV</span><span class="tag">Écoute active</span></div>
+        <p>[À COMPLÉTER — accueil, fidélisation, gestion de la satisfaction et des réclamations.]</p>
+        <span class="skill-link disabled">Lié à : [expérience à préciser]</span>
       </div>
       <div class="skill-card">
         <div class="skill-num">05</div>
-        <h3>Outils &amp; Digital</h3>
-        <p>[À COMPLÉTER — logiciels maîtrisés : Suite Office, outils web, création visuelle, e-commerce.]</p>
-        <div class="tag-row"><span class="tag">Pack Office</span><span class="tag">Canva</span><span class="tag">Shopify</span></div>
+        <h3>Travail en équipe</h3>
+        <p>[À COMPLÉTER — projets de groupe, SAE collectives, sport en club ou en binôme, gestion des rôles.]</p>
+        <span class="skill-link disabled">Lié à : [SAE à préciser]</span>
       </div>
       <div class="skill-card">
         <div class="skill-num">06</div>
-        <h3>Soft skills</h3>
-        <p>[À COMPLÉTER — 3 à 4 qualités humaines réelles, illustrées si possible par une situation concrète.]</p>
-        <div class="tag-row"><span class="tag">Rigueur</span><span class="tag">Esprit d'équipe</span><span class="tag">Adaptabilité</span></div>
+        <h3>Digital</h3>
+        <p>[À COMPLÉTER — outils maîtrisés : Suite Office, création web, e-commerce, réseaux sociaux, Canva.]</p>
+        <a href="#projets" class="skill-link">Lié au projet HomeVibe →</a>
+      </div>
+      <div class="skill-card">
+        <div class="skill-num">07</div>
+        <h3>Analyse</h3>
+        <p>[À COMPLÉTER — analyse de données commerciales, études de marché, veille concurrentielle, reporting.]</p>
+        <span class="skill-link disabled">Lié à : [projet à préciser]</span>
       </div>
     </div>
   </section>
 
-  <!-- PROJECTS -->
+  <!-- ==================== 5. PROJETS / SAE ==================== -->
   <section id="projets" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">04 — Réalisations</p>
         <h2 class="section-title">Projets SAE</h2>
       </div>
-      <p class="section-note">Des projets concrets, menés de la stratégie à l'exécution.</p>
+      <p class="section-note">Clique sur un projet pour voir le détail complet.</p>
     </div>
 
-    <div class="project">
-      <div class="project-visual"><div class="tone"></div><span>HomeVibe — E-commerce</span></div>
-      <div>
-        <p class="project-index">Projet personnel</p>
-        <h3>HomeVibe</h3>
-        <p>[À COMPLÉTER — décris ton rôle réel : conception de la boutique en ligne, stratégie produit, fiches produits, choix marketing. Précise les résultats si tu en as (trafic, conversion, apprentissages).]</p>
-        <div class="project-tags"><span class="tag">E-commerce</span><span class="tag">Marketing digital</span><span class="tag">Gestion produit</span></div>
-        <a href="shop/index.html" class="project-link">Voir le site →</a>
+    <div class="project-card">
+      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <h3>HomeVibe — Boutique e-commerce</h3>
+          <div class="p-tags"><span class="tag">E-commerce</span><span class="tag">Marketing digital</span><span class="tag">Projet personnel</span></div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — pourquoi as-tu lancé ce projet, dans quel cadre (personnel, SAE, cours) ?]</p></div>
+          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER — ce que tu cherchais à démontrer ou obtenir avec ce site.]</p></div>
+          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — conception de la boutique, choix des produits, fiches produits, design, contenu.]</p></div>
+          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER — ce que TU as fait précisément si le projet a été mené à plusieurs.]</p></div>
+          <div class="pb-block"><h5>Compétences mobilisées</h5><p>Marketing, digital, gestion produit — [à ajuster selon la réalité].</p></div>
+          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER — résultats concrets si disponibles (trafic, retours) et ce que tu en as appris.]</p></div>
+        </div>
+        <div style="padding:0 32px 32px;"><a href="shop/index.html" class="skill-link">Voir le site en ligne →</a></div>
       </div>
     </div>
 
-    <div class="project">
-      <div class="project-visual"><div class="tone"></div><span>Quitus — Landing page</span></div>
-      <div>
-        <p class="project-index">Projet personnel</p>
-        <h3>Quitus</h3>
-        <p>[À COMPLÉTER — décris le contexte du projet, l'objectif de la landing page, la cible visée et la stratégie de conversion mise en place.]</p>
-        <div class="project-tags"><span class="tag">Landing page</span><span class="tag">Conversion</span><span class="tag">Copywriting</span></div>
-        <a href="quitus/index.html" class="project-link">Voir le site →</a>
+    <div class="project-card">
+      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <h3>Quitus — Landing page</h3>
+          <div class="p-tags"><span class="tag">Landing page</span><span class="tag">Copywriting</span><span class="tag">Projet personnel</span></div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — contexte de création de cette landing page.]</p></div>
+          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER — objectif de conversion visé, cible du site.]</p></div>
+          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — structure de la page, argumentaire, call-to-action mis en place.]</p></div>
+          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER — ta contribution précise au projet.]</p></div>
+          <div class="pb-block"><h5>Compétences mobilisées</h5><p>Communication, marketing, rédaction persuasive — [à ajuster].</p></div>
+          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER — ce que ce projet t'a appris sur la conversion et le discours commercial.]</p></div>
+        </div>
+        <div style="padding:0 32px 32px;"><a href="quitus/index.html" class="skill-link">Voir le site en ligne →</a></div>
       </div>
     </div>
 
-    <div class="project">
-      <div class="project-visual"><div class="tone"></div><span>[Nom du projet / SAE]</span></div>
-      <div>
-        <p class="project-index">[SAE / Stage / Association — à préciser]</p>
-        <h3>[Titre du projet]</h3>
-        <p>[À COMPLÉTER — contexte, mission confiée, actions menées, résultats obtenus.]</p>
-        <div class="project-tags"><span class="tag">[Tag 1]</span><span class="tag">[Tag 2]</span></div>
-        <span class="project-link">Détails à venir</span>
+    <div class="project-card">
+      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <h3>[Titre de la SAE / projet à ajouter]</h3>
+          <div class="p-tags"><span class="tag">[SAE — matière à préciser]</span></div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER]</p></div>
+          <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER]</p></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT -->
+  <!-- ==================== 6. CONTACT ==================== -->
   <section id="contact" class="cta-section">
     <div class="wrap">
       <div class="cta-grid">
         <div>
           <p class="kicker">05 — Contact</p>
-          <h2 class="cta-title">Discutons de votre <em>prochain projet</em> ou opportunité.</h2>
+          <h2 class="cta-title">Une opportunité, un projet ? <em>Écrivons-nous.</em></h2>
           <a href="mailto:email@exemple.com" class="btn btn-solid">Écrire un email</a>
         </div>
         <div class="contact-list">
@@ -463,16 +556,58 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  // header scroll state + progress bar
   const header = document.getElementById('siteHeader');
+  const progress = document.getElementById('progress');
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 20);
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progress.style.width = pct + '%';
   });
 
+  // reveal on scroll
   const revealEls = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.12 });
   revealEls.forEach(el => io.observe(el));
+
+  // active nav link on scroll
+  const sections = ['top','apropos','parcours','competences','projets'].map(id => document.getElementById(id));
+  const navLinks = document.querySelectorAll('#navlinks a');
+  const navIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.toggle('active', l.dataset.sec === entry.target.id));
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  sections.forEach(s => s && navIO.observe(s));
+
+  // theme toggle
+  const themeToggle = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  themeToggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e) {}
+  });
+
+  // animated counters (only runs once real numbers replace the [X] placeholders)
+  document.querySelectorAll('.stat .num').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    if (isNaN(target) || target === 0) return;
+    let cur = 0;
+    const step = Math.max(1, Math.ceil(target / 40));
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) { cur = target; clearInterval(t); }
+      el.textContent = cur;
+    }, 30);
+  });
 </script>
 
 </body>
