@@ -264,6 +264,7 @@ section{padding:100px 0;position:relative;}
 }
 
 .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;border:1px solid var(--line);padding:5px 10px;color:var(--muted);}
+.tag-note{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600;}
 
 /* ---------- PARCOURS — panneaux TC1 / TC2 ---------- */
 .tc-panel{display:none;padding:70px 0 100px;}
