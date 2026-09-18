@@ -238,10 +238,11 @@
   <nav>
     <a href="#top" class="logo">Mathéo <span>Guzzi</span></a>
     <ul class="navlinks">
+      <li><a href="#top">Accueil</a></li>
       <li><a href="#apropos">À propos</a></li>
-      <li><a href="#competences">Compétences</a></li>
-      <li><a href="#projets">Projets</a></li>
       <li><a href="#parcours">Parcours</a></li>
+      <li><a href="#competences">Compétences</a></li>
+      <li><a href="#projets">Projets SAE</a></li>
     </ul>
     <a href="#contact" class="nav-cta">Contact</a>
     <button class="burger" aria-label="Menu" onclick="document.getElementById('mnav').classList.toggle('open')">
@@ -252,10 +253,11 @@
 
 <!-- mobile menu -->
 <div id="mnav" style="position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:28px;padding:32px;">
+  <a href="#top" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Accueil</a>
   <a href="#apropos" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">À propos</a>
-  <a href="#competences" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
-  <a href="#projets" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets</a>
   <a href="#parcours" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Parcours</a>
+  <a href="#competences" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
+  <a href="#projets" style="font-family:'Fraunces',serif;font-size:28px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets SAE</a>
   <a href="#contact" style="font-family:'Fraunces',serif;font-size:28px;color:var(--accent);" onclick="document.getElementById('mnav').classList.remove('open')">Contact</a>
 </div>
 <style>#mnav.open{display:flex !important;}</style>
@@ -309,11 +311,39 @@
     </div>
   </section>
 
+  <!-- TIMELINE -->
+  <section id="parcours" class="wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="kicker">02 — Parcours</p>
+        <h2 class="section-title">Formation &amp; Expériences</h2>
+      </div>
+      <p class="section-note">Un parcours construit pas à pas vers le monde de l'entreprise.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-date">[Année]</div>
+        <div class="tl-role"><h4>BUT Techniques de Commercialisation</h4><p>[À COMPLÉTER — nom de l'établissement, spécialisation, points forts de la formation.]</p></div>
+        <div class="tl-place">[Ville]</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">[Année]</div>
+        <div class="tl-role"><h4>[Intitulé du stage / job / SAE]</h4><p>[À COMPLÉTER — entreprise, missions principales, compétences développées.]</p></div>
+        <div class="tl-place">[Entreprise]</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">[Année]</div>
+        <div class="tl-role"><h4>[Baccalauréat / formation antérieure]</h4><p>[À COMPLÉTER — filière, mention, établissement.]</p></div>
+        <div class="tl-place">[Établissement]</div>
+      </div>
+    </div>
+  </section>
+
   <!-- SKILLS -->
   <section id="competences" class="wrap reveal">
     <div class="section-head">
       <div>
-        <p class="kicker">02 — Savoir-faire</p>
+        <p class="kicker">03 — Savoir-faire</p>
         <h2 class="section-title">Compétences clés</h2>
       </div>
       <p class="section-note">Un socle technique et humain construit pour le terrain commercial.</p>
@@ -362,8 +392,8 @@
   <section id="projets" class="wrap reveal">
     <div class="section-head">
       <div>
-        <p class="kicker">03 — Réalisations</p>
-        <h2 class="section-title">Projets &amp; SAE</h2>
+        <p class="kicker">04 — Réalisations</p>
+        <h2 class="section-title">Projets SAE</h2>
       </div>
       <p class="section-note">Des projets concrets, menés de la stratégie à l'exécution.</p>
     </div>
@@ -398,34 +428,6 @@
         <p>[À COMPLÉTER — contexte, mission confiée, actions menées, résultats obtenus.]</p>
         <div class="project-tags"><span class="tag">[Tag 1]</span><span class="tag">[Tag 2]</span></div>
         <span class="project-link">Détails à venir</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- TIMELINE -->
-  <section id="parcours" class="wrap reveal">
-    <div class="section-head">
-      <div>
-        <p class="kicker">04 — Parcours</p>
-        <h2 class="section-title">Formation &amp; Expériences</h2>
-      </div>
-      <p class="section-note">Un parcours construit pas à pas vers le monde de l'entreprise.</p>
-    </div>
-    <div class="timeline">
-      <div class="tl-row">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>BUT Techniques de Commercialisation</h4><p>[À COMPLÉTER — nom de l'établissement, spécialisation, points forts de la formation.]</p></div>
-        <div class="tl-place">[Ville]</div>
-      </div>
-      <div class="tl-row">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>[Intitulé du stage / job / SAE]</h4><p>[À COMPLÉTER — entreprise, missions principales, compétences développées.]</p></div>
-        <div class="tl-place">[Entreprise]</div>
-      </div>
-      <div class="tl-row">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-role"><h4>[Baccalauréat / formation antérieure]</h4><p>[À COMPLÉTER — filière, mention, établissement.]</p></div>
-        <div class="tl-place">[Établissement]</div>
       </div>
     </div>
   </section>
