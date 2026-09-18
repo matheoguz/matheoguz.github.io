@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mathéo Guzzi — Portfolio BUT Techniques de Commercialisation</title>
-<meta name="description" content="Portfolio de Mathéo Guzzi, étudiant en BUT Techniques de Commercialisation — vente, marketing, communication, e-commerce et entrepreneuriat.">
+<meta name="description" content="Portfolio de Mathéo Guzzi, étudiant en BUT Techniques de Commercialisation (TC2) — vente, marketing, communication, e-commerce et entrepreneuriat.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,10 +14,13 @@
     --paper:#f7f4ee;
     --paper-2:#efeae0;
     --line:#dcd5c6;
-    --accent:#7a4b2c;
+    --accent:#c9e100;      /* jaune citron, légèrement rabattu pour rester lisible/pro */
+    --on-accent:#161512;   /* texte sombre sur fond accent (lisibilité) */
     --accent-2:#3f4a3a;
     --muted:#6b665c;
     --white:#ffffff;
+    --tc1:#8a8578;
+    --tc2:#161512;
     --maxw:1180px;
     --shadow:0 20px 50px -20px rgba(22,21,18,0.15);
   }
@@ -26,11 +29,14 @@
     --paper:#141310;
     --paper-2:#1c1a15;
     --line:#332f27;
-    --accent:#d6a878;
+    --accent:#d9ff3a;
+    --on-accent:#161512;
     --accent-2:#8ba084;
     --muted:#a8a196;
     --white:#1c1a15;
-    --shadow:0 20px 50px -20px rgba(0,0,0,0.5);
+    --tc1:#7a756a;
+    --tc2:#f1efe8;
+    --shadow:0 20px 50px -20px rgba(0,0,0,0.6);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
@@ -47,9 +53,8 @@
   a{color:inherit;text-decoration:none;}
   img{max-width:100%;display:block;}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
-  ::selection{background:var(--accent);color:var(--white);}
+  ::selection{background:var(--accent);color:var(--on-accent);}
 
-  /* progress bar */
   #progress{position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:200;width:0%;transition:width .1s linear;}
 
   /* ---------- NAV ---------- */
@@ -62,170 +67,203 @@
   header.scrolled{border-bottom-color:var(--line);}
   nav{
     display:flex;align-items:center;justify-content:space-between;
-    max-width:var(--maxw);margin:0 auto;padding:20px 32px;
+    max-width:1360px;margin:0 auto;padding:16px 28px;
   }
-  .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:0.02em;}
-  .logo span{color:var(--accent);}
-  .navlinks{display:flex;gap:32px;list-style:none;align-items:center;}
+  .logo{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:0.02em;flex-shrink:0;}
+  .logo span{color:var(--accent);-webkit-text-stroke:0.5px var(--ink);}
+  .navlinks{display:flex;gap:22px;list-style:none;align-items:center;flex-wrap:nowrap;}
   .navlinks a{
-    font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    color:var(--ink);position:relative;padding-bottom:4px;opacity:.65;
-    transition:opacity .2s ease;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;
+    color:var(--ink);position:relative;padding:6px 0;opacity:.6;
+    transition:opacity .2s ease;white-space:nowrap;
   }
   .navlinks a.active,.navlinks a:hover{opacity:1;}
   .navlinks a::after{
-    content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);
+    content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--accent);
     transition:width .25s ease;
   }
   .navlinks a.active::after,.navlinks a:hover::after{width:100%;}
-  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
   .nav-cta{
-    font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    border:1px solid var(--ink);padding:10px 20px;transition:all .25s ease;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;
+    border:1px solid var(--ink);padding:9px 18px;transition:all .25s ease;
   }
-  .nav-cta:hover{background:var(--ink);color:var(--paper);}
+  .nav-cta:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
   .theme-toggle{
-    width:38px;height:38px;border:1px solid var(--line);border-radius:50%;
+    width:36px;height:36px;border:1px solid var(--line);border-radius:50%;
     display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;
-    color:var(--ink);transition:border-color .2s ease, transform .2s ease;
+    color:var(--ink);transition:border-color .2s ease, transform .2s ease;flex-shrink:0;
   }
   .theme-toggle:hover{border-color:var(--accent);transform:rotate(20deg);}
-  .theme-toggle svg{width:16px;height:16px;}
+  .theme-toggle svg{width:15px;height:15px;}
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
-  .burger span{width:24px;height:1px;background:var(--ink);display:block;}
+  .burger span{width:22px;height:1px;background:var(--ink);display:block;}
 
   /* ---------- HERO ---------- */
-  .hero{
-    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    position:relative;padding-top:100px;
-  }
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;padding-top:100px;}
   .hero-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;}
   .eyebrow{
-    font-size:13px;text-transform:uppercase;letter-spacing:0.16em;color:var(--accent);
-    margin-bottom:24px;font-weight:600;display:flex;align-items:center;gap:10px;
+    font-size:13px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink);
+    margin-bottom:24px;font-weight:600;display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:var(--on-accent);padding:8px 16px;
   }
-  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-  h1.hero-title{font-size:clamp(40px,7vw,88px);line-height:0.98;max-width:920px;}
-  h1.hero-title em{font-style:italic;color:var(--accent);font-weight:400;}
-  .hero-sub{max-width:540px;font-size:18px;color:var(--muted);margin-top:28px;}
+  h1.hero-title{font-size:clamp(38px,6.6vw,84px);line-height:1.02;max-width:920px;}
+  h1.hero-title em{font-style:italic;color:var(--accent-text,var(--ink));font-weight:400;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:6px;text-underline-offset:2px;font-style:normal;}
+  .hero-sub{max-width:560px;font-size:18px;color:var(--muted);margin-top:28px;}
   .hero-meta{text-align:right;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;}
   .hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;}
   .btn{
     display:inline-flex;align-items:center;gap:10px;
     padding:15px 30px;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;
-    border:1px solid var(--ink);transition:all .3s ease;cursor:pointer;
+    border:1px solid var(--ink);transition:all .3s ease;cursor:pointer;background:none;font-family:inherit;color:var(--ink);
   }
   .btn-solid{background:var(--ink);color:var(--paper);}
-  .btn-solid:hover{background:var(--accent);border-color:var(--accent);color:var(--white);}
+  .btn-solid:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
   .btn-ghost:hover{background:var(--ink);color:var(--paper);}
   .scroll-cue{position:absolute;bottom:40px;left:32px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px;}
   .scroll-cue .line{width:40px;height:1px;background:var(--muted);animation:pulse 2s infinite;}
   @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
 
-  /* ---------- SECTION SHELL ---------- */
-  section{padding:140px 0;position:relative;}
-  .section-head{
-    display:flex;justify-content:space-between;align-items:flex-end;
-    margin-bottom:64px;gap:40px;flex-wrap:wrap;
-    border-bottom:1px solid var(--line);padding-bottom:28px;
-  }
-  .kicker{font-size:13px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:600;margin-bottom:14px;}
-  .section-title{font-size:clamp(30px,4vw,48px);}
+  section{padding:130px 0;position:relative;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;gap:40px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:26px;}
+  .kicker{font-size:13px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:600;margin-bottom:14px;}
+  .kicker b{color:var(--ink);background:var(--accent);padding:2px 8px;}
+  .section-title{font-size:clamp(28px,3.6vw,46px);}
   .section-note{max-width:340px;font-size:14px;color:var(--muted);text-align:right;}
 
   /* ---------- ABOUT ---------- */
   .about-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:80px;}
   .about-grid p{font-size:17px;color:var(--muted);margin-bottom:20px;max-width:520px;}
-  .about-grid .lede{font-family:'Fraunces',serif;font-size:26px;color:var(--ink);line-height:1.4;margin-bottom:28px;font-weight:400;}
-  .about-block-title{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin:28px 0 8px;font-weight:600;}
+  .about-grid .lede{font-family:'Fraunces',serif;font-size:25px;color:var(--ink);line-height:1.4;margin-bottom:28px;font-weight:400;}
+  .about-block-title{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink);margin:26px 0 8px;font-weight:700;border-left:3px solid var(--accent);padding-left:10px;}
   .interest-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
-  .interest-tag{
-    font-size:13px;padding:8px 16px;border:1px solid var(--line);border-radius:30px;color:var(--muted);
-    transition:all .25s ease;
-  }
-  .interest-tag:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+  .interest-tag{font-size:13px;padding:8px 16px;border:1px solid var(--line);border-radius:30px;color:var(--muted);transition:all .25s ease;}
+  .interest-tag:hover{border-color:var(--accent);color:var(--ink);transform:translateY(-2px);}
   .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
-  .stat{border-top:1px solid var(--ink);padding-top:16px;}
-  .stat .num{font-family:'Fraunces',serif;font-size:40px;color:var(--accent);}
+  .stat{border-top:2px solid var(--ink);padding-top:16px;}
+  .stat .num{font-family:'Fraunces',serif;font-size:38px;}
   .stat .label{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-top:6px;}
-  .portrait-frame{
-    aspect-ratio:4/5;background:var(--paper-2);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
-  }
+  .portrait-frame{aspect-ratio:4/5;background:var(--paper-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
   .portrait-frame .ph-label{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:center;padding:20px;}
-  .portrait-frame::before{content:'';position:absolute;inset:14px;border:1px solid var(--accent);opacity:.4;}
+  .portrait-frame::before{content:'';position:absolute;inset:14px;border:1px solid var(--accent);opacity:.7;}
 
-  /* ---------- TIMELINE ---------- */
-  .timeline{position:relative;border-top:1px solid var(--line);}
-  .tl-item{
-    display:grid;grid-template-columns:140px 32px 1fr;gap:0 28px;
-    padding:36px 0;border-bottom:1px solid var(--line);position:relative;
+  /* ---------- YEAR BADGE ---------- */
+  .year-badge{
+    display:inline-flex;align-items:center;gap:8px;font-size:11px;text-transform:uppercase;
+    letter-spacing:0.08em;font-weight:700;padding:5px 12px;border-radius:2px;
   }
-  .tl-date{font-family:'Fraunces',serif;font-size:16px;color:var(--accent);padding-top:2px;}
+  .year-badge.tc1{background:var(--paper-2);color:var(--tc1);border:1px solid var(--line);}
+  .year-badge.tc2{background:var(--accent);color:var(--on-accent);}
+
+  /* ---------- PARCOURS ---------- */
+  .parcours-block{margin-bottom:70px;}
+  .parcours-block:last-child{margin-bottom:0;}
+  .parcours-block-head{display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
+  .parcours-block-head h3{font-size:28px;}
+  .parcours-block-sub{color:var(--muted);font-size:14px;margin-bottom:32px;}
+  .timeline{position:relative;border-top:1px solid var(--line);}
+  .tl-item{display:grid;grid-template-columns:130px 28px 1fr;gap:0 26px;padding:30px 0;border-bottom:1px solid var(--line);position:relative;}
+  .tl-date{font-family:'Fraunces',serif;font-size:15px;color:var(--muted);padding-top:2px;}
   .tl-node-col{display:flex;flex-direction:column;align-items:center;}
-  .tl-dot{width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--accent);margin-top:4px;flex-shrink:0;transition:background .3s ease;}
-  .tl-item:hover .tl-dot{background:var(--accent);}
+  .tl-dot{width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);margin-top:4px;flex-shrink:0;transition:background .3s ease;}
+  .parcours-block.tc2 .tl-dot{border-color:var(--accent);}
+  .tl-item:hover .tl-dot{background:var(--ink);}
+  .parcours-block.tc2 .tl-item:hover .tl-dot{background:var(--accent);}
   .tl-line{flex:1;width:1px;background:var(--line);margin-top:8px;}
-  .tl-content h4{font-size:19px;margin-bottom:4px;}
+  .tl-content h4{font-size:18px;margin-bottom:4px;}
   .tl-content .tl-place{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;}
   .tl-content p{font-size:14px;color:var(--muted);margin-bottom:14px;max-width:600px;}
   .tl-skills{display:flex;flex-wrap:wrap;gap:8px;}
   .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;border:1px solid var(--line);padding:5px 10px;color:var(--muted);}
 
-  /* ---------- SKILLS ---------- */
-  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
-  .skill-card{background:var(--paper);padding:36px;transition:background .3s ease, transform .3s ease;}
-  .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
-  .skill-num{font-family:'Fraunces',serif;font-size:14px;color:var(--accent);margin-bottom:18px;}
-  .skill-card h3{font-size:20px;margin-bottom:10px;}
-  .skill-card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
-  .skill-link{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);border-bottom:1px solid var(--accent);padding-bottom:2px;display:inline-block;}
-  .skill-link.disabled{color:var(--muted);border-color:var(--line);opacity:.7;}
+  /* ---------- EVOLUTION TC1->TC2 ---------- */
+  .evo-header{text-align:center;margin-bottom:60px;}
+  .evo-header .section-title{font-size:clamp(32px,5vw,54px);}
+  .evo-header p{color:var(--muted);font-size:17px;margin-top:14px;font-family:'Fraunces',serif;font-style:italic;}
+  .evo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .evo-row{display:contents;}
+  .evo-cell{background:var(--paper);padding:26px 30px;}
+  .evo-domain{grid-column:1/-1;background:var(--paper-2);padding:14px 30px;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;}
+  .evo-col-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .evo-cell p{font-size:14px;color:var(--muted);}
+  .evo-arrow{display:none;}
+  @media(min-width:700px){
+    .evo-cell:first-of-type{border-right:1px solid var(--line);}
+  }
+
+  /* ---------- FILTER BAR ---------- */
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:44px;}
+  .filter-btn{
+    font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;padding:9px 18px;
+    border:1px solid var(--line);color:var(--muted);cursor:pointer;background:none;font-family:inherit;
+    transition:all .2s ease;
+  }
+  .filter-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .filter-btn.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 
   /* ---------- PROJECTS ---------- */
-  .project-card{
-    border:1px solid var(--line);margin-bottom:24px;overflow:hidden;
-    transition:box-shadow .3s ease, border-color .3s ease;cursor:pointer;
-  }
-  .project-card:hover{box-shadow:var(--shadow);border-color:var(--accent);}
-  .project-head{
-    display:flex;justify-content:space-between;align-items:center;gap:24px;
-    padding:32px;
-  }
-  .project-head h3{font-size:26px;}
-  .project-head .p-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-  .project-toggle{
-    width:34px;height:34px;border:1px solid var(--line);border-radius:50%;flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .3s ease, border-color .3s ease;
-  }
+  .project-card{border:1px solid var(--line);margin-bottom:20px;overflow:hidden;transition:box-shadow .3s ease, border-color .3s ease;}
+  .project-card.hide{display:none;}
+  .project-card:hover{box-shadow:var(--shadow);border-color:var(--ink);}
+  .project-head{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:28px 30px;cursor:pointer;}
+  .project-head h3{font-size:23px;margin-bottom:8px;}
+  .p-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .project-toggle{width:32px;height:32px;border:1px solid var(--line);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;transition:transform .3s ease, border-color .3s ease;}
   .project-card.open .project-toggle{transform:rotate(45deg);border-color:var(--accent);}
   .project-body{max-height:0;overflow:hidden;transition:max-height .45s ease;}
-  .project-card.open .project-body{max-height:900px;}
-  .project-body-inner{padding:0 32px 36px;display:grid;grid-template-columns:repeat(2,1fr);gap:28px;border-top:1px solid var(--line);padding-top:28px;}
-  .pb-block h5{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;}
+  .project-card.open .project-body{max-height:1000px;}
+  .project-body-inner{padding:0 30px 32px;display:grid;grid-template-columns:repeat(2,1fr);gap:26px;border-top:1px solid var(--line);padding-top:26px;}
+  .pb-block h5{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:8px;font-weight:700;}
   .pb-block p{font-size:14px;color:var(--muted);}
+  .pb-link{padding:0 30px 30px;}
+  .pb-link a{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--ink);padding-bottom:2px;}
 
-  /* ---------- EXPERIENCE TIMELINE ---------- */
-  /* (reuses .timeline styles above) */
+  /* ---------- SKILLS ---------- */
+  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .skill-card{background:var(--paper);padding:32px;transition:background .3s ease, transform .3s ease;}
+  .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
+  .skill-card h3{font-size:19px;margin-bottom:12px;}
+  .skill-card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+  .skill-chain{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:14px;}
+  .skill-chain-row{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .skill-chain-row b{color:var(--ink);font-weight:600;}
+  .skill-chain-row .yr{margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;padding:2px 8px;border:1px solid var(--line);}
+
+  /* ---------- EXPERIENCES ---------- */
+  .exp-card{border:1px solid var(--line);padding:32px;margin-bottom:20px;transition:border-color .3s ease;}
+  .exp-card:hover{border-color:var(--ink);}
+  .exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:18px;}
+  .exp-top h3{font-size:22px;}
+  .exp-top .exp-company{font-size:14px;color:var(--muted);margin-top:4px;}
+  .exp-period{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);white-space:nowrap;}
+  .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .exp-grid h5{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;font-weight:700;}
+  .exp-grid p{font-size:14px;color:var(--muted);}
+
+  /* ---------- PROJET PRO ---------- */
+  .propro-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+  .propro-grid p{font-size:16px;color:var(--muted);margin-bottom:18px;max-width:520px;}
+  .interest-cloud{display:flex;flex-wrap:wrap;gap:14px;}
+  .interest-pill{
+    font-family:'Fraunces',serif;font-size:20px;padding:16px 26px;border:1px solid var(--line);
+    transition:all .3s ease;cursor:default;
+  }
+  .interest-pill:hover{border-color:var(--accent);background:var(--accent);color:var(--on-accent);transform:translateY(-3px) rotate(-1deg);}
+  .propro-note{font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding-left:14px;margin-top:24px;font-style:italic;}
 
   /* ---------- CONTACT / CTA ---------- */
   .cta-section{background:var(--ink);color:var(--paper);}
   html[data-theme="dark"] .cta-section{background:var(--paper-2);}
   .cta-section .kicker{color:var(--accent);}
   .cta-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:end;}
-  .cta-title{font-size:clamp(34px,5vw,58px);max-width:640px;}
-  .cta-title em{font-style:italic;color:var(--accent);font-weight:400;}
+  .cta-title{font-size:clamp(32px,4.6vw,54px);max-width:640px;}
+  .cta-title em{font-style:normal;color:var(--accent);}
   .contact-list{display:flex;flex-direction:column;gap:0;}
-  .contact-list a{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:20px 0;border-bottom:1px solid rgba(150,140,120,0.25);
-    font-size:15px;transition:padding-left .25s ease;
-  }
+  .contact-list a{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(150,140,120,0.25);font-size:15px;transition:padding-left .25s ease;}
   .contact-list a:hover{padding-left:10px;}
   .contact-list span:last-child{color:var(--muted);font-size:13px;}
-  .cta-section .btn-solid{background:var(--paper);color:var(--ink);border-color:var(--paper);margin-top:40px;}
-  .cta-section .btn-solid:hover{background:var(--accent);color:var(--white);border-color:var(--accent);}
+  .cta-section .btn-solid{background:var(--accent);color:var(--on-accent);border-color:var(--accent);margin-top:40px;}
+  .cta-section .btn-solid:hover{background:var(--paper);border-color:var(--paper);color:var(--ink);}
 
   footer{background:var(--ink);color:var(--muted);padding:32px 0;font-size:12px;}
   html[data-theme="dark"] footer{background:var(--paper-2);}
@@ -235,21 +273,26 @@
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
   .reveal.visible{opacity:1;transform:translateY(0);}
 
-  @media(max-width:900px){
+  @media(max-width:1080px){
     .navlinks{display:none;}
     .burger{display:flex;}
+  }
+  @media(max-width:900px){
     .hero-grid{grid-template-columns:1fr;}
     .hero-meta{text-align:left;flex-direction:row;flex-wrap:wrap;gap:20px;}
     .about-grid{grid-template-columns:1fr;}
     .about-grid .portrait-frame{order:-1;max-width:320px;}
     .skills-grid{grid-template-columns:1fr;}
     .stat-row{grid-template-columns:1fr 1fr;}
-    .tl-item{grid-template-columns:32px 1fr;}
+    .tl-item{grid-template-columns:28px 1fr;}
     .tl-date{grid-column:1/-1;padding-top:0;margin-bottom:8px;}
     .cta-grid{grid-template-columns:1fr;}
     .project-body-inner{grid-template-columns:1fr;}
-    .project-head{flex-direction:row;align-items:flex-start;}
-    section{padding:90px 0;}
+    .evo-grid{grid-template-columns:1fr;}
+    .evo-cell:first-of-type{border-right:none !important;border-bottom:1px solid var(--line);}
+    .exp-grid{grid-template-columns:1fr;}
+    .propro-grid{grid-template-columns:1fr;gap:32px;}
+    section{padding:80px 0;}
   }
 </style>
 </head>
@@ -264,8 +307,10 @@
       <li><a href="#top" data-sec="top">Accueil</a></li>
       <li><a href="#apropos" data-sec="apropos">À propos</a></li>
       <li><a href="#parcours" data-sec="parcours">Parcours</a></li>
+      <li><a href="#projets" data-sec="projets">Projets / SAE</a></li>
       <li><a href="#competences" data-sec="competences">Compétences</a></li>
-      <li><a href="#projets" data-sec="projets">Projets SAE</a></li>
+      <li><a href="#experiences" data-sec="experiences">Expériences</a></li>
+      <li><a href="#projet-pro" data-sec="projet-pro">Projet pro</a></li>
     </ul>
     <div class="nav-right">
       <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
@@ -279,27 +324,29 @@
   </nav>
 </header>
 
-<div id="mnav" style="position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:26px;padding:32px;">
-  <a href="#top" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Accueil</a>
-  <a href="#apropos" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">À propos</a>
-  <a href="#parcours" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Parcours</a>
-  <a href="#competences" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
-  <a href="#projets" style="font-family:'Fraunces',serif;font-size:26px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets SAE</a>
-  <a href="#contact" style="font-family:'Fraunces',serif;font-size:26px;color:var(--accent);" onclick="document.getElementById('mnav').classList.remove('open')">Contact</a>
+<div id="mnav" style="position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:22px;padding:32px;overflow-y:auto;">
+  <a href="#top" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Accueil</a>
+  <a href="#apropos" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">À propos</a>
+  <a href="#parcours" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Parcours</a>
+  <a href="#projets" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Projets / SAE</a>
+  <a href="#competences" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Compétences</a>
+  <a href="#experiences" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Expériences</a>
+  <a href="#projet-pro" style="font-family:'Fraunces',serif;font-size:24px;" onclick="document.getElementById('mnav').classList.remove('open')">Projet pro</a>
+  <a href="#contact" style="font-family:'Fraunces',serif;font-size:24px;background:var(--accent);color:var(--on-accent);display:inline-block;padding:6px 14px;width:fit-content;" onclick="document.getElementById('mnav').classList.remove('open')">Contact</a>
 </div>
 <style>#mnav.open{display:flex !important;}</style>
 
 <main id="top">
 
-  <!-- ==================== 1. ACCUEIL ==================== -->
+  <!-- ==================== ACCUEIL ==================== -->
   <section class="hero wrap" style="padding-top:0;">
     <div class="hero-grid">
       <div>
-        <p class="eyebrow"><span class="dot"></span>BUT Techniques de Commercialisation — 1ère année</p>
-        <h1 class="hero-title">La vente est un <em>sport</em><br>de combat mental.</h1>
-        <p class="hero-sub">[À COMPLÉTER — ton nom complet + phrase d'accroche personnelle en 1-2 lignes : ce qui te définit, ton ambition dans le commerce/marketing. Exemple de ton à garder : direct, énergique, sans jargon scolaire.]</p>
+        <p class="eyebrow">BUT Techniques de Commercialisation — TC2 · 2026/2027</p>
+        <h1 class="hero-title">Une année pour construire,<br>une <em>seconde</em> pour approfondir.</h1>
+        <p class="hero-sub">[À COMPLÉTER — ton nom complet + phrase d'accroche personnelle en 1-2 lignes. Idée directrice : tu es en TC2, tu t'appuies sur ce que ta TC1 t'a appris pour aller plus loin (vente, marketing, communication, e-commerce, entrepreneuriat).]</p>
         <div class="hero-actions">
-          <a href="#parcours" class="btn btn-ghost">Mon parcours</a>
+          <a href="#parcours" class="btn btn-ghost">TC1 → TC2, mon évolution</a>
           <a href="#projets" class="btn btn-solid">Voir mes projets</a>
         </div>
       </div>
@@ -312,30 +359,30 @@
     <div class="scroll-cue"><span class="line"></span><span>Défiler</span></div>
   </section>
 
-  <!-- ==================== 2. À PROPOS ==================== -->
+  <!-- ==================== À PROPOS ==================== -->
   <section id="apropos" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">01 — Présentation</p>
         <h2 class="section-title">Qui je suis</h2>
       </div>
-      <p class="section-note">Étudiant en BUT TC, discipliné par le sport, moteur par la vente.</p>
+      <p class="section-note">Actuellement en <b style="color:var(--ink)">TC2</b>, après une première année de découverte.</p>
     </div>
     <div class="about-grid">
       <div class="portrait-frame">
         <p class="ph-label">[Photo professionnelle<br>à insérer ici]</p>
       </div>
       <div>
-        <p class="lede">[À COMPLÉTER — accroche personnelle en 2-3 phrases : qui tu es, ce qui t'a mené vers le BUT TC, ta vision du métier de commercial/marketeur.]</p>
+        <p class="lede">[À COMPLÉTER — accroche personnelle en 2-3 phrases, ton naturel : qui tu es, ce qui t'a mené vers le BUT TC, où tu en es maintenant en TC2.]</p>
 
         <p class="about-block-title">Formation</p>
-        <p>[À COMPLÉTER — établissement, ville, spécialisation ou parcours choisi au sein du BUT TC, matières qui te correspondent le plus.]</p>
+        <p>[À COMPLÉTER — établissement, ville. Précise ce que ta TC1 t'a apporté et ce que ta TC2 approfondit (spécialisation, options, matières).]</p>
 
         <p class="about-block-title">Personnalité</p>
-        <p>[À COMPLÉTER — 2-3 traits de personnalité illustrés par une situation concrète si possible (ex : rigueur héritée de la boxe, esprit de compétition, sens du contact).]</p>
+        <p>[À COMPLÉTER — 2-3 traits de personnalité illustrés par une situation concrète. Le sport (boxe/muscu) peut être cité ici comme touche personnelle légère, pas comme thème central.]</p>
 
         <p class="about-block-title">Objectifs professionnels</p>
-        <p>[À COMPLÉTER — le métier ou secteur visé après le BUT TC : vente, marketing digital, e-commerce, entrepreneuriat... précise si tu as déjà une idée de poursuite d'études.]</p>
+        <p>[À COMPLÉTER — tes pistes actuelles parmi vente / communication / marketing / e-commerce / entrepreneuriat. Précise que rien n'est figé si c'est le cas.]</p>
 
         <p class="about-block-title">Centres d'intérêt</p>
         <div class="interest-tags">
@@ -346,191 +393,364 @@
         </div>
 
         <div class="stat-row">
-          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Expériences</div></div>
-          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Projets / SAE</div></div>
-          <div class="stat"><div class="num" data-count="0">[X]</div><div class="label">Langues parlées</div></div>
+          <div class="stat"><div class="num">2</div><div class="label">Années de BUT TC</div></div>
+          <div class="stat"><div class="num">[X]</div><div class="label">Projets / SAE</div></div>
+          <div class="stat"><div class="num">[X]</div><div class="label">Expériences pro</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== 3. PARCOURS ==================== -->
+  <!-- ==================== PARCOURS ==================== -->
   <section id="parcours" class="wrap reveal">
     <div class="section-head">
       <div>
         <p class="kicker">02 — Parcours</p>
         <h2 class="section-title">Formation &amp; Expériences</h2>
       </div>
-      <p class="section-note">Chaque étape construit une compétence utile pour demain.</p>
+      <p class="section-note">Deux années clairement distinguées, une progression continue.</p>
     </div>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
-        <div class="tl-content">
-          <h4>BUT Techniques de Commercialisation — 1ère année</h4>
-          <p class="tl-place">[Établissement, Ville]</p>
-          <p>[À COMPLÉTER — ce que couvre cette première année, options ou orientation prises.]</p>
-          <div class="tl-skills"><span class="tag">[Compétence développée]</span><span class="tag">[Compétence développée]</span></div>
+
+    <div class="parcours-block tc1">
+      <div class="parcours-block-head">
+        <span class="year-badge tc1">TC1 · 2025/2026</span>
+        <h3>Première année — découverte &amp; premières expériences</h3>
+      </div>
+      <p class="parcours-block-sub">Année terminée. Ce que j'ai appris et réalisé.</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">[Période]</div>
+          <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-content">
+            <h4>BUT Techniques de Commercialisation — 1ère année</h4>
+            <p class="tl-place">[Établissement, Ville]</p>
+            <p>[À COMPLÉTER — ce que couvre cette première année, matières marquantes.]</p>
+            <div class="tl-skills"><span class="tag">[Compétence développée]</span><span class="tag">[Compétence développée]</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">[Période]</div>
+          <div class="tl-node-col"><div class="tl-dot"></div></div>
+          <div class="tl-content">
+            <h4>[Intitulé du stage / job étudiant / SAE marquante de TC1]</h4>
+            <p class="tl-place">[Entreprise ou contexte, Ville]</p>
+            <p>[À COMPLÉTER — missions principales de cette expérience de TC1.]</p>
+            <div class="tl-skills"><span class="tag">[Compétence développée]</span></div>
+          </div>
         </div>
       </div>
-      <div class="tl-item">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
-        <div class="tl-content">
-          <h4>[Intitulé du stage / job étudiant]</h4>
-          <p class="tl-place">[Entreprise, Ville]</p>
-          <p>[À COMPLÉTER — missions principales confiées durant cette expérience.]</p>
-          <div class="tl-skills"><span class="tag">[Compétence développée]</span><span class="tag">[Compétence développée]</span></div>
-        </div>
+    </div>
+
+    <div class="parcours-block tc2">
+      <div class="parcours-block-head">
+        <span class="year-badge tc2">TC2 · 2026/2027</span>
+        <h3>Deuxième année — approfondissement &amp; professionnalisation</h3>
       </div>
-      <div class="tl-item">
-        <div class="tl-date">[Année]</div>
-        <div class="tl-node-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <h4>[Baccalauréat / formation antérieure]</h4>
-          <p class="tl-place">[Établissement, Ville]</p>
-          <p>[À COMPLÉTER — filière, mention, spécialités.]</p>
-          <div class="tl-skills"><span class="tag">[Compétence développée]</span></div>
+      <p class="parcours-block-sub">Année en cours. Ce que je suis en train de développer.</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">[Période]</div>
+          <div class="tl-node-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-content">
+            <h4>BUT Techniques de Commercialisation — 2e année</h4>
+            <p class="tl-place">[Établissement, Ville]</p>
+            <p>[À COMPLÉTER — orientation prise en TC2, options, ce qui s'approfondit par rapport à la TC1.]</p>
+            <div class="tl-skills"><span class="tag">[Compétence développée]</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">[Période]</div>
+          <div class="tl-node-col"><div class="tl-dot"></div></div>
+          <div class="tl-content">
+            <h4>[Expérience / SAE en cours de TC2]</h4>
+            <p class="tl-place">[Entreprise ou contexte, Ville]</p>
+            <p>[À COMPLÉTER — ce que tu es en train de mener actuellement.]</p>
+            <div class="tl-skills"><span class="tag">[Compétence développée]</span></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== 4. COMPÉTENCES ==================== -->
-  <section id="competences" class="wrap reveal">
-    <div class="section-head">
-      <div>
-        <p class="kicker">03 — Savoir-faire</p>
-        <h2 class="section-title">Compétences clés</h2>
-      </div>
-      <p class="section-note">Chaque compétence s'appuie sur une expérience ou un projet réel.</p>
+  <!-- ==================== DE TC1 À TC2 ==================== -->
+  <section id="evolution" class="wrap reveal">
+    <div class="evo-header">
+      <p class="kicker" style="text-align:center;"><b>De TC1 à TC2</b></p>
+      <h2 class="section-title">Deux années, une progression.</h2>
+      <p>[À COMPLÉTER une fois les informations fournies — cette section ne s'active qu'avec des faits réels, aucune évolution n'est présumée ci-dessous.]</p>
     </div>
-    <div class="skills-grid">
-      <div class="skill-card">
-        <div class="skill-num">01</div>
-        <h3>Vente</h3>
-        <p>[À COMPLÉTER — ton niveau/expérience réelle en prospection, argumentation, négociation, closing.]</p>
-        <span class="skill-link disabled">Lié à : [expérience / projet à préciser]</span>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">02</div>
-        <h3>Marketing</h3>
-        <p>[À COMPLÉTER — actions marketing réelles menées : campagnes, études de marché, positionnement produit.]</p>
-        <a href="#projets" class="skill-link">Lié au projet HomeVibe →</a>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">03</div>
-        <h3>Communication</h3>
-        <p>[À COMPLÉTER — communication écrite/orale, réseaux sociaux, prise de parole, création de contenu.]</p>
-        <a href="#projets" class="skill-link">Lié au projet Quitus →</a>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">04</div>
-        <h3>Relation client</h3>
-        <p>[À COMPLÉTER — accueil, fidélisation, gestion de la satisfaction et des réclamations.]</p>
-        <span class="skill-link disabled">Lié à : [expérience à préciser]</span>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">05</div>
-        <h3>Travail en équipe</h3>
-        <p>[À COMPLÉTER — projets de groupe, SAE collectives, sport en club ou en binôme, gestion des rôles.]</p>
-        <span class="skill-link disabled">Lié à : [SAE à préciser]</span>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">06</div>
-        <h3>Digital</h3>
-        <p>[À COMPLÉTER — outils maîtrisés : Suite Office, création web, e-commerce, réseaux sociaux, Canva.]</p>
-        <a href="#projets" class="skill-link">Lié au projet HomeVibe →</a>
-      </div>
-      <div class="skill-card">
-        <div class="skill-num">07</div>
-        <h3>Analyse</h3>
-        <p>[À COMPLÉTER — analyse de données commerciales, études de marché, veille concurrentielle, reporting.]</p>
-        <span class="skill-link disabled">Lié à : [projet à préciser]</span>
-      </div>
+    <div class="evo-grid">
+      <div class="evo-domain">Vente</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Marketing</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Communication</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Relation client</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Travail en équipe</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Digital</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
+
+      <div class="evo-domain">Professionnalisation</div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc1">TC1</span></div><p>[À COMPLÉTER]</p></div>
+      <div class="evo-cell"><div class="evo-col-label"><span class="year-badge tc2">TC2</span></div><p>[À COMPLÉTER]</p></div>
     </div>
   </section>
 
-  <!-- ==================== 5. PROJETS / SAE ==================== -->
+  <!-- ==================== PROJETS / SAE ==================== -->
   <section id="projets" class="wrap reveal">
     <div class="section-head">
       <div>
-        <p class="kicker">04 — Réalisations</p>
-        <h2 class="section-title">Projets SAE</h2>
+        <p class="kicker">03 — Réalisations</p>
+        <h2 class="section-title">Projets &amp; SAE</h2>
       </div>
-      <p class="section-note">Clique sur un projet pour voir le détail complet.</p>
+      <p class="section-note">Filtre par année ou par domaine, clique pour le détail complet.</p>
     </div>
 
-    <div class="project-card">
-      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-        <div>
-          <h3>HomeVibe — Boutique e-commerce</h3>
-          <div class="p-tags"><span class="tag">E-commerce</span><span class="tag">Marketing digital</span><span class="tag">Projet personnel</span></div>
-        </div>
-        <div class="project-toggle">+</div>
-      </div>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — pourquoi as-tu lancé ce projet, dans quel cadre (personnel, SAE, cours) ?]</p></div>
-          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER — ce que tu cherchais à démontrer ou obtenir avec ce site.]</p></div>
-          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — conception de la boutique, choix des produits, fiches produits, design, contenu.]</p></div>
-          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER — ce que TU as fait précisément si le projet a été mené à plusieurs.]</p></div>
-          <div class="pb-block"><h5>Compétences mobilisées</h5><p>Marketing, digital, gestion produit — [à ajuster selon la réalité].</p></div>
-          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER — résultats concrets si disponibles (trafic, retours) et ce que tu en as appris.]</p></div>
-        </div>
-        <div style="padding:0 32px 32px;"><a href="shop/index.html" class="skill-link">Voir le site en ligne →</a></div>
-      </div>
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-filter="tous">Tous</button>
+      <button class="filter-btn" data-filter="tc1">TC1</button>
+      <button class="filter-btn" data-filter="tc2">TC2</button>
+      <button class="filter-btn" data-filter="marketing">Marketing</button>
+      <button class="filter-btn" data-filter="vente">Vente</button>
+      <button class="filter-btn" data-filter="communication">Communication</button>
+      <button class="filter-btn" data-filter="digital">Digital</button>
     </div>
 
-    <div class="project-card">
-      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-        <div>
-          <h3>Quitus — Landing page</h3>
-          <div class="p-tags"><span class="tag">Landing page</span><span class="tag">Copywriting</span><span class="tag">Projet personnel</span></div>
+    <div id="projectList">
+      <div class="project-card" data-tags="tc1 marketing">
+        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+          <div>
+            <h3>[Titre du projet — ex. Étude de marché Evian]</h3>
+            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Marketing</span></div>
+          </div>
+          <div class="project-toggle">+</div>
         </div>
-        <div class="project-toggle">+</div>
-      </div>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — contexte de création de cette landing page.]</p></div>
-          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER — objectif de conversion visé, cible du site.]</p></div>
-          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — structure de la page, argumentaire, call-to-action mis en place.]</p></div>
-          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER — ta contribution précise au projet.]</p></div>
-          <div class="pb-block"><h5>Compétences mobilisées</h5><p>Communication, marketing, rédaction persuasive — [à ajuster].</p></div>
-          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER — ce que ce projet t'a appris sur la conversion et le discours commercial.]</p></div>
+        <div class="project-body">
+          <div class="project-body-inner">
+            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+          </div>
         </div>
-        <div style="padding:0 32px 32px;"><a href="quitus/index.html" class="skill-link">Voir le site en ligne →</a></div>
       </div>
-    </div>
 
-    <div class="project-card">
-      <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-        <div>
-          <h3>[Titre de la SAE / projet à ajouter]</h3>
-          <div class="p-tags"><span class="tag">[SAE — matière à préciser]</span></div>
+      <div class="project-card" data-tags="tc1 marketing digital">
+        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+          <div>
+            <h3>HomeVibe — Boutique e-commerce</h3>
+            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Marketing</span><span class="tag">Digital</span></div>
+          </div>
+          <div class="project-toggle">+</div>
         </div>
-        <div class="project-toggle">+</div>
+        <div class="project-body">
+          <div class="project-body-inner">
+            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — cadre du projet : personnel, cours, SAE.]</p></div>
+            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — conception de la boutique, fiches produits, choix marketing.]</p></div>
+            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+          </div>
+          <div class="pb-link"><a href="shop/index.html">Voir le site en ligne →</a></div>
+        </div>
       </div>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
-          <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
-          <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
-          <div class="pb-block"><h5>Rôle personnel</h5><p>[À COMPLÉTER]</p></div>
-          <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
-          <div class="pb-block"><h5>Résultat &amp; apprentissages</h5><p>[À COMPLÉTER]</p></div>
+
+      <div class="project-card" data-tags="tc1 communication">
+        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+          <div>
+            <h3>Quitus — Landing page</h3>
+            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Communication</span></div>
+          </div>
+          <div class="project-toggle">+</div>
+        </div>
+        <div class="project-body">
+          <div class="project-body-inner">
+            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+          </div>
+          <div class="pb-link"><a href="quitus/index.html">Voir le site en ligne →</a></div>
+        </div>
+      </div>
+
+      <div class="project-card" data-tags="tc2 vente">
+        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+          <div>
+            <h3>[Titre du projet / SAE de TC2 à ajouter]</h3>
+            <div class="p-meta"><span class="year-badge tc2">TC2</span><span class="tag">[Domaine à préciser]</span></div>
+          </div>
+          <div class="project-toggle">+</div>
+        </div>
+        <div class="project-body">
+          <div class="project-body-inner">
+            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== 6. CONTACT ==================== -->
+  <!-- ==================== COMPÉTENCES ==================== -->
+  <section id="competences" class="wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="kicker">04 — Savoir-faire</p>
+        <h2 class="section-title">Compétences clés</h2>
+      </div>
+      <p class="section-note">Compétence → projet/expérience → année. Aucun niveau inventé.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <h3>Vente</h3>
+        <p>[À COMPLÉTER — ton expérience réelle en prospection, argumentation, négociation.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>[Projet / expérience à préciser]</b><span class="yr">[TC1/TC2]</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Marketing</h3>
+        <p>[À COMPLÉTER — actions marketing réelles : campagnes, études de marché, positionnement.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>Projet HomeVibe</b><span class="yr">TC1</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Communication</h3>
+        <p>[À COMPLÉTER — communication écrite/orale, réseaux sociaux, création de contenu.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>Projet Quitus</b><span class="yr">TC1</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Relation client</h3>
+        <p>[À COMPLÉTER — accueil, fidélisation, gestion de la satisfaction.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>[Expérience à préciser]</b><span class="yr">[TC1/TC2]</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Travail en équipe</h3>
+        <p>[À COMPLÉTER — projets de groupe, SAE collectives.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>[SAE à préciser]</b><span class="yr">[TC1/TC2]</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Digital</h3>
+        <p>[À COMPLÉTER — outils maîtrisés : Suite Office, e-commerce, réseaux sociaux, Canva.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>Projet HomeVibe</b><span class="yr">TC1</span></div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Analyse</h3>
+        <p>[À COMPLÉTER — analyse de données, études de marché, veille concurrentielle.]</p>
+        <div class="skill-chain">
+          <div class="skill-chain-row">→ <b>[Projet à préciser]</b><span class="yr">[TC1/TC2]</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== EXPÉRIENCES ==================== -->
+  <section id="experiences" class="wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="kicker">05 — Vie professionnelle</p>
+        <h2 class="section-title">Expériences</h2>
+      </div>
+      <p class="section-note">Distinctes des projets scolaires — le terrain, en entreprise.</p>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-top">
+        <div>
+          <h3>[Poste occupé]</h3>
+          <p class="exp-company">[Nom de l'entreprise, Ville]</p>
+        </div>
+        <span class="exp-period">[Période] · [TC1 ou TC2]</span>
+      </div>
+      <div class="exp-grid">
+        <div><h5>Missions</h5><p>[À COMPLÉTER]</p></div>
+        <div><h5>Compétences développées</h5><p>[À COMPLÉTER]</p></div>
+        <div><h5>Ce que ça m'a apporté</h5><p>[À COMPLÉTER]</p></div>
+      </div>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-top">
+        <div>
+          <h3>[Poste occupé]</h3>
+          <p class="exp-company">[Nom de l'entreprise, Ville]</p>
+        </div>
+        <span class="exp-period">[Période] · [TC1 ou TC2]</span>
+      </div>
+      <div class="exp-grid">
+        <div><h5>Missions</h5><p>[À COMPLÉTER]</p></div>
+        <div><h5>Compétences développées</h5><p>[À COMPLÉTER]</p></div>
+        <div><h5>Ce que ça m'a apporté</h5><p>[À COMPLÉTER]</p></div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-top:24px;">[Ajouter une autre expérience si besoin — même structure.]</p>
+  </section>
+
+  <!-- ==================== PROJET PRO ==================== -->
+  <section id="projet-pro" class="wrap reveal">
+    <div class="section-head">
+      <div>
+        <p class="kicker">06 — Perspective</p>
+        <h2 class="section-title">Projet professionnel</h2>
+      </div>
+      <p class="section-note">En construction — comme mon parcours.</p>
+    </div>
+    <div class="propro-grid">
+      <div>
+        <p>[À COMPLÉTER — comment tes pistes professionnelles ont évolué entre la TC1 et la TC2, et ce qui reste encore ouvert. Ne pas présenter un métier comme définitif tant qu'il n'est pas confirmé.]</p>
+        <p>[À COMPLÉTER — un exemple concret qui t'a rapproché de l'une de ces pistes : un stage, un projet, une rencontre.]</p>
+        <p class="propro-note">Ces pistes ne sont pas figées : elles évoluent avec mes expériences et mes projets.</p>
+      </div>
+      <div class="interest-cloud">
+        <span class="interest-pill">Vente</span>
+        <span class="interest-pill">Communication</span>
+        <span class="interest-pill">Marketing</span>
+        <span class="interest-pill">E-commerce</span>
+        <span class="interest-pill">Entrepreneuriat</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT ==================== -->
   <section id="contact" class="cta-section">
     <div class="wrap">
       <div class="cta-grid">
         <div>
-          <p class="kicker">05 — Contact</p>
+          <p class="kicker">07 — Contact</p>
           <h2 class="cta-title">Une opportunité, un projet ? <em>Écrivons-nous.</em></h2>
           <a href="mailto:email@exemple.com" class="btn btn-solid">Écrire un email</a>
         </div>
@@ -556,7 +776,6 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // header scroll state + progress bar
   const header = document.getElementById('siteHeader');
   const progress = document.getElementById('progress');
   window.addEventListener('scroll', () => {
@@ -566,15 +785,13 @@
     progress.style.width = pct + '%';
   });
 
-  // reveal on scroll
   const revealEls = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
   revealEls.forEach(el => io.observe(el));
 
-  // active nav link on scroll
-  const sections = ['top','apropos','parcours','competences','projets'].map(id => document.getElementById(id));
+  const sections = ['top','apropos','parcours','projets','competences','experiences','projet-pro'].map(id => document.getElementById(id));
   const navLinks = document.querySelectorAll('#navlinks a');
   const navIO = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -585,7 +802,6 @@
   }, { rootMargin: '-45% 0px -45% 0px' });
   sections.forEach(s => s && navIO.observe(s));
 
-  // theme toggle
   const themeToggle = document.getElementById('themeToggle');
   const root = document.documentElement;
   const saved = localStorage.getItem('theme');
@@ -596,17 +812,19 @@
     try { localStorage.setItem('theme', next); } catch(e) {}
   });
 
-  // animated counters (only runs once real numbers replace the [X] placeholders)
-  document.querySelectorAll('.stat .num').forEach(el => {
-    const target = parseInt(el.dataset.count, 10);
-    if (isNaN(target) || target === 0) return;
-    let cur = 0;
-    const step = Math.max(1, Math.ceil(target / 40));
-    const t = setInterval(() => {
-      cur += step;
-      if (cur >= target) { cur = target; clearInterval(t); }
-      el.textContent = cur;
-    }, 30);
+  // filter bar
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('#projectList .project-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      projectCards.forEach(card => {
+        const tags = card.dataset.tags.split(' ');
+        card.classList.toggle('hide', f !== 'tous' && !tags.includes(f));
+      });
+    });
   });
 </script>
 
