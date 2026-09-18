@@ -397,12 +397,22 @@ section{padding:100px 0;position:relative;}
 .skillbar-fill{height:100%;background:var(--accent);transition:width 1s ease;}
 
 /* ---------- EXPERIENCES ---------- */
-.exp-card{border:1px solid var(--line);padding:32px;margin-bottom:20px;transition:border-color .3s ease;}
-.exp-card:hover{border-color:var(--ink);}
+.exp-timeline{position:relative;}
+.exp-item{position:relative;display:flex;gap:28px;margin-bottom:28px;}
+.exp-item::before{content:'';position:absolute;left:23px;top:52px;bottom:-28px;width:1px;background:var(--line);}
+.exp-item:last-child::before{display:none;}
+.exp-marker{flex-shrink:0;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:1;transition:border-color .3s ease,background .3s ease;}
+.exp-num{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--muted);}
+.exp-item:hover .exp-marker{border-color:var(--accent);background:var(--accent);}
+.exp-item:hover .exp-num{color:var(--on-accent);}
+.exp-card{flex:1;border:1px solid var(--line);padding:32px;transition:border-color .3s ease,transform .3s ease,box-shadow .3s ease;}
+.exp-card:hover{border-color:var(--ink);transform:translateX(4px);}
+.exp-card-highlight{border-left:3px solid var(--accent);}
+.exp-type{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-2);font-weight:700;margin-bottom:8px;}
 .exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:18px;}
 .exp-top h3{font-size:22px;}
 .exp-top .exp-company{font-size:14px;color:var(--muted);margin-top:4px;}
-.exp-period{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);white-space:nowrap;}
+.exp-period{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);white-space:nowrap;border:1px solid var(--line);padding:4px 10px;height:fit-content;}
 .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .exp-grid h5{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;font-weight:700;}
 .exp-grid p{font-size:14px;color:var(--muted);}
@@ -476,6 +486,10 @@ footer{background:var(--paper);border-top:1px solid var(--line);color:var(--mute
   .contact-grid{grid-template-columns:1fr;}
   .project-body-inner{grid-template-columns:1fr;}
   .exp-grid{grid-template-columns:1fr;}
+  .exp-item{gap:16px;}
+  .exp-marker{width:36px;height:36px;}
+  .exp-item::before{left:17px;}
+  .exp-card:hover{transform:none;}
   .propro-grid{grid-template-columns:1fr;gap:32px;}
   .page-hero{padding:150px 0 50px;}
   section{padding:70px 0;}
