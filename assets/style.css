@@ -87,6 +87,9 @@ nav{
 }
 .theme-toggle:hover{border-color:var(--accent);transform:rotate(20deg);}
 .theme-toggle svg{width:15px;height:15px;}
+.theme-toggle .icon-moon{display:none;}
+html[data-theme="dark"] .theme-toggle .icon-sun{display:none;}
+html[data-theme="dark"] .theme-toggle .icon-moon{display:block;}
 .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
 .burger span{width:22px;height:1px;background:var(--ink);display:block;}
 #mnav{position:fixed;inset:0;background:var(--paper);z-index:99;display:none;flex-direction:column;justify-content:center;gap:22px;padding:32px;overflow-y:auto;}
