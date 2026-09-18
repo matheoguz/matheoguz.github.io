@@ -331,6 +331,13 @@ section{padding:100px 0;position:relative;}
 .pb-block p{font-size:14px;color:var(--muted);}
 .pb-link{padding:0 30px 30px;}
 .pb-link a{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--ink);padding-bottom:2px;}
+.pb-gallery{padding:0 30px 26px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.pb-gallery a{display:block;border:1px solid var(--line);overflow:hidden;}
+.pb-gallery img{width:100%;height:120px;object-fit:cover;display:block;transition:transform .3s ease;}
+.pb-gallery a:hover img{transform:scale(1.06);}
+.pb-links-row{padding:0 30px 30px;display:flex;flex-wrap:wrap;gap:8px 22px;}
+.pb-links-row a{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--ink);padding-bottom:2px;}
+@media(max-width:600px){.pb-gallery{grid-template-columns:repeat(2,1fr);}}
 
 /* ---------- SKILLS ---------- */
 .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
