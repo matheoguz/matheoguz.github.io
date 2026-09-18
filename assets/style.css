@@ -337,7 +337,7 @@ section{padding:100px 0;position:relative;}
 .skill-card{background:var(--paper);padding:32px;transition:background .3s ease, transform .3s ease;}
 .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
 .skill-card h3{font-size:19px;margin-bottom:12px;}
-.skill-card-logo{width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:14px;}
+.skill-card-logo{width:40px;height:40px;object-fit:contain;margin-bottom:14px;}
 .skill-modal-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0;}
 .skill-modal-gallery img{width:100%;aspect-ratio:3/4;object-fit:cover;border:1px solid var(--line);}
 @media(max-width:480px){.skill-modal-gallery{grid-template-columns:1fr 1fr;}}
