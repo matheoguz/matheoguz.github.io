@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guzzi Matheo — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;
+  --bg2:#111118;
+  --accent:#6c63ff;
+  --accent2:#a78bfa;
+  --text:#f0eeff;
+  --muted:#8b85a8;
+  --border:rgba(108,99,255,0.18);
+  --card:rgba(255,255,255,0.03);
+  --radius:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.7}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2.5rem;
+  background:rgba(10,10,15,0.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:var(--text);cursor:pointer;text-decoration:none}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:4px;list-style:none}
+.nav-links li a{
+  display:block;color:var(--muted);text-decoration:none;
+  font-size:0.82rem;font-weight:400;letter-spacing:0.06em;
+  transition:color 0.2s;text-transform:uppercase;
+  padding:0.4rem 1rem;border-radius:100px;cursor:pointer;
+  border:1px solid transparent;
+}
+.nav-links li a:hover{color:var(--text)}
+.nav-links li a.active{color:var(--text);background:rgba(108,99,255,0.12);border-color:var(--border)}
+
+/* GRILLE DE FOND */
+.hero-grid{
+  position:fixed;inset:0;
+  background-image:linear-gradient(rgba(108,99,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.06) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0;
+}
+.hero-deco{
+  position:fixed;right:-100px;top:50%;transform:translateY(-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(108,99,255,0.09) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* PAGES */
+.pages-wrapper{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden}
+.page{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:5.5rem 2.5rem 3rem;
+  opacity:0;pointer-events:none;
+  transform:translateY(40px);
+  transition:opacity 0.55s cubic-bezier(0.4,0,0.2,1),transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.page.active{opacity:1;pointer-events:all;transform:translateY(0)}
+.page-inner{width:100%;max-width:920px;margin:0 auto;position:relative;z-index:1}
+
+/* ========== ACCUEIL ========== */
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(108,99,255,0.12);border:1px solid var(--border);
+  border-radius:100px;padding:6px 18px;
+  font-size:0.78rem;color:var(--accent2);margin-bottom:2rem;
+  letter-spacing:0.04em;text-transform:uppercase;font-weight:500;
+}
+.hero-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:#4ade80;display:inline-block;animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-name{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(3.5rem,9vw,7rem);
+  font-weight:800;line-height:0.95;letter-spacing:-0.03em;margin-bottom:0.6rem;
+}
+.hero-name .first{color:var(--text);display:block}
+.hero-name .last{color:var(--accent);display:block}
+.hero-role{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:1.75rem;letter-spacing:0.02em}
+.hero-tagline{
+  font-size:1.1rem;color:var(--text);font-weight:400;
+  max-width:520px;line-height:1.65;margin-bottom:3rem;opacity:0.85;
+}
+.hero-tagline em{color:var(--accent2);font-style:normal;font-weight:500}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+  padding:0.75rem 1.75rem;border-radius:100px;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;
+}
+.btn-primary:hover{background:#7c74ff;transform:translateY(-2px)}
+.btn-outline{
+  background:transparent;color:var(--text);border:1px solid var(--border);
+  padding:0.75rem 1.75rem;border-radius:100px;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.hero-hint{margin-top:4rem;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase}
+.hero-hint::before{content:'';width:28px;height:1px;background:var(--muted)}
+
+#rotating-word{display:inline-block;min-width:160px}
+#rotating-word em{color:var(--accent2);font-style:normal;font-weight:500;display:inline-block;opacity:1;transform:translateY(0);transition:opacity 0.45s ease,transform 0.45s ease}
+
+/* ========== SECTION SHARED ========== */
+.section-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.18em;color:var(--accent);font-weight:500;margin-bottom:0.5rem}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.75rem}
+.section-title span{color:var(--accent)}
+.divider{width:36px;height:2px;background:var(--accent);border-radius:2px;margin-bottom:1.75rem}
+.section-sub{color:var(--muted);font-size:0.92rem;max-width:520px;margin-bottom:2rem;line-height:1.7}
+
+/* ========== A PROPOS ========== */
+.about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:2rem;align-items:start}
+.about-text p{color:var(--muted);font-size:0.88rem;line-height:1.8;margin-bottom:0.9rem}
+.about-text strong{color:var(--text);font-weight:500}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.25rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:0.9rem;text-align:center}
+.stat-card .num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent)}
+.stat-card .lbl{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
+.about-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:0.75rem}
+.about-card h4{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;margin-bottom:0.65rem}
+.about-card p{font-size:0.83rem;color:var(--muted);line-height:1.7}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.2);border-radius:100px;padding:3px 12px;font-size:0.78rem;color:var(--accent2)}
+
+/* ========== PARCOURS ========== */
+.timeline{position:relative}
+.timeline::before{content:'';position:absolute;left:13px;top:0;bottom:0;width:1.5px;background:var(--border)}
+.timeline-item{position:relative;padding-left:46px;margin-bottom:1.6rem}
+.timeline-dot{
+  position:absolute;left:0;top:5px;
+  width:27px;height:27px;border-radius:50%;
+  background:var(--bg2);border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.timeline-dot svg{width:11px;height:11px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.timeline-year{font-size:0.73rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-weight:500;margin-bottom:4px}
+.timeline-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.3rem;transition:border-color 0.2s}
+.timeline-card:hover{border-color:rgba(108,99,255,0.4)}
+.timeline-card h3{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:700;margin-bottom:2px}
+.timeline-card .orga{font-size:0.8rem;color:var(--accent2);margin-bottom:5px;font-weight:500}
+.timeline-card p{font-size:0.83rem;color:var(--muted);line-height:1.65}
+
+/* ========== COMPETENCES ========== */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.skill-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;transition:border-color 0.2s,background 0.2s}
+.skill-block:hover{border-color:rgba(108,99,255,0.4);background:rgba(108,99,255,0.04)}
+.skill-icon{width:36px;height:36px;background:rgba(108,99,255,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.7rem}
+.skill-icon svg{width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.skill-block h4{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;margin-bottom:0.35rem}
+.skill-block p{font-size:0.78rem;color:var(--muted);line-height:1.55;margin-bottom:0.7rem}
+.skill-bar{height:2.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.skill-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px}
+
+/* ========== CONTACT ========== */
+.contact-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:2.5rem;align-items:start}
+.contact-info h3{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:0.7rem;line-height:1.3}
+.contact-info p{color:var(--muted);font-size:0.88rem;line-height:1.75;margin-bottom:1.5rem}
+.contact-links{display:flex;flex-direction:column;gap:0.75rem}
+.contact-link{display:flex;align-items:center;gap:10px;color:var(--muted);text-decoration:none;font-size:0.875rem;transition:color 0.2s}
+.contact-link:hover{color:var(--accent2)}
+.contact-link-icon{width:34px;height:34px;background:var(--card);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-link-icon svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.contact-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:0.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;font-weight:500}
+.form-group input,.form-group textarea{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:9px;padding:0.65rem 0.9rem;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;
+  outline:none;transition:border-color 0.2s;resize:none;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{height:90px;line-height:1.5}
+.btn-send{
+  width:100%;background:var(--accent);color:#fff;border:none;
+  padding:0.8rem;border-radius:100px;
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;
+  cursor:pointer;transition:background 0.2s,transform 0.15s;margin-top:0.25rem;
+}
+.btn-send:hover{background:#7c74ff;transform:translateY(-1px)}
+
+.btn-contact-main{display:flex;align-items:center;gap:10px;background:var(--accent);color:#fff;text-decoration:none;padding:0.75rem 1.25rem;border-radius:100px;font-size:0.875rem;font-weight:500;transition:all 0.2s;border:none;cursor:pointer}
+.btn-contact-main:hover{background:#7c74ff;transform:translateY(-1px)}
+.btn-contact-outline{display:flex;align-items:center;gap:10px;background:transparent;color:var(--text);text-decoration:none;padding:0.75rem 1.25rem;border-radius:100px;font-size:0.875rem;font-weight:500;transition:all 0.2s;border:1px solid var(--border)}
+.btn-contact-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+footer{text-align:center;padding:1.5rem 0 0;color:var(--muted);font-size:0.78rem;border-top:1px solid var(--border);margin-top:2rem}
+
+/* SKILL ROW */
+.skill-row{display:flex;flex-direction:column;gap:5px}
+.skill-row-header{display:flex;justify-content:space-between;align-items:center}
+.skill-row-header span:first-child{font-size:0.82rem;color:var(--text);font-weight:500}
+.pct{font-size:0.75rem;color:var(--accent);font-family:'Syne',sans-serif;font-weight:700}
+.skill-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0%;transition:width 1s cubic-bezier(0.4,0,0.2,1)}
+
+/* SAE CARDS */
+.sae-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;margin-bottom:0.65rem;transition:border-color 0.2s}
+.sae-card:hover{border-color:rgba(108,99,255,0.35)}
+.sae-tag{display:inline-block;background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.2);border-radius:100px;padding:2px 10px;font-size:0.7rem;color:var(--accent2);margin-bottom:5px;font-weight:500}
+.sae-title{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.35}
+.sae-desc{font-size:0.78rem;color:var(--muted);line-height:1.6}
+.sae-empty{opacity:0.5}
+.sae-proof-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.25);border-radius:100px;padding:4px 12px;font-size:0.75rem;color:var(--accent2);text-decoration:none;font-weight:500;transition:all 0.2s}
+.sae-proof-btn:hover{background:rgba(108,99,255,0.22);color:#fff}
+
+/* DOTS */
+.page-indicator{position:fixed;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:99}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:all 0.3s;cursor:pointer}
+.dot.active{background:var(--accent);width:22px;border-radius:3px}
+
+/* RESPONSIVE */
+@media(max-width:750px){
+  nav{padding:0.9rem 1.25rem}
+  .nav-links{gap:2px}
+  .nav-links li a{padding:0.35rem 0.6rem;font-size:0.72rem}
+  .page{padding:4.5rem 1.25rem 2.5rem}
+  .about-grid,.contact-wrap,.skills-grid{grid-template-columns:1fr}
+  #page-parcours .page-inner > div{grid-template-columns:1fr !important}
+  .hero-deco{display:none}
+}
+#page-parcours,#page-competences,#page-apropos,#page-contact{justify-content:flex-start;padding-top:5.5rem}
+</style>
+</head>
+<body>
+
+<div class="hero-grid"></div>
+<div class="hero-deco"></div>
+
+<nav>
+  <a class="nav-logo" href="#" data-page="accueil">G<span>.</span>Matheo</a>
+  <ul class="nav-links">
+    <li><a href="#" data-page="accueil" class="active">Accueil</a></li>
+    <li><a href="#" data-page="apropos">À propos</a></li>
+    <li><a href="#" data-page="parcours">Parcours</a></li>
+    <li><a href="#" data-page="competences">Compétences</a></li>
+    <li><a href="#" data-page="contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="pages-wrapper">
+
+  <!-- PAGE 1 : ACCUEIL -->
+  <div class="page active" id="page-accueil">
+    <div class="page-inner">
+      <div class="hero-badge">Disponible · Alternance &amp; Stage</div>
+      <h1 class="hero-name">
+        <span class="first">Guzzi</span>
+        <span class="last">Matheo</span>
+      </h1>
+      <p class="hero-role">Étudiant en BUT Techniques de Commercialisation</p>
+      <p class="hero-tagline">
+        À travers ce portfolio, je vous présente <span id="rotating-word"><em>mon parcours</em></span>.
+      </p>
+      <div class="hero-hint">Naviguez via le menu en haut</div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 : A PROPOS -->
+  <div class="page" id="page-apropos">
+    <div class="page-inner">
+      <div class="section-label">À propos</div>
+      <h2 class="section-title">Qui suis-<span>je</span> ?</h2>
+      <div class="divider"></div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Actuellement étudiant en première année de <strong>BUT Techniques de Commercialisation</strong>, je développe des compétences en marketing, communication et stratégie commerciale. Cette formation me permet de mieux comprendre et appréhender le monde du commerce dans toute sa complexité.</p>
+          <p>Je suis quelqu'un de <strong>dynamique et déterminé</strong> dans ce que j'entreprends. Le contact humain et tout ce qui touche au commerce et à la stratégie m'animent profondément au quotidien.</p>
+          <p>En dehors des études, le sport tient une place centrale dans ma vie — notamment la <strong>boxe et la salle</strong> — qui m'apportent discipline et motivation. J'aime aussi profiter des bons moments avec mes amis et savourer les choses simples.</p>
+          <div class="about-stats">
+            <div class="stat-card">
+              <div class="num">BUT</div>
+              <div class="lbl">Tech. commercialisation</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">1ère</div>
+              <div class="lbl">Année en cours</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="about-card">
+            <h4>🎯 Objectif</h4>
+            <p>Continuer à progresser et à me former pour construire un parcours professionnel solide, ancré dans le commerce et la stratégie. Je souhaite également trouver une <strong>alternance pour ma 3ème année</strong> afin de combiner expérience terrain et formation.</p>
+          </div>
+          <div class="about-card">
+            <h4>💡 Centres d'intérêt</h4>
+            <div class="tag-list">
+              <span class="tag">Marketing</span>
+              <span class="tag">Stratégie commerciale</span>
+              <span class="tag">Boxe</span>
+              <span class="tag">Sport</span>
+              <span class="tag">Communication</span>
+              <span class="tag">Relation client</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3 : PARCOURS -->
+  <div class="page" id="page-parcours">
+    <div class="page-inner">
+      <div class="section-label">Parcours</div>
+      <h2 class="section-title">Mon <span>parcours</span></h2>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start">
+
+        <!-- FORMATIONS -->
+        <div>
+          <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent2);font-weight:500;margin-bottom:1.25rem">🎓 Formation</p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="timeline-year">2011 — 2016</div>
+              <div class="timeline-card">
+                <h3>École Prés Calards</h3>
+                <div class="orga">Le Breuil</div>
+                <p>Scolarité primaire, premières années d'apprentissage fondamental.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              <div class="timeline-year">2016 — 2020</div>
+              <div class="timeline-card">
+                <h3>Collège Croix Menée</h3>
+                <div class="orga">Le Creusot</div>
+                <p>Scolarité au collège, obtention du brevet des collèges mention assez bien.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-7 10 7M5 7v13M19 7v13M2 20h20"/></svg></div>
+              <div class="timeline-year">2020 — 2024</div>
+              <div class="timeline-card">
+                <h3>Lycée Léon Blum</h3>
+                <div class="orga">Le Creusot</div>
+                <p>Première et Terminale STMG — obtention du baccalauréat.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+              <div class="timeline-year">2024 — En cours</div>
+              <div class="timeline-card">
+                <h3>BUT Techniques de Commercialisation</h3>
+                <div class="orga">IUT — Le Creusot</div>
+                <p>Formation en 3 ans alliant marketing, vente, négociation et stratégie commerciale.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPERIENCES -->
+        <div>
+          <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent2);font-weight:500;margin-bottom:1.25rem">💼 Expériences</p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+              <div class="timeline-year">Stage 3ème · 2022</div>
+              <div class="timeline-card">
+                <h3>Centre de Loisirs et de Jeunesse</h3>
+                <div class="orga">46 Rte de Couche, 71670 Le Breuil</div>
+                <p>Animation et accompagnement des enfants, développement du sens du relationnel.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              <div class="timeline-year">Stage 3ème · 2022</div>
+              <div class="timeline-card">
+                <h3>Cabinet d'architecte</h3>
+                <div class="orga">Rue Évariste Galois, 71210 Torcy</div>
+                <p>Réalisation de maquettes architecturales et découverte du milieu professionnel.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+              <div class="timeline-year">Stage IUT · 2026</div>
+              <div class="timeline-card">
+                <h3>Stage — Espace SFR</h3>
+                <div class="orga">53 Rue Maréchal Foch, 71200 Le Creusot</div>
+                <p>Stage réalisé dans le cadre du BUT TC : relation client, vente et conseil en téléphonie.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+              <div class="timeline-year">Job d'été · 2024 — 2025</div>
+              <div class="timeline-card">
+                <h3>Mise en rayon — Leclerc Le Breuil</h3>
+                <div class="orga">2 Av. de Chambreuil, 71670 Le Breuil</div>
+                <p>Expérience en grande distribution, contact client et gestion du rayon.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+              <div class="timeline-year">Job · 2024</div>
+              <div class="timeline-card">
+                <h3>Agent — Mairie du Creusot</h3>
+                <div class="orga">Le Creusot</div>
+                <p>Mission pour la collectivité, sens du service public et du travail en équipe.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 : COMPETENCES -->
+  <div class="page" id="page-competences">
+    <div class="page-inner">
+      <div class="section-label">Compétences</div>
+      <h2 class="section-title">Mes <span>compétences</span></h2>
+      <div class="divider"></div>
+
+      <!-- BARRES DE PROGRESSION 3 colonnes -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.9rem 2.5rem;margin-bottom:2rem">
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Communication commerciale</span><span class="pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Marketing</span><span class="pct">55%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="55"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Vente</span><span class="pct">75%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Anglais</span><span class="pct">30%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="30"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Italien</span><span class="pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Mathématiques</span><span class="pct">40%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="40"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-header"><span>Ressource numérique</span><span class="pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="60"></div></div>
+        </div>
+      </div>
+
+      <!-- SAE 1ERE ANNEE -->
+      <div style="border-top:1px solid var(--border);padding-top:1.4rem">
+        <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent2);font-weight:500;margin-bottom:1rem">📋 SAE — 1ère année BUT TC</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+          <!-- SEMESTRE 1 -->
+          <div>
+            <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:600;margin-bottom:0.65rem;border-left:2px solid var(--accent);padding-left:8px">Semestre 1</p>
+            <div class="sae-card">
+              <div class="sae-tag">Communication commerciale</div>
+              <h4 class="sae-title">Charte graphique &amp; plaquette — Dina Mada</h4>
+              <p class="sae-desc">Création d'une charte graphique et d'une plaquette commerciale pour l'association Dina Mada.</p>
+              <a href="Plaquette_DINA_MADA.pdf" target="_blank" class="sae-proof-btn">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Voir la plaquette
+              </a>
+            </div>
+            <div class="sae-card">
+              <div class="sae-tag">Vente</div>
+              <h4 class="sae-title">Oral — Présentation couteau suisse</h4>
+              <p class="sae-desc">Présentation orale d'argumentation commerciale autour d'un couteau suisse, mise en pratique des techniques de vente.</p>
+              <a href="SAE_Vente_CouteauSuisse.pdf" target="_blank" class="sae-proof-btn">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Voir le document
+              </a>
+            </div>
+            <div class="sae-card">
+              <div class="sae-tag">Marketing</div>
+              <h4 class="sae-title">Jeu Diabolo — Simulation marché eau plate, gazeuse &amp; aromatisée</h4>
+              <p class="sae-desc">Simulation concurrentielle avec toute la promo BUT TC : création de l'entreprise "L'Or et Loire", positionnement sur le marché de l'eau, oral de présentation et analyse des résultats.</p>
+              <a href="SAE_Marketing_Diabolo.pdf" target="_blank" class="sae-proof-btn">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Voir le bilan
+              </a>
+            </div>
+          </div>
+
+          <!-- SEMESTRE 2 -->
+          <div>
+            <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:600;margin-bottom:0.65rem;border-left:2px solid var(--accent);padding-left:8px">Semestre 2</p>
+            <div class="sae-card">
+              <div class="sae-tag">Communication commerciale</div>
+              <h4 class="sae-title">Plan de communication — Création produit</h4>
+              <p class="sae-desc">Élaboration d'un plan de communication complet pour notre produit de création, de la stratégie à la mise en œuvre des supports.</p>
+            </div>
+            <div class="sae-card">
+              <div class="sae-tag">Marketing</div>
+              <h4 class="sae-title">Lancement d'un nouveau produit</h4>
+              <p class="sae-desc">Création d'un produit et mise sur le marché : étude de positionnement, mix marketing et stratégie de lancement.</p>
+            </div>
+            <div class="sae-card sae-empty">
+              <div class="sae-tag">Vente</div>
+              <h4 class="sae-title">À compléter prochainement…</h4>
+              <p class="sae-desc" style="font-style:italic">La SAE de vente du semestre 2 sera ajoutée dès que disponible.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAGE 5 : CONTACT -->
+  <div class="page" id="page-contact">
+    <div class="page-inner">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Travaillons <span>ensemble</span></h2>
+      <div class="divider"></div>
+      <div class="contact-wrap">
+        <div class="contact-info">
+          <p style="color:var(--text);font-size:0.95rem;line-height:1.75;margin-bottom:1.5rem">
+            Tu veux en savoir plus sur mon parcours, discuter d'une opportunité ou juste échanger ?<br><br>
+            Je suis en BUT TC et toujours partant pour de nouvelles expériences — un stage, une alternance, un projet… je lis tous les messages et réponds rapidement.
+          </p>
+
+          <!-- BOUTONS EMAIL + CV -->
+          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.75rem">
+            <a href="mailto:matheoguzzi@gmail.com?subject=Prise de contact — Portfolio" class="btn-contact-main">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Écrire un mail
+            </a>
+            <a href="CV_GUZZI_Matheo.pdf" target="_blank" class="btn-contact-outline">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Voir mon CV
+            </a>
+          </div>
+
+          <!-- INFOS -->
+          <div class="contact-links">
+            <div class="contact-link">
+              <div class="contact-link-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.26h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></div>
+              <span>+33 7 70 19 79 63</span>
+            </div>
+            <div class="contact-link">
+              <div class="contact-link-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <span>18 Impasse Bel Air — Le Creusot</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <div class="form-group">
+            <label>Nom complet</label>
+            <input type="text" placeholder="Jean Dupont">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="jean@exemple.fr">
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea placeholder="Bonjour Matheo, je souhaite..."></textarea>
+          </div>
+          <button class="btn-send">Envoyer →</button>
+        </div>
+      </div>
+      <footer>© 2025 Guzzi Matheo · Portfolio personnel</footer>
+    </div>
+  </div>
+
+</div>
+
+<!-- INDICATEUR DE PAGES -->
+<div class="page-indicator">
+  <div class="dot active" title="Accueil"></div>
+  <div class="dot" title="À propos"></div>
+  <div class="dot" title="Parcours"></div>
+  <div class="dot" title="Compétences"></div>
+  <div class="dot" title="Contact"></div>
+</div>
+
+<script>
+const pages = ['accueil','apropos','parcours','competences','contact'];
+let current = 0;
+
+let barLoop = null;
+
+function animateBars() {
+  if (barLoop) clearInterval(barLoop);
+  const fills = document.querySelectorAll('#page-competences .skill-fill');
+  const cols = [[0,3,6],[1,4],[2,5]];
+
+  function runCycle() {
+    // Reset sans transition d'abord
+    fills.forEach(el => {
+      el.style.transition = 'none';
+      el.style.width = '0%';
+    });
+    // Forcer le reflow pour que le reset soit bien pris en compte
+    fills[0] && fills[0].getBoundingClientRect();
+    // Anime colonne par colonne
+    cols.forEach((col, ci) => {
+      setTimeout(() => {
+        col.forEach(i => {
+          if (!fills[i]) return;
+          fills[i].style.transition = 'width 0.9s cubic-bezier(0.4,0,0.2,1)';
+          fills[i].style.width = fills[i].getAttribute('data-width') + '%';
+        });
+      }, 50 + ci * 400);
+    });
+  }
+
+  runCycle();
+  barLoop = setInterval(runCycle, 4500);
+}
+
+function goTo(id) {
+  var idx = pages.indexOf(id);
+  if (idx === -1) return;
+  document.querySelector('#page-' + pages[current]).classList.remove('active');
+  document.querySelectorAll('.dot')[current].classList.remove('active');
+  document.querySelectorAll('[data-page]').forEach(function(a) { a.classList.remove('active'); });
+  current = idx;
+  document.querySelector('#page-' + pages[current]).classList.add('active');
+  document.querySelectorAll('.dot')[current].classList.add('active');
+  var activeLinks = document.querySelectorAll('[data-page="' + id + '"]');
+  activeLinks.forEach(function(a) { a.classList.add('active'); });
+  if (id === 'competences') animateBars();
+  else if (barLoop) { clearInterval(barLoop); barLoop = null; }
+}
+
+// Clics navigation - compatible Safari
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('[data-page]');
+  if (!el) return;
+  e.preventDefault();
+  goTo(el.getAttribute('data-page'));
+});
+
+// Clics dots
+document.querySelectorAll('.dot').forEach(function(dot, i) {
+  dot.addEventListener('click', function() { goTo(pages[i]); });
+});
+
+// Navigation clavier
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    if (current < pages.length - 1) goTo(pages[current + 1]);
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    if (current > 0) goTo(pages[current - 1]);
+  }
+});
+
+// Swipe mobile
+var startX = 0, startY = 0;
+document.addEventListener('touchstart', function(e) {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+document.addEventListener('touchend', function(e) {
+  var dx = e.changedTouches[0].clientX - startX;
+  var dy = e.changedTouches[0].clientY - startY;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+    if (dx < 0 && current < pages.length - 1) goTo(pages[current + 1]);
+    if (dx > 0 && current > 0) goTo(pages[current - 1]);
+  }
+});
+
+// Mot qui tourne sur l'accueil
+var rotatingWords = ['mon parcours', 'mes compétences', 'mes ambitions'];
+var wordIndex = 0;
+var wordEl = document.querySelector('#rotating-word em');
+
+function rotateWord() {
+  wordEl.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  wordEl.style.opacity = '0';
+  wordEl.style.transform = 'translateY(-10px)';
+
+  setTimeout(function() {
+    wordIndex = (wordIndex + 1) % rotatingWords.length;
+    wordEl.textContent = rotatingWords[wordIndex];
+    wordEl.style.transition = 'none';
+    wordEl.style.transform = 'translateY(10px)';
+    wordEl.style.opacity = '0';
+    void wordEl.offsetWidth; // force reflow Safari
+    wordEl.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    wordEl.style.opacity = '1';
+    wordEl.style.transform = 'translateY(0)';
+  }, 420);
+}
+
+setInterval(rotateWord, 2500);
+</script>
+</body>
+</html>
