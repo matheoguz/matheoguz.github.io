@@ -338,6 +338,8 @@ section{padding:100px 0;position:relative;}
 .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
 .skill-card h3{font-size:19px;margin-bottom:12px;}
 .skill-card-logo{width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:14px;}
+.vinted-items{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;}
+.vinted-items img{width:100%;aspect-ratio:3/4;object-fit:cover;border:1px solid var(--line);}
 .skill-card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
 .skill-example{font-size:12.5px;color:var(--ink);background:var(--paper-2);border-left:2px solid var(--accent);padding:8px 12px;margin:-6px 0 16px;}
 
