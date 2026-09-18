@@ -311,9 +311,14 @@ section{padding:100px 0;position:relative;}
 .filter-btn.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 
 /* ---------- PROJECTS ---------- */
+.semester-block{margin-bottom:56px;}
+.semester-block:last-child{margin-bottom:0;}
 .project-card{border:1px solid var(--line);margin-bottom:20px;overflow:hidden;transition:box-shadow .3s ease, border-color .3s ease;}
 .project-card.hide{display:none;}
 .project-card:hover{box-shadow:var(--shadow);border-color:var(--ink);}
+.project-card-empty{border-style:dashed;background:var(--paper-2);}
+.project-card-empty .project-head{cursor:default;}
+.project-card-empty h3{font-size:16px;color:var(--muted);font-family:'Fraunces',serif;}
 .project-head{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:28px 30px;cursor:pointer;}
 .project-head h3{font-size:23px;margin-bottom:8px;}
 .p-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}

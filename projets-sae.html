@@ -51,99 +51,158 @@
   <div class="page-hero wrap reveal">
     <p class="kicker">03 — Réalisations</p>
     <h1>Projets &amp; SAE</h1>
-    <p>Filtre par année ou par domaine, clique sur une carte pour le détail complet.</p>
+    <p>Classés par année, puis par semestre — clique sur une carte pour le détail complet.</p>
   </div>
 
-  <section class="wrap reveal">
-    <div class="filter-bar" id="filterBar">
+  <section class="wrap reveal" style="padding-bottom:0;">
+    <div class="tc-tabs" id="tcTabs">
+      <button class="tc-tab-btn tc1" data-tab="tc1">
+        <span class="tc-tab-year">TC1 — 2025/2026</span>
+        <span class="tc-tab-desc">Semestres 1 &amp; 2</span>
+      </button>
+      <button class="tc-tab-btn tc2 active" data-tab="tc2">
+        <span class="tc-tab-year">TC2 — 2026/2027</span>
+        <span class="tc-tab-desc">Semestres 3 &amp; 4</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ==================== PANEL TC1 ==================== -->
+  <section class="wrap tc-panel" data-tab-panel="tc1">
+    <div class="filter-bar" id="filterBarTc1">
       <button class="filter-btn active" data-filter="tous">Tous</button>
-      <button class="filter-btn" data-filter="tc1">TC1</button>
-      <button class="filter-btn" data-filter="tc2">TC2</button>
       <button class="filter-btn" data-filter="marketing">Marketing</button>
       <button class="filter-btn" data-filter="vente">Vente</button>
       <button class="filter-btn" data-filter="communication">Communication</button>
       <button class="filter-btn" data-filter="digital">Digital</button>
     </div>
 
-    <div id="projectList">
-      <div class="project-card" data-tags="tc1 marketing">
-        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-          <div>
-            <h3>[Titre du projet — ex. Étude de marché Evian]</h3>
-            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Marketing</span></div>
+    <div class="semester-block">
+      <p class="tc-block-num">Semestre 1</p>
+      <div class="project-list" data-project-list>
+        <div class="project-card" data-tags="marketing">
+          <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+            <div>
+              <h3>[Titre du projet — ex. Étude de marché Evian]</h3>
+              <div class="p-meta"><span class="tag">[Semestre à confirmer]</span><span class="tag">Marketing</span></div>
+            </div>
+            <div class="project-toggle">+</div>
           </div>
-          <div class="project-toggle">+</div>
+          <div class="project-body">
+            <div class="project-body-inner">
+              <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+            </div>
+          </div>
         </div>
-        <div class="project-body">
-          <div class="project-body-inner">
-            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+
+        <div class="project-card" data-tags="marketing digital">
+          <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+            <div>
+              <h3>HomeVibe — Boutique e-commerce</h3>
+              <div class="p-meta"><span class="tag">[Semestre à confirmer]</span><span class="tag">Marketing</span><span class="tag">Digital</span></div>
+            </div>
+            <div class="project-toggle">+</div>
+          </div>
+          <div class="project-body">
+            <div class="project-body-inner">
+              <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — cadre du projet : personnel, cours, SAE.]</p></div>
+              <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — conception de la boutique, fiches produits, choix marketing.]</p></div>
+              <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+            </div>
+            <div class="pb-link"><a href="shop/index.html">Voir le site en ligne →</a></div>
+          </div>
+        </div>
+
+        <div class="project-card" data-tags="communication">
+          <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+            <div>
+              <h3>Quitus — Landing page</h3>
+              <div class="p-meta"><span class="tag">[Semestre à confirmer]</span><span class="tag">Communication</span></div>
+            </div>
+            <div class="project-toggle">+</div>
+          </div>
+          <div class="project-body">
+            <div class="project-body-inner">
+              <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+            </div>
+            <div class="pb-link"><a href="quitus/index.html">Voir le site en ligne →</a></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="project-card" data-tags="tc1 marketing digital">
-        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-          <div>
-            <h3>HomeVibe — Boutique e-commerce</h3>
-            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Marketing</span><span class="tag">Digital</span></div>
+    <div class="semester-block">
+      <p class="tc-block-num">Semestre 2</p>
+      <div class="project-list" data-project-list>
+        <div class="project-card project-card-empty">
+          <div class="project-head">
+            <div>
+              <h3>[Titre du projet / SAE du Semestre 2 à ajouter]</h3>
+              <div class="p-meta"><span class="tag">[Domaine à préciser]</span></div>
+            </div>
           </div>
-          <div class="project-toggle">+</div>
-        </div>
-        <div class="project-body">
-          <div class="project-body-inner">
-            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER — cadre du projet : personnel, cours, SAE.]</p></div>
-            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER — conception de la boutique, fiches produits, choix marketing.]</p></div>
-            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
-          </div>
-          <div class="pb-link"><a href="shop/index.html">Voir le site en ligne →</a></div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="project-card" data-tags="tc1 communication">
-        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-          <div>
-            <h3>Quitus — Landing page</h3>
-            <div class="p-meta"><span class="year-badge tc1">TC1</span><span class="tag">Communication</span></div>
+  <!-- ==================== PANEL TC2 ==================== -->
+  <section class="wrap tc-panel" data-tab-panel="tc2">
+    <div class="filter-bar" id="filterBarTc2">
+      <button class="filter-btn active" data-filter="tous">Tous</button>
+      <button class="filter-btn" data-filter="marketing">Marketing</button>
+      <button class="filter-btn" data-filter="vente">Vente</button>
+      <button class="filter-btn" data-filter="communication">Communication</button>
+      <button class="filter-btn" data-filter="digital">Digital</button>
+    </div>
+
+    <div class="semester-block">
+      <p class="tc-block-num">Semestre 3</p>
+      <div class="project-list" data-project-list>
+        <div class="project-card" data-tags="vente">
+          <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
+            <div>
+              <h3>[Titre du projet / SAE de Semestre 3 à ajouter]</h3>
+              <div class="p-meta"><span class="tag">[Domaine à préciser]</span></div>
+            </div>
+            <div class="project-toggle">+</div>
           </div>
-          <div class="project-toggle">+</div>
-        </div>
-        <div class="project-body">
-          <div class="project-body-inner">
-            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+          <div class="project-body">
+            <div class="project-body-inner">
+              <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
+              <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+            </div>
           </div>
-          <div class="pb-link"><a href="quitus/index.html">Voir le site en ligne →</a></div>
         </div>
       </div>
+    </div>
 
-      <div class="project-card" data-tags="tc2 vente">
-        <div class="project-head" onclick="this.parentElement.classList.toggle('open')">
-          <div>
-            <h3>[Titre du projet / SAE de TC2 à ajouter]</h3>
-            <div class="p-meta"><span class="year-badge tc2">TC2</span><span class="tag">[Domaine à préciser]</span></div>
-          </div>
-          <div class="project-toggle">+</div>
-        </div>
-        <div class="project-body">
-          <div class="project-body-inner">
-            <div class="pb-block"><h5>Contexte</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Objectif</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Travail réalisé</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Mon rôle</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Compétences mobilisées</h5><p>[À COMPLÉTER]</p></div>
-            <div class="pb-block"><h5>Résultat &amp; ce que j'ai appris</h5><p>[À COMPLÉTER]</p></div>
+    <div class="semester-block">
+      <p class="tc-block-num">Semestre 4</p>
+      <div class="project-list" data-project-list>
+        <div class="project-card project-card-empty">
+          <div class="project-head">
+            <div>
+              <h3>[Titre du projet / SAE du Semestre 4 à ajouter]</h3>
+              <div class="p-meta"><span class="tag">[Domaine à préciser]</span></div>
+            </div>
           </div>
         </div>
       </div>

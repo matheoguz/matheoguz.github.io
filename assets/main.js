@@ -86,17 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3200);
   }
 
-  // project filter bar (projets-sae.html only)
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const projectCards = document.querySelectorAll('#projectList .project-card');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const f = btn.dataset.filter;
-      projectCards.forEach(card => {
-        const tags = (card.dataset.tags || '').split(' ');
-        card.classList.toggle('hide', f !== 'tous' && !tags.includes(f));
+  // project filter bars, scoped per TC panel (projets-sae.html only)
+  document.querySelectorAll('.filter-bar').forEach(bar => {
+    const scope = bar.closest('.tc-panel') || document;
+    const barBtns = bar.querySelectorAll('.filter-btn');
+    const cards = scope.querySelectorAll('[data-project-list] .project-card:not(.project-card-empty)');
+    barBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        barBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        cards.forEach(card => {
+          const tags = (card.dataset.tags || '').split(' ');
+          card.classList.toggle('hide', f !== 'tous' && !tags.includes(f));
+        });
       });
     });
   });
