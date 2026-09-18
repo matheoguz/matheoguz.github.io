@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stylo Ortho — Pitch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&family=Share+Tech+Mono&family=Courier+Prime:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000}
+
+/* ── SLIDES ── */
+.slide{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .65s cubic-bezier(.4,0,.2,1);
+  padding:44px 56px 80px;
+  z-index:10;
+}
+.slide.active{opacity:1;pointer-events:all}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:14px;z-index:200;
+}
+.nav-btn{
+  background:none;border:1px solid rgba(255,255,255,.2);
+  color:#fff;width:36px;height:36px;border-radius:50%;
+  font-size:15px;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-btn:hover{background:rgba(212,175,55,.2);border-color:#D4AF37;color:#D4AF37}
+.nav-dots{display:flex;gap:7px}
+.ndot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .3s}
+.ndot.active{background:#D4AF37;transform:scale(1.3)}
+.snum{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.25)}
+.hint{position:fixed;top:18px;right:20px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.18);z-index:200;text-transform:uppercase}
+
+/* ── COMMUNS ── */
+.tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.3em;color:#D4AF37;text-transform:uppercase}
+.big-title{font-family:'Playfair Display',serif;font-size:clamp(28px,3.8vw,48px);color:#fff;font-weight:700}
+.big-title em{color:#D4AF37;font-style:italic}
+.sep{width:100px;height:1px;background:linear-gradient(to right,transparent,#D4AF37,transparent);margin:12px auto}
+
+/* ════════════════════════════
+   SLIDE 1 — DICTÉE
+════════════════════════════ */
+#s1{background:#C8BCA8}
+.feuille{
+  background:#FAF7F0;
+  box-shadow:0 4px 0 #B8AC98,0 8px 0 #A89C88,0 20px 60px rgba(0,0,0,.35);
+  width:min(660px,88vw);padding:44px 52px 36px;position:relative;
+  font-family:'Courier Prime','Courier New',monospace;
+}
+.feuille::before{content:'';position:absolute;top:0;left:68px;bottom:0;width:1px;background:rgba(200,60,60,.3)}
+.f-header{text-align:center;border-bottom:2px solid #1A3A6B;padding-bottom:14px;margin-bottom:22px}
+.f-titre{font-size:clamp(20px,3vw,30px);font-weight:700;letter-spacing:.2em;color:#1A3A6B;text-transform:uppercase}
+.f-brevet{
+  display:inline-block;
+  background:#1A3A6B;color:#fff;
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  padding:3px 12px;margin-top:6px;
+  font-family:'Share Tech Mono',monospace;
+}
+.f-infos{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin-bottom:24px}
+.f-champ{border-bottom:1px solid #CCC;padding:10px 0 6px;display:flex;gap:8px;align-items:flex-end}
+.f-label{font-size:11px;letter-spacing:.12em;color:#888;text-transform:uppercase;flex-shrink:0}
+.f-val{flex:1;min-height:18px}
+.f-lignes{display:flex;flex-direction:column}
+.f-ligne{border-bottom:1px solid #DDD;height:38px;position:relative}
+.f-ligne::before{content:attr(data-n);position:absolute;left:-32px;top:50%;transform:translateY(-50%);font-size:10px;color:rgba(0,0,0,.15);font-family:'Share Tech Mono',monospace}
+.f-note{margin-top:18px;display:flex;justify-content:space-between;align-items:center}
+.f-note-lbl{font-size:11px;color:#888;letter-spacing:.1em;text-transform:uppercase}
+.f-note-box{border:1px solid #CCC;padding:5px 18px;font-size:14px;color:#1A3A6B;font-weight:700;min-width:56px;text-align:center}
+
+/* ════════════════════════════
+   SLIDE 2 — STATS
+════════════════════════════ */
+#s2{background:linear-gradient(160deg,#0A1628 0%,#060E1A 100%)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:900px;margin-top:28px}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:28px 20px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,88px);font-weight:700;line-height:1}
+.stat-num.or{color:#D4AF37}
+.stat-num.rg{color:#E84444}
+.stat-num.bl{color:#60A5FA}
+.stat-u{font-size:20px;vertical-align:super}
+.stat-desc{font-family:'Inter',sans-serif;font-size:clamp(11px,1.1vw,14px);color:rgba(255,255,255,.5);margin-top:10px;line-height:1.45}
+
+
+
+/* ════════════════════════════
+   SLIDE 4 — COMPOSANTS
+════════════════════════════ */
+#s4{background:linear-gradient(150deg,#060E1A 0%,#0A1628 100%)}
+.comps-row{display:flex;gap:28px;width:100%;max-width:860px;margin-top:32px}
+.comp-box{
+  flex:1;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:36px 24px;
+  text-align:center;
+  transition:all .25s;
+}
+.comp-box:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.35);transform:translateY(-4px)}
+.comp-icon{font-size:36px;margin-bottom:14px}
+.comp-name{font-family:'Playfair Display',serif;font-size:clamp(16px,2vw,22px);font-weight:700;color:#fff}
+
+/* ════════════════════════════
+   SLIDE 5 — TÉLÉPHONE
+════════════════════════════ */
+#s5{background:linear-gradient(160deg,#050A12 0%,#0A1628 100%)}
+.phone-scene{display:flex;align-items:center;gap:60px;width:100%;max-width:900px}
+.phone-wrap{position:relative;flex-shrink:0}
+.phone-body{
+  width:160px;height:290px;
+  border:3px solid rgba(255,255,255,.25);
+  border-radius:32px;
+  background:linear-gradient(135deg,#111,#1a1a1a);
+  box-shadow:0 0 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08);
+  overflow:hidden;position:relative;
+}
+/* Notch */
+.phone-notch{width:60px;height:18px;background:#000;border-radius:0 0 14px 14px;margin:0 auto}
+/* Status bar */
+.phone-status{display:flex;justify-content:space-between;align-items:center;padding:4px 14px;margin-top:2px}
+.phone-signal{display:flex;gap:2px;align-items:flex-end}
+.bar{width:4px;background:rgba(255,255,255,.2);border-radius:1px}
+.bar:nth-child(1){height:6px}
+.bar:nth-child(2){height:9px}
+.bar:nth-child(3){height:12px}
+.bar:nth-child(4){height:15px}
+.phone-wifi{font-size:11px;color:rgba(255,255,255,.2)}
+/* Big X over phone */
+.phone-x{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:120px;
+  color:rgba(232,68,68,.35);
+  font-weight:700;
+  line-height:1;
+}
+/* Phone screen content */
+.phone-screen{padding:8px 12px;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.no-icon{display:flex;align-items:center;gap:6px;opacity:.5}
+.no-icon svg{width:20px;height:20px;stroke:rgba(255,255,255,.4);fill:none}
+.no-txt{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-decoration:line-through}
+
+.phone-caption{
+  position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;
+  color:#E84444;white-space:nowrap;text-transform:uppercase;
+}
+.phone-avantages{flex:1;display:flex;flex-direction:column;gap:18px}
+.avantage{display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px 18px}
+.av-icon{font-size:22px;flex-shrink:0}
+.av-title{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.av-desc{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.45);line-height:1.4}
+
+/* ════════════════════════════
+   SLIDE 6 — APPLICATION
+════════════════════════════ */
+#s6{background:#0A0A0A;padding:0}
+.app-frame-wrap{width:100%;height:100%;display:flex;flex-direction:column}
+.app-frame-header{
+  background:#1A3A6B;padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;z-index:20;
+}
+.app-frame-title{font-family:'Playfair Display',serif;font-size:16px;color:#D4AF37;font-weight:700;letter-spacing:.08em}
+.app-frame-url{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.1em}
+#app-iframe{width:100%;flex:1;border:none;display:block}
+
+/* ════════════════════════════
+   SLIDE 8 — INVESTISSEMENT
+════════════════════════════ */
+#s8{background:radial-gradient(ellipse 80% 60% at 50% 50%,#0D2040 0%,#060E1A 100%)}
+.invest-wrap{width:100%;max-width:960px;display:flex;flex-direction:column;align-items:center;gap:28px;text-align:center}
+.invest-cards{display:flex;gap:20px;width:100%;justify-content:center}
+.icard{flex:1;max-width:240px;border-radius:14px;padding:26px 20px;text-align:center}
+.icard.main{background:linear-gradient(135deg,#1A3A6B,#0D2040);border:1px solid rgba(212,175,55,.4);box-shadow:0 0 40px rgba(212,175,55,.1)}
+.icard.side{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.i-amount{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:700;color:#D4AF37;line-height:1}
+.i-sub{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+.i-sep{width:36px;height:1px;background:rgba(212,175,55,.4);margin:12px auto}
+.i-pct{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,34px);font-weight:700;color:#60A5FA;line-height:1}
+.i-desc{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:8px}
+.equipe{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.membre{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.08em;color:rgba(255,255,255,.55)}
+.cta-block{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.25);border-radius:12px;padding:18px 28px;width:100%}
+.cta-txt{font-family:'Playfair Display',serif;font-size:clamp(14px,1.8vw,19px);color:#fff;font-style:italic;line-height:1.6}
+.cta-txt strong{color:#D4AF37;font-style:normal}
+.cta-url{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;color:#D4AF37;margin-top:8px;display:block}
+.cta-url-sub{font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);margin-top:3px}
+</style>
+</head>
+<body>
+<div class="hint">← → Espace pour naviguer</div>
+
+<!-- ════ SLIDE 1 : DICTÉE ════ -->
+<div class="slide active" id="s1">
+  <div class="feuille">
+    <div class="f-header">
+      <div class="f-titre">Dictée</div>
+      <div class="f-brevet">Brevet Blanc</div>
+    </div>
+    <div class="f-infos">
+      <div class="f-champ"><span class="f-label">Nom :</span><div class="f-val"></div></div>
+      <div class="f-champ"><span class="f-label">Prénom :</span><div class="f-val"></div></div>
+      <div class="f-champ"><span class="f-label">Date :</span><div class="f-val"></div></div>
+      <div class="f-champ"><span class="f-label">Classe :</span><div class="f-val"></div></div>
+    </div>
+    <div class="f-lignes">
+      <div class="f-ligne" data-n="1"></div>
+      <div class="f-ligne" data-n="2"></div>
+      <div class="f-ligne" data-n="3"></div>
+      <div class="f-ligne" data-n="4"></div>
+      <div class="f-ligne" data-n="5"></div>
+      <div class="f-ligne" data-n="6"></div>
+      <div class="f-ligne" data-n="7"></div>
+    </div>
+    <div class="f-note">
+      <span class="f-note-lbl">Note :</span>
+      <div class="f-note-box">&nbsp;&nbsp;/ 20</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 : STATS ════ -->
+<div class="slide" id="s2">
+  <div style="text-align:center">
+    <div class="tag">Le constat</div>
+    <div class="big-title" style="margin-top:10px">L'orthographe :<br>un enjeu <em>majeur</em></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num or">90<span class="stat-u">%</span></div>
+      <div class="stat-desc">des e-mails professionnels contiennent au moins une faute d'orthographe</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num rg">35<span class="stat-u">%</span></div>
+      <div class="stat-desc">des recruteurs rejettent un CV à partir de seulement 3 fautes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num bl">80<span class="stat-u">%</span></div>
+      <div class="stat-desc">des employeurs considèrent les fautes comme un frein à une promotion</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num or">86<span class="stat-u">%</span></div>
+      <div class="stat-desc">des recruteurs estiment que la maîtrise du français est une compétence prioritaire</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num rg">80<span class="stat-u">%</span></div>
+      <div class="stat-desc">des Français pensent que leur niveau d'orthographe s'est dégradé</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num bl">81<span class="stat-u">%</span></div>
+      <div class="stat-desc">de fautes en plus chez les élèves de CM2 par rapport à 1987</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 : IMAGE STYLO ════ -->
+<div class="slide" id="s3" style="padding:0;background:#888">
+  <div style="position:relative;width:100%;height:100%;overflow:hidden">
+    <img src="stylo-pen.png" alt="Stylo Ortho" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:90px">
+      <div class="tag">La solution</div>
+      <div class="big-title" style="margin-top:8px;text-shadow:0 2px 24px rgba(0,0,0,.9)">Le <em>Stylo Ortho</em></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.22em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-top:8px">Le premier stylo qui corrige · Sur papier · En temps réel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 : COMPOSANTS ════ -->
+<div class="slide" id="s4">
+  <div style="text-align:center">
+    <div class="tag">À l'intérieur</div>
+    <div class="big-title" style="margin-top:10px">3 composants <em>essentiels</em></div>
+  </div>
+  <div class="comps-row">
+    <div class="comp-box">
+      <div class="comp-icon">🧠</div>
+      <div class="comp-name">Puce embarquée</div>
+    </div>
+    <div class="comp-box">
+      <div class="comp-icon">📚</div>
+      <div class="comp-name">Dictionnaire intégré</div>
+    </div>
+    <div class="comp-box">
+      <div class="comp-icon">🖥️</div>
+      <div class="comp-name">Écran discret</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 : TÉLÉPHONE ════ -->
+<div class="slide" id="s5">
+  <div style="text-align:center;margin-bottom:32px">
+    <div class="tag">Contrairement aux autres</div>
+    <div class="big-title" style="margin-top:10px">Aucun <em>téléphone</em><br>aucune <em>connexion</em></div>
+  </div>
+  <div class="phone-scene">
+    <div class="phone-wrap">
+      <div class="phone-body">
+        <div class="phone-notch"></div>
+        <div class="phone-status">
+          <div class="phone-signal">
+            <div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="phone-wifi">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2">
+              <path d="M1.42 9a16 16 0 0 1 21.16 0M5 12.55a11 11 0 0 1 14.08 0M10.54 16.1a6 6 0 0 1 2.92 0"/>
+              <line x1="3" y1="3" x2="21" y2="21" stroke="#E84444" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+        <div class="phone-screen">
+          <div class="no-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M1.42 9a16 16 0 0 1 21.16 0M5 12.55a11 11 0 0 1 14.08 0"/><line x1="2" y1="2" x2="22" y2="22" stroke="#E84444" stroke-width="2"/></svg>
+            <span class="no-txt">Connexion Internet</span>
+          </div>
+          <div class="no-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="2" y1="2" x2="22" y2="22" stroke="#E84444" stroke-width="2"/></svg>
+            <span class="no-txt">Téléphone requis</span>
+          </div>
+          <div class="no-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0"/><line x1="2" y1="2" x2="22" y2="22" stroke="#E84444" stroke-width="2"/></svg>
+            <span class="no-txt">Signal requis</span>
+          </div>
+        </div>
+        <div class="phone-x">✕</div>
+      </div>
+      <div class="phone-caption">Non requis</div>
+    </div>
+    <div class="phone-avantages">
+      <div class="avantage">
+        <div class="av-icon">✏️</div>
+        <div>
+          <div class="av-title">Utilisable partout</div>
+          <div class="av-desc">En classe, à la maison, lors des révisions ou de la prise de notes. Aucune restriction.</div>
+        </div>
+      </div>
+      <div class="avantage">
+        <div class="av-icon">🔒</div>
+        <div>
+          <div class="av-title">Totalement autonome</div>
+          <div class="av-desc">Fonctionne de manière indépendante. Aucun appareil externe nécessaire.</div>
+        </div>
+      </div>
+      <div class="avantage">
+        <div class="av-icon">✅</div>
+        <div>
+          <div class="av-title">Autorisé en examen</div>
+          <div class="av-desc">Sans connexion, sans téléphone — utilisable en conditions d'évaluation scolaire.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 : APPLICATION ORTHO ════ -->
+<div class="slide" id="s6" style="padding:0;z-index:10">
+  <div class="app-frame-wrap">
+    <div class="app-frame-header">
+      <div class="app-frame-title">Application Stylo Ortho</div>
+      <div class="app-frame-url">applicationortho.netlify.app</div>
+    </div>
+    <iframe src="https://applicationortho.netlify.app" loading="lazy" title="Application Stylo Ortho" style="width:100%;flex:1;border:none;display:block"></iframe>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 : IMAGE STYLO (même que slide 3) ════ -->
+<div class="slide" id="s7" style="padding:0;background:#888">
+  <div style="position:relative;width:100%;height:100%;overflow:hidden">
+    <img src="stylo-pen.png" alt="Stylo Ortho" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:90px">
+      <div class="tag">La solution</div>
+      <div class="big-title" style="margin-top:8px;text-shadow:0 2px 24px rgba(0,0,0,.9)">Le <em>Stylo Ortho</em></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.22em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-top:8px">Le premier stylo qui corrige · Sur papier · En temps réel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 : INVESTISSEMENT ════ -->
+<div class="slide" id="s8">
+  <div class="invest-wrap">
+    <div>
+      <div class="tag">L'opportunité</div>
+      <div class="big-title" style="margin-top:8px">Écrivons cette histoire <em>ensemble</em></div>
+    </div>
+    <div class="invest-cards">
+      <div class="icard main">
+        <div class="i-amount">75 000 €</div>
+        <div class="i-sub">investissement recherché</div>
+        <div class="i-sep"></div>
+        <div class="i-pct">14 %</div>
+        <div class="i-sub">du capital</div>
+        <div class="i-desc">Finaliser le Stylo Ortho, déposer le brevet, devenir pionniers d'un marché inexploité.</div>
+      </div>
+      <div class="icard side">
+        <div class="i-amount" style="color:#D4AF37;font-size:36px">82,3%</div>
+        <div class="i-sub">intéressés par le produit</div>
+        <div class="i-sep"></div>
+        <div class="i-desc">Enquête menée auprès de 214 répondants. 86,4 % jugent le stylo utile ou très utile.</div>
+      </div>
+      <div class="icard side">
+        <div class="i-amount" style="color:#22C55E;font-size:36px">0</div>
+        <div class="i-sub">concurrent direct</div>
+        <div class="i-sep"></div>
+        <div class="i-desc">Aucune solution équivalente sur l'écriture manuscrite. Marché pionnier.</div>
+      </div>
+    </div>
+    <div class="equipe">
+      <div class="membre">Etienne Iacovella</div>
+      <div class="membre">Mathéo Guzzi</div>
+      <div class="membre">Cédric Chagot</div>
+      <div class="membre">Pierre</div>
+      <div class="membre">Théo Thevs</div>
+      <div class="membre">Valentin</div>
+    </div>
+    <div class="cta-block">
+      <div class="cta-txt">"Aujourd'hui nous écrivons les <strong>premières lignes</strong> de Stylo Ortho.<br>Demain, nous espérons écrire la <strong>suite avec vous.</strong>" <span style="font-size:12px;color:rgba(255,255,255,.3);font-style:normal;font-family:'Share Tech Mono',monospace">— Valentin</span></div>
+      <a class="cta-url" href="https://factureorhto.netlify.app" target="_blank">factureorhto.netlify.app</a>
+      <div class="cta-url-sub">Accédez à votre facture et effectuez votre investissement en toute sécurité.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ NAV ════ -->
+<div class="nav">
+  <button class="nav-btn" onclick="go(-1)">‹</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" onclick="go(1)">›</button>
+  <div class="snum" id="snum">1 / 8</div>
+</div>
+
+<script>
+// ── SLIDES ──────────────────────────────────────────────
+const SLIDES = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+const N = SLIDES.length;
+let cur = 0;
+
+// Créer les dots
+const dotsEl = document.getElementById('dots');
+SLIDES.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'ndot' + (i===0?' active':'');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+const dots = document.querySelectorAll('.ndot');
+const snum = document.getElementById('snum');
+
+function goTo(n) {
+  n = Math.max(0, Math.min(n, N-1));
+  document.getElementById(SLIDES[cur]).classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur = n;
+  document.getElementById(SLIDES[cur]).classList.add('active');
+  dots[cur].classList.add('active');
+  snum.textContent = (cur+1) + ' / ' + N;
+}
+function go(d) { goTo(cur+d); }
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(-1);
+});
+</script>
+</body>
+</html>
