@@ -264,15 +264,11 @@
           <div class="skillbar-track"><div class="skillbar-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="skill-card">
+      <div class="skill-card skill-card-clickable" data-modal-target="modal-vinted" tabindex="0" role="button" aria-haspopup="dialog">
         <img src="assets/img/vinted-logo.jpg" alt="Vinted" class="skill-card-logo">
         <h3>Achat-revente Vinted</h3>
         <p>Ça m'a appris à vendre, à négocier et à faire de l'argent par moi-même — fixer un prix juste, discuter avec les acheteurs et gérer une activité de A à Z.</p>
-        <div class="vinted-items">
-          <img src="assets/img/vinted-item-1.jpg" alt="Annonce Vinted — baskets Asics">
-          <img src="assets/img/vinted-item-2.jpg" alt="Annonce Vinted — short Polo Ralph Lauren">
-        </div>
-        <p class="skill-example">Exemple concret : cette activité m'a donné l'idée de Vestly AI, un outil d'aide à la décision achat-revente (analyse d'opportunité, estimation de prix).</p>
+        <span class="skill-card-open">Voir mes annonces →</span>
         <div class="skill-card-bar">
           <div class="skillbar-top"><span class="skillbar-pct">[À COMPLÉTER]%</span></div>
           <div class="skillbar-track"><div class="skillbar-fill" style="width:0%"></div></div>
@@ -313,6 +309,18 @@
       <b>Vestly AI</b> — outil d'aide à la décision pour l'achat-revente (application Next.js) : moteur d'analyse d'opportunité, estimation de prix et calcul de marge, sans achat ni action automatique — toute validation reste manuelle.
     </li>
   </ul>
+</template>
+
+<template id="modal-vinted">
+  <p class="skill-modal-kicker">Outil</p>
+  <h2>Achat-revente Vinted</h2>
+  <p class="skill-modal-text">Ça m'a appris à vendre, à négocier et à faire de l'argent par moi-même — fixer un prix juste, discuter avec les acheteurs et gérer une activité de A à Z.</p>
+  <div class="skill-modal-gallery">
+    <img src="assets/img/vinted-item-1.jpg" alt="Annonce Vinted — baskets Asics">
+    <img src="assets/img/vinted-item-2.jpg" alt="Annonce Vinted — short Polo Ralph Lauren">
+    <img src="assets/img/vinted-item-3.jpg" alt="Annonce Vinted — sweats Polo Ralph Lauren noir et blanc">
+  </div>
+  <p class="skill-example">Exemple concret : cette activité m'a donné l'idée de Vestly AI, un outil d'aide à la décision achat-revente (analyse d'opportunité, estimation de prix).</p>
 </template>
 
 <div class="skill-modal-overlay" id="skillModalOverlay">
