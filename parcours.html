@@ -55,7 +55,20 @@
   </div>
 
   <section class="wrap reveal">
-    <div class="parcours-block tc1">
+    <div class="tc-tabs" id="tcTabs">
+      <button class="tc-tab-btn tc1" data-tab="tc1">
+        <span class="tc-tab-year">TC1</span>
+        <span class="tc-tab-dates">2025/2026</span>
+        <span class="tc-tab-desc">Découverte &amp; premières expériences</span>
+      </button>
+      <button class="tc-tab-btn tc2 active" data-tab="tc2">
+        <span class="tc-tab-year">TC2</span>
+        <span class="tc-tab-dates">2026/2027</span>
+        <span class="tc-tab-desc">Approfondissement &amp; professionnalisation</span>
+      </button>
+    </div>
+
+    <div class="parcours-block tc1" data-tab-panel="tc1">
       <div class="parcours-block-head">
         <span class="year-badge tc1">TC1 · 2025/2026</span>
         <h3>Première année — découverte &amp; premières expériences</h3>
@@ -85,9 +98,7 @@
       </div>
     </div>
 
-    <div class="tl-arrow">↓</div>
-
-    <div class="parcours-block tc2">
+    <div class="parcours-block tc2" data-tab-panel="tc2">
       <div class="parcours-block-head">
         <span class="year-badge tc2">TC2 · 2026/2027</span>
         <h3>Deuxième année — approfondissement &amp; professionnalisation</h3>

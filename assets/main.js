@@ -55,6 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // TC1 / TC2 tabs (parcours.html only)
+  const tcTabs = document.getElementById('tcTabs');
+  if (tcTabs) {
+    const tabBtns = tcTabs.querySelectorAll('.tc-tab-btn');
+    const panels = document.querySelectorAll('[data-tab-panel]');
+    const showTab = (tab) => {
+      tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      panels.forEach(p => p.classList.toggle('tab-active', p.dataset.tabPanel === tab));
+    };
+    tabBtns.forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+    const initialActive = tcTabs.querySelector('.tc-tab-btn.active');
+    showTab(initialActive ? initialActive.dataset.tab : 'tc2');
+  }
+
   // rotating word in the home hero title (index.html only)
   const rotatorWord = document.getElementById('rotatorWord');
   if (rotatorWord) {

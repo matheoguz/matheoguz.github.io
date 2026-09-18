@@ -247,6 +247,26 @@ section{padding:100px 0;position:relative;}
 .year-badge.tc1{background:var(--paper-2);color:var(--tc1);border:1px solid var(--line);}
 .year-badge.tc2{background:var(--accent);color:var(--on-accent);}
 
+/* ---------- PARCOURS — onglets TC1 / TC2 ---------- */
+.tc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:60px;}
+.tc-tab-btn{
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;
+  padding:28px 26px;border:1px solid var(--line);background:var(--paper);cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:all .25s ease;
+}
+.tc-tab-btn:hover{border-color:var(--ink);}
+.tc-tab-year{font-family:'Fraunces',serif;font-size:32px;}
+.tc-tab-dates{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
+.tc-tab-desc{font-size:13px;color:var(--muted);margin-top:8px;}
+.tc-tab-btn.active{border-color:var(--accent);background:var(--paper-2);}
+.tc-tab-btn.active .tc-tab-year{color:var(--ink);}
+.tc-tab-btn.active::after{content:'';display:block;width:100%;height:3px;background:var(--accent);margin-top:14px;}
+.parcours-block{display:none;}
+.parcours-block.tab-active{display:block;}
+@media(max-width:600px){
+  .tc-tabs{grid-template-columns:1fr;}
+}
+
 /* ---------- PARCOURS ---------- */
 .parcours-block{margin-bottom:70px;}
 .parcours-block:last-child{margin-bottom:0;}
