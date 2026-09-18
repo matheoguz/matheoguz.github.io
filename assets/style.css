@@ -277,25 +277,12 @@ section{padding:100px 0;position:relative;}
 .tc-panel-intro{font-size:17px;color:var(--muted);}
 .tc-block{margin-bottom:56px;}
 .tc-block:last-child{margin-bottom:0;}
-.tc-block-num{font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-ink,var(--ink));font-weight:700;margin-bottom:18px;background:var(--accent);display:inline-block;padding:4px 10px;}
+.tc-block-num{font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--on-accent);font-weight:700;margin-bottom:18px;background:var(--accent);display:inline-block;padding:4px 10px;}
 .tc-block-text{font-size:15px;color:var(--muted);max-width:680px;}
 .tc-quote{font-family:'Fraunces',serif;font-size:19px;font-style:italic;color:var(--ink);max-width:680px;line-height:1.5;}
 .tc-block-closing{border-top:1px solid var(--line);padding-top:40px;}
 
-.tc-project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
-.tc-project-card{border:1px solid var(--line);padding:26px;transition:border-color .25s ease;}
-.tc-project-card:hover{border-color:var(--ink);}
-.tc-pc-name{font-family:'Fraunces',serif;font-size:18px;margin-bottom:4px;}
-.tc-pc-domain{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:16px;}
-.tc-pc-list{display:flex;flex-direction:column;gap:10px;}
-.tc-pc-list dt{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;}
-.tc-pc-list dd{font-size:13.5px;color:var(--muted);margin-top:2px;}
-.tc-project-card-add{
-  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  border-style:dashed;background:var(--paper-2);
-}
-.tc-pc-add-label{font-family:'Fraunces',serif;font-size:16px;color:var(--ink);margin-bottom:8px;}
-.tc-pc-add-hint{font-size:13px;color:var(--muted);}
+.tc-panel-link{display:inline-block;margin-top:20px;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--ink);padding-bottom:2px;}
 
 .tc-skill-row{display:flex;flex-wrap:wrap;gap:12px;}
 .tc-skill-chip{
