@@ -371,6 +371,7 @@ section{padding:100px 0;position:relative;}
 .skill-modal-subhead{font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-ink,var(--ink));margin:22px 0 10px;font-weight:700;}
 .skill-modal-content h3.skill-modal-subhead:first-of-type{margin-top:22px;}
 .skill-modal-link{display:inline-block;margin-top:10px;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--ink);padding-bottom:2px;}
+.skill-modal-text{font-size:14px;color:var(--muted);}
 .skill-card-bar{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;}
 .skill-card-bar .skillbar-top{justify-content:flex-end;margin-bottom:6px;}
 .skill-card-bar .skillbar-track{height:4px;}
