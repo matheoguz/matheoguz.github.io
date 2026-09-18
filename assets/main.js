@@ -55,6 +55,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // rotating word in the home hero title (index.html only)
+  const rotatorWord = document.getElementById('rotatorWord');
+  if (rotatorWord) {
+    const words = ['ENTREPRENDRE', 'CRÉER', 'VENDRE', 'INNOVER', 'DÉVELOPPER'];
+    let i = 0;
+    setInterval(() => {
+      rotatorWord.classList.add('leaving');
+      setTimeout(() => {
+        i = (i + 1) % words.length;
+        rotatorWord.textContent = words[i];
+        rotatorWord.classList.remove('leaving');
+        rotatorWord.classList.add('entering');
+        setTimeout(() => rotatorWord.classList.remove('entering'), 450);
+      }, 450);
+    }, 3200);
+  }
+
   // project filter bar (projets-sae.html only)
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('#projectList .project-card');
