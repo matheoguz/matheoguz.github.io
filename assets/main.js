@@ -55,6 +55,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // skill card modal (competences.html only — e.g. Claude card)
+  const modalOverlay = document.getElementById('skillModalOverlay');
+  const modalContent = document.getElementById('skillModalContent');
+  const modalClose = document.getElementById('skillModalClose');
+  if (modalOverlay && modalContent) {
+    const openModal = (targetId) => {
+      const tpl = document.getElementById(targetId);
+      if (!tpl) return;
+      modalContent.innerHTML = '';
+      modalContent.appendChild(tpl.content.cloneNode(true));
+      modalOverlay.classList.add('open');
+    };
+    const closeModal = () => modalOverlay.classList.remove('open');
+
+    document.querySelectorAll('[data-modal-target]').forEach(trigger => {
+      trigger.addEventListener('click', () => openModal(trigger.dataset.modalTarget));
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(trigger.dataset.modalTarget); }
+      });
+    });
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  }
+
   // TC1 / TC2 tabs (parcours.html only)
   const tcTabs = document.getElementById('tcTabs');
   if (tcTabs) {

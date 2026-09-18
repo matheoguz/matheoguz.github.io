@@ -210,10 +210,10 @@
           <div class="skillbar-track"><div class="skillbar-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="skill-card">
+      <div class="skill-card skill-card-clickable" data-modal-target="modal-claude" tabindex="0" role="button" aria-haspopup="dialog">
         <h3>Claude</h3>
         <p>Utilisé pour construire ce portfolio de A à Z : structure du site, design, rédaction et mise en ligne.</p>
-        <p class="skill-example">Exemple concret : ce portfolio de 8 pages entièrement conçu avec Claude — arborescence du site, direction artistique (fond sombre, accent jaune citron), page d'accueil avec mot animé, structuration du Parcours et des Projets/SAE en onglets TC1/TC2, page Compétences avec matières, langues et outils, et mise en ligne sur GitHub.</p>
+        <span class="skill-card-open">Voir ce qu'on a réalisé →</span>
         <div class="skill-card-bar">
           <div class="skillbar-top"><span class="skillbar-pct">[À COMPLÉTER]%</span></div>
           <div class="skillbar-track"><div class="skillbar-fill" style="width:0%"></div></div>
@@ -275,6 +275,29 @@
     </div>
   </div>
 </main>
+
+<template id="modal-claude">
+  <p class="skill-modal-kicker">Outil</p>
+  <h2>Claude</h2>
+  <p class="skill-modal-intro">Ce que Mathéo et Claude ont réalisé ensemble sur ce portfolio :</p>
+  <ul class="skill-modal-list">
+    <li>Arborescence complète du site en 8 pages (Accueil, À propos, Parcours, Compétences, Projets/SAE, Expériences, Projet pro, Contact)</li>
+    <li>Direction artistique : fond sombre premium, accent jaune citron, typographie forte, mode clair/sombre</li>
+    <li>Page d'accueil avec mise en page texte/photo et titre à mot animé</li>
+    <li>Parcours et Projets/SAE structurés en onglets TC1 / TC2, avec transition en fondu</li>
+    <li>Page Compétences avec matières du BUT TC, langues et outils, chacun justifié par un usage réel</li>
+    <li>Navigation, header et menu mobile cohérents sur toutes les pages</li>
+    <li>Corrections de bugs (contraste, responsive, liens) au fil des retours</li>
+    <li>Mise en ligne et gestion des versions sur GitHub</li>
+  </ul>
+</template>
+
+<div class="skill-modal-overlay" id="skillModalOverlay">
+  <div class="skill-modal" role="dialog" aria-modal="true">
+    <button class="skill-modal-close" id="skillModalClose" aria-label="Fermer">&times;</button>
+    <div class="skill-modal-content" id="skillModalContent"></div>
+  </div>
+</div>
 
 <footer>
   <div class="wrap footer-row">
