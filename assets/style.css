@@ -363,7 +363,7 @@ footer{background:var(--paper);border-top:1px solid var(--line);color:var(--mute
   .nav-cta{display:none;}
 }
 /* Mobile uniquement : bascule sur le menu hamburger */
-@media(max-width:720px){
+@media(max-width:680px){
   .navlinks{display:none;}
   .burger{display:flex;}
 }
