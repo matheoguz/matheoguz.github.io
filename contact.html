@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathéo Guzzi — Accueil</title>
-<meta name="description" content="Portfolio de Mathéo Guzzi, étudiant en BUT Techniques de Commercialisation (TC2).">
+<title>Mathéo Guzzi — Contact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,36 +47,43 @@
 </div>
 
 <main>
-  <section class="hero wrap" style="padding-top:0;">
-    <div class="hero-grid">
+  <div class="page-hero wrap reveal">
+    <p class="kicker">07 — Contact</p>
+    <h1>Une opportunité, un projet ? Écrivons-nous.</h1>
+    <p>Disponible pour un stage, une alternance ou tout échange autour de la vente, du marketing ou de l'e-commerce.</p>
+  </div>
+
+  <section class="wrap reveal">
+    <div class="contact-grid">
       <div>
-        <p class="eyebrow">BUT Techniques de Commercialisation — TC2 · 2026/2027</p>
-        <h1 class="hero-title">Une année pour construire,<br>une <em>seconde</em> pour approfondir.</h1>
-        <p class="hero-sub">[À COMPLÉTER — ton nom complet + phrase d'accroche personnelle en 1-2 lignes. Idée directrice : tu es en TC2, tu t'appuies sur ce que ta TC1 t'a appris pour aller plus loin (vente, marketing, communication, e-commerce, entrepreneuriat).]</p>
-        <div class="hero-actions">
-          <a href="parcours.html" class="btn btn-ghost">Découvrir mon parcours</a>
-          <a href="projets-sae.html" class="btn btn-solid">Voir mes projets</a>
-        </div>
-        <div class="home-stats">
-          <div class="stat"><div class="num">2</div><div class="label">Années de BUT TC</div></div>
-          <div class="stat"><div class="num">[X]</div><div class="label">Projets / SAE</div></div>
-          <div class="stat"><div class="num">[X]</div><div class="label">Expériences pro</div></div>
+        <div class="contact-list">
+          <a href="mailto:email@exemple.com"><span>Email</span><span>[email@exemple.com]</span></a>
+          <a href="tel:+33000000000"><span>Téléphone</span><span>[06 00 00 00 00]</span></a>
+          <a href="#" target="_blank"><span>LinkedIn</span><span>[linkedin.com/in/...]</span></a>
+          <a href="https://github.com/matheoguz" target="_blank"><span>GitHub</span><span>github.com/matheoguz</span></a>
+          <a href="#" target="_blank"><span>Curriculum Vitae</span><span>[Lien vers le CV en PDF à ajouter]</span></a>
         </div>
       </div>
-      <div class="hero-meta">
-        <span>[Ville, France]</span>
-        <span>[email@exemple.com]</span>
-        <span>[Disponible pour stage / alternance]</span>
+      <div>
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('[À CONFIGURER — brancher ce formulaire sur un service comme Formspree ou EmailJS pour recevoir les messages, ou le remplacer par un simple mailto.]');">
+          <label for="cf-name">Nom</label>
+          <input type="text" id="cf-name" name="name" placeholder="Votre nom" required>
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="votre@email.com" required>
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" rows="5" placeholder="Votre message" required></textarea>
+          <button type="submit" class="btn btn-solid">Envoyer</button>
+          <p class="contact-note">[À COMPLÉTER — ce formulaire est visuel pour le moment ; il faut le connecter à un service d'envoi (Formspree, EmailJS...) pour qu'il fonctionne réellement en ligne.]</p>
+        </form>
       </div>
     </div>
-    <div class="scroll-cue"><span class="line"></span><span>Défiler</span></div>
   </section>
 </main>
 
 <footer>
   <div class="wrap footer-row">
     <span>© <span id="year"></span> Mathéo Guzzi — Tous droits réservés</span>
-    <a href="contact.html">Me contacter →</a>
+    <a href="index.html">Retour à l'accueil</a>
   </div>
 </footer>
 
