@@ -338,11 +338,8 @@ section{padding:100px 0;position:relative;}
 .skill-card:hover{background:var(--paper-2);transform:translateY(-4px);}
 .skill-card h3{font-size:19px;margin-bottom:12px;}
 .skill-card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
-.skill-chain{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:14px;}
-.skill-chain-row{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.skill-chain-row b{color:var(--ink);font-weight:600;}
-.skill-chain-row .yr{margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;padding:2px 8px;border:1px solid var(--line);}
-.skill-card-bar{margin-top:14px;}
+.skill-example{font-size:12.5px;color:var(--ink);background:var(--paper-2);border-left:2px solid var(--accent);padding:8px 12px;margin:-6px 0 16px;}
+.skill-card-bar{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;}
 .skill-card-bar .skillbar-top{justify-content:flex-end;margin-bottom:6px;}
 .skill-card-bar .skillbar-track{height:4px;}
 
