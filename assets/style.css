@@ -130,8 +130,8 @@ h1.hero-title em{font-style:normal;text-decoration:underline;text-decoration-col
   min-height:100vh;display:flex;align-items:center;position:relative;
   padding:120px 0 60px;background:#141310;color:#f1efe8;overflow:hidden;
 }
-.hero-grid-photo{display:grid;grid-template-columns:1.15fr 0.85fr;gap:60px;align-items:center;}
-.hero-copy{max-width:620px;}
+.hero-grid-photo{display:grid;grid-template-columns:60% 40%;gap:50px;align-items:center;}
+.hero-copy{max-width:620px;min-width:0;}
 .eyebrow-dark{background:var(--accent);color:var(--on-accent);}
 h1.hero-title-dark{font-size:clamp(34px,4.6vw,62px);line-height:1.12;color:#f1efe8;max-width:none;}
 .hero-sub-dark{color:#b8b2a4;max-width:520px;}
@@ -161,9 +161,9 @@ h1.hero-title-dark{font-size:clamp(34px,4.6vw,62px);line-height:1.12;color:#f1ef
 .btn-dark-outline:hover{background:#f1efe8;color:#141310;}
 .btn-dark-solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
 .btn-dark-solid:hover{background:#f1efe8;border-color:#f1efe8;color:#141310;}
-.hero-photo-col{display:flex;justify-content:center;align-items:center;}
+.hero-photo-col{display:flex;justify-content:center;align-items:center;min-width:0;}
 .hero-photo-frame{
-  position:relative;width:100%;max-width:400px;aspect-ratio:3/4;
+  position:relative;width:100%;max-width:460px;aspect-ratio:3/4;
   border-radius:6px;overflow:hidden;
   background:linear-gradient(160deg,#232019,#141310 70%);
 }
@@ -178,8 +178,11 @@ h1.hero-title-dark{font-size:clamp(34px,4.6vw,62px);line-height:1.12;color:#f1ef
   font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#7a746a;padding:30px;
   border:1px dashed #3a3529;border-radius:6px;
 }
-@media(max-width:900px){
-  .hero-grid-photo{grid-template-columns:1fr;gap:44px;text-align:left;}
+/* Uniquement en dessous de cette largeur (mobile) le hero repasse en colonne :
+   texte au-dessus, photo en dessous. Sur ordinateur ET tablette, la disposition
+   reste impérativement deux colonnes côte à côte (texte gauche / photo droite). */
+@media(max-width:680px){
+  .hero-grid-photo{grid-template-columns:1fr;gap:36px;text-align:left;}
   .hero-photo-col{order:-1;}
   .hero-photo-frame{max-width:280px;}
   .hero-dark{padding:130px 0 50px;min-height:auto;}
