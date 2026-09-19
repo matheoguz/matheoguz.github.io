@@ -152,8 +152,81 @@
         </div>
       </div>
 
+      <div class="exp-item">
+        <div class="exp-marker"><span class="exp-num">06</span></div>
+        <div class="exp-card exp-card-clickable" data-modal-target="modal-octobre-rose" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="exp-top">
+            <div>
+              <span class="exp-type">Action solidaire — IUT</span>
+              <h3>Octobre Rose</h3>
+              <p class="exp-company">Vente sur point de vente — TC1</p>
+            </div>
+            <span class="exp-period">TC1 · à refaire en TC2</span>
+          </div>
+          <span class="skill-card-open">Voir le détail →</span>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-marker"><span class="exp-num">07</span></div>
+        <div class="exp-card exp-card-clickable" data-modal-target="modal-papillons-blancs" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="exp-top">
+            <div>
+              <span class="exp-type">Action solidaire — IUT</span>
+              <h3>Papillons Blancs</h3>
+              <p class="exp-company">Vente sur point de vente — TC1</p>
+            </div>
+            <span class="exp-period">TC1</span>
+          </div>
+          <span class="skill-card-open">Voir le détail →</span>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-marker"><span class="exp-num">08</span></div>
+        <div class="exp-card exp-card-clickable" data-modal-target="modal-projet-entreprise" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="exp-top">
+            <div>
+              <span class="exp-type">Projet école — partenariat entreprise</span>
+              <h3>Mine de Rayon</h3>
+              <p class="exp-company">Projet en petit groupe — TC1</p>
+            </div>
+            <span class="exp-period">TC1</span>
+          </div>
+          <span class="skill-card-open">Voir le détail →</span>
+        </div>
+      </div>
+
     </div>
   </section>
+
+  <template id="modal-octobre-rose">
+    <p class="skill-modal-kicker">Action solidaire</p>
+    <h2>Octobre Rose</h2>
+    <p class="skill-modal-text">Dans le cadre du BUT TC, les étudiants organisent chaque année une vente sur un point de vente pour Octobre Rose, le mois de sensibilisation au cancer du sein. Avec mon groupe, nous avons vendu des produits (brioches, rubans roses...) directement sur place, au profit de l'association.</p>
+    <p class="skill-modal-text">C'est un projet créé et organisé par les élèves du BUT TC pendant l'école, pas une démarche personnelle. Je l'ai fait en TC1 et je le referai en TC2.</p>
+  </template>
+
+  <template id="modal-papillons-blancs">
+    <p class="skill-modal-kicker">Action solidaire</p>
+    <h2>Papillons Blancs</h2>
+    <p class="skill-modal-text">Même principe qu'Octobre Rose : une vente sur un point de vente organisée par les étudiants du BUT TC, cette fois au profit de l'association Papillons Blancs, qui aide les personnes en situation de handicap mental.</p>
+    <p class="skill-modal-text">Un projet collectif créé par les élèves pendant l'école, réalisé en TC1.</p>
+  </template>
+
+  <template id="modal-projet-entreprise">
+    <p class="skill-modal-kicker">Projet école</p>
+    <h2>Partenariat avec Mine de Rayon</h2>
+    <p class="skill-modal-text">Dans le cadre du BUT TC, toute la promo est répartie en petits groupes, chacun associé à une entreprise réelle trouvée par les élèves eux-mêmes. Mon groupe a travaillé avec Mine de Rayon, une entreprise du Creusot.</p>
+    <p class="skill-modal-text">Un projet organisé par l'école, réalisé en TC1.</p>
+  </template>
+
+  <div class="skill-modal-overlay" id="skillModalOverlay">
+    <div class="skill-modal" role="dialog" aria-modal="true">
+      <button class="skill-modal-close" id="skillModalClose" aria-label="Fermer">&times;</button>
+      <div class="skill-modal-content" id="skillModalContent"></div>
+    </div>
+  </div>
 
   <div class="cta-band">
     <div class="wrap cta-band-inner">
