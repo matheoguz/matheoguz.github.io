@@ -410,6 +410,10 @@ section{padding:100px 0;position:relative;}
 .exp-card-highlight{border-left:3px solid var(--accent);}
 .exp-card-clickable{cursor:pointer;}
 .exp-card-clickable:hover{border-color:var(--accent);}
+.exp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.exp-row .exp-card{padding:26px;}
+.exp-row-logo{width:40px;height:40px;object-fit:contain;margin-bottom:14px;display:block;}
+@media(max-width:750px){.exp-row{grid-template-columns:1fr;}}
 .exp-type{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-2);font-weight:700;margin-bottom:8px;}
 .exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:18px;}
 .exp-top h3{font-size:22px;}
