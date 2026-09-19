@@ -414,6 +414,12 @@ section{padding:100px 0;position:relative;}
 .exp-row .exp-card{padding:26px;}
 .exp-row-logo{width:40px;height:40px;object-fit:contain;margin-bottom:14px;display:block;}
 @media(max-width:750px){.exp-row{grid-template-columns:1fr;}}
+
+.unitc-intro{display:grid;grid-template-columns:1fr 1.2fr;gap:32px;align-items:center;border:1px solid var(--line);padding:32px;margin-top:48px;}
+.unitc-intro-logo{width:120px;height:auto;display:block;margin-bottom:18px;}
+.unitc-intro-text p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:10px;}
+.unitc-intro-img{width:100%;height:100%;object-fit:cover;max-height:320px;}
+@media(max-width:750px){.unitc-intro{grid-template-columns:1fr;}.unitc-intro-img{order:-1;max-height:220px;}}
 .exp-type{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-2);font-weight:700;margin-bottom:8px;}
 .exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:18px;}
 .exp-top h3{font-size:22px;}
