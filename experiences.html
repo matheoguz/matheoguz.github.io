@@ -154,18 +154,16 @@
 
     </div>
 
-    <div class="unitc-intro">
-      <div class="unitc-intro-text">
-        <img src="assets/img/unitc/logo.png" alt="UniTC Business" class="unitc-intro-logo">
-        <h3 style="margin-bottom:10px;">UniTC Business — l'entreprise-école du BUT TC</h3>
-        <p>Chaque vendredi, les étudiants en BUT TC de l'IUT du Creusot gèrent UniTC Business, leur propre entreprise-école : plus de 190 étudiants répartis en pôles (RH, Communication, Événementiel, Logistique, Commercial), comme dans une vraie PME.</p>
-        <p>C'est dans ce cadre que sont organisées les grandes actions de l'année (Marché d'Hiver, Octobre Rose, Papillons Blancs) ainsi que les projets en petits groupes avec de vraies entreprises locales — présentés ci-dessous.</p>
-      </div>
-      <img src="assets/img/unitc/banniere.jpg" alt="Bienvenue chez UniTC Business — IUT du Creusot" class="unitc-intro-img">
-    </div>
-
-    <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);font-weight:600;margin:32px 0 18px;">Actions organisées par l'IUT / le BUT TC</p>
+    <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);font-weight:600;margin:48px 0 18px;">Actions organisées par l'IUT / le BUT TC</p>
     <div class="exp-row">
+      <div class="exp-card exp-card-clickable" data-modal-target="modal-projet-entreprise" tabindex="0" role="button" aria-haspopup="dialog">
+        <img src="assets/img/unitc/logo.png" alt="UniTC Business" class="exp-row-logo">
+        <span class="exp-type">Entreprise-école — BUT TC</span>
+        <h3>UniTC Business</h3>
+        <p class="exp-company">Mon projet : Mine de Rayon — TC1</p>
+        <span class="skill-card-open">Voir le détail →</span>
+      </div>
+
       <div class="exp-card exp-card-clickable" data-modal-target="modal-octobre-rose" tabindex="0" role="button" aria-haspopup="dialog">
         <img src="assets/img/octobre-rose/ruban.png" alt="Octobre Rose" class="exp-row-logo">
         <span class="exp-type">Action solidaire — UniTC Business</span>
@@ -178,13 +176,6 @@
         <span class="exp-type">Action solidaire — UniTC Business</span>
         <h3>Papillons Blancs</h3>
         <p class="exp-company">Vente sur points de vente — TC1</p>
-        <span class="skill-card-open">Voir le détail →</span>
-      </div>
-
-      <div class="exp-card exp-card-clickable" data-modal-target="modal-projet-entreprise" tabindex="0" role="button" aria-haspopup="dialog">
-        <span class="exp-type">Projet — UniTC Business</span>
-        <h3>Mine de Rayon</h3>
-        <p class="exp-company">Projet en petit groupe — TC1</p>
         <span class="skill-card-open">Voir le détail →</span>
       </div>
     </div>
@@ -217,10 +208,12 @@
   </template>
 
   <template id="modal-projet-entreprise">
-    <p class="skill-modal-kicker">Projet · UniTC Business</p>
-    <h2>Partenariat avec Mine de Rayon</h2>
-    <p class="skill-modal-text">Dans le cadre d'UniTC Business, notre entreprise-école du BUT TC, la promo est répartie en petits groupes, chacun associé à une entreprise réelle trouvée par les élèves eux-mêmes. Mon groupe a travaillé avec Mine de Rayon, une entreprise du Creusot.</p>
-    <p class="skill-modal-text">Un projet mené en TC1 dans ce cadre.</p>
+    <p class="skill-modal-kicker">Entreprise-école · BUT TC</p>
+    <h2>UniTC Business</h2>
+    <p class="skill-modal-text">Chaque vendredi, les étudiants en BUT TC de l'IUT du Creusot gèrent UniTC Business, leur propre entreprise-école : plus de 190 étudiants répartis en pôles (RH, Communication, Événementiel, Logistique, Commercial), comme dans une vraie PME. C'est dans ce cadre que sont organisées les grandes actions de l'année (Octobre Rose, Papillons Blancs, Marché d'Hiver) ainsi que des projets en petits groupes avec de vraies entreprises locales.</p>
+    <img src="assets/img/unitc/banniere.jpg" alt="Bienvenue chez UniTC Business — IUT du Creusot" style="width:100%;margin:16px 0;border:1px solid var(--line);">
+    <h3 class="skill-modal-subhead">Mon projet</h3>
+    <p class="skill-modal-text">Avec mon groupe, nous avons été associés à Mine de Rayon, une entreprise du Creusot trouvée par nous-mêmes, dans le cadre de ce dispositif. Projet mené en TC1.</p>
   </template>
 
   <div class="skill-modal-overlay" id="skillModalOverlay">
