@@ -51,6 +51,7 @@ main{padding:40px 0 60px}
 }
 .tool-card:hover{transform:translateY(-3px);border-color:var(--accent)}
 .tool-card .icon{font-size:1.8rem;margin-bottom:10px;display:block}
+.tool-card .icon-img{display:block;margin-bottom:12px}
 .tool-card h3{margin:0 0 6px;font-size:1.05rem}
 .tool-card p{margin:0;color:var(--muted);font-size:0.88rem}
 
