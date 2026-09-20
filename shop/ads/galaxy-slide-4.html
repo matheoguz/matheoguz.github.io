@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 4</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;background:#0a0612}
+  .ad{position:relative;width:100%;height:100vh;font-family:Arial,sans-serif;color:#fff;display:flex;flex-direction:column;justify-content:flex-end}
+  .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,6,18,0.2) 0%,rgba(10,6,18,0.4) 40%,rgba(10,6,18,0.97) 100%)}
+  .num{position:absolute;top:24px;left:26px;z-index:3;font-size:0.9rem;font-weight:700;color:#a78bfa;letter-spacing:0.1em;background:rgba(0,0,0,0.4);padding:6px 12px;border-radius:100px}
+  .brand{position:absolute;top:24px;right:26px;z-index:3;font-weight:900;font-size:1.1rem}
+  .brand span{color:#a78bfa}
+  .content{position:relative;z-index:2;padding:28px 26px 44px}
+  .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+  .price-now{font-size:2.4rem;font-weight:900}
+  .price-old{font-size:1.3rem;color:#b39ddb;text-decoration:line-through}
+  .price-badge{background:#fff;color:#7c3aed;font-weight:800;font-size:0.9rem;padding:4px 10px;border-radius:8px}
+  .cta{display:block;text-align:center;background:linear-gradient(90deg,#7c3aed,#a78bfa);color:#fff;font-weight:800;font-size:1.2rem;padding:19px;border-radius:14px;box-shadow:0 8px 30px rgba(124,58,237,0.5)}
+</style>
+</head>
+<body>
+<div class="ad">
+  <img class="bgimg" src="https://i5.walmartimages.com/asr/89d7fde2-7694-44d7-b6d2-dc4fc745a2e7.2d611540b795a8eb49a4d71e9208a34e.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" alt="Projecteur Galaxy LED ambiance">
+  <div class="overlay"></div>
+  <div class="num">4 / 4</div>
+  <div class="brand">Home<span>Vibe</span></div>
+  <div class="content">
+    <div class="price-row">
+      <span class="price-now">34,99 €</span>
+      <span class="price-old">69,99 €</span>
+      <span class="price-badge">-50%</span>
+    </div>
+    <a class="cta">Commander maintenant</a>
+  </div>
+</div>
+</body>
+</html>
