@@ -381,7 +381,7 @@ var OrderManager = (function() {
         var subtotal = 0;
         for (var i = 0; i < items.length; i++) {
             var price = parseFloat(items[i].price) || 0;
-            var quantity = parseInt(items[i].quantity) || 1;
+            var quantity = parseInt(items[i].qty) || 1;
             subtotal += price * quantity;
         }
         var deliveryFee = deliveryMethod === 'express' ? 9.99 : 0;

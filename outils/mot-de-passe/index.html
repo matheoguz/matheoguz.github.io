@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur de mot de passe sécurisé gratuit — Outilio</title>
+<meta name="description" content="Générez un mot de passe fort et aléatoire gratuitement, directement dans votre navigateur. Longueur, majuscules, chiffres, symboles personnalisables. Aucune donnée envoyée en ligne.">
+<link rel="canonical" href="https://matheoguz.github.io/outils/mot-de-passe/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">🔐 Générateur de mot de passe</h1>
+    <p class="tool-desc">Créez un mot de passe aléatoire et sécurisé. Tout est généré localement dans votre navigateur, rien n'est envoyé sur internet.</p>
+
+    <div class="card">
+      <label for="length">Longueur : <strong id="lengthVal">16</strong> caractères</label>
+      <input type="range" id="length" min="6" max="64" value="16">
+
+      <div class="row">
+        <div>
+          <div class="checkbox-row"><input type="checkbox" id="upper" checked><label style="margin:0" for="upper">Majuscules (A-Z)</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="lower" checked><label style="margin:0" for="lower">Minuscules (a-z)</label></div>
+        </div>
+        <div>
+          <div class="checkbox-row"><input type="checkbox" id="numbers" checked><label style="margin:0" for="numbers">Chiffres (0-9)</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="symbols" checked><label style="margin:0" for="symbols">Symboles (!@#$...)</label></div>
+        </div>
+      </div>
+      <div class="checkbox-row"><input type="checkbox" id="excludeAmbiguous"><label style="margin:0" for="excludeAmbiguous">Exclure les caractères ambigus (l, 1, I, O, 0)</label></div>
+
+      <button class="btn" id="generateBtn">Générer un mot de passe</button>
+
+      <div class="copy-row">
+        <input type="text" id="output" readonly value="">
+        <button class="btn secondary" id="copyBtn">Copier</button>
+      </div>
+      <div id="strength" class="result"></div>
+      <p class="muted-small">Générateur basé sur <code>crypto.getRandomValues</code> (générateur aléatoire cryptographique du navigateur), pas sur <code>Math.random</code>.</p>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+const lengthInput = document.getElementById('length');
+const lengthVal = document.getElementById('lengthVal');
+const output = document.getElementById('output');
+const strengthEl = document.getElementById('strength');
+
+lengthInput.addEventListener('input', () => { lengthVal.textContent = lengthInput.value; });
+
+function secureRandomInt(maxExclusive) {
+  const arr = new Uint32Array(1);
+  const limit = Math.floor(0xFFFFFFFF / maxExclusive) * maxExclusive;
+  let x;
+  do {
+    crypto.getRandomValues(arr);
+    x = arr[0];
+  } while (x >= limit);
+  return x % maxExclusive;
+}
+
+function generatePassword() {
+  const length = parseInt(lengthInput.value, 10);
+  const useUpper = document.getElementById('upper').checked;
+  const useLower = document.getElementById('lower').checked;
+  const useNumbers = document.getElementById('numbers').checked;
+  const useSymbols = document.getElementById('symbols').checked;
+  const excludeAmbiguous = document.getElementById('excludeAmbiguous').checked;
+
+  let upperSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let lowerSet = 'abcdefghijklmnopqrstuvwxyz';
+  let numberSet = '0123456789';
+  let symbolSet = '!@#$%^&*()-_=+[]{};:,.<>?';
+
+  if (excludeAmbiguous) {
+    upperSet = upperSet.replace(/[IO]/g, '');
+    lowerSet = lowerSet.replace(/[l]/g, '');
+    numberSet = numberSet.replace(/[01]/g, '');
+  }
+
+  const pools = [];
+  if (useUpper) pools.push(upperSet);
+  if (useLower) pools.push(lowerSet);
+  if (useNumbers) pools.push(numberSet);
+  if (useSymbols) pools.push(symbolSet);
+
+  if (pools.length === 0) {
+    output.value = '';
+    strengthEl.textContent = 'Sélectionnez au moins un type de caractère.';
+    strengthEl.style.color = 'var(--warn)';
+    return;
+  }
+
+  const fullSet = pools.join('');
+  let passwordChars = [];
+
+  // Ensure at least one character from each selected pool
+  pools.forEach(pool => {
+    passwordChars.push(pool[secureRandomInt(pool.length)]);
+  });
+
+  while (passwordChars.length < length) {
+    passwordChars.push(fullSet[secureRandomInt(fullSet.length)]);
+  }
+
+  // Fisher-Yates shuffle using secure random
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = secureRandomInt(i + 1);
+    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+  }
+
+  passwordChars = passwordChars.slice(0, length);
+  const password = passwordChars.join('');
+  output.value = password;
+  evaluateStrength(password, fullSet.length);
+}
+
+function evaluateStrength(password, poolSize) {
+  const entropyBits = Math.log2(Math.pow(poolSize, password.length));
+  let label, color;
+  if (entropyBits < 40) { label = 'Faible'; color = 'var(--warn)'; }
+  else if (entropyBits < 70) { label = 'Correct'; color = 'var(--accent2)'; }
+  else { label = 'Excellent'; color = 'var(--ok)'; }
+  strengthEl.innerHTML = `Robustesse : <strong style="color:${color}">${label}</strong> — entropie ≈ ${Math.round(entropyBits)} bits`;
+}
+
+document.getElementById('generateBtn').addEventListener('click', generatePassword);
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  if (!output.value) return;
+  try {
+    await navigator.clipboard.writeText(output.value);
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copié !';
+    setTimeout(() => { btn.textContent = original; }, 1200);
+  } catch (e) {
+    output.select();
+    document.execCommand('copy');
+  }
+});
+
+['length','upper','lower','numbers','symbols','excludeAmbiguous'].forEach(id => {
+  document.getElementById(id).addEventListener('change', generatePassword);
+});
+lengthInput.addEventListener('input', generatePassword);
+
+generatePassword();
+</script>
+</body>
+</html>

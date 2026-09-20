@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HomeVibe Admin - Tableau de Bord</title>
+<title>HomeVibe Admin - Tableau de Bord (Demo)</title>
+<meta name="robots" content="noindex, nofollow">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -402,7 +403,7 @@ tr.clickable{cursor:pointer}
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">H</div>
-    <div class="sidebar-brand">HomeVibe<span>Administration</span></div>
+    <div class="sidebar-brand">HomeVibe<span>Administration (Demo)</span></div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Principal</div>
@@ -494,6 +495,13 @@ tr.clickable{cursor:pointer}
       <div class="topbar-avatar" title="Admin">MG</div>
     </div>
   </header>
+
+  <!-- DEMO DATA BANNER -->
+  <div class="sync-banner" id="demoBanner" style="background:linear-gradient(135deg,rgba(225,112,85,.18),rgba(225,112,85,.08));border-color:rgba(225,112,85,.35)">
+    <span class="banner-icon">&#x26A0;&#xFE0F;</span>
+    <span class="banner-text"><strong>Ceci est un tableau de bord de demonstration.</strong> Les commandes, clients et statistiques affiches ci-dessous sont des donnees d'exemple codees en dur, pas vos vraies commandes (qui sont stockees localement via OrderManager). Ce site etant statique (GitHub Pages, sans serveur), il n'y a pas de backend reel derriere cet ecran.</span>
+    <span class="banner-close" onclick="document.getElementById('demoBanner').hidden=true">&times;</span>
+  </div>
 
   <!-- SYNC BANNER -->
   <div class="sync-banner" id="syncBanner">
@@ -832,7 +840,7 @@ tr.clickable{cursor:pointer}
             </div>
             <div>
               <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Email de contact</label>
-              <input type="email" value="contact@homevibe.fr" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)">
+              <input type="email" value="contact@homevibe-shop.com" style="width:100%;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)">
             </div>
             <div>
               <label class="text-sm text-muted" style="display:block;margin-bottom:4px">Devise</label>

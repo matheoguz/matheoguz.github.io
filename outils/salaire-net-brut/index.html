@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculateur salaire net / brut 2026 (France) — Outilio</title>
+<meta name="description" content="Convertissez votre salaire brut en net ou net en brut, gratuitement. Estimation basée sur les taux de cotisations salariales moyens en France (cadre / non-cadre).">
+<link rel="canonical" href="https://matheoguz.github.io/outils/salaire-net-brut/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">💶 Calculateur salaire net / brut</h1>
+    <p class="tool-desc">Estimation indicative pour un salarié du secteur privé en France. Ce n'est pas un bulletin de paie officiel : les taux réels varient selon la convention collective, la mutuelle, la tranche de rémunération, etc.</p>
+
+    <div class="card">
+      <label>Sens du calcul</label>
+      <div class="row">
+        <div><label class="checkbox-row"><input type="radio" name="direction" value="brutToNet" checked> Brut → Net</label></div>
+        <div><label class="checkbox-row"><input type="radio" name="direction" value="netToBrut"> Net → Brut</label></div>
+      </div>
+
+      <label for="amount">Montant mensuel (€)</label>
+      <input type="number" id="amount" value="2500" min="0" step="10">
+
+      <label for="statut">Statut</label>
+      <select id="statut">
+        <option value="nonCadre">Non-cadre</option>
+        <option value="cadre">Cadre</option>
+        <option value="fonctionnaire">Fonction publique</option>
+      </select>
+
+      <button class="btn" id="calcBtn">Calculer</button>
+
+      <div class="result big" id="resultMain"></div>
+      <div class="result" id="resultDetail"></div>
+      <p class="muted-small">Taux de charges salariales moyens utilisés : non-cadre ≈ 22%, cadre ≈ 25%, fonction publique ≈ 15%. Ce calculateur donne un ordre de grandeur, à confirmer avec votre service RH ou un simulateur officiel (service-public.fr / urssaf.fr).</p>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+const RATES = {
+  nonCadre: 0.22,
+  cadre: 0.25,
+  fonctionnaire: 0.15
+};
+
+function formatEUR(n) {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(n);
+}
+
+function calculate() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const statut = document.getElementById('statut').value;
+  const direction = document.querySelector('input[name=direction]:checked').value;
+  const rate = RATES[statut];
+
+  const resultMain = document.getElementById('resultMain');
+  const resultDetail = document.getElementById('resultDetail');
+
+  if (isNaN(amount) || amount <= 0) {
+    resultMain.textContent = '';
+    resultDetail.textContent = 'Entrez un montant valide.';
+    return;
+  }
+
+  let brut, net;
+  if (direction === 'brutToNet') {
+    brut = amount;
+    net = brut * (1 - rate);
+    resultMain.innerHTML = `Net estimé : ${formatEUR(net)} / mois`;
+    resultDetail.innerHTML = `Brut : ${formatEUR(brut)} — Charges salariales (${Math.round(rate*100)}%) : ${formatEUR(brut - net)}<br>Brut annuel : ${formatEUR(brut*12)} — Net annuel estimé : ${formatEUR(net*12)}`;
+  } else {
+    net = amount;
+    brut = net / (1 - rate);
+    resultMain.innerHTML = `Brut estimé : ${formatEUR(brut)} / mois`;
+    resultDetail.innerHTML = `Net : ${formatEUR(net)} — Charges salariales (${Math.round(rate*100)}%) : ${formatEUR(brut - net)}<br>Net annuel : ${formatEUR(net*12)} — Brut annuel estimé : ${formatEUR(brut*12)}`;
+  }
+}
+
+document.getElementById('calcBtn').addEventListener('click', calculate);
+document.getElementById('amount').addEventListener('input', calculate);
+document.getElementById('statut').addEventListener('change', calculate);
+document.querySelectorAll('input[name=direction]').forEach(r => r.addEventListener('change', calculate));
+
+calculate();
+</script>
+</body>
+</html>

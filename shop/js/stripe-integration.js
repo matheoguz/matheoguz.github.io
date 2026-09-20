@@ -107,7 +107,7 @@ function getCart() {
 function calculateSubtotal(items) {
     return items.reduce(function(total, item) {
         var price = parseFloat(item.price) || 0;
-        var quantity = parseInt(item.quantity) || 1;
+        var quantity = parseInt(item.qty) || 1;
         return total + (price * quantity);
     }, 0);
 }
@@ -161,7 +161,7 @@ async function createCheckoutSession(items, customerInfo, deliveryMethod) {
     var lineItems = items.map(function(item) {
         return {
             price: item.stripePriceId, // Price ID du Dashboard Stripe (price_xxx)
-            quantity: parseInt(item.quantity) || 1
+            quantity: parseInt(item.qty) || 1
         };
     });
 
@@ -351,7 +351,7 @@ function formatPrice(amount) {
  */
 function getCartItemCount(items) {
     return items.reduce(function(count, item) {
-        return count + (parseInt(item.quantity) || 1);
+        return count + (parseInt(item.qty) || 1);
     }, 0);
 }
 

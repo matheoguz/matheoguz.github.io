@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertisseur d'unités gratuit (longueur, poids, température, volume) — Outilio</title>
+<meta name="description" content="Convertissez longueurs, poids, températures et volumes instantanément. Outil gratuit, sans inscription, calcul en temps réel.">
+<link rel="canonical" href="https://matheoguz.github.io/outils/convertisseur-unites/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">📐 Convertisseur d'unités</h1>
+    <p class="tool-desc">Longueur, poids, température, volume — conversions instantanées et précises.</p>
+
+    <div class="card">
+      <label for="category">Catégorie</label>
+      <select id="category">
+        <option value="length">Longueur</option>
+        <option value="weight">Poids</option>
+        <option value="temperature">Température</option>
+        <option value="volume">Volume</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label for="fromValue">Valeur</label>
+          <input type="number" id="fromValue" value="1" step="any">
+        </div>
+        <div>
+          <label for="fromUnit">De</label>
+          <select id="fromUnit"></select>
+        </div>
+        <div>
+          <label for="toUnit">Vers</label>
+          <select id="toUnit"></select>
+        </div>
+      </div>
+
+      <div class="result big" id="resultVal"></div>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+// Units in "length" and "weight" are expressed as a factor to convert TO the base unit (meters / kilograms / liters).
+const UNITS = {
+  length: {
+    base: 'm',
+    units: {
+      mm: 0.001, cm: 0.01, m: 1, km: 1000,
+      in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344
+    },
+    labels: { mm:'Millimètres', cm:'Centimètres', m:'Mètres', km:'Kilomètres', in:'Pouces', ft:'Pieds', yd:'Yards', mi:'Miles' }
+  },
+  weight: {
+    base: 'kg',
+    units: {
+      mg: 0.000001, g: 0.001, kg: 1, t: 1000,
+      oz: 0.0283495231, lb: 0.45359237
+    },
+    labels: { mg:'Milligrammes', g:'Grammes', kg:'Kilogrammes', t:'Tonnes', oz:'Onces', lb:'Livres' }
+  },
+  volume: {
+    base: 'L',
+    units: {
+      ml: 0.001, cl: 0.01, L: 1, m3: 1000,
+      galUS: 3.785411784, ptUS: 0.473176473
+    },
+    labels: { ml:'Millilitres', cl:'Centilitres', L:'Litres', m3:'Mètres cubes', galUS:'Gallons (US)', ptUS:'Pintes (US)' }
+  },
+  temperature: {
+    base: 'C',
+    units: { C: null, F: null, K: null },
+    labels: { C:'Celsius (°C)', F:'Fahrenheit (°F)', K:'Kelvin (K)' }
+  }
+};
+
+const categorySelect = document.getElementById('category');
+const fromUnitSelect = document.getElementById('fromUnit');
+const toUnitSelect = document.getElementById('toUnit');
+const fromValueInput = document.getElementById('fromValue');
+const resultVal = document.getElementById('resultVal');
+
+function populateUnits() {
+  const cat = categorySelect.value;
+  const def = UNITS[cat];
+  fromUnitSelect.innerHTML = '';
+  toUnitSelect.innerHTML = '';
+  Object.keys(def.units).forEach((key, i) => {
+    const opt1 = document.createElement('option');
+    opt1.value = key; opt1.textContent = def.labels[key];
+    fromUnitSelect.appendChild(opt1);
+    const opt2 = document.createElement('option');
+    opt2.value = key; opt2.textContent = def.labels[key];
+    toUnitSelect.appendChild(opt2);
+  });
+  // sensible defaults
+  const keys = Object.keys(def.units);
+  fromUnitSelect.value = keys[0];
+  toUnitSelect.value = keys[1] || keys[0];
+}
+
+function toCelsius(value, unit) {
+  if (unit === 'C') return value;
+  if (unit === 'F') return (value - 32) * 5/9;
+  if (unit === 'K') return value - 273.15;
+}
+function fromCelsius(value, unit) {
+  if (unit === 'C') return value;
+  if (unit === 'F') return value * 9/5 + 32;
+  if (unit === 'K') return value + 273.15;
+}
+
+function convert() {
+  const cat = categorySelect.value;
+  const value = parseFloat(fromValueInput.value);
+  const fromU = fromUnitSelect.value;
+  const toU = toUnitSelect.value;
+
+  if (isNaN(value)) { resultVal.textContent = ''; return; }
+
+  let result;
+  if (cat === 'temperature') {
+    const celsius = toCelsius(value, fromU);
+    result = fromCelsius(celsius, toU);
+  } else {
+    const def = UNITS[cat];
+    const baseValue = value * def.units[fromU];
+    result = baseValue / def.units[toU];
+  }
+
+  const formatted = Number.isFinite(result) ? +result.toFixed(6) : result;
+  resultVal.textContent = `${value} ${UNITS[cat].labels[fromU]} = ${formatted} ${UNITS[cat].labels[toU]}`;
+}
+
+categorySelect.addEventListener('change', () => { populateUnits(); convert(); });
+[fromUnitSelect, toUnitSelect].forEach(el => el.addEventListener('change', convert));
+fromValueInput.addEventListener('input', convert);
+
+populateUnits();
+convert();
+</script>
+</body>
+</html>
