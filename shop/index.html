@@ -711,9 +711,17 @@ function showToast(msg){
 }
 
 /* ── NEWSLETTER ── */
+// NOTE: pas d'outil d'emailing connecte (Mailchimp/Brevo) pour le moment.
+// En attendant, chaque inscription ouvre un email pre-rempli vers le vendeur
+// pour que l'adresse ne soit pas perdue. A remplacer par un vrai service
+// d'emailing des que possible.
 function handleNewsletter(e){
  e.preventDefault();
  const input=e.target.querySelector('input');
+ const email=input.value.trim();
+ if(!email){return;}
+ const mailtoUrl='mailto:contact@homevibe-shop.com?subject='+encodeURIComponent('Inscription newsletter HomeVibe')+'&body='+encodeURIComponent('Nouvel inscrit newsletter : '+email);
+ try{window.open(mailtoUrl,'_blank');}catch(err){console.error('[HomeVibe] newsletter mailto error',err);}
  showToast('Merci ! Vous recevrez nos offres bientot.');
  input.value='';
 }
