@@ -93,6 +93,7 @@ const downloadBtn = document.getElementById('downloadBtn');
 
 let originalFile = null;
 let originalImage = null;
+let currentObjectUrl = null;
 
 dropzone.addEventListener('click', () => fileInput.click());
 dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
@@ -159,7 +160,9 @@ function compress() {
 
   canvas.toBlob(blob => {
     if (!blob) return;
+    if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
     const url = URL.createObjectURL(blob);
+    currentObjectUrl = url;
     afterImg.src = url;
     afterSize.textContent = `${targetW}×${targetH} — ${formatBytes(blob.size)}`;
     downloadBtn.href = url;
