@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVibe - Pub Projecteur Galaxy LED</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;background:#0a0612;overflow:hidden}
+  .ad{
+    position:relative;width:100%;height:100vh;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    font-family:'Arial',sans-serif;color:#fff;
+  }
+  .bgimg{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;
+  }
+  .overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(10,6,18,0.15) 0%,rgba(10,6,18,0.15) 45%,rgba(10,6,18,0.92) 100%);
+  }
+  .content{position:relative;padding:28px 26px 40px;z-index:2}
+  .badge{
+    display:inline-block;background:#7c3aed;color:#fff;font-weight:800;
+    font-size:0.85rem;padding:6px 14px;border-radius:100px;margin-bottom:14px;
+    letter-spacing:0.02em;
+  }
+  h1{font-size:2rem;font-weight:900;line-height:1.15;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,0.5)}
+  p.sub{font-size:1.05rem;color:#e5d9ff;margin-bottom:20px;line-height:1.4}
+  .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:22px}
+  .price-now{font-size:2.2rem;font-weight:900;color:#fff}
+  .price-old{font-size:1.2rem;color:#b39ddb;text-decoration:line-through}
+  .price-badge{background:#fff;color:#7c3aed;font-weight:800;font-size:0.9rem;padding:4px 10px;border-radius:8px}
+  .cta{
+    display:block;text-align:center;background:linear-gradient(90deg,#7c3aed,#a78bfa);
+    color:#fff;font-weight:800;font-size:1.15rem;padding:18px;border-radius:14px;
+    box-shadow:0 8px 30px rgba(124,58,237,0.5);
+  }
+  .brand{position:absolute;top:24px;left:26px;z-index:3;font-weight:900;font-size:1.2rem;letter-spacing:-0.02em}
+  .brand span{color:#a78bfa}
+  .rating{position:absolute;top:24px;right:26px;z-index:3;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);padding:6px 12px;border-radius:100px;font-size:0.85rem;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="ad">
+  <img class="bgimg" src="https://m.media-amazon.com/images/I/91hIlAZuQjL._AC_UL450_SY450_QL70_.jpg" alt="Projecteur Galaxy LED HomeVibe">
+  <div class="overlay"></div>
+  <div class="brand">Home<span>Vibe</span></div>
+  <div class="rating">⭐ 4.9 (512 avis)</div>
+  <div class="content">
+    <span class="badge">🔥 Le plus viral sur TikTok</span>
+    <h1>Transforme ta chambre en galaxie</h1>
+    <p class="sub">16 millions de couleurs · Sync musicale Bluetooth · Rotation 360°</p>
+    <div class="price-row">
+      <span class="price-now">34,99 €</span>
+      <span class="price-old">69,99 €</span>
+      <span class="price-badge">-50%</span>
+    </div>
+    <div class="cta">Découvrir → homevibe-shop</div>
+  </div>
+</div>
+
+</body>
+</html>
