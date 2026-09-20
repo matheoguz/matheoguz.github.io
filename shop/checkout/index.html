@@ -137,7 +137,7 @@
     </header>
 
     <div class="demo-badge" id="demoBadge" style="display:none;">
-        Mode Demo - Paiement Simule | Configurez votre cle Stripe pour activer les vrais paiements
+        Paiement via PayPal — deux onglets vont s'ouvrir (email de commande + PayPal)
     </div>
 
     <main class="checkout-container" id="checkoutContent">
@@ -305,7 +305,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (HomeVibeStripe.isDemoMode()) {
                 document.getElementById('demoBadge').style.display = 'block';
-                document.getElementById('payButtonText').textContent = 'Payer (Mode Demo)';
+                document.getElementById('payButtonText').textContent = 'Payer avec PayPal';
             }
 
             cartItems = HomeVibeStripe.getCart();
@@ -412,27 +412,15 @@
             try {
                 var customerInfo = getCustomerInfo();
 
-                if (typeof OrderManager !== 'undefined') {
-                    var totals = HomeVibeStripe.calculateTotal(cartItems, currentDelivery);
-                    OrderManager.createOrder({
-                        items: cartItems,
-                        customer: customerInfo,
-                        delivery: currentDelivery,
-                        subtotal: totals.subtotal,
-                        deliveryFee: totals.delivery,
-                        total: totals.total,
-                        paymentMethod: HomeVibeStripe.isDemoMode() ? 'demo' : 'stripe',
-                        paymentStatus: HomeVibeStripe.isDemoMode() ? 'completed' : 'pending'
-                    });
-                }
-
+                // HomeVibeStripe.createCheckoutSession() cree deja la commande
+                // via OrderManager (methode 'paypal' ou 'stripe' selon la config).
                 await HomeVibeStripe.createCheckoutSession(cartItems, customerInfo, currentDelivery);
 
             } catch (error) {
                 console.error('[HomeVibe] Erreur paiement:', error);
                 showError('Une erreur est survenue. Veuillez reessayer ou contacter notre support.');
                 btn.disabled = false;
-                btnText.textContent = HomeVibeStripe.isDemoMode() ? 'Payer (Mode Demo)' : 'Payer avec Stripe';
+                btnText.textContent = HomeVibeStripe.isDemoMode() ? 'Payer avec PayPal' : 'Payer avec Stripe';
                 spinner.style.display = 'none';
             }
         }

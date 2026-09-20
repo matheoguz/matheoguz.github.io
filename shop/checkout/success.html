@@ -97,11 +97,11 @@
             </div>
         </div>
 
-        <h1 class="success-title">Merci pour votre commande !</h1>
-        <p class="success-subtitle">Votre paiement a ete traite avec succes.</p>
+        <h1 class="success-title">Votre commande est enregistree !</h1>
+        <p class="success-subtitle">Finalisez le paiement dans l'onglet PayPal qui vient de s'ouvrir.</p>
 
         <div class="demo-notice" id="demoNotice" style="display:none;">
-            Ceci est une commande de demonstration. En production, un vrai paiement Stripe sera traite.
+            Un onglet PayPal s'est ouvert avec le montant exact de votre commande. Si vous ne le voyez pas (bloqueur de popup), verifiez les onglets ouverts par votre navigateur ou contactez-nous avec votre numero de commande.
         </div>
 
         <div class="order-number-display">
@@ -119,18 +119,18 @@
         <div class="info-cards">
             <div class="info-card">
                 <div class="icon">&#9993;&#65039;</div>
-                <div class="title">Confirmation par email</div>
-                <div class="desc">Vous recevrez un email de confirmation a l'adresse indiquee lors de la commande.</div>
+                <div class="title">Verification manuelle</div>
+                <div class="desc">Nous verifions la reception de votre paiement PayPal puis confirmons votre commande par email sous peu.</div>
             </div>
             <div class="info-card">
                 <div class="icon">&#128666;</div>
-                <div class="title">Expedition sous 24-48h</div>
-                <div class="desc">Votre commande sera preparee et expediee dans un delai de 24 a 48 heures ouvrees.</div>
+                <div class="title">Expedition</div>
+                <div class="desc">Delai de livraison estime : 15 a 25 jours ouvres (produit expedie depuis notre fournisseur).</div>
             </div>
             <div class="info-card">
                 <div class="icon">&#128230;</div>
                 <div class="title">Suivi de colis</div>
-                <div class="desc">Un numero de suivi vous sera communique par email des l'expedition.</div>
+                <div class="desc">Un numero de suivi vous sera communique par email des que la commande est expediee.</div>
             </div>
             <div class="info-card">
                 <div class="icon">&#128172;</div>
@@ -159,7 +159,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             var params = new URLSearchParams(window.location.search);
-            if (params.get('demo') === 'true') {
+            if (params.get('demo') === 'true' || params.get('paypal') === 'true') {
                 document.getElementById('demoNotice').style.display = 'block';
             }
 

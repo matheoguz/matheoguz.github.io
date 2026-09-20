@@ -150,9 +150,9 @@ function calculateTotal(items, deliveryMethod) {
  * @returns {Promise} Redirection vers Stripe Checkout
  */
 async function createCheckoutSession(items, customerInfo, deliveryMethod) {
-    // En mode demo, simuler un paiement reussi
+    // Stripe n'est pas configure (pas de cle reelle) : on utilise PayPal a la place
     if (isDemoMode()) {
-        return simulateDemoPayment(items, customerInfo, deliveryMethod);
+        return processPaypalPayment(items, customerInfo, deliveryMethod);
     }
 
     // --- MODE PRODUCTION ---
@@ -246,43 +246,76 @@ async function redirectToCheckout(sessionId) {
 }
 
 // =============================================================================
-// Simulation de paiement en mode demo
+// Paiement via PayPal.me (pas de cle Stripe configuree)
 // =============================================================================
 
+// Remplacez par votre propre lien PayPal.me si different
+var PAYPAL_ME_USERNAME = 'MatheoGuzzi';
+// Adresse qui recoit le recapitulatif de commande (nom, adresse, articles)
+var ORDER_NOTIFICATION_EMAIL = 'contact@homevibe-shop.com';
+
 /**
- * Simule un paiement reussi en mode demo
- * Sauvegarde la commande et redirige vers la page de succes
+ * Traite le paiement via PayPal.me : sauvegarde la commande, envoie le
+ * recapitulatif par email au vendeur, ouvre PayPal.me avec le montant exact,
+ * puis redirige vers la page de succes.
  *
  * @param {Array} items - Articles du panier
  * @param {Object} customerInfo - Informations client
  * @param {string} deliveryMethod - Methode de livraison
  */
-function simulateDemoPayment(items, customerInfo, deliveryMethod) {
-    console.log('[HomeVibe] Mode Demo - Simulation de paiement...');
-
+function processPaypalPayment(items, customerInfo, deliveryMethod) {
     var totals = calculateTotal(items, deliveryMethod);
+    var order = null;
 
-    // Sauvegarder la commande via le gestionnaire de commandes
     if (typeof OrderManager !== 'undefined') {
-        var order = OrderManager.createOrder({
+        order = OrderManager.createOrder({
             items: items,
             customer: customerInfo,
             delivery: deliveryMethod,
             subtotal: totals.subtotal,
             deliveryFee: totals.delivery,
             total: totals.total,
-            paymentMethod: 'demo',
-            paymentStatus: 'completed'
+            paymentMethod: 'paypal',
+            paymentStatus: 'pending'
         });
-        console.log('[HomeVibe] Commande demo creee:', order.orderNumber);
     }
 
-    // Simuler un delai de traitement (1.5 secondes)
+    var orderRef = order ? order.orderNumber : ('HV-' + Date.now());
+
+    // Email recapitulatif au vendeur (nom, adresse, articles, total, reference)
+    var itemsList = items.map(function(item) {
+        var qty = parseInt(item.qty) || 1;
+        return '- ' + (item.name || 'Produit') + ' x' + qty + ' = ' + formatPrice((parseFloat(item.price) || 0) * qty);
+    }).join('\n');
+
+    var body = 'Nouvelle commande HomeVibe (' + orderRef + ')\n\n' +
+        'Client : ' + customerInfo.firstName + ' ' + customerInfo.lastName + '\n' +
+        'Email : ' + customerInfo.email + '\n' +
+        'Telephone : ' + (customerInfo.phone || 'non renseigne') + '\n' +
+        'Adresse : ' + customerInfo.address + ', ' + customerInfo.postalCode + ' ' + customerInfo.city + ', ' + customerInfo.country + '\n' +
+        'Livraison : ' + (deliveryMethod === 'express' ? 'Express (3-7 jours)' : 'Standard (7-14 jours)') + '\n\n' +
+        'Articles :\n' + itemsList + '\n\n' +
+        'Sous-total : ' + formatPrice(totals.subtotal) + '\n' +
+        'Livraison : ' + formatPrice(totals.delivery) + '\n' +
+        'TOTAL : ' + formatPrice(totals.total) + '\n\n' +
+        'Paiement attendu via PayPal.me pour ce montant exact — verifiez la reception avant expedition.';
+
+    var mailtoUrl = 'mailto:' + ORDER_NOTIFICATION_EMAIL +
+        '?subject=' + encodeURIComponent('Commande HomeVibe ' + orderRef) +
+        '&body=' + encodeURIComponent(body);
+
+    // PayPal.me avec le montant exact du panier
+    var paypalUrl = 'https://paypal.me/' + PAYPAL_ME_USERNAME + '/' + totals.total.toFixed(2) + 'EUR';
+
+    // Ouvre le recap email (client mail) et PayPal (nouvel onglet) sans bloquer la redirection
+    try { window.open(mailtoUrl, '_blank'); } catch (e) { console.error('[HomeVibe] mailto error', e); }
+    window.open(paypalUrl, '_blank');
+
     return new Promise(function(resolve) {
         setTimeout(function() {
-            window.location.href = '/shop/checkout/success.html?demo=true';
+            window.location.href = '/shop/checkout/success.html?paypal=true&ref=' + encodeURIComponent(orderRef);
             resolve();
-        }, 1500);
+        }, 800);
     });
 }
 
