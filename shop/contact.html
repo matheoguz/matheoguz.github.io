@@ -128,7 +128,80 @@ h1{font-size:2rem;margin:2rem 0 0.5rem;color:var(--text)}
 </p>
 </footer>
 <script>
-document.getElementById('contactForm').addEventListener('submit',function(e){e.preventDefault();const toast=document.getElementById('toast');toast.classList.add('show');this.reset();setTimeout(()=>toast.classList.remove('show'),3000)});
+/*
+ * Ce site est 100% statique (GitHub Pages) : il n'y a pas de serveur pour
+ * traiter ce formulaire. Par defaut, le formulaire ouvre le client email
+ * du visiteur (mailto:) avec le message pre-rempli, ce qui fonctionne
+ * sans aucune configuration.
+ *
+ * Pour recevoir les messages directement dans une boite de reception ou
+ * un tableau de bord (sans mailto), vous pouvez brancher un service tiers
+ * gratuit comme Formspree (https://formspree.io) :
+ *   1. Creez un compte sur https://formspree.io et un formulaire
+ *   2. Remplacez FORMSPREE_ENDPOINT ci-dessous par l'URL fournie
+ *      (ex: https://formspree.io/f/xxxxxxxx)
+ *   3. Decommentez le bloc "MODE FORMSPREE" plus bas
+ */
+const FORMSPREE_ENDPOINT = ''; // ex: 'https://formspree.io/f/xxxxxxxx'
+const CONTACT_EMAIL = 'contact@homevibe-shop.com';
+
+document.getElementById('contactForm').addEventListener('submit', function(e){
+ e.preventDefault();
+ const form = this;
+ const toast = document.getElementById('toast');
+ const data = new FormData(form);
+
+ if (FORMSPREE_ENDPOINT) {
+  // --- MODE FORMSPREE ---
+  fetch(FORMSPREE_ENDPOINT, {
+   method: 'POST',
+   headers: { 'Accept': 'application/json' },
+   body: data
+  }).then(function(res){
+   if (res.ok) {
+    toast.textContent = 'Message envoye avec succes !';
+    form.reset();
+   } else {
+    toast.textContent = "Erreur d'envoi. Merci de reessayer.";
+   }
+   toast.classList.add('show');
+   setTimeout(()=>toast.classList.remove('show'), 3000);
+  }).catch(function(){
+   toast.textContent = "Erreur d'envoi. Merci de reessayer.";
+   toast.classList.add('show');
+   setTimeout(()=>toast.classList.remove('show'), 3000);
+  });
+  return;
+ }
+
+ // --- MODE PAR DEFAUT : ouvre le client email du visiteur ---
+ const prenom = (data.get('prenom') || '').toString();
+ const nom = (data.get('nom') || '').toString();
+ const email = (data.get('email') || '').toString();
+ const sujet = (data.get('sujet') || '').toString();
+ const commande = (data.get('commande') || '').toString();
+ const message = (data.get('message') || '').toString();
+
+ const subject = 'Contact HomeVibe - ' + (sujet || 'Question');
+ const bodyLines = [
+  'Nom : ' + prenom + ' ' + nom,
+  'Email : ' + email,
+  commande ? 'Numero de commande : ' + commande : null,
+  '',
+  message
+ ].filter(function(l){ return l !== null; });
+
+ const mailtoUrl = 'mailto:' + encodeURIComponent(CONTACT_EMAIL) +
+  '?subject=' + encodeURIComponent(subject) +
+  '&body=' + encodeURIComponent(bodyLines.join('\n'));
+
+ window.location.href = mailtoUrl;
+
+ toast.textContent = 'Ouverture de votre client email...';
+ toast.classList.add('show');
+ form.reset();
+ setTimeout(()=>toast.classList.remove('show'), 3000);
+});
 </script>
 </body>
 </html>
