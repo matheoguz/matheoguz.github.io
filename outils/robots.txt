@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /outils/
+
+Sitemap: https://matheoguz.github.io/outils/sitemap.xml

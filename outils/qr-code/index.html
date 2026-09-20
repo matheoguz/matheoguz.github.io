@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur de QR code gratuit — Outilio</title>
+<meta name="description" content="Créez un QR code gratuitement pour un lien, un texte, un email ou un numéro de téléphone. Téléchargement en PNG, aucune inscription requise.">
+<link rel="canonical" href="https://matheoguz.github.io/outils/qr-code/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  #qrcode{display:flex;justify-content:center;margin-top:20px;background:#fff;border-radius:10px;padding:16px;width:fit-content}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">▦ Générateur de QR code</h1>
+    <p class="tool-desc">Générez un QR code pour un lien, un texte ou vos coordonnées. Le code est créé directement dans votre navigateur.</p>
+
+    <div class="card">
+      <label for="content">Contenu du QR code</label>
+      <textarea id="content" rows="3" placeholder="https://exemple.com ou n'importe quel texte">https://matheoguz.github.io</textarea>
+
+      <div class="row">
+        <div>
+          <label for="size">Taille (px)</label>
+          <select id="size">
+            <option value="200">200×200</option>
+            <option value="300" selected>300×300</option>
+            <option value="500">500×500</option>
+          </select>
+        </div>
+        <div>
+          <label for="colorDark">Couleur</label>
+          <input type="text" id="colorDark" value="#000000">
+        </div>
+      </div>
+
+      <button class="btn" id="generateBtn">Générer le QR code</button>
+
+      <div id="qrcode"></div>
+
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn secondary" id="downloadBtn">Télécharger en PNG</button>
+      </div>
+      <p class="muted-small" id="fallbackMsg" style="display:none;color:var(--warn)">La bibliothèque de génération n'a pas pu se charger (connexion bloquée ?). Réessayez ou vérifiez votre connexion.</p>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+let qr = null;
+const qrDiv = document.getElementById('qrcode');
+
+function generate() {
+  if (typeof QRCode === 'undefined') {
+    document.getElementById('fallbackMsg').style.display = 'block';
+    return;
+  }
+  const text = document.getElementById('content').value.trim() || ' ';
+  const size = parseInt(document.getElementById('size').value, 10);
+  const color = document.getElementById('colorDark').value || '#000000';
+
+  qrDiv.innerHTML = '';
+  qr = new QRCode(qrDiv, {
+    text: text,
+    width: size,
+    height: size,
+    colorDark: color,
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+document.getElementById('generateBtn').addEventListener('click', generate);
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const canvas = qrDiv.querySelector('canvas');
+  if (!canvas) { generate(); return; }
+  const link = document.createElement('a');
+  link.download = 'qrcode.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+window.addEventListener('load', generate);
+</script>
+</body>
+</html>

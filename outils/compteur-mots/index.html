@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compteur de mots et de caractères gratuit — Outilio</title>
+<meta name="description" content="Comptez les mots, caractères, phrases et paragraphes d'un texte, avec estimation du temps de lecture. Gratuit et instantané.">
+<link rel="canonical" href="https://matheoguz.github.io/outils/compteur-mots/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:16px}
+  .stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+  .stat .num{font-size:1.5rem;font-weight:800;color:var(--accent2)}
+  .stat .label{font-size:0.78rem;color:var(--muted);margin-top:4px}
+  textarea#textInput{min-height:220px;resize:vertical}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">📝 Compteur de mots &amp; caractères</h1>
+    <p class="tool-desc">Collez votre texte pour obtenir instantanément le nombre de mots, caractères, phrases et le temps de lecture estimé.</p>
+
+    <div class="card">
+      <label for="textInput">Votre texte</label>
+      <textarea id="textInput" placeholder="Collez ou tapez votre texte ici..."></textarea>
+
+      <div class="stats">
+        <div class="stat"><div class="num" id="statWords">0</div><div class="label">Mots</div></div>
+        <div class="stat"><div class="num" id="statChars">0</div><div class="label">Caractères</div></div>
+        <div class="stat"><div class="num" id="statCharsNoSpace">0</div><div class="label">Sans espaces</div></div>
+        <div class="stat"><div class="num" id="statSentences">0</div><div class="label">Phrases</div></div>
+        <div class="stat"><div class="num" id="statParagraphs">0</div><div class="label">Paragraphes</div></div>
+        <div class="stat"><div class="num" id="statReadTime">0 min</div><div class="label">Lecture (≈200 mots/min)</div></div>
+      </div>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+const textInput = document.getElementById('textInput');
+
+function analyze() {
+  const text = textInput.value;
+
+  const trimmed = text.trim();
+  const words = trimmed.length ? trimmed.split(/\s+/).filter(Boolean) : [];
+  const chars = text.length;
+  const charsNoSpace = text.replace(/\s/g, '').length;
+  const sentences = trimmed.length ? (trimmed.match(/[^.!?]+[.!?]+/g) || (trimmed.length ? [trimmed] : [])).length : 0;
+  const paragraphs = trimmed.length ? trimmed.split(/\n\s*\n/).filter(p => p.trim().length).length : 0;
+  const readMinutes = words.length ? Math.max(1, Math.ceil(words.length / 200)) : 0;
+
+  document.getElementById('statWords').textContent = words.length;
+  document.getElementById('statChars').textContent = chars;
+  document.getElementById('statCharsNoSpace').textContent = charsNoSpace;
+  document.getElementById('statSentences').textContent = sentences;
+  document.getElementById('statParagraphs').textContent = paragraphs;
+  document.getElementById('statReadTime').textContent = readMinutes + ' min';
+}
+
+textInput.addEventListener('input', analyze);
+analyze();
+</script>
+</body>
+</html>

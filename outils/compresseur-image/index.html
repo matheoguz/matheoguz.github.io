@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compresseur d'image gratuit en ligne (JPEG, PNG, WebP) — Outilio</title>
+<meta name="description" content="Compressez vos images en ligne gratuitement, sans les envoyer sur un serveur. Réduisez le poids de vos JPEG, PNG ou WebP directement dans votre navigateur.">
+<link rel="canonical" href="https://matheoguz.github.io/outils/compresseur-image/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .dropzone{
+    border:2px dashed var(--border);border-radius:14px;padding:40px 20px;
+    text-align:center;color:var(--muted);cursor:pointer;transition:border-color .15s;
+  }
+  .dropzone.drag{border-color:var(--accent);color:var(--text)}
+  .preview-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px}
+  .preview-col{flex:1;min-width:220px;text-align:center}
+  .preview-col img{max-width:100%;border-radius:10px;border:1px solid var(--border)}
+  .preview-col p{color:var(--muted);font-size:0.85rem}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/outils/">Outil<span>io</span></a>
+    <nav class="top"><a href="/outils/">Tous les outils</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap tool-page">
+    <h1 class="tool-title">🖼️ Compresseur d'image</h1>
+    <p class="tool-desc">Réduisez le poids de vos photos avant de les envoyer par email ou de les mettre en ligne. Le traitement se fait entièrement sur votre appareil : vos images ne quittent jamais votre navigateur.</p>
+
+    <div class="card">
+      <div class="dropzone" id="dropzone">
+        <p>📁 Cliquez pour choisir une image, ou glissez-la ici</p>
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+      </div>
+
+      <div id="controls" style="display:none">
+        <label for="quality">Qualité : <strong id="qualityVal">75</strong>%</label>
+        <input type="range" id="quality" min="10" max="100" value="75">
+
+        <label for="format">Format de sortie</label>
+        <select id="format">
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/webp">WebP</option>
+          <option value="image/png">PNG</option>
+        </select>
+
+        <label for="maxWidth">Largeur max (px, 0 = pas de redimensionnement)</label>
+        <input type="number" id="maxWidth" value="1920" min="0" step="10">
+
+        <div class="preview-row">
+          <div class="preview-col">
+            <p>Avant</p>
+            <img id="beforeImg" alt="Image avant compression">
+            <p id="beforeSize"></p>
+          </div>
+          <div class="preview-col">
+            <p>Après</p>
+            <img id="afterImg" alt="Image après compression">
+            <p id="afterSize"></p>
+          </div>
+        </div>
+
+        <a class="btn" id="downloadBtn" download="image-compressee.jpg">Télécharger l'image compressée</a>
+      </div>
+    </div>
+
+    <div class="adslot">Emplacement publicitaire (à activer via Google AdSense)</div>
+  </div>
+</main>
+
+<footer class="site"><div class="wrap"><p>Outilio — <a href="/outils/">Tous les outils</a></p></div></footer>
+
+<script>
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const controls = document.getElementById('controls');
+const beforeImg = document.getElementById('beforeImg');
+const afterImg = document.getElementById('afterImg');
+const beforeSize = document.getElementById('beforeSize');
+const afterSize = document.getElementById('afterSize');
+const qualitySlider = document.getElementById('quality');
+const qualityVal = document.getElementById('qualityVal');
+const formatSelect = document.getElementById('format');
+const maxWidthInput = document.getElementById('maxWidth');
+const downloadBtn = document.getElementById('downloadBtn');
+
+let originalFile = null;
+let originalImage = null;
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files.length) handleFile(e.target.files[0]);
+});
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' o';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' Ko';
+  return (bytes/(1024*1024)).toFixed(2) + ' Mo';
+}
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Merci de choisir un fichier image.');
+    return;
+  }
+  originalFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      originalImage = img;
+      beforeImg.src = e.target.result;
+      beforeSize.textContent = `${img.width}×${img.height} — ${formatBytes(file.size)}`;
+      controls.style.display = 'block';
+      compress();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function compress() {
+  if (!originalImage) return;
+  const quality = parseInt(qualitySlider.value, 10) / 100;
+  const format = formatSelect.value;
+  const maxWidth = parseInt(maxWidthInput.value, 10) || 0;
+
+  let targetW = originalImage.width;
+  let targetH = originalImage.height;
+  if (maxWidth > 0 && targetW > maxWidth) {
+    const scale = maxWidth / targetW;
+    targetW = maxWidth;
+    targetH = Math.round(targetH * scale);
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  if (format === 'image/jpeg') {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
+  }
+  ctx.drawImage(originalImage, 0, 0, targetW, targetH);
+
+  canvas.toBlob(blob => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    afterImg.src = url;
+    afterSize.textContent = `${targetW}×${targetH} — ${formatBytes(blob.size)}`;
+    downloadBtn.href = url;
+    const ext = format === 'image/png' ? 'png' : (format === 'image/webp' ? 'webp' : 'jpg');
+    downloadBtn.download = `image-compressee.${ext}`;
+  }, format, format === 'image/png' ? undefined : quality);
+}
+
+qualitySlider.addEventListener('input', () => { qualityVal.textContent = qualitySlider.value; compress(); });
+formatSelect.addEventListener('change', compress);
+maxWidthInput.addEventListener('change', compress);
+</script>
+</body>
+</html>
