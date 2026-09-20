@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumira — La lampe coucher de soleil qui transforme votre pièce</title>
+<meta name="description" content="Lumira recrée les couleurs d'un coucher de soleil dans votre intérieur. Projection LED haute définition, rotation 180°, parfaite pour l'ambiance, les photos et les vidéos. Livraison, paiement sécurisé.">
+<link rel="canonical" href="https://matheoguz.github.io/lumira/">
+<meta property="og:title" content="Lumira — La lampe coucher de soleil">
+<meta property="og:description" content="Recréez les couleurs magiques d'un coucher de soleil dans votre intérieur, à toute heure.">
+<meta property="og:image" content="https://i5.walmartimages.com/seo/Sunset-Lamp-Projector-Rainbow-Light-180-Degree-Rotation-Projection-Led-Night-Light-Photography-Selfie-Home-Living-Room-Bedroom-Decor-USB-Charging-Rai_914695f5-9881-4242-9ac1-473dbf4cbf83.06e04cb58cd08f868d35155f056daf18.jpeg">
+<meta property="og:type" content="product">
+<meta name="robots" content="index,follow">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sunset1:#ff7e5f;
+  --sunset2:#feb47b;
+  --sunset3:#ff6a88;
+  --ink:#1c1410;
+  --paper:#fff8f3;
+  --muted:#7a6a5f;
+  --border:#f0ddd0;
+  --card:#ffffff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.65}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0 0 .4em}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+a{color:inherit}
+
+header.top{padding:18px 0;position:sticky;top:0;background:rgba(255,248,243,.92);backdrop-filter:blur(6px);z-index:20;border-bottom:1px solid var(--border)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
+.brand span{background:linear-gradient(90deg,var(--sunset1),var(--sunset3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.cta-top{background:linear-gradient(90deg,var(--sunset1),var(--sunset3));color:#fff;border:none;border-radius:100px;padding:10px 22px;font-weight:600;font-size:.9rem;text-decoration:none}
+
+.hero{padding:60px 0 40px;text-align:center}
+.hero .eyebrow{color:var(--sunset3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
+.hero h1{font-size:2.6rem;max-width:720px;margin:14px auto 16px}
+.hero p.sub{max-width:560px;margin:0 auto 26px;color:var(--muted);font-size:1.05rem}
+.hero-img{max-width:640px;width:100%;border-radius:20px;box-shadow:0 30px 60px -20px rgba(255,110,80,.35)}
+
+.cta-primary{
+  display:inline-block;background:linear-gradient(90deg,var(--sunset1),var(--sunset3));
+  color:#fff;font-weight:700;font-size:1.05rem;border:none;border-radius:100px;
+  padding:16px 36px;text-decoration:none;margin-top:10px;
+}
+.price-line{margin-top:14px;color:var(--muted);font-size:.9rem}
+.price-line strike{opacity:.6;margin-right:8px}
+.price-now{color:var(--ink);font-weight:700;font-size:1.1rem}
+
+section{padding:50px 0}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px}
+
+.benefits{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:30px}
+.benefit{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.benefit .num{font-family:'Fraunces',serif;font-size:1.6rem;color:var(--sunset1);font-weight:700}
+.benefit h3{font-size:1.05rem;margin-top:6px}
+.benefit p{color:var(--muted);font-size:.92rem;margin:0}
+
+.how{background:var(--card);border-radius:24px;padding:40px;margin-top:20px;border:1px solid var(--border)}
+.how ol{padding-left:20px;color:var(--muted)}
+.how li{margin-bottom:10px}
+
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:10px 30px;margin-top:20px}
+.specs div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--border);padding:10px 0;font-size:.92rem}
+.specs div span:first-child{color:var(--muted)}
+
+.trust{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;margin-top:30px;color:var(--muted);font-size:.85rem}
+.trust div{display:flex;align-items:center;gap:8px}
+
+.faq details{border-bottom:1px solid var(--border);padding:16px 0}
+.faq summary{cursor:pointer;font-weight:600;font-size:1rem}
+.faq p{color:var(--muted);margin:10px 0 0}
+
+.final-cta{text-align:center;background:linear-gradient(135deg,var(--sunset1),var(--sunset3));border-radius:28px;padding:56px 24px;color:#fff}
+.final-cta h2{color:#fff}
+.final-cta .cta-primary{background:#fff;color:var(--sunset1)}
+
+footer.site{padding:30px 0;text-align:center;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);margin-top:20px}
+footer.site a{color:var(--muted)}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.9rem}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .specs{grid-template-columns:1fr}
+  .how{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Lum<span>ira</span></div>
+    <a class="cta-top" href="#commander">Commander</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="eyebrow">Lumira · Veilleuse coucher de soleil</div>
+    <h1>Le coucher de soleil, dans votre chambre, à toute heure</h1>
+    <p class="sub">Une projection LED qui recrée les teintes chaudes d'un coucher de soleil sur vos murs — pour l'ambiance, la déco, ou vos photos et vidéos.</p>
+    <img class="hero-img" src="https://i5.walmartimages.com/seo/Sunset-Lamp-Projector-Rainbow-Light-180-Degree-Rotation-Projection-Led-Night-Light-Photography-Selfie-Home-Living-Room-Bedroom-Decor-USB-Charging-Rai_914695f5-9881-4242-9ac1-473dbf4cbf83.06e04cb58cd08f868d35155f056daf18.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" alt="Lampe Lumira projetant un coucher de soleil dans une chambre">
+    <div>
+      <a class="cta-primary" href="https://paypal.me/MatheoGuzzi/24.99" target="_blank" rel="noopener" id="mainCta">Commander — 24,99 €</a>
+      <div class="price-line"><strike>49,99 €</strike><span class="price-now">24,99 €</span> · paiement sécurisé via PayPal</div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="gallery">
+      <img src="https://i5.walmartimages.com/seo/Sunset-Lamp-Projector-Rainbow-Light-180-Degree-Rotation-Projection-Led-Night-Light-Photography-Selfie-Home-Living-Room-Bedroom-Decor-USB-Charging-Rai_914695f5-9881-4242-9ac1-473dbf4cbf83.06e04cb58cd08f868d35155f056daf18.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF" alt="La lampe Lumira">
+      <img src="https://m.media-amazon.com/images/I/71Q+ZEUuAZL._AC_UL450_SY450_QL70_.jpg" alt="Ambiance salon avec Lumira">
+      <img src="https://i5.walmartimages.com/asr/d30f1495-081f-45d3-bf1f-8e2a6535c7c5.8139f7cae5eb1d99dcec466dd9466935.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF" alt="Mode coucher de soleil de Lumira">
+      <img src="https://m.media-amazon.com/images/I/61TppK0o88L._AC_UL450_SY450_QL70_.jpg" alt="Filtre arc-en-ciel de Lumira">
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2 style="text-align:center">Pourquoi Lumira</h2>
+    <div class="benefits">
+      <div class="benefit"><div class="num">01</div><h3>Une ambiance instantanée</h3><p>Allumez, et la pièce change de lumière en quelques secondes — parfait pour se détendre, méditer ou recevoir.</p></div>
+      <div class="benefit"><div class="num">02</div><h3>Pensée pour la photo/vidéo</h3><p>Rotation 180°, projection nette et large — l'accessoire déco qui rend vos contenus plus chaleureux.</p></div>
+      <div class="benefit"><div class="num">03</div><h3>Simple à utiliser</h3><p>Alimentation USB, aucun réglage compliqué. Vous l'allumez, elle fait le travail.</p></div>
+      <div class="benefit"><div class="num">04</div><h3>Un vrai cadeau</h3><p>Prix accessible, effet visuel immédiat — l'un des cadeaux déco les plus appréciés du moment.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="how">
+      <h2>Comment ça marche</h2>
+      <ol>
+        <li>Branchez Lumira sur n'importe quelle source USB (secteur, batterie, ordinateur).</li>
+        <li>Orientez la tête de projection vers le mur ou le plafond de votre choix.</li>
+        <li>Ajustez la rotation jusqu'à 180° pour couvrir toute la pièce.</li>
+        <li>Changez de filtre pour passer du coucher de soleil à l'effet arc-en-ciel.</li>
+      </ol>
+      <h2 style="margin-top:30px">Caractéristiques</h2>
+      <div class="specs">
+        <div><span>Alimentation</span><span>USB (5V)</span></div>
+        <div><span>Rotation</span><span>180°</span></div>
+        <div><span>Filtres inclus</span><span>4 teintes</span></div>
+        <div><span>Portée de projection</span><span>jusqu'à 4-5 m</span></div>
+        <div><span>Usage recommandé</span><span>intérieur, faible luminosité</span></div>
+        <div><span>Entretien</span><span>chiffon sec</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="commander">
+    <div class="how">
+      <h2>Après votre paiement</h2>
+      <p style="color:var(--muted)">PayPal ne nous transmet pas automatiquement votre adresse. Une fois le paiement effectué, indiquez-nous où livrer votre commande :</p>
+      <form id="orderForm" style="margin-top:16px;display:grid;gap:12px;max-width:480px">
+        <input type="text" id="ofName" placeholder="Nom complet" required style="padding:11px 13px;border-radius:10px;border:1px solid var(--border);font-family:inherit">
+        <input type="email" id="ofEmail" placeholder="Email" required style="padding:11px 13px;border-radius:10px;border:1px solid var(--border);font-family:inherit">
+        <input type="text" id="ofAddress" placeholder="Adresse complète (rue, code postal, ville, pays)" required style="padding:11px 13px;border-radius:10px;border:1px solid var(--border);font-family:inherit">
+        <input type="text" id="ofPaypalRef" placeholder="Référence de paiement PayPal (optionnel)" style="padding:11px 13px;border-radius:10px;border:1px solid var(--border);font-family:inherit">
+        <button type="submit" class="cta-primary" style="border:none;cursor:pointer;font-family:inherit">Envoyer mon adresse de livraison</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="trust">
+      <div>🔒 Paiement sécurisé PayPal</div>
+      <div>📦 Livraison suivie</div>
+      <div>↩️ Livraison 15-25 jours (dropshipping)</div>
+      <div>✉️ Support par email</div>
+    </div>
+  </section>
+
+  <section class="wrap faq">
+    <h2 style="text-align:center;margin-bottom:20px">Questions fréquentes</h2>
+    <details>
+      <summary>Dans quel délai je reçois ma commande ?</summary>
+      <p>Le produit est expédié directement depuis notre fournisseur. Comptez généralement 15 à 25 jours ouvrés pour la livraison en France/Belgique/Suisse.</p>
+    </details>
+    <details>
+      <summary>Comment se passe le paiement ?</summary>
+      <p>Le paiement se fait via PayPal, de façon sécurisée. Après votre commande, vous recevrez un email pour confirmer votre adresse de livraison.</p>
+    </details>
+    <details>
+      <summary>Puis-je me faire rembourser ?</summary>
+      <p>Oui, si le produit n'arrive pas ou est défectueux, contactez-nous et nous trouverons une solution. Voir nos <a href="/shop/legal/retours.html">conditions de retour</a>.</p>
+    </details>
+    <details>
+      <summary>La lampe fonctionne-t-elle en plein jour ?</summary>
+      <p>L'effet est plus marqué dans une pièce sombre ou en soirée. En plein jour avec beaucoup de lumière ambiante, la projection sera moins visible.</p>
+    </details>
+  </section>
+
+  <section class="wrap">
+    <div class="final-cta">
+      <h2>Prête à changer l'ambiance de votre pièce ?</h2>
+      <p style="max-width:420px;margin:0 auto 20px">24,99 € · paiement sécurisé · livraison suivie</p>
+      <a class="cta-primary" href="https://paypal.me/MatheoGuzzi/24.99" target="_blank" rel="noopener">Commander maintenant</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Lumira · Une marque HomeVibe. <a href="mailto:contact@homevibe-shop.com">Contact</a> · <a href="/shop/legal/mentions-legales.html">Mentions légales</a> · <a href="/shop/legal/retours.html">Retours</a></p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('orderForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('ofName').value;
+  const email = document.getElementById('ofEmail').value;
+  const address = document.getElementById('ofAddress').value;
+  const ref = document.getElementById('ofPaypalRef').value;
+  const subject = encodeURIComponent('Commande Lumira - ' + name);
+  const body = encodeURIComponent(
+    'Nouvelle commande Lumira (Veilleuse Coucher de Soleil, 24,99 EUR)\n\n' +
+    'Nom : ' + name + '\n' +
+    'Email : ' + email + '\n' +
+    'Adresse de livraison : ' + address + '\n' +
+    'Référence PayPal : ' + (ref || 'non renseignée')
+  );
+  window.location.href = 'mailto:contact@homevibe-shop.com?subject=' + subject + '&body=' + body;
+});
+</script>
+
+</body>
+</html>
