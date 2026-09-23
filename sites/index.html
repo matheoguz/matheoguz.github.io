@@ -80,8 +80,9 @@ section{padding:96px 0}
 .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .project{background:#fff;border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;text-decoration:none;transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column}
 .project:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(30,27,75,.1)}
-.project .screen{height:230px;border-bottom:1px solid var(--line)}
-.project iframe{width:1280px;height:900px;transform:scale(.2875)}
+.project .shot{height:230px;overflow:hidden;background:#e9eaf2}
+.project .shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.project:hover .shot img{transform:scale(1.05)}
 .project .info{padding:20px 22px 22px;flex:1;display:flex;flex-direction:column}
 .tag{align-self:flex-start;font-size:.75rem;font-weight:700;color:var(--brand);background:var(--soft);padding:.2rem .6rem;border-radius:6px;margin-bottom:.7rem}
 .project h3{font-size:1.15rem;margin-bottom:.3rem}
@@ -177,7 +178,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   .logo .name{display:none}
   .strip div:nth-child(3){border-left:0}
   .strip div:nth-child(n+3){border-top:1px solid var(--line)}
-  .project iframe{transform:scale(.2625)}
 }
 </style>
 </head>
@@ -211,9 +211,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     <div class="stage" aria-hidden="true">
       <div class="laptop">
         <div class="bar"><i></i><i></i><i></i><span>latabledolivia.fr</span></div>
-        <div class="screen"><iframe src="restaurant/index.html" tabindex="-1" title="Aperçu restaurant"></iframe></div>
+        <div class="screen"><iframe src="restaurant/index.html?v=3" tabindex="-1" title="Aperçu restaurant"></iframe></div>
       </div>
-      <div class="phone"><div class="screen"><iframe src="coiffeur/index.html" tabindex="-1" title="Aperçu salon"></iframe></div></div>
+      <div class="phone"><div class="screen"><iframe src="coiffeur/index.html?v=3" tabindex="-1" title="Aperçu salon"></iframe></div></div>
     </div>
   </div>
 </header>
@@ -236,15 +236,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     </div>
     <div class="projects">
       <a class="project" href="restaurant/">
-        <div class="screen"><iframe src="restaurant/index.html" tabindex="-1" title="Restaurant"></iframe></div>
+        <div class="shot"><img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=900&q=80" alt="Restaurant" loading="lazy"></div>
         <div class="info"><span class="tag">Restaurant</span><h3>La Table d'Olivia</h3><p>Carte, avis clients, horaires et réservation en un clic.</p><span class="go">Visiter le site →</span></div>
       </a>
       <a class="project" href="coiffeur/">
-        <div class="screen"><iframe src="coiffeur/index.html" tabindex="-1" title="Salon de coiffure"></iframe></div>
+        <div class="shot"><img src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?auto=format&fit=crop&w=900&q=80" alt="Salon de coiffure" loading="lazy"></div>
         <div class="info"><span class="tag">Salon de coiffure</span><h3>Studio Nova</h3><p>Grille de tarifs claire, présentation de l'équipe, prise de rendez-vous.</p><span class="go">Visiter le site →</span></div>
       </a>
       <a class="project" href="artisan/">
-        <div class="screen"><iframe src="artisan/index.html" tabindex="-1" title="Artisan plombier"></iframe></div>
+        <div class="shot"><img src="https://images.unsplash.com/photo-1676210134188-4c05dd172f89?auto=format&fit=crop&w=900&q=80" alt="Artisan plombier" loading="lazy"></div>
         <div class="info"><span class="tag">Artisan</span><h3>Martin Plomberie</h3><p>Bandeau urgence, services, zone d'intervention et demande de devis.</p><span class="go">Visiter le site →</span></div>
       </a>
     </div>
