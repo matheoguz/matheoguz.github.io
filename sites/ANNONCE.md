@@ -70,3 +70,5 @@ site vitrine, site web, restaurant, artisan, coiffeur
 3. Tu vérifies qu'il est beau (sur ton téléphone), tu l'envoies au client.
 4. Il demande des modifs → tu me les recopies, je les fais.
 5. Tu es payé. 💸
+
+⚠️ Quand tu as ton lien ComeUp/Fiverr, envoie-le moi : je le mets sur les boutons "Demander mon site" du portfolio.
