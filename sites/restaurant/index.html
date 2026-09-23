@@ -23,8 +23,8 @@ nav ul a:hover{color:var(--wine)}
 .btn{display:inline-block;background:var(--wine);color:#fff;text-decoration:none;padding:.8rem 1.6rem;border-radius:50px;font-weight:500;transition:transform .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn.ghost{background:transparent;border:1px solid #fff}
-.hero{min-height:85vh;display:flex;align-items:center;padding:4rem 5vw;color:#fff;
- background:radial-gradient(circle at 75% 30%,rgba(196,154,90,.35),transparent 50%),linear-gradient(135deg,#3a1d1d 0%,#5c2626 45%,#2b2420 100%)}
+.hero{min-height:88vh;display:flex;align-items:center;padding:4rem 5vw;color:#fff;
+ background:linear-gradient(90deg,rgba(25,15,12,.88) 0%,rgba(25,15,12,.55) 55%,rgba(25,15,12,.25) 100%),url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=2000&q=80') center/cover,#3a1d1d}
 .hero .inner{max-width:640px}
 .hero small{letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-size:.8rem}
 .hero h1{font-size:clamp(2.4rem,6vw,4.2rem);margin:1rem 0}
@@ -35,7 +35,9 @@ section{padding:5rem 5vw}
 .title small{color:var(--wine);letter-spacing:.2em;text-transform:uppercase;font-size:.75rem;font-weight:600}
 .title h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-top:.5rem}
 .about{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1100px;margin:auto}
-.about .visual{aspect-ratio:4/5;border-radius:12px;background:linear-gradient(160deg,#c49a5a,#7a2e2e);display:flex;align-items:center;justify-content:center;font-size:6rem}
+.about .visual{aspect-ratio:4/5;border-radius:12px;overflow:hidden;background:#7a2e2e;box-shadow:0 30px 60px rgba(43,36,32,.25)}
+.about .visual img,.band img{width:100%;height:100%;object-fit:cover;display:block}
+.band{height:420px;background:#2b2420}
 .about p{color:var(--muted);margin-bottom:1rem}
 .menu{background:#fff}
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:3rem;max-width:1100px;margin:auto}
@@ -77,7 +79,7 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
 
 <section id="about">
   <div class="about">
-    <div class="visual">🍷</div>
+    <div class="visual"><img src="https://images.unsplash.com/photo-1663530761401-15eefb544889?auto=format&fit=crop&w=1000&q=80" alt="Le chef dresse une assiette" loading="lazy"></div>
     <div>
       <div class="title" style="text-align:left;margin-bottom:1.5rem"><small>Notre histoire</small><h2>Une cuisine sincère depuis 2014</h2></div>
       <p>Chez Olivia, la carte change avec les saisons. Légumes du maraîcher voisin, viandes de l'éleveur du village, poissons de la criée : tout est préparé sur place, le matin même.</p>
@@ -109,6 +111,8 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
     </div>
   </div>
 </section>
+
+<div class="band"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80" alt="Assiette signature du restaurant" loading="lazy"></div>
 
 <section id="avis">
   <div class="title"><small>Ils sont venus</small><h2>4,8 / 5 sur Google</h2></div>

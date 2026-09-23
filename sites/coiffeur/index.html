@@ -29,7 +29,10 @@ nav ul a{text-decoration:none;color:var(--muted);font-size:.9rem;font-weight:500
 .hero p{color:var(--muted);font-size:1.08rem;margin-bottom:2rem;max-width:480px}
 .hero .actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
 .hero .note{font-size:.85rem;color:var(--muted)}
-.blob{aspect-ratio:1;border-radius:40% 60% 55% 45%/50% 40% 60% 50%;background:linear-gradient(135deg,#f6c9bd,#e8a598 45%,#b86b8e);display:flex;align-items:center;justify-content:center;font-size:7rem;box-shadow:0 30px 60px rgba(201,111,95,.25);animation:morph 10s ease-in-out infinite}
+.blob{aspect-ratio:1;border-radius:40% 60% 55% 45%/50% 40% 60% 50%;background:linear-gradient(135deg,#f6c9bd,#b86b8e);overflow:hidden;box-shadow:0 30px 60px rgba(201,111,95,.3);animation:morph 10s ease-in-out infinite}
+.blob img,.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery{display:grid;grid-template-columns:1.4fr 1fr;gap:1.2rem;max-width:1100px;margin:0 auto 3.5rem;height:380px}
+.gallery div{border-radius:24px;overflow:hidden;background:#f0dcd6}
 @keyframes morph{50%{border-radius:55% 45% 40% 60%/45% 60% 40% 55%}}
 section{padding:5rem 5vw}
 .head{max-width:1100px;margin:0 auto 3rem;display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap}
@@ -44,7 +47,7 @@ section{padding:5rem 5vw}
 .row b{color:var(--rose-d)}
 .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1100px;margin:auto}
 .member{text-align:center}
-.member .pic{aspect-ratio:1;border-radius:24px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-size:4rem}
+.member .pic{width:96px;height:96px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:1.6rem;color:#1c1b1f}
 .member:nth-child(1) .pic{background:#f6d5cc}.member:nth-child(2) .pic{background:#e5d4ec}.member:nth-child(3) .pic{background:#d6e6e0}
 .member span{color:var(--muted);font-size:.9rem}
 .cta{background:var(--ink);color:#fff;border-radius:28px;max-width:1100px;margin:0 auto 5rem;padding:3.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center}
@@ -53,7 +56,7 @@ section{padding:5rem 5vw}
 .cta ul{list-style:none;opacity:.85}
 .cta li{padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.1)}
 footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
-@media(max-width:800px){nav ul{display:none}.hero,.cta{grid-template-columns:1fr}.blob{max-width:320px;margin:auto}.member .pic{max-width:180px;margin:0 auto 1rem}.cta{margin:0 5vw 4rem;padding:2rem}}
+@media(max-width:800px){nav ul{display:none}.hero,.cta{grid-template-columns:1fr}.blob{max-width:320px;margin:auto}.gallery{grid-template-columns:1fr;height:auto}.gallery div{height:240px}.cta{margin:0 5vw 4rem;padding:2rem}}
 </style>
 </head>
 <body>
@@ -71,7 +74,7 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
     <p>Coupe, couleur, balayage et soins pour femmes, hommes et enfants. Une équipe passionnée, des produits respectueux de vos cheveux.</p>
     <div class="actions"><a href="tel:+33100000000" class="btn">Réserver maintenant</a><span class="note">⭐ 4,9/5 · plus de 320 avis</span></div>
   </div>
-  <div class="blob">✂️</div>
+  <div class="blob"><img src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?auto=format&fit=crop&w=1200&q=80" alt="Coiffeuse en pleine coupe"></div>
 </header>
 
 <section id="tarifs" class="prices">
@@ -96,11 +99,12 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
 </section>
 
 <section id="equipe">
+  <div class="gallery"><div><img src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=1400&q=80" alt="L'intérieur du salon" loading="lazy"></div><div><img src="https://images.unsplash.com/photo-1695527081848-1e46c06e6458?auto=format&fit=crop&w=900&q=80" alt="Coloration en cours" loading="lazy"></div></div>
   <div class="head"><h2>L'équipe</h2><p>Trois coiffeurs, formés aux dernières tendances, à votre écoute.</p></div>
   <div class="team">
-    <div class="member"><div class="pic">💇‍♀️</div><h3>Léa</h3><span>Fondatrice · Coloriste</span></div>
-    <div class="member"><div class="pic">💈</div><h3>Karim</h3><span>Barbier · Coupes homme</span></div>
-    <div class="member"><div class="pic">✨</div><h3>Inès</h3><span>Coiffure mariage · Soins</span></div>
+    <div class="member"><div class="pic">L</div><h3>Léa</h3><span>Fondatrice · Coloriste</span></div>
+    <div class="member"><div class="pic">K</div><h3>Karim</h3><span>Barbier · Coupes homme</span></div>
+    <div class="member"><div class="pic">I</div><h3>Inès</h3><span>Coiffure mariage · Soins</span></div>
   </div>
 </section>
 
