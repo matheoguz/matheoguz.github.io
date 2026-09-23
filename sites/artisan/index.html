@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Martin Plomberie — Plombier chauffagiste</title>
+<meta name="description" content="Plombier chauffagiste : dépannage rapide, fuite, chauffe-eau, rénovation de salle de bain. Devis gratuit.">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#0f3d6e;--blue2:#1b5fa6;--orange:#ff7a1a;--bg:#f4f7fb;--ink:#12202f;--muted:#5a6878}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+h1,h2,h3{font-family:'Archivo',sans-serif;line-height:1.15}
+.demo{background:#000;color:#fff;text-align:center;font-size:.8rem;padding:.4rem 1rem}
+.demo a{color:var(--orange)}
+.urgent{background:var(--orange);color:#fff;text-align:center;padding:.55rem 1rem;font-weight:600;font-size:.9rem}
+.urgent a{color:#fff}
+nav{position:sticky;top:0;z-index:10;background:#fff;display:flex;justify-content:space-between;align-items:center;padding:1rem 5vw;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.25rem;color:var(--blue);text-decoration:none}
+.logo span{color:var(--orange)}
+nav ul{display:flex;gap:1.8rem;list-style:none}
+nav ul a{text-decoration:none;color:var(--muted);font-weight:500;font-size:.92rem}
+.btn{display:inline-block;background:var(--orange);color:#fff;text-decoration:none;padding:.85rem 1.6rem;border-radius:8px;font-weight:600;transition:.2s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.outline{background:transparent;border:2px solid #fff}
+.hero{background:linear-gradient(120deg,var(--blue) 0%,var(--blue2) 100%);color:#fff;padding:5rem 5vw;position:relative;overflow:hidden}
+.hero::after{content:"🔧";position:absolute;right:6vw;top:50%;transform:translateY(-50%) rotate(-15deg);font-size:14rem;opacity:.12}
+.hero .inner{max-width:680px;position:relative;z-index:1}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);margin-bottom:1.2rem}
+.hero p{font-size:1.1rem;opacity:.9;margin-bottom:2rem}
+.hero .actions{display:flex;gap:1rem;flex-wrap:wrap}
+.badges{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:2.5rem;font-size:.9rem;opacity:.9}
+section{padding:5rem 5vw}
+.title{text-align:center;max-width:620px;margin:0 auto 3rem}
+.title h2{font-size:clamp(1.7rem,3.5vw,2.4rem);color:var(--blue)}
+.title p{color:var(--muted);margin-top:.6rem}
+.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;max-width:1150px;margin:auto}
+.service{background:#fff;border-radius:14px;padding:2rem;border-top:4px solid var(--orange);box-shadow:0 6px 24px rgba(15,61,110,.06)}
+.service .ico{font-size:2.2rem}
+.service h3{margin:.8rem 0 .5rem;color:var(--blue)}
+.service p{color:var(--muted);font-size:.95rem}
+.why{background:#fff}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:1100px;margin:auto;text-align:center}
+.why-grid .num{font-family:'Archivo',sans-serif;font-size:2.6rem;font-weight:800;color:var(--orange)}
+.why-grid p{color:var(--muted)}
+.zone{max-width:900px;margin:auto;text-align:center;color:var(--muted)}
+.zone .towns{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1.5rem}
+.zone .towns span{background:#fff;border:1px solid #dbe4ef;padding:.4rem 1rem;border-radius:50px;font-size:.9rem;color:var(--ink)}
+.contact{background:var(--blue);color:#fff}
+.contact .title h2{color:#fff}
+.contact .title p{color:rgba(255,255,255,.75)}
+form{max-width:620px;margin:auto;display:grid;gap:1rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+input,select,textarea{width:100%;padding:.9rem 1rem;border-radius:8px;border:0;font:inherit}
+textarea{min-height:120px;resize:vertical}
+form button{border:0;cursor:pointer;font:inherit;font-size:1rem}
+.sent{display:none;text-align:center;background:rgba(255,255,255,.1);padding:1rem;border-radius:8px}
+footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
+@media(max-width:760px){nav ul{display:none}.two{grid-template-columns:1fr}.hero::after{display:none}}
+</style>
+</head>
+<body>
+<div class="demo">Site de démonstration réalisé par Matheo Guzzi — <a href="../">voir les autres réalisations</a></div>
+<div class="urgent">🚨 Urgence fuite d'eau ? Intervention en moins de 2h — <a href="tel:+33600000000">06 00 00 00 00</a></div>
+<nav>
+  <a href="#" class="logo">Martin<span>Plomberie</span></a>
+  <ul><li><a href="#services">Services</a></li><li><a href="#zone">Zone</a></li><li><a href="#devis">Devis</a></li></ul>
+  <a href="tel:+33600000000" class="btn">📞 Appeler</a>
+</nav>
+
+<header class="hero">
+  <div class="inner">
+    <h1>Votre plombier de confiance, 7j/7.</h1>
+    <p>Dépannage, installation et rénovation. Un artisan local, des prix annoncés avant l'intervention, un travail garanti.</p>
+    <div class="actions"><a href="#devis" class="btn">Devis gratuit</a><a href="tel:+33600000000" class="btn outline">06 00 00 00 00</a></div>
+    <div class="badges"><span>✅ Artisan certifié RGE</span><span>✅ Garantie décennale</span><span>✅ 15 ans d'expérience</span></div>
+  </div>
+</header>
+
+<section id="services">
+  <div class="title"><h2>Nos interventions</h2><p>Du petit dépannage à la salle de bain complète.</p></div>
+  <div class="services">
+    <div class="service"><div class="ico">💧</div><h3>Recherche de fuite</h3><p>Détection et réparation rapide des fuites, visibles ou encastrées.</p></div>
+    <div class="service"><div class="ico">🔥</div><h3>Chauffe-eau & chaudière</h3><p>Installation, remplacement et entretien de tous types d'appareils.</p></div>
+    <div class="service"><div class="ico">🚿</div><h3>Salle de bain</h3><p>Rénovation complète : douche italienne, meuble vasque, carrelage.</p></div>
+    <div class="service"><div class="ico">🚽</div><h3>Débouchage</h3><p>Canalisations, WC, éviers : intervention propre et efficace.</p></div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="title"><h2>Pourquoi nous choisir ?</h2></div>
+  <div class="why-grid">
+    <div><div class="num">2h</div><p>délai moyen d'intervention en urgence</p></div>
+    <div><div class="num">1 800+</div><p>clients satisfaits dans la région</p></div>
+    <div><div class="num">4,9★</div><p>note moyenne sur Google</p></div>
+    <div><div class="num">0 €</div><p>pour le déplacement et le devis</p></div>
+  </div>
+</section>
+
+<section id="zone">
+  <div class="zone">
+    <div class="title" style="margin-bottom:1rem"><h2>Zone d'intervention</h2></div>
+    <p>Nous intervenons dans un rayon de 30 km autour de Votre Ville.</p>
+    <div class="towns"><span>Votre Ville</span><span>Ville voisine 1</span><span>Ville voisine 2</span><span>Ville voisine 3</span><span>Ville voisine 4</span><span>Ville voisine 5</span></div>
+  </div>
+</section>
+
+<section id="devis" class="contact">
+  <div class="title"><h2>Demandez votre devis gratuit</h2><p>Réponse sous 24h. Pour une urgence, appelez directement.</p></div>
+  <form onsubmit="event.preventDefault();this.querySelector('.sent').style.display='block';this.reset()">
+    <div class="two"><input required placeholder="Nom"><input required type="tel" placeholder="Téléphone"></div>
+    <select required><option value="">Type d'intervention</option><option>Fuite / dépannage</option><option>Chauffe-eau / chaudière</option><option>Salle de bain</option><option>Débouchage</option><option>Autre</option></select>
+    <textarea placeholder="Décrivez votre besoin"></textarea>
+    <button class="btn" type="submit">Envoyer ma demande</button>
+    <div class="sent">✅ Merci ! (Démo : sur le vrai site, la demande arrive directement par e-mail.)</div>
+  </form>
+</section>
+<footer>© Martin Plomberie — Site réalisé par Matheo Guzzi</footer>
+</body>
+</html>
