@@ -64,6 +64,10 @@ site vitrine, site web, restaurant, artisan, coiffeur
 
 ---
 
+## Paiement
+- **Sur ComeUp / Fiverr** : le client paie à la commande, la plateforme bloque l'argent et te le verse quand il valide la livraison.
+- **Client en direct** : 50 % d'acompte avant de commencer, 50 % à la livraison **avant** la mise en ligne.
+
 ## Comment ça marche entre nous
 1. Un client commande → tu m'envoies ici **tout ce qu'il t'a donné** (textes, photos, infos).
 2. Je fabrique le site et je le mets en ligne sur ton GitHub.
