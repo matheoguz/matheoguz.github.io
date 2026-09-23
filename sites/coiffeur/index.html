@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Nova — Salon de coiffure</title>
+<meta name="description" content="Salon de coiffure femme, homme et enfant. Coupe, couleur, balayage. Prenez rendez-vous en ligne.">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fdf7f4;--ink:#1c1b1f;--rose:#e8a598;--rose-d:#c96f5f;--muted:#6b6670}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+h1,h2,h3{font-family:'Unbounded',sans-serif;line-height:1.15}
+.demo{background:var(--ink);color:#fff;text-align:center;font-size:.8rem;padding:.4rem 1rem}
+.demo a{color:var(--rose)}
+nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:1rem 5vw;background:rgba(253,247,244,.92);backdrop-filter:blur(10px)}
+.logo{font-family:'Unbounded',sans-serif;font-weight:700;text-decoration:none;color:var(--ink);font-size:1.15rem}
+.logo span{color:var(--rose-d)}
+nav ul{display:flex;gap:1.8rem;list-style:none}
+nav ul a{text-decoration:none;color:var(--muted);font-size:.9rem;font-weight:500}
+.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:.85rem 1.7rem;border-radius:14px;font-weight:700;font-size:.9rem;transition:.2s}
+.btn:hover{background:var(--rose-d)}
+.btn.light{background:#fff;color:var(--ink)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center;padding:4rem 5vw 5rem;max-width:1250px;margin:auto}
+.tag{display:inline-block;background:#fff;border:1px solid #f0dcd6;padding:.35rem .9rem;border-radius:50px;font-size:.8rem;font-weight:700;color:var(--rose-d)}
+.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);margin:1.2rem 0}
+.hero h1 em{font-style:normal;color:var(--rose-d)}
+.hero p{color:var(--muted);font-size:1.08rem;margin-bottom:2rem;max-width:480px}
+.hero .actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.hero .note{font-size:.85rem;color:var(--muted)}
+.blob{aspect-ratio:1;border-radius:40% 60% 55% 45%/50% 40% 60% 50%;background:linear-gradient(135deg,#f6c9bd,#e8a598 45%,#b86b8e);display:flex;align-items:center;justify-content:center;font-size:7rem;box-shadow:0 30px 60px rgba(201,111,95,.25);animation:morph 10s ease-in-out infinite}
+@keyframes morph{50%{border-radius:55% 45% 40% 60%/45% 60% 40% 55%}}
+section{padding:5rem 5vw}
+.head{max-width:1100px;margin:0 auto 3rem;display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap}
+.head h2{font-size:clamp(1.7rem,3.5vw,2.5rem)}
+.head p{color:var(--muted);max-width:380px}
+.prices{background:#fff}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;max-width:1100px;margin:auto}
+.card{border:1px solid #f0e4df;border-radius:20px;padding:2rem}
+.card h3{font-size:1.05rem;margin-bottom:1.2rem}
+.row{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px dashed #eadbd5}
+.row:last-child{border:0}
+.row b{color:var(--rose-d)}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1100px;margin:auto}
+.member{text-align:center}
+.member .pic{aspect-ratio:1;border-radius:24px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-size:4rem}
+.member:nth-child(1) .pic{background:#f6d5cc}.member:nth-child(2) .pic{background:#e5d4ec}.member:nth-child(3) .pic{background:#d6e6e0}
+.member span{color:var(--muted);font-size:.9rem}
+.cta{background:var(--ink);color:#fff;border-radius:28px;max-width:1100px;margin:0 auto 5rem;padding:3.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center}
+.cta h2{font-size:clamp(1.6rem,3vw,2.2rem)}
+.cta p{opacity:.75;margin:1rem 0 1.5rem}
+.cta ul{list-style:none;opacity:.85}
+.cta li{padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.1)}
+footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
+@media(max-width:800px){nav ul{display:none}.hero,.cta{grid-template-columns:1fr}.blob{max-width:320px;margin:auto}.member .pic{max-width:180px;margin:0 auto 1rem}.cta{margin:0 5vw 4rem;padding:2rem}}
+</style>
+</head>
+<body>
+<div class="demo">Site de démonstration réalisé par Matheo Guzzi — <a href="../">voir les autres réalisations</a></div>
+<nav>
+  <a href="#" class="logo">Studio<span>Nova</span></a>
+  <ul><li><a href="#tarifs">Tarifs</a></li><li><a href="#equipe">L'équipe</a></li><li><a href="#contact">Contact</a></li></ul>
+  <a href="#contact" class="btn">Prendre RDV</a>
+</nav>
+
+<header class="hero">
+  <div>
+    <span class="tag">✦ Nouveau : soins Kératine</span>
+    <h1>Votre coiffure, <em>votre style.</em></h1>
+    <p>Coupe, couleur, balayage et soins pour femmes, hommes et enfants. Une équipe passionnée, des produits respectueux de vos cheveux.</p>
+    <div class="actions"><a href="tel:+33100000000" class="btn">Réserver maintenant</a><span class="note">⭐ 4,9/5 · plus de 320 avis</span></div>
+  </div>
+  <div class="blob">✂️</div>
+</header>
+
+<section id="tarifs" class="prices">
+  <div class="head"><h2>Nos tarifs</h2><p>Des prix clairs, sans surprise. Le diagnostic est toujours offert avant votre prestation.</p></div>
+  <div class="price-grid">
+    <div class="card"><h3>👩 Femme</h3>
+      <div class="row"><span>Coupe + brushing</span><b>38 €</b></div>
+      <div class="row"><span>Brushing seul</span><b>24 €</b></div>
+      <div class="row"><span>Couleur racines</span><b>45 €</b></div>
+      <div class="row"><span>Balayage</span><b>dès 75 €</b></div></div>
+    <div class="card"><h3>👨 Homme</h3>
+      <div class="row"><span>Coupe classique</span><b>22 €</b></div>
+      <div class="row"><span>Coupe + barbe</span><b>32 €</b></div>
+      <div class="row"><span>Taille de barbe</span><b>14 €</b></div>
+      <div class="row"><span>Dégradé américain</span><b>26 €</b></div></div>
+    <div class="card"><h3>🧒 Enfant & soins</h3>
+      <div class="row"><span>Coupe enfant (-12 ans)</span><b>15 €</b></div>
+      <div class="row"><span>Soin profond</span><b>18 €</b></div>
+      <div class="row"><span>Lissage Kératine</span><b>dès 120 €</b></div>
+      <div class="row"><span>Chignon / mariage</span><b>sur devis</b></div></div>
+  </div>
+</section>
+
+<section id="equipe">
+  <div class="head"><h2>L'équipe</h2><p>Trois coiffeurs, formés aux dernières tendances, à votre écoute.</p></div>
+  <div class="team">
+    <div class="member"><div class="pic">💇‍♀️</div><h3>Léa</h3><span>Fondatrice · Coloriste</span></div>
+    <div class="member"><div class="pic">💈</div><h3>Karim</h3><span>Barbier · Coupes homme</span></div>
+    <div class="member"><div class="pic">✨</div><h3>Inès</h3><span>Coiffure mariage · Soins</span></div>
+  </div>
+</section>
+
+<div id="contact" class="cta">
+  <div>
+    <h2>Envie de changement ?</h2>
+    <p>Appelez-nous ou passez directement au salon. On trouve toujours un créneau.</p>
+    <a href="tel:+33100000000" class="btn light">📞 01 00 00 00 00</a>
+  </div>
+  <ul>
+    <li>📍 8 rue des Lilas, 00000 Votre Ville</li>
+    <li>🕐 Mar → Ven : 9h – 19h</li>
+    <li>🕐 Samedi : 9h – 17h</li>
+    <li>🚫 Dimanche & lundi : fermé</li>
+  </ul>
+</div>
+<footer>© Studio Nova — Site réalisé par Matheo Guzzi</footer>
+</body>
+</html>

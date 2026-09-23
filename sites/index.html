@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sites vitrines — Matheo Guzzi</title>
+<meta name="description" content="Création de sites vitrines modernes pour restaurants, salons, artisans et indépendants. Livraison rapide.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#141418;--card:#1c1c24;--accent:#6c63ff;--accent2:#a78bfa;--text:#f0eeff;--muted:#8b85a8;--border:rgba(108,99,255,.2)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:0 5vw}
+h1,h2,h3{font-family:'Syne',sans-serif}
+header{max-width:900px;margin:auto;padding:6rem 0 3.5rem;text-align:center}
+header small{color:var(--accent2);letter-spacing:.2em;text-transform:uppercase;font-size:.78rem}
+header h1{font-size:clamp(2.2rem,5.5vw,3.6rem);line-height:1.1;margin:1rem 0}
+header h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--muted);font-size:1.1rem;max-width:620px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:1100px;margin:auto}
+.site{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;transition:.25s}
+.site:hover{transform:translateY(-6px);border-color:var(--accent)}
+.preview{height:180px;display:flex;align-items:center;justify-content:center;font-size:4rem}
+.site:nth-child(1) .preview{background:linear-gradient(135deg,#5c2626,#c49a5a)}
+.site:nth-child(2) .preview{background:linear-gradient(135deg,#f6c9bd,#b86b8e)}
+.site:nth-child(3) .preview{background:linear-gradient(135deg,#0f3d6e,#ff7a1a)}
+.site .body{padding:1.4rem 1.6rem}
+.site h3{font-size:1.15rem}
+.site p{color:var(--muted);font-size:.92rem}
+.site .go{color:var(--accent2);font-size:.9rem;margin-top:.6rem;display:block}
+.offers{max-width:1100px;margin:5rem auto 0}
+.offers h2{text-align:center;font-size:2rem;margin-bottom:2rem}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.plan{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem}
+.plan.best{border-color:var(--accent);box-shadow:0 0 40px rgba(108,99,255,.15)}
+.plan h3{font-size:1.1rem}
+.plan .price{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;margin:.4rem 0 1rem}
+.plan ul{list-style:none;color:var(--muted);font-size:.93rem}
+.plan li{padding:.35rem 0}
+.plan li::before{content:"✓ ";color:var(--accent2)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:4rem 0 2rem}
+footer a{color:var(--accent2)}
+</style>
+</head>
+<body>
+<header>
+  <small>Création de sites vitrines</small>
+  <h1>Un site <span>moderne et professionnel</span> pour votre activité</h1>
+  <p>Restaurants, salons, artisans, indépendants : je crée votre site, rapide, beau sur mobile et prêt à attirer de nouveaux clients.</p>
+</header>
+
+<div class="grid">
+  <a class="site" href="restaurant/"><div class="preview">🍷</div><div class="body"><h3>La Table d'Olivia</h3><p>Restaurant : carte, avis, réservation</p><span class="go">Voir le site →</span></div></a>
+  <a class="site" href="coiffeur/"><div class="preview">✂️</div><div class="body"><h3>Studio Nova</h3><p>Salon de coiffure : tarifs, équipe, prise de RDV</p><span class="go">Voir le site →</span></div></a>
+  <a class="site" href="artisan/"><div class="preview">🔧</div><div class="body"><h3>Martin Plomberie</h3><p>Artisan : services, zone, demande de devis</p><span class="go">Voir le site →</span></div></a>
+</div>
+
+<section class="offers">
+  <h2>Formules</h2>
+  <div class="plans">
+    <div class="plan"><h3>Essentiel</h3><div class="price">60 €</div><ul><li>Site une page</li><li>Adapté mobile</li><li>Horaires, adresse, contact</li><li>Livré en 3 jours</li></ul></div>
+    <div class="plan best"><h3>Standard ⭐</h3><div class="price">150 €</div><ul><li>Site complet (4 sections et +)</li><li>Formulaire de contact</li><li>Carte / tarifs / avis</li><li>Mise en ligne incluse</li><li>2 séries de modifications</li></ul></div>
+    <div class="plan"><h3>Premium</h3><div class="price">280 €</div><ul><li>Tout le Standard</li><li>Plusieurs pages</li><li>Référencement Google de base</li><li>Nom de domaine connecté</li><li>Modifications illimitées 30 jours</li></ul></div>
+  </div>
+</section>
+<footer>Les sites ci-dessus sont des démonstrations (entreprises fictives). — <a href="../">Portfolio Matheo Guzzi</a></footer>
+</body>
+</html>
