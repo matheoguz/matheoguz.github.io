@@ -41,7 +41,8 @@ section{padding:5rem 5vw}
 .title p{color:var(--muted);margin-top:.6rem}
 .services{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;max-width:1150px;margin:auto}
 .service{background:#fff;border-radius:14px;padding:2rem;border-top:4px solid var(--orange);box-shadow:0 6px 24px rgba(15,61,110,.06)}
-.service .ico{font-size:2.2rem}
+.service .ico{color:var(--orange)}
+.badges span::before{content:"";display:inline-block;width:14px;height:8px;border-left:2px solid #ffb27a;border-bottom:2px solid #ffb27a;transform:rotate(-45deg) translateY(-3px);margin-right:10px}
 .service h3{margin:.8rem 0 .5rem;color:var(--blue)}
 .service p{color:var(--muted);font-size:.95rem}
 .why{background:#fff}
@@ -66,11 +67,11 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
 </head>
 <body>
 <div class="demo">Site de démonstration réalisé par Matheo Guzzi — <a href="../">voir les autres réalisations</a></div>
-<div class="urgent">🚨 Urgence fuite d'eau ? Intervention en moins de 2h — <a href="tel:+33600000000">06 00 00 00 00</a></div>
+<div class="urgent">Urgence fuite d'eau ? Intervention en moins de 2h — <a href="tel:+33600000000">06 00 00 00 00</a></div>
 <nav>
   <a href="#" class="logo">Martin<span>Plomberie</span></a>
   <ul><li><a href="#services">Services</a></li><li><a href="#zone">Zone</a></li><li><a href="#devis">Devis</a></li></ul>
-  <a href="tel:+33600000000" class="btn">📞 Appeler</a>
+  <a href="tel:+33600000000" class="btn">Appeler</a>
 </nav>
 
 <header class="hero">
@@ -78,17 +79,17 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
     <h1>Votre plombier de confiance, 7j/7.</h1>
     <p>Dépannage, installation et rénovation. Un artisan local, des prix annoncés avant l'intervention, un travail garanti.</p>
     <div class="actions"><a href="#devis" class="btn">Devis gratuit</a><a href="tel:+33600000000" class="btn outline">06 00 00 00 00</a></div>
-    <div class="badges"><span>✅ Artisan certifié RGE</span><span>✅ Garantie décennale</span><span>✅ 15 ans d'expérience</span></div>
+    <div class="badges"><span>Artisan certifié RGE</span><span>Garantie décennale</span><span>15 ans d'expérience</span></div>
   </div>
 </header>
 
 <section id="services">
   <div class="title"><h2>Nos interventions</h2><p>Du petit dépannage à la salle de bain complète.</p></div>
   <div class="services">
-    <div class="service"><div class="ico">💧</div><h3>Recherche de fuite</h3><p>Détection et réparation rapide des fuites, visibles ou encastrées.</p></div>
-    <div class="service"><div class="ico">🔥</div><h3>Chauffe-eau & chaudière</h3><p>Installation, remplacement et entretien de tous types d'appareils.</p></div>
-    <div class="service"><div class="ico">🚿</div><h3>Salle de bain</h3><p>Rénovation complète : douche italienne, meuble vasque, carrelage.</p></div>
-    <div class="service"><div class="ico">🚽</div><h3>Débouchage</h3><p>Canalisations, WC, éviers : intervention propre et efficace.</p></div>
+    <div class="service"><svg class="ico" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg><h3>Recherche de fuite</h3><p>Détection et réparation rapide des fuites, visibles ou encastrées.</p></div>
+    <div class="service"><svg class="ico" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4-10-2 2-3 4-3 6-1-1-1.5-2-1.5-3C7 10 6 12.5 6 15a6 6 0 0 0 6 6z"/></svg><h3>Chauffe-eau & chaudière</h3><p>Installation, remplacement et entretien de tous types d'appareils.</p></div>
+    <div class="service"><svg class="ico" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V8a4 4 0 0 1 8 0"/><path d="M9 8h6"/><path d="M10 12v1M13 12v1M16 12v1M11.5 15v1M14.5 15v1"/></svg><h3>Salle de bain</h3><p>Rénovation complète : douche italienne, meuble vasque, carrelage.</p></div>
+    <div class="service"><svg class="ico" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h8a4 4 0 0 1 4 4v10"/><path d="M3 11h8"/><path d="M11 21h8"/></svg><h3>Débouchage</h3><p>Canalisations, WC, éviers : intervention propre et efficace.</p></div>
   </div>
 </section>
 
@@ -129,7 +130,7 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
     <select required><option value="">Type d'intervention</option><option>Fuite / dépannage</option><option>Chauffe-eau / chaudière</option><option>Salle de bain</option><option>Débouchage</option><option>Autre</option></select>
     <textarea placeholder="Décrivez votre besoin"></textarea>
     <button class="btn" type="submit">Envoyer ma demande</button>
-    <div class="sent">✅ Merci ! (Démo : sur le vrai site, la demande arrive directement par e-mail.)</div>
+    <div class="sent">Merci ! (Démo : sur le vrai site, la demande arrive directement par e-mail.)</div>
   </form>
 </section>
 <footer>© Martin Plomberie — Site réalisé par Matheo Guzzi</footer>
