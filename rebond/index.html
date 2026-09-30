@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Rebond : la seconde main sans frais cachés. 0 % de commission vendeur.">
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
+</head>
+<body>
+<title>Rebond</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky top bar + category rail, dense photo grid of "price-tag" cards; sheets slide up for detail, sell, chat, checkout; bottom tab bar on phones. */
+:root{
+  --bg:#F3F5F1; --surface:#FFFFFF; --surface-2:#E9EEE8; --ink:#13201B; --muted:#5B6961; --line:#D9E0DA;
+  --accent:#0B8A5F; --accent-ink:#FFFFFF; --accent-soft:#D6EFE4;
+  --tag:#FFD447; --tag-ink:#231D02; --danger:#B93C28; --warn:#9A6400; --shadow:rgba(19,32,27,.14);
+  --f-display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1512; --surface:#16201B; --surface-2:#1E2A24; --ink:#E6EEE9; --muted:#93A39A; --line:#2A3831;
+  --accent:#34C28E; --accent-ink:#03140D; --accent-soft:#173A2C;
+  --tag:#F4C935; --tag-ink:#231D02; --danger:#F0806B; --warn:#E3B04F; --shadow:rgba(0,0,0,.45); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0E1512; --surface:#16201B; --surface-2:#1E2A24; --ink:#E6EEE9; --muted:#93A39A; --line:#2A3831;
+  --accent:#34C28E; --accent-ink:#03140D; --accent-soft:#173A2C;
+  --tag:#F4C935; --tag-ink:#231D02; --danger:#F0806B; --warn:#E3B04F; --shadow:rgba(0,0,0,.45); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding-bottom:84px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.logo{font-family:var(--f-display);font-weight:800;font-size:1.55rem;letter-spacing:-.03em;background:none;border:0;padding:0;display:flex;align-items:center;gap:6px}
+.logo i{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--accent);transform:translateY(-6px);font-style:normal}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;height:42px}
+.search input{border:0;background:none;outline:none;flex:1;min-width:0}
+.search svg{flex:none;color:var(--muted)}
+.navlinks{display:flex;gap:4px}
+.navlinks button{background:none;border:0;padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:600;position:relative}
+.navlinks button[aria-current="true"]{color:var(--ink);background:var(--surface-2)}
+.dot{position:absolute;top:4px;right:4px;min-width:17px;height:17px;border-radius:9px;background:var(--danger);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px;font-weight:700}
+.btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;background:var(--surface-2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:none;border:1px solid var(--line)}
+.btn.danger{background:none;border:1px solid var(--danger);color:var(--danger)}
+.btn.sm{padding:7px 13px;font-size:.88rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.block{width:100%}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:stretch;padding-block:22px 8px}
+.hero-main{background:var(--ink);color:var(--bg);border-radius:22px;padding:28px 28px 26px;position:relative;overflow:hidden;min-width:0}
+.hero-main h1{font-size:clamp(2rem,4.6vw,3.3rem);font-weight:800;letter-spacing:-.035em;max-width:14ch}
+.hero-main h1 em{font-style:normal;color:var(--tag)}
+.hero-main p{max-width:44ch;opacity:.82;margin:12px 0 18px}
+.hero-main .btn.primary{background:var(--tag);color:var(--tag-ink)}
+.hero-main .btn.ghost{color:var(--bg);border-color:color-mix(in srgb,var(--bg) 35%,transparent)}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero-deal{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hero-deal h2{font-size:1.15rem}
+.fee-row{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums;padding:6px 0;border-bottom:1px dashed var(--line)}
+.fee-row b{font-family:var(--f-mono);font-weight:500}
+.fee-row.total{border-bottom:0;font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.pill.grey{background:var(--surface-2);color:var(--muted)}
+.pill.sold{background:var(--ink);color:var(--bg)}
+
+/* filters */
+.cats{display:flex;gap:8px;overflow-x:auto;padding-block:14px 6px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:6px 14px}
+.filters select,.filters input{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;max-width:100%}
+.filters input{width:120px}
+.count{margin-left:auto;font-size:.88rem}
+
+/* grid & card */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px 14px}
+.card{background:none;border:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0;position:relative}
+.ph{position:relative;aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;background:var(--surface-2);max-width:100%}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.card:hover .ph img{transform:scale(1.035)}
+.tag{position:absolute;left:10px;bottom:10px;background:var(--tag);color:var(--tag-ink);font-family:var(--f-mono);font-size:.95rem;padding:4px 10px 4px 20px;border-radius:4px 8px 8px 4px;transform:rotate(-3deg);box-shadow:0 2px 6px var(--shadow)}
+.tag::before{content:"";position:absolute;left:7px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--surface)}
+.fav{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 90%,transparent);display:grid;place-items:center;color:var(--ink)}
+.fav[aria-pressed="true"]{color:var(--danger)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+.badge-demo{position:absolute;top:10px;left:10px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--surface);color:var(--muted);padding:2px 7px;border-radius:5px}
+.soldout{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 55%,transparent);display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-weight:800;font-size:1.3rem;letter-spacing:.08em;text-transform:uppercase}
+.card h3{font-family:var(--f-body);font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .meta{font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.empty{border:2px dashed var(--line);border-radius:20px;padding:40px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty h2{font-size:1.4rem}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:22px 12px}
+.section-h h2{font-size:1.6rem;letter-spacing:-.02em}
+
+/* sheets */
+.scrim{position:fixed;inset:0;background:rgba(8,14,11,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .18s}
+.sheet{background:var(--bg);width:min(980px,100%);max-height:calc(100% - 8px);overflow:auto;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:rise .22s ease-out;display:flex;flex-direction:column}
+.sheet.narrow{width:min(560px,100%)}
+.sheet-h{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--bg);border-bottom:1px solid var(--line)}
+.sheet-h h2{font-size:1.2rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.x{width:38px;height:38px;border-radius:50%;border:0;background:var(--surface-2);display:grid;place-items:center;flex:none}
+.sheet-b{padding:18px}
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{transform:translateY(24px);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.detail{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}
+.gallery{display:flex;flex-direction:column;gap:8px;min-width:0}
+.gallery .main{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--surface-2)}
+.gallery .main img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs{display:flex;gap:8px;overflow-x:auto}
+.thumbs button{flex:none;width:64px;height:80px;border-radius:10px;overflow:hidden;border:2px solid transparent;padding:0;background:var(--surface-2)}
+.thumbs button[aria-pressed="true"]{border-color:var(--accent)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.info{display:flex;flex-direction:column;gap:14px;min-width:0}
+.price-big{font-family:var(--f-mono);font-size:2rem;letter-spacing:-.02em}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:.92rem}
+.specs dt{color:var(--muted)}
+.specs dd{margin:0;font-weight:600}
+.seller{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.av{width:42px;height:42px;border-radius:50%;flex:none;object-fit:cover;background:var(--surface-2);display:grid;place-items:center;font-weight:700;color:#fff}
+.stars{color:var(--warn);letter-spacing:1px}
+.desc{white-space:pre-wrap;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions .btn{flex:1}
+.protect{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--accent-soft);font-size:.88rem}
+.protect svg{flex:none;color:var(--accent);margin-top:2px}
+
+/* forms */
+.form{display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label.f{display:grid;gap:6px;font-weight:600;font-size:.9rem;min-width:0}
+label.f input,label.f select,label.f textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 12px;font-weight:400;width:100%}
+label.f textarea{min-height:96px;resize:vertical}
+.hint{font-weight:400;font-size:.82rem;color:var(--muted)}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos .p{position:relative;width:86px;height:108px;border-radius:12px;overflow:hidden;background:var(--surface-2)}
+.photos .p img{width:100%;height:100%;object-fit:cover}
+.photos .p button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:1}
+.photos .add{width:86px;height:108px;border-radius:12px;border:2px dashed var(--line);display:grid;place-items:center;text-align:center;font-size:.8rem;color:var(--muted);cursor:pointer;background:var(--surface)}
+.photos .add:focus-within{outline:2px solid var(--accent)}
+.photos .add input{position:absolute;width:1px;height:1px;opacity:0}
+.earn{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.earn b{font-family:var(--f-mono);font-size:1.2rem;font-weight:500;color:var(--accent)}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.opt:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.opt input{accent-color:var(--accent)}
+.opt .grow{flex:1;min-width:0}
+.opt b{font-family:var(--f-mono);font-weight:500}
+
+/* chat */
+.threads{display:flex;flex-direction:column;gap:8px}
+.thread{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);background:var(--surface);border-radius:14px;text-align:left;width:100%}
+.thread img{width:52px;height:64px;border-radius:8px;object-fit:cover;flex:none}
+.thread .grow{flex:1;min-width:0}
+.thread .last{font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unread{width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none}
+.chat{display:flex;flex-direction:column;gap:8px;min-height:240px}
+.msg{max-width:78%;padding:9px 13px;border-radius:16px;background:var(--surface);border:1px solid var(--line);overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.msg time{display:block;font-size:.72rem;opacity:.7;margin-top:2px}
+.offer{align-self:center;width:min(360px,100%);padding:14px;border-radius:16px;background:var(--surface);border:1px dashed var(--ink);text-align:center;display:grid;gap:8px}
+.offer b{font-family:var(--f-mono);font-size:1.4rem;font-weight:500}
+.composer{position:sticky;bottom:0;display:flex;gap:8px;padding:12px 18px;background:var(--bg);border-top:1px solid var(--line)}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 14px}
+.chat-head{display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;background:var(--surface);border:1px solid var(--line);margin-bottom:12px}
+.chat-head img{width:44px;height:55px;object-fit:cover;border-radius:8px}
+
+/* me */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.tabs button{flex:none;border:0;background:none;padding:9px 14px;border-radius:999px;font-weight:700;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-family:var(--f-mono);font-weight:500;font-size:1.4rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.olist{display:flex;flex-direction:column;gap:10px}
+.order{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);background:var(--surface);border-radius:14px;flex-wrap:wrap}
+.order img{width:56px;height:70px;border-radius:8px;object-fit:cover;flex:none}
+.order .grow{flex:1;min-width:160px}
+.steps{display:flex;gap:4px;margin-top:6px}
+.steps i{height:4px;flex:1;border-radius:2px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.starpick{display:flex;gap:4px}
+.starpick button{border:0;background:none;font-size:1.6rem;color:var(--line);padding:0 2px}
+.starpick button.on{color:var(--warn)}
+
+.banner{margin-block:12px 0;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:.88rem;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:600;box-shadow:0 8px 24px var(--shadow);width:max-content;max-width:calc(100% - 32px);text-align:center}
+
+/* bottom nav (phones) */
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar{grid-template-columns:repeat(5,1fr)}
+.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;font-weight:600;color:var(--muted);padding:4px 0;position:relative}
+.tabbar button[aria-current="true"]{color:var(--accent)}
+.tabbar .sell{color:var(--accent-ink)}
+.tabbar .sell span.c{width:44px;height:44px;border-radius:50%;background:var(--accent);display:grid;place-items:center;margin-top:-18px;box-shadow:0 4px 12px var(--shadow)}
+.tabbar .dot{top:0;right:calc(50% - 22px)}
+
+footer{padding-block:40px 20px;color:var(--muted);font-size:.84rem}
+
+@media (max-width:820px){
+  .navlinks,.top .btn.sellbtn{display:none}
+  .tabbar{display:grid}
+  .hero{grid-template-columns:1fr}
+  .detail{grid-template-columns:1fr}
+  .scrim{padding:0;align-items:flex-end}
+  .sheet,.sheet.narrow{width:100%;max-height:94%;border-radius:22px 22px 0 0}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px}
+  .row2{grid-template-columns:1fr}
+  .count{margin-left:0;width:100%}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <button class="logo" id="logo" aria-label="Rebond, accueil">rebond<i></i></button>
+    <label class="search" for="q">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Rechercher une marque, un article…" autocomplete="off">
+    </label>
+    <nav class="navlinks" aria-label="Navigation">
+      <button data-go="home">Explorer</button>
+      <button data-go="favs">Favoris</button>
+      <button data-go="inbox">Messages</button>
+      <button data-go="me">Mon espace</button>
+    </nav>
+    <button class="btn primary sellbtn" data-action="sell">+ Vendre</button>
+  </div>
+</header>
+
+<main class="wrap" id="main" aria-live="polite"></main>
+
+<footer class="wrap">
+  <p><b>Rebond</b> · la seconde main sans frais cachés. <span id="modeNote"></span></p>
+</footer>
+
+<nav class="tabbar" aria-label="Navigation mobile">
+  <button data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 4l9 7v9H3z"/></svg>Explorer</button>
+  <button data-go="favs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Favoris</button>
+  <button class="sell" data-action="sell"><span class="c"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></span><span style="color:var(--accent)">Vendre</span></button>
+  <button data-go="inbox"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H8l-4 4z"/></svg>Messages</button>
+  <button data-go="me"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Moi</button>
+</nav>
+
+<div id="sheets"></div>
+<div id="toastHost"></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- Business rules (one place to tweak) ---------- */
+const FEES = { buyerRate: 0.03, buyerCap: 5, sellerRate: 0 };            // protection acheteur 3 % plafonnée à 5 €, 0 % vendeur
+const SHIPPING = [
+  { id: "relay", label: "Point relais", sub: "3 à 5 jours · suivi inclus", price: 3.49 },
+  { id: "home",  label: "À domicile",  sub: "2 à 3 jours · suivi inclus", price: 5.99 },
+  { id: "hand",  label: "Remise en main propre", sub: "Vous fixez le rendez-vous par message", price: 0 },
+];
+const CATS = [
+  { id: "femme", label: "Femme", sizes: ["XS","S","M","L","XL","34","36","38","40","42","44"] },
+  { id: "homme", label: "Homme", sizes: ["XS","S","M","L","XL","XXL","38","40","42","44","46"] },
+  { id: "chaussures", label: "Chaussures", sizes: ["36","37","38","39","40","41","42","43","44","45","46"] },
+  { id: "enfant", label: "Enfant", sizes: ["3 mois","6 mois","12 mois","2 ans","4 ans","6 ans","8 ans","10 ans","12 ans","14 ans"] },
+  { id: "sacs", label: "Sacs & accessoires", sizes: ["Taille unique"] },
+  { id: "sport", label: "Sport", sizes: ["XS","S","M","L","XL","Taille unique"] },
+];
+const CONDS = ["Neuf avec étiquette","Neuf sans étiquette","Très bon état","Bon état","Satisfaisant"];
+
+/* ---------- Small helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const eur = n => (Math.round(n * 100) / 100).toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+const fee = p => Math.min(FEES.buyerCap, Math.round(p * FEES.buyerRate * 100) / 100);
+const catLabel = id => (CATS.find(c => c.id === id) || {}).label || id;
+const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+function h(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "html") e.innerHTML = v;            // only ever used with static markup
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat(9)) if (k != null && k !== false) e.append(k instanceof Node ? k : String(k));
+  return e;
+}
+function ago(t) {
+  const s = (Date.now() - t) / 1000;
+  if (s < 60) return "à l’instant";
+  if (s < 3600) return `il y a ${Math.floor(s / 60)} min`;
+  if (s < 86400) return `il y a ${Math.floor(s / 3600)} h`;
+  if (s < 86400 * 30) return `il y a ${Math.floor(s / 86400)} j`;
+  return new Date(t).toLocaleDateString("fr-FR");
+}
+function toast(msg) {
+  const host = $("#toastHost"); host.replaceChildren(h("div", { class: "toast", role: "status" }, msg));
+  clearTimeout(toast.t); toast.t = setTimeout(() => host.replaceChildren(), 2800);
+}
+const ICON = {
+  heart: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  back: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 5l-7 7 7 7"/></svg>',
+  shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+};
+
+/* ---------- Illustrations for listings without photos ---------- */
+const SHAPES = {
+  tshirt: [[140,80],[175,70],[200,95],[225,70],[260,80],[330,130],[300,185],[270,165],[270,420],[130,420],[130,165],[100,185],[70,130]],
+  sweat: [[140,80],[175,70],[200,95],[225,70],[260,80],[300,110],[345,330],[310,340],[270,190],[270,420],[130,420],[130,190],[90,340],[55,330],[100,110]],
+  pants: [[135,70],[265,70],[290,430],[220,430],[200,170],[180,430],[110,430]],
+  dress: [[165,70],[235,70],[240,150],[300,430],[100,430],[160,150]],
+  shoe: [[70,300],[82,236],[150,226],[196,258],[300,286],[340,318],[336,352],[70,352]],
+  bag: [[100,200],[300,200],[322,420],[78,420]],
+};
+const illoCache = {};
+function illo(shape, bg, fg) {
+  const key = shape + bg + fg; if (illoCache[key]) return illoCache[key];
+  const c = document.createElement("canvas"); c.width = 400; c.height = 500; const x = c.getContext("2d");
+  x.fillStyle = bg; x.fillRect(0, 0, 400, 500);
+  x.fillStyle = "rgba(0,0,0,.07)"; x.beginPath(); x.ellipse(200, 450, 150, 16, 0, 0, 7); x.fill();
+  x.fillStyle = fg; x.beginPath(); (SHAPES[shape] || SHAPES.tshirt).forEach(([a, b], i) => i ? x.lineTo(a, b) : x.moveTo(a, b)); x.closePath(); x.fill();
+  if (shape === "bag") { x.strokeStyle = fg; x.lineWidth = 16; x.beginPath(); x.arc(200, 200, 70, Math.PI, 0); x.stroke(); }
+  if (shape === "sweat") { x.strokeStyle = "rgba(255,255,255,.35)"; x.lineWidth = 4; x.beginPath(); x.moveTo(200, 100); x.lineTo(200, 420); x.stroke(); }
+  if (shape === "shoe") { x.fillStyle = "rgba(255,255,255,.85)"; x.fillRect(70, 336, 270, 16); }
+  return (illoCache[key] = c.toDataURL("image/png"));
+}
+const FALLBACK = illo("tshirt", "#DCE4DE", "#9FB2A7");
+const imgOf = l => l.thumb || (l.illo ? illo(...l.illo) : FALLBACK);
+
+/* ---------- Image compression (uploads) ---------- */
+function loadImg(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = r.result; };
+    r.onerror = rej; r.readAsDataURL(file);
+  });
+}
+function shrink(img, maxW, q) {
+  const ratio = Math.min(1, maxW / img.width), w = Math.round(img.width * ratio), hh = Math.round(img.height * ratio);
+  const c = document.createElement("canvas"); c.width = w; c.height = hh;
+  c.getContext("2d").drawImage(img, 0, 0, w, hh);
+  return c.toDataURL("image/jpeg", q);
+}
+
+/* ---------- Data layer: shared (claude db) or local (this browser) ---------- */
+const S = {
+  mode: "loading", me: null, canWrite: true, readOnlyReason: "",
+  listings: [], orders: [], threads: [], reviews: [], favs: new Set(), seen: {},
+  view: "home", meTab: "listings",
+  f: { q: "", cat: "all", size: "", cond: "", max: "", sort: "recent" },
+  names: {}, avatars: {},
+};
+let DB = null, USER = null;
+
+const Local = {
+  key: "rebond.v1",
+  load() { try { return JSON.parse(localStorage.getItem(this.key)) || null; } catch { return null; } },
+  save(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch { toast("Stockage du navigateur plein : supprime quelques annonces."); } },
+  data: null,
+  init() {
+    this.data = this.load();
+    if (!this.data) { this.data = demoData(); this.save(this.data); }
+    this.data.photos ||= {}; this.data.favs ||= []; this.data.seen ||= {};
+  },
+};
+
+const Store = {
+  async set(col, id, body) {
+    if (S.mode === "shared") return DB.collection(col).doc(id).set(body);
+    Local.data[col] ||= {}; Local.data[col][id] = { ...body }; Local.save(Local.data); pushLocal();
+  },
+  async update(col, id, patch) {
+    if (S.mode === "shared") return DB.collection(col).doc(id).update(patch);
+    Object.assign(Local.data[col][id], patch); Local.save(Local.data); pushLocal();
+  },
+  async del(col, id) {
+    if (S.mode === "shared") return DB.collection(col).doc(id).delete();
+    delete (Local.data[col] || {})[id]; Local.save(Local.data); pushLocal();
+  },
+  async get(col, id) {
+    if (S.mode === "shared") { const s = await DB.collection(col).doc(id).get(); return s.exists ? s.data() : null; }
+    return (Local.data[col] || {})[id] || null;
+  },
+  newId(col) { return S.mode === "shared" ? DB.collection(col).doc().id : rid(); },
+  async saveMine() {
+    const body = { favs: [...S.favs], seen: S.seen };
+    if (S.mode === "shared") { if (S.me) return DB.doc("data/users/" + S.me + "/profile").set(body); return; }
+    Local.data.favs = body.favs; Local.data.seen = body.seen; Local.save(Local.data);
+  },
+};
+
+function arr(obj) { return Object.entries(obj || {}).map(([id, v]) => ({ id, ...v })); }
+function pushLocal() {
+  const d = Local.data;
+  S.listings = arr(d.listings); S.orders = arr(d.orders); S.threads = arr(d.threads); S.reviews = arr(d.reviews);
+  S.favs = new Set(d.favs); S.seen = { ...d.seen };
+  render(); refreshOpenSheet();
+}
+
+async function boot() {
+  render();
+  let db = null, user = null;
+  if (window.claude && typeof window.claude.use === "function") {
+    try { [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]); } catch { db = null; }
+  }
+  if (db) {
+    DB = db; USER = user; S.mode = "shared";
+    S.me = user ? await user.id() : null;
+    const can = user ? await user.can("data.write") : null;
+    if (!S.me) { S.canWrite = false; S.readOnlyReason = "Connecte-toi à claude.ai pour vendre, acheter et discuter."; }
+    else if (can === false) { S.canWrite = false; S.readOnlyReason = "Tu es en lecture seule. Demande à l’auteur de te passer « Contributeur » pour vendre et acheter."; }
+    const onErr = e => { if (e && e.code === "revoked") { S.canWrite = false; render(); } };
+    const sub = (col, key, q) => (q || DB.collection(col)).onSnapshot(snap => {
+      S[key] = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); refreshOpenSheet();
+    }, onErr);
+    sub("listings", "listings", DB.collection("listings").orderBy("createdAt", "desc").limit(1000));
+    sub("orders", "orders"); sub("threads", "threads"); sub("reviews", "reviews");
+    if (S.me) DB.doc("data/users/" + S.me + "/profile").onSnapshot(s => {
+      const d = s.exists ? s.data() : {}; S.favs = new Set(d.favs || []); S.seen = { ...(d.seen || {}) }; render();
+    }, onErr);
+  } else {
+    S.mode = "local"; S.me = "moi"; Local.init(); pushLocal();
+  }
+  $("#modeNote").textContent = S.mode === "shared"
+    ? "Version partagée : les annonces sont visibles par toutes les personnes qui ouvrent cette page."
+    : "Mode démo : les données restent dans ce navigateur. Les annonces marquées « Exemple » sont fictives.";
+  render();
+}
+
+/* ---------- Names ---------- */
+const DEMO_PEOPLE = { demo_ines: "Inès · Lyon", demo_karim: "Karim · Marseille", demo_lea: "Léa · Lille", demo_tom: "Tom · Nantes", moi: "Toi" };
+function nameOf(id) { return DEMO_PEOPLE[id] || S.names[id] || (id === S.me ? "Toi" : "Membre Rebond"); }
+function colorOf(id) { let n = 0; for (const c of String(id)) n = (n * 31 + c.charCodeAt(0)) % 360; return `hsl(${n} 45% 42%)`; }
+let namesPending = false;
+async function resolveNames(ids) {
+  if (!USER || namesPending) return;
+  const want = [...new Set(ids)].filter(i => i && !(i in S.names) && !DEMO_PEOPLE[i]);
+  if (!want.length) return;
+  namesPending = true;
+  try {
+    const ps = await USER.profiles(want);
+    for (const id of want) { S.names[id] = ps[id]?.name || ""; S.avatars[id] = ps[id]?.avatarUrl || ""; }
+  } finally { namesPending = false; }
+  render(); refreshOpenSheet();
+}
+function avatar(id, size = 42) {
+  if (S.avatars[id]) return h("img", { class: "av", src: S.avatars[id], alt: "", style: `width:${size}px;height:${size}px` });
+  const n = nameOf(id); return h("span", { class: "av", style: `background:${colorOf(id)};width:${size}px;height:${size}px` }, (n[0] || "?").toUpperCase());
+}
+function rating(sellerId) {
+  const rs = S.reviews.filter(r => r.sellerId === sellerId);
+  if (!rs.length) return { avg: 0, n: 0 };
+  return { avg: rs.reduce((a, r) => a + r.stars, 0) / rs.length, n: rs.length };
+}
+const starStr = a => "★★★★★".slice(0, Math.round(a)) + "☆☆☆☆☆".slice(0, 5 - Math.round(a));
+
+/* ---------- Guards ---------- */
+function needWrite() {
+  if (S.mode === "loading") { toast("Chargement en cours…"); return false; }
+  if (!S.canWrite) { toast(S.readOnlyReason || "Action impossible en lecture seule."); return false; }
+  return true;
+}
+function writeFailed(e) {
+  if (e && e.code === "invalid_argument") { S.canWrite = false; S.readOnlyReason = "Ton accès ne permet pas d’enregistrer. Demande le rôle « Contributeur »."; render(); toast(S.readOnlyReason); }
+  else if (e && e.code === "quota_exceeded") toast("Espace plein : supprime d’anciennes annonces pour en publier de nouvelles.");
+  else toast("Enregistrement impossible pour l’instant. Réessaie dans un instant.");
+  console.warn(e);
+}
+
+/* ---------- Derived ---------- */
+const myThreads = () => S.threads.filter(t => t.buyerId === S.me || t.sellerId === S.me).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+const unreadCount = () => myThreads().filter(t => (t.updatedAt || 0) > (S.seen[t.id] || 0) && (t.messages || []).slice(-1)[0]?.from !== S.me).length;
+const listingById = id => S.listings.find(l => l.id === id);
+
+function filtered() {
+  const f = S.f, q = f.q.trim().toLowerCase();
+  let r = S.listings.filter(l => l.status !== "deleted");
+  if (S.view === "favs") r = r.filter(l => S.favs.has(l.id));
+  if (f.cat !== "all") r = r.filter(l => l.category === f.cat);
+  if (f.size) r = r.filter(l => l.size === f.size);
+  if (f.cond) r = r.filter(l => l.condition === f.cond);
+  if (f.max) r = r.filter(l => l.price <= +f.max);
+  if (q) r = r.filter(l => [l.title, l.brand, l.description, catLabel(l.category)].join(" ").toLowerCase().includes(q));
+  const sorts = { recent: (a, b) => b.createdAt - a.createdAt, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price };
+  r.sort(sorts[f.sort]);
+  // Sold items sink to the bottom
+  return r.sort((a, b) => (a.status === "sold") - (b.status === "sold"));
+}
+
+/* ---------- Main render ---------- */
+function render() {
+  document.querySelectorAll("[data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === S.view ? "true" : "false"));
+  const u = S.mode === "loading" ? 0 : unreadCount();
+  document.querySelectorAll('[data-go="inbox"]').forEach(b => { b.querySelector(".dot")?.remove(); if (u) b.append(h("span", { class: "dot" }, u)); });
+  const main = $("#main");
+  const view = { home: viewHome, favs: viewHome, inbox: viewInbox, me: viewMe }[S.view] || viewHome;
+  main.replaceChildren(...[].concat(view()).filter(Boolean));
+  const ids = [...S.listings.map(l => l.sellerId), ...S.threads.flatMap(t => [t.buyerId, t.sellerId]), ...S.reviews.map(r => r.buyerId)];
+  resolveNames(ids);
+}
+
+function banner() {
+  if (S.mode === "shared" && !S.canWrite) return h("div", { class: "banner" }, h("span", { class: "pill warn" }, "Lecture seule"), S.readOnlyReason);
+  return null;
+}
+
+function viewHome() {
+  const out = [];
+  if (S.view === "home") {
+    const l = S.listings.filter(x => x.status !== "sold").length;
+    out.push(h("section", { class: "hero" },
+      h("div", { class: "hero-main" },
+        h("h1", null, "Vide ton dressing. ", h("em", null, "Garde tout."), ""),
+        h("p", null, "0 % de commission pour les vendeurs, une protection acheteur plafonnée à 5 €, et des offres qu’on négocie en un clic."),
+        h("div", { class: "hero-cta" },
+          h("button", { class: "btn primary", onclick: openSell }, "Vendre un article"),
+          h("button", { class: "btn ghost", onclick: () => $("#q").focus() }, l ? `Parcourir ${l} article${l > 1 ? "s" : ""}` : "Parcourir"))),
+      h("div", { class: "hero-deal" },
+        h("h2", null, "Un jean vendu 25 €, ça donne quoi ?"),
+        h("div", { class: "fee-row" }, h("span", null, "Le vendeur touche"), h("b", null, eur(25))),
+        h("div", { class: "fee-row" }, h("span", null, "Protection acheteur (3 %)"), h("b", null, eur(fee(25)))),
+        h("div", { class: "fee-row" }, h("span", null, "Point relais"), h("b", null, eur(3.49))),
+        h("div", { class: "fee-row total" }, h("span", null, "L’acheteur paie"), h("b", null, eur(25 + fee(25) + 3.49))),
+        h("p", { class: "small muted" }, "Tout est affiché avant de payer. Aucun frais ajouté au dernier moment."))));
+  } else {
+    out.push(h("div", { class: "section-h" }, h("h2", null, "Tes favoris"), h("span", { class: "muted small" }, `${S.favs.size} article${S.favs.size > 1 ? "s" : ""}`)));
+  }
+  out.push(banner());
+  out.push(h("div", { class: "cats", role: "group", "aria-label": "Catégories" },
+    [{ id: "all", label: "Tout" }, ...CATS].map(c => h("button", { class: "chip", "aria-pressed": String(S.f.cat === c.id), onclick: () => { S.f.cat = c.id; S.f.size = ""; render(); } }, c.label))));
+  const sizes = S.f.cat === "all" ? [...new Set(CATS.flatMap(c => c.sizes))] : CATS.find(c => c.id === S.f.cat).sizes;
+  const list = filtered();
+  out.push(h("div", { class: "filters" },
+    sel("fSize", "Taille", [["", "Toutes tailles"], ...sizes.map(s => [s, s])], S.f.size, v => S.f.size = v),
+    sel("fCond", "État", [["", "Tous états"], ...CONDS.map(s => [s, s])], S.f.cond, v => S.f.cond = v),
+    h("input", { id: "fMax", type: "number", min: "0", inputmode: "numeric", placeholder: "Prix max €", "aria-label": "Prix maximum", value: S.f.max, onchange: e => { S.f.max = e.target.value; render(); } }),
+    sel("fSort", "Trier", [["recent", "Plus récents"], ["low", "Prix croissant"], ["high", "Prix décroissant"]], S.f.sort, v => S.f.sort = v),
+    h("span", { class: "count muted" }, S.mode === "loading" ? "Chargement…" : `${list.length} résultat${list.length > 1 ? "s" : ""}`)));
+  if (S.mode === "loading") out.push(h("div", { class: "empty" }, h("h2", null, "Chargement des annonces…")));
+  else if (!list.length) out.push(emptyState());
+  else out.push(h("div", { class: "grid" }, list.map(card)));
+  return out;
+}
+function sel(id, label, opts, val, set) {
+  return h("select", { id, "aria-label": label, onchange: e => { set(e.target.value); render(); } },
+    opts.map(([v, t]) => h("option", { value: v, selected: v === val }, t)));
+}
+function emptyState() {
+  const filteredOut = S.listings.length && (S.f.q || S.f.cat !== "all" || S.f.size || S.f.cond || S.f.max);
+  if (S.view === "favs" && !filteredOut) return h("div", { class: "empty" }, h("h2", null, "Aucun favori pour l’instant"), h("p", { class: "muted" }, "Touche le cœur d’une annonce pour la retrouver ici et suivre son prix."), h("button", { class: "btn primary", onclick: () => go("home") }, "Explorer les annonces"));
+  if (filteredOut) return h("div", { class: "empty" }, h("h2", null, "Rien ne correspond"), h("p", { class: "muted" }, "Essaie une autre taille, un autre prix ou efface la recherche."), h("button", { class: "btn", onclick: () => { S.f = { q: "", cat: "all", size: "", cond: "", max: "", sort: "recent" }; $("#q").value = ""; render(); } }, "Effacer les filtres"));
+  return h("div", { class: "empty" }, h("h2", null, "Le premier article, c’est le tien"), h("p", { class: "muted" }, "Aucune annonce pour l’instant. Publie un article en moins d’une minute : quelques photos, un prix, c’est en ligne."), h("button", { class: "btn primary", onclick: openSell }, "Publier ma première annonce"));
+}
+function favBtn(l) {
+  return h("button", { class: "fav", "aria-label": S.favs.has(l.id) ? "Retirer des favoris" : "Ajouter aux favoris", "aria-pressed": String(S.favs.has(l.id)), html: ICON.heart,
+    onclick: e => { e.stopPropagation(); toggleFav(l.id); } });
+}
+function card(l) {
+  return h("article", { class: "card" },
+    h("div", { class: "ph" },
+      h("button", { style: "all:unset;display:block;width:100%;height:100%;cursor:pointer", "aria-label": `Voir ${l.title}`, onclick: () => openListing(l.id) },
+        h("img", { src: imgOf(l), alt: "", loading: "lazy" })),
+      l.demo ? h("span", { class: "badge-demo" }, "Exemple") : null,
+      l.status === "sold" ? h("div", { class: "soldout" }, "Vendu") : h("span", { class: "tag" }, eur(l.price)),
+      favBtn(l)),
+    h("h3", null, l.title),
+    h("div", { class: "meta" }, [l.brand, l.size, l.condition].filter(Boolean).join(" · ")));
+}
+async function toggleFav(id) {
+  if (S.mode === "shared" && !S.me) { toast("Connecte-toi pour garder des favoris."); return; }
+  S.favs.has(id) ? S.favs.delete(id) : S.favs.add(id);
+  toast(S.favs.has(id) ? "Ajouté aux favoris" : "Retiré des favoris");
+  render(); refreshOpenSheet();
+  try { await Store.saveMine(); } catch (e) { console.warn(e); }
+}
+function go(v) { S.view = v; closeSheet(); render(); window.scrollTo({ top: 0 }); }
+
+/* ---------- Inbox ---------- */
+function viewInbox() {
+  const ts = myThreads();
+  const out = [h("div", { class: "section-h" }, h("h2", null, "Messages"), h("span", { class: "muted small" }, ts.length ? `${ts.length} conversation${ts.length > 1 ? "s" : ""}` : ""))];
+  out.push(banner());
+  if (!ts.length) { out.push(h("div", { class: "empty" }, h("h2", null, "Pas encore de conversation"), h("p", { class: "muted" }, "Pose une question ou fais une offre depuis une annonce : la discussion apparaîtra ici."), h("button", { class: "btn primary", onclick: () => go("home") }, "Trouver un article"))); return out; }
+  out.push(h("div", { class: "threads" }, ts.map(t => {
+    const l = listingById(t.listingId) || { title: t.title || "Annonce supprimée" };
+    const other = t.buyerId === S.me ? t.sellerId : t.buyerId;
+    const last = (t.messages || []).slice(-1)[0];
+    const unread = (t.updatedAt || 0) > (S.seen[t.id] || 0) && last?.from !== S.me;
+    return h("button", { class: "thread", onclick: () => openChat(t.id) },
+      h("img", { src: l.id ? imgOf(l) : FALLBACK, alt: "" }),
+      h("div", { class: "grow" },
+        h("div", null, h("b", null, nameOf(other)), " ", h("span", { class: "muted small" }, "· " + l.title)),
+        h("div", { class: "last" }, last ? (last.kind === "offer" ? `Offre : ${eur(last.amount)}` : last.text) : "")),
+      h("span", { class: "muted small" }, t.updatedAt ? ago(t.updatedAt) : ""),
+      unread ? h("span", { class: "unread", "aria-label": "Non lu" }) : null);
+  })));
+  return out;
+}
+
+/* ---------- Me ---------- */
+function viewMe() {
+  const mine = S.listings.filter(l => l.sellerId === S.me);
+  const buys = S.orders.filter(o => o.buyerId === S.me).sort((a, b) => b.createdAt - a.createdAt);
+  const sales = S.orders.filter(o => o.sellerId === S.me).sort((a, b) => b.createdAt - a.createdAt);
+  const earned = sales.filter(o => o.status === "done").reduce((a, o) => a + o.price, 0);
+  const r = rating(S.me);
+  const out = [h("div", { class: "section-h" },
+    h("div", { style: "display:flex;gap:12px;align-items:center" }, avatar(S.me || "anon", 52), h("div", null, h("h2", null, S.me ? nameOf(S.me) : "Invité"), h("div", { class: "small muted" }, r.n ? h("span", null, h("span", { class: "stars" }, starStr(r.avg)), ` ${r.avg.toFixed(1)} · ${r.n} avis`) : "Pas encore d’avis"))),
+    h("button", { class: "btn primary", onclick: openSell }, "+ Vendre"))];
+  out.push(banner());
+  out.push(h("div", { class: "stats" },
+    h("div", { class: "stat" }, h("b", null, mine.filter(l => l.status !== "sold").length), h("span", null, "en vente")),
+    h("div", { class: "stat" }, h("b", null, sales.length), h("span", null, "vendus")),
+    h("div", { class: "stat" }, h("b", null, eur(earned)), h("span", null, "gagnés (commandes reçues)"))));
+  const tabs = [["listings", "Mes annonces"], ["sales", `Ventes${sales.filter(o => o.status === "paid").length ? " •" : ""}`], ["buys", "Achats"], ["reviews", "Avis"]];
+  out.push(h("div", { class: "tabs", role: "tablist" }, tabs.map(([id, t]) => h("button", { role: "tab", "aria-selected": String(S.meTab === id), onclick: () => { S.meTab = id; render(); } }, t))));
+  if (S.meTab === "listings") {
+    out.push(mine.length ? h("div", { class: "grid" }, mine.map(card)) :
+      h("div", { class: "empty" }, h("h2", null, "Aucune annonce en ligne"), h("p", { class: "muted" }, "Prends 3 photos à la lumière du jour, fixe ton prix, publie."), h("button", { class: "btn primary", onclick: openSell }, "Publier une annonce")));
+  } else if (S.meTab === "sales") {
+    out.push(sales.length ? h("div", { class: "olist" }, sales.map(o => orderRow(o, "seller"))) : h("div", { class: "empty" }, h("h2", null, "Aucune vente pour l’instant"), h("p", { class: "muted" }, "Quand quelqu’un achète ton article, la commande apparaît ici avec l’étiquette d’envoi.")));
+  } else if (S.meTab === "buys") {
+    out.push(buys.length ? h("div", { class: "olist" }, buys.map(o => orderRow(o, "buyer"))) : h("div", { class: "empty" }, h("h2", null, "Aucun achat"), h("p", { class: "muted" }, "Tes commandes et leur suivi s’afficheront ici.")));
+  } else {
+    const rs = S.reviews.filter(x => x.sellerId === S.me);
+    out.push(rs.length ? h("div", { class: "olist" }, rs.map(x => h("div", { class: "order" }, avatar(x.buyerId, 40), h("div", { class: "grow" }, h("div", null, h("b", null, nameOf(x.buyerId)), " ", h("span", { class: "stars" }, starStr(x.stars))), x.text ? h("div", { class: "desc" }, x.text) : null, h("div", { class: "small muted" }, ago(x.at)))))) :
+      h("div", { class: "empty" }, h("h2", null, "Pas encore d’avis"), h("p", { class: "muted" }, "Les acheteurs notent la vente après avoir reçu l’article.")));
+  }
+  return out;
+}
+const STATUS = { paid: ["Payée · à expédier", "warn", 1], shipped: ["Expédiée", "", 2], done: ["Reçue", "grey", 3] };
+function orderRow(o, role) {
+  const [label, cls, step] = STATUS[o.status] || STATUS.paid;
+  const act = [];
+  if (role === "seller" && o.status === "paid") act.push(h("button", { class: "btn primary sm", onclick: () => setOrder(o, "shipped") }, o.shipping === "hand" ? "Marquer comme remis" : "Marquer comme expédié"));
+  if (role === "buyer" && o.status === "shipped") act.push(h("button", { class: "btn primary sm", onclick: () => setOrder(o, "done") }, "J’ai reçu l’article"));
+  if (role === "buyer" && o.status === "done" && !S.reviews.some(r => r.id === o.id)) act.push(h("button", { class: "btn sm", onclick: () => openReview(o) }, "Noter la vente"));
+  const other = role === "buyer" ? o.sellerId : o.buyerId;
+  return h("div", { class: "order" },
+    h("img", { src: o.thumb || FALLBACK, alt: "" }),
+    h("div", { class: "grow" },
+      h("div", null, h("b", null, o.title)),
+      h("div", { class: "small muted" }, `${role === "buyer" ? "Vendu par" : "Acheté par"} ${nameOf(other)} · ${o.shipLabel} · ${ago(o.createdAt)}`),
+      h("div", { class: "small" }, role === "buyer" ? `Payé ${eur(o.total)}` : `Tu reçois ${eur(o.price)}`),
+      h("div", { class: "steps", "aria-hidden": "true" }, [1, 2, 3].map(i => h("i", { class: i <= step ? "on" : "" })))),
+    h("span", { class: "pill " + cls }, label),
+    act);
+}
+async function setOrder(o, status) {
+  if (!needWrite()) return;
+  try { await Store.update("orders", o.id, { status }); toast(status === "shipped" ? "L’acheteur est prévenu : colis en route." : "Merci ! Le vendeur reçoit son argent."); }
+  catch (e) { writeFailed(e); }
+}
+
+/* ---------- Sheets ---------- */
+let sheetState = null;
+function openSheet(title, body, opts = {}) {
+  const host = $("#sheets");
+  const head = h("div", { class: "sheet-h" },
+    opts.back ? h("button", { class: "x", "aria-label": "Retour", html: ICON.back, onclick: opts.back }) : null,
+    h("h2", null, title),
+    h("button", { class: "x", "aria-label": "Fermer", html: ICON.x, onclick: closeSheet }));
+  const sheet = h("div", { class: "sheet" + (opts.narrow ? " narrow" : ""), role: "dialog", "aria-modal": "true", "aria-label": title }, head, body, opts.footer || null);
+  const scrim = h("div", { class: "scrim", onclick: e => { if (e.target === scrim) closeSheet(); } }, sheet);
+  host.replaceChildren(scrim);
+  document.body.style.overflow = "hidden";
+  setTimeout(() => (sheet.querySelector("[autofocus]") || head.querySelector(".x:last-child")).focus(), 30);
+  return sheet;
+}
+function closeSheet() { $("#sheets").replaceChildren(); document.body.style.overflow = ""; sheetState = null; }
+function refreshOpenSheet() {
+  if (!sheetState) return;
+  if (sheetState.type === "listing") paintListing();
+  if (sheetState.type === "chat") paintChat();
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sheetState) closeSheet(); });
+
+/* Listing detail */
+async function openListing(id) {
+  sheetState = { type: "listing", id, photos: null, idx: 0 };
+  const l = listingById(id); if (!l) return;
+  const body = h("div", { class: "sheet-b" });
+  openSheet(l.title, body);
+  sheetState.body = body;
+  paintListing();
+  try {
+    const p = await Store.get("photos", id);
+    if (sheetState?.id === id) { sheetState.photos = p?.images || null; paintListing(); }
+  } catch (e) { console.warn(e); }
+}
+function paintListing() {
+  const st = sheetState, l = listingById(st.id);
+  if (!l) { st.body.replaceChildren(h("div", { class: "empty" }, h("h2", null, "Cette annonce a été retirée"))); return; }
+  const pics = st.photos && st.photos.length ? st.photos : [imgOf(l)];
+  st.idx = Math.min(st.idx, pics.length - 1);
+  const mine = l.sellerId === S.me, sold = l.status === "sold";
+  const r = rating(l.sellerId);
+  const sellerCount = S.listings.filter(x => x.sellerId === l.sellerId && x.status !== "sold").length;
+  const actions = mine
+    ? [h("button", { class: "btn danger", onclick: () => removeListing(l) }, "Supprimer l’annonce")]
+    : sold ? [h("button", { class: "btn block", disabled: true }, "Cet article est vendu")]
+    : [h("button", { class: "btn primary", onclick: () => openCheckout(l.id) }, "Acheter"),
+       h("button", { class: "btn", onclick: () => startChat(l, "offer") }, "Faire une offre"),
+       h("button", { class: "btn ghost", onclick: () => startChat(l) }, "Poser une question")];
+  st.body.replaceChildren(h("div", { class: "detail" },
+    h("div", { class: "gallery" },
+      h("div", { class: "main", style: "position:relative" }, h("img", { src: pics[st.idx], alt: l.title }), sold ? h("div", { class: "soldout" }, "Vendu") : null, l.demo ? h("span", { class: "badge-demo" }, "Exemple") : null),
+      pics.length > 1 ? h("div", { class: "thumbs" }, pics.map((p, i) => h("button", { "aria-label": `Photo ${i + 1}`, "aria-pressed": String(i === st.idx), onclick: () => { st.idx = i; paintListing(); } }, h("img", { src: p, alt: "" })))) : null),
+    h("div", { class: "info" },
+      h("div", { style: "display:flex;justify-content:space-between;gap:12px;align-items:flex-start" },
+        h("div", null, h("div", { class: "price-big" }, eur(l.price)), h("div", { class: "small muted" }, `${eur(l.price + fee(l.price))} avec protection acheteur`)),
+        h("button", { class: "btn ghost sm", "aria-pressed": String(S.favs.has(l.id)), onclick: () => toggleFav(l.id) }, S.favs.has(l.id) ? "♥ En favori" : "♡ Favori")),
+      h("dl", { class: "specs" },
+        h("dt", null, "Marque"), h("dd", null, l.brand || "Sans marque"),
+        h("dt", null, "Taille"), h("dd", null, l.size || "—"),
+        h("dt", null, "État"), h("dd", null, l.condition),
+        h("dt", null, "Catégorie"), h("dd", null, catLabel(l.category)),
+        h("dt", null, "Publié"), h("dd", null, ago(l.createdAt))),
+      l.description ? h("p", { class: "desc", style: "margin:0" }, l.description) : null,
+      h("div", { class: "actions" }, actions),
+      h("div", { class: "protect", html: ICON.shield }, ),
+      h("div", { class: "seller" }, avatar(l.sellerId),
+        h("div", { style: "flex:1;min-width:0" }, h("b", null, mine ? "Toi" : nameOf(l.sellerId)),
+          h("div", { class: "small muted" }, r.n ? h("span", null, h("span", { class: "stars" }, starStr(r.avg)), ` ${r.avg.toFixed(1)} (${r.n} avis) · `) : "Nouveau vendeur · ", `${sellerCount} article${sellerCount > 1 ? "s" : ""} en vente`))))));
+  const pr = st.body.querySelector(".protect");
+  pr.append(h("div", null, h("b", null, "Protection acheteur incluse. "), "Ton argent est bloqué jusqu’à ce que tu confirmes la réception. Article non conforme : remboursé."));
+}
+async function removeListing(l) {
+  const body = h("div", { class: "sheet-b form" },
+    h("p", { style: "margin:0" }, `Supprimer « ${l.title} » ? Elle disparaîtra pour tout le monde.`),
+    h("div", { class: "actions" },
+      h("button", { class: "btn", onclick: () => openListing(l.id) }, "Annuler"),
+      h("button", { class: "btn danger", onclick: async () => {
+        if (!needWrite()) return;
+        try { await Store.del("listings", l.id); await Store.del("photos", l.id); closeSheet(); toast("Annonce supprimée"); } catch (e) { writeFailed(e); }
+      } }, "Supprimer")));
+  sheetState = null; openSheet("Supprimer l’annonce", body, { narrow: true });
+}
+
+/* Sell */
+function openSell() {
+  if (!needWrite()) return;
+  sheetState = { type: "sell" };
+  const photos = []; // {thumb, full}
+  const box = h("div", { class: "photos" });
+  const fileIn = h("input", { type: "file", accept: "image/*", multiple: true, id: "sPhotos" });
+  const addTile = h("label", { class: "add", for: "sPhotos" }, fileIn, h("span", null, "+ Ajouter", h("br"), "des photos"));
+  const paintPhotos = () => box.replaceChildren(...photos.map((p, i) => h("div", { class: "p" }, h("img", { src: p.thumb, alt: `Photo ${i + 1}` }), h("button", { type: "button", "aria-label": `Retirer la photo ${i + 1}`, onclick: () => { photos.splice(i, 1); paintPhotos(); } }, "×"))), photos.length < 5 ? addTile : "");
+  fileIn.addEventListener("change", async () => {
+    for (const f of [...fileIn.files].slice(0, 5 - photos.length)) {
+      try { const img = await loadImg(f); photos.push({ thumb: shrink(img, 420, .72), full: shrink(img, 1000, .74) }); } catch { toast("Cette image n’a pas pu être lue."); }
+    }
+    fileIn.value = ""; paintPhotos();
+  });
+  paintPhotos();
+
+  const cat = h("select", { id: "sCat", required: true }, CATS.map(c => h("option", { value: c.id }, c.label)));
+  const size = h("select", { id: "sSize" });
+  const paintSizes = () => size.replaceChildren(...CATS.find(c => c.id === cat.value).sizes.map(s => h("option", { value: s }, s)));
+  paintSizes();
+  const price = h("input", { id: "sPrice", type: "number", min: "1", step: "0.5", inputmode: "decimal", required: true, placeholder: "15" });
+  const earn = h("b", null, eur(0));
+  const hint = h("span", { class: "hint" });
+  const paintHint = () => {
+    const same = S.listings.filter(l => l.category === cat.value).map(l => l.price).sort((a, b) => a - b);
+    hint.textContent = same.length >= 3 ? `Dans cette catégorie, la moitié des articles sont affichés sous ${eur(same[Math.floor(same.length / 2)])}.` : "Un prix rond et juste part plus vite.";
+  };
+  paintHint();
+  cat.addEventListener("change", () => { paintSizes(); paintHint(); });
+  price.addEventListener("input", () => earn.textContent = eur((+price.value || 0) * (1 - FEES.sellerRate)));
+
+  const title = h("input", { id: "sTitle", required: true, maxlength: "70", placeholder: "Ex. Jean droit Levi’s 501 bleu brut", autofocus: true });
+  const brand = h("input", { id: "sBrand", maxlength: "40", placeholder: "Ex. Levi’s" });
+  const cond = h("select", { id: "sCond" }, CONDS.map(c => h("option", { value: c, selected: c === "Très bon état" }, c)));
+  const desc = h("textarea", { id: "sDesc", maxlength: "1200", placeholder: "Matière, coupe, défauts éventuels, mesures… Plus c’est précis, moins on te pose de questions." });
+  const submit = h("button", { class: "btn primary block", type: "submit" }, "Publier l’annonce");
+
+  const form = h("form", { class: "sheet-b form", onsubmit: async e => {
+    e.preventDefault();
+    const p = Math.round((+price.value) * 100) / 100;
+    if (!title.value.trim()) { toast("Donne un titre à ton annonce."); title.focus(); return; }
+    if (!(p >= 1)) { toast("Indique un prix d’au moins 1 €."); price.focus(); return; }
+    if (!needWrite()) return;
+    submit.disabled = true; submit.textContent = "Publication…";
+    const id = Store.newId("listings");
+    // keep the full-size photo doc under the 256 KiB document limit
+    let fulls = photos.map(x => x.full);
+    while (fulls.join("").length > 240000 && fulls.length > 1) fulls.pop();
+    const listing = { sellerId: S.me, title: title.value.trim(), brand: brand.value.trim(), category: cat.value, size: size.value, condition: cond.value,
+      description: desc.value.trim(), price: p, thumb: photos[0]?.thumb || "", illo: photos.length ? null : ["tshirt", "#DCE4DE", "#8BA597"], status: "active", createdAt: Date.now() };
+    try {
+      if (fulls.length) await Store.set("photos", id, { images: fulls });
+      await Store.set("listings", id, listing);
+      closeSheet(); S.view = "home"; S.f.cat = "all"; render(); toast("Annonce en ligne !"); setTimeout(() => openListing(id), 150);
+    } catch (err) { submit.disabled = false; submit.textContent = "Publier l’annonce"; writeFailed(err); }
+  } },
+    h("div", { class: "f" }, h("b", { class: "small" }, "Photos"), h("span", { class: "hint" }, "Jusqu’à 5. La première sert de couverture. Lumière du jour, fond uni."), box),
+    h("label", { class: "f", for: "sTitle" }, "Titre", title),
+    h("div", { class: "row2" }, h("label", { class: "f", for: "sCat" }, "Catégorie", cat), h("label", { class: "f", for: "sSize" }, "Taille", size)),
+    h("div", { class: "row2" }, h("label", { class: "f", for: "sBrand" }, "Marque", brand), h("label", { class: "f", for: "sCond" }, "État", cond)),
+    h("label", { class: "f", for: "sDesc" }, "Description", desc),
+    h("label", { class: "f", for: "sPrice" }, "Prix (€)", price, hint),
+    h("div", { class: "earn" }, h("span", null, "Tu recevras", h("br"), h("span", { class: "small muted" }, "0 % de commission vendeur")), earn),
+    submit);
+  openSheet("Vendre un article", form, { narrow: true });
+}
+
+/* Chat */
+function threadId(listingId, buyerId) { return listingId + "--" + buyerId.replace(/[^A-Za-z0-9_\-.~:@+]/g, "_"); }
+async function startChat(l, mode) {
+  if (!needWrite()) return;
+  const id = threadId(l.id, S.me);
+  if (!S.threads.some(t => t.id === id)) {
+    try { await Store.set("threads", id, { listingId: l.id, title: l.title, sellerId: l.sellerId, buyerId: S.me, messages: [], updatedAt: Date.now() }); }
+    catch (e) { writeFailed(e); return; }
+  }
+  openChat(id, mode);
+}
+function openChat(id, mode) {
+  sheetState = { type: "chat", id, mode };
+  const body = h("div", { class: "sheet-b" });
+  const input = h("input", { id: "chatIn", placeholder: "Écris ton message…", autocomplete: "off", maxlength: "600", autofocus: mode !== "offer" });
+  const composer = h("form", { class: "composer", onsubmit: async e => { e.preventDefault(); const t = input.value.trim(); if (!t) return; input.value = ""; await postMsg(id, { kind: "msg", text: t }); } },
+    input, h("button", { class: "btn primary", type: "submit" }, "Envoyer"));
+  const t = S.threads.find(x => x.id === id);
+  const other = t ? (t.buyerId === S.me ? t.sellerId : t.buyerId) : "";
+  openSheet(other ? nameOf(other) : "Conversation", body, { narrow: true, footer: composer, back: () => { closeSheet(); go("inbox"); } });
+  sheetState.body = body;
+  paintChat();
+  markSeen(id);
+}
+function markSeen(id) {
+  const t = S.threads.find(x => x.id === id); if (!t) return;
+  if ((S.seen[id] || 0) >= (t.updatedAt || 0)) return;
+  S.seen[id] = t.updatedAt || Date.now(); render();
+  Store.saveMine().catch(e => console.warn(e));
+}
+function paintChat() {
+  const st = sheetState, t = S.threads.find(x => x.id === st.id);
+  if (!t) { st.body.replaceChildren(h("p", { class: "muted" }, "Ouverture de la conversation…")); return; }
+  const l = listingById(t.listingId);
+  const iAmSeller = t.sellerId === S.me;
+  const offerBox = h("div", { class: "row2", style: "align-items:end" });
+  if (!iAmSeller && l && l.status !== "sold") {
+    const amt = h("input", { id: "offerAmt", type: "number", min: "1", step: "0.5", inputmode: "decimal", placeholder: String(Math.round(l.price * .85)), autofocus: st.mode === "offer" });
+    offerBox.append(h("label", { class: "f", for: "offerAmt" }, "Proposer un prix", amt),
+      h("button", { class: "btn", onclick: async () => {
+        const a = Math.round((+amt.value) * 100) / 100;
+        if (!(a >= 1)) { toast("Indique un montant."); amt.focus(); return; }
+        if (a >= l.price) { toast("L’offre doit être inférieure au prix affiché."); return; }
+        amt.value = ""; await postMsg(t.id, { kind: "offer", amount: a, state: "pending" });
+      } }, "Envoyer l’offre"));
+    st.mode = null;
+  }
+  const accepted = t.acceptedPrice;
+  const head = l ? h("div", { class: "chat-head" }, h("img", { src: imgOf(l), alt: "" }),
+    h("div", { style: "flex:1;min-width:0" }, h("b", null, l.title), h("div", { class: "small muted" }, accepted ? `Prix négocié : ${eur(accepted)} (au lieu de ${eur(l.price)})` : eur(l.price))),
+    !iAmSeller && l.status !== "sold" ? h("button", { class: "btn primary sm", onclick: () => openCheckout(l.id, accepted) }, accepted ? `Acheter ${eur(accepted)}` : "Acheter") : l.status === "sold" ? h("span", { class: "pill sold" }, "Vendu") : null) : null;
+  const msgs = (t.messages || []).map((m, i) => {
+    if (m.kind === "offer") {
+      const fromMe = m.from === S.me;
+      const kids = [h("span", { class: "small muted" }, fromMe ? "Ton offre" : `Offre de ${nameOf(m.from)}`), h("b", null, eur(m.amount))];
+      if (m.state === "pending") {
+        if (iAmSeller) kids.push(h("div", { class: "actions" }, h("button", { class: "btn sm", onclick: () => answerOffer(t, i, false) }, "Refuser"), h("button", { class: "btn primary sm", onclick: () => answerOffer(t, i, true) }, "Accepter")));
+        else kids.push(h("span", { class: "pill grey" }, "En attente de réponse"));
+      } else kids.push(h("span", { class: "pill " + (m.state === "accepted" ? "" : "warn") }, m.state === "accepted" ? "Offre acceptée" : "Offre refusée"));
+      return h("div", { class: "offer" }, kids);
+    }
+    return h("div", { class: "msg" + (m.from === S.me ? " me" : "") }, m.text, h("time", null, ago(m.at)));
+  });
+  st.body.replaceChildren(head, offerBox.childNodes.length ? offerBox : "", h("div", { class: "chat", style: "margin-top:14px" },
+    msgs.length ? msgs : h("p", { class: "muted small", style: "text-align:center" }, iAmSeller ? "Aucun message." : "Dis bonjour, pose ta question ou fais une offre. Les échanges restent sur Rebond : ne partage pas de coordonnées bancaires.")));
+  const sc = st.body.closest(".sheet"); if (sc) sc.scrollTop = sc.scrollHeight;
+  markSeen(t.id);
+}
+async function postMsg(id, m) {
+  if (!needWrite()) return;
+  const t = S.threads.find(x => x.id === id); if (!t) return;
+  const messages = [...(t.messages || []), { ...m, from: S.me, at: Date.now() }].slice(-200);
+  try { await Store.update("threads", id, { messages, updatedAt: Date.now() }); S.seen[id] = Date.now(); Store.saveMine().catch(() => {}); } catch (e) { writeFailed(e); }
+}
+async function answerOffer(t, i, ok) {
+  if (!needWrite()) return;
+  const messages = (t.messages || []).map((m, j) => j === i ? { ...m, state: ok ? "accepted" : "declined" } : m);
+  messages.push({ kind: "msg", from: S.me, at: Date.now(), text: ok ? `Offre acceptée à ${eur(t.messages[i].amount)}. Tu peux acheter à ce prix.` : "Désolé, je ne peux pas descendre à ce prix." });
+  const patch = { messages, updatedAt: Date.now() }; if (ok) patch.acceptedPrice = t.messages[i].amount;
+  try { await Store.update("threads", t.id, patch); } catch (e) { writeFailed(e); }
+}
+
+/* Checkout */
+function openCheckout(listingId, negotiated) {
+  if (!needWrite()) return;
+  const l = listingById(listingId); if (!l || l.status === "sold") { toast("Cet article n’est plus disponible."); return; }
+  if (!negotiated) { const t = S.threads.find(x => x.id === threadId(l.id, S.me || "")); negotiated = t?.acceptedPrice; }
+  const price = negotiated || l.price;
+  sheetState = { type: "checkout", id: listingId };
+  let ship = "relay";
+  const sumBox = h("div");
+  const paintSum = () => {
+    const s = SHIPPING.find(x => x.id === ship);
+    sumBox.replaceChildren(
+      h("div", { class: "fee-row" }, h("span", null, negotiated ? "Article (prix négocié)" : "Article"), h("b", null, eur(price))),
+      h("div", { class: "fee-row" }, h("span", null, "Protection acheteur (3 %, max 5 €)"), h("b", null, eur(fee(price)))),
+      h("div", { class: "fee-row" }, h("span", null, s.label), h("b", null, eur(s.price))),
+      h("div", { class: "fee-row total" }, h("span", null, "Total"), h("b", null, eur(price + fee(price) + s.price))));
+  };
+  paintSum();
+  const opts = h("div", { class: "form", role: "radiogroup", "aria-label": "Livraison" }, SHIPPING.map(s =>
+    h("label", { class: "opt" }, h("input", { type: "radio", name: "ship", value: s.id, checked: s.id === ship, onchange: () => { ship = s.id; paintSum(); } }),
+      h("span", { class: "grow" }, h("b", { style: "font-family:var(--f-body);font-weight:700" }, s.label), h("br"), h("span", { class: "small muted" }, s.sub)),
+      h("b", null, s.price ? eur(s.price) : "Gratuit"))));
+  const pay = h("button", { class: "btn primary block", onclick: async () => {
+    if (!needWrite()) return;
+    const fresh = listingById(listingId); if (!fresh || fresh.status === "sold") { toast("Quelqu’un vient de l’acheter. Désolé !"); closeSheet(); return; }
+    pay.disabled = true; pay.textContent = "Paiement…";
+    const s = SHIPPING.find(x => x.id === ship);
+    const oid = Store.newId("orders");
+    const order = { listingId, title: l.title, thumb: l.thumb || imgOf(l), sellerId: l.sellerId, buyerId: S.me, price, fee: fee(price), shipping: s.id, shipLabel: s.label, shipPrice: s.price, total: Math.round((price + fee(price) + s.price) * 100) / 100, status: "paid", createdAt: Date.now() };
+    if (order.thumb.length > 60000) order.thumb = "";
+    try {
+      await Store.set("orders", oid, order);
+      await Store.update("listings", listingId, { status: "sold", buyerId: S.me });
+      closeSheet(); S.view = "me"; S.meTab = "buys"; render(); window.scrollTo({ top: 0 }); toast("Commande payée ! Le vendeur a 5 jours pour expédier.");
+    } catch (e) { pay.disabled = false; pay.textContent = "Payer"; writeFailed(e); }
+  } }, "Payer");
+  const body = h("div", { class: "sheet-b form" },
+    h("div", { class: "chat-head" }, h("img", { src: imgOf(l), alt: "" }), h("div", null, h("b", null, l.title), h("div", { class: "small muted" }, `${l.size} · ${l.condition}`))),
+    h("h3", { style: "font-size:1.05rem" }, "Livraison"), opts,
+    h("h3", { style: "font-size:1.05rem" }, "Récapitulatif"), sumBox,
+    h("div", { class: "protect", html: ICON.shield }, h("div", null, "Le vendeur est payé seulement quand tu confirmes la réception.")),
+    pay,
+    h("p", { class: "small muted", style: "margin:0;text-align:center" }, "Paiement de démonstration : aucune carte n’est débitée."));
+  openSheet("Paiement sécurisé", body, { narrow: true });
+}
+
+/* Review */
+function openReview(o) {
+  let stars = 5;
+  const pick = h("div", { class: "starpick", role: "radiogroup", "aria-label": "Note" });
+  const paint = () => pick.replaceChildren(...[1, 2, 3, 4, 5].map(i => h("button", { type: "button", class: i <= stars ? "on" : "", role: "radio", "aria-checked": String(i === stars), "aria-label": `${i} étoile${i > 1 ? "s" : ""}`, onclick: () => { stars = i; paint(); } }, "★")));
+  paint();
+  const txt = h("textarea", { id: "rvTxt", maxlength: "400", placeholder: "Envoi rapide, article conforme…" });
+  const body = h("form", { class: "sheet-b form", onsubmit: async e => {
+    e.preventDefault(); if (!needWrite()) return;
+    try { await Store.set("reviews", o.id, { sellerId: o.sellerId, buyerId: S.me, stars, text: txt.value.trim(), at: Date.now() }); closeSheet(); toast("Merci pour ton avis !"); } catch (err) { writeFailed(err); }
+  } }, h("p", { style: "margin:0" }, `Comment s’est passée ta commande « ${o.title} » avec ${nameOf(o.sellerId)} ?`), pick,
+    h("label", { class: "f", for: "rvTxt" }, "Commentaire (facultatif)", txt), h("button", { class: "btn primary block", type: "submit" }, "Publier l’avis"));
+  sheetState = { type: "review" };
+  openSheet("Noter la vente", body, { narrow: true });
+}
+
+/* ---------- Demo content (local mode only) ---------- */
+function demoData() {
+  const now = Date.now(), H = 3600e3;
+  const L = (id, sellerId, title, brand, category, size, condition, price, hrs, illoArgs, description, status) =>
+    [id, { sellerId, title, brand, category, size, condition, price, createdAt: now - hrs * H, illo: illoArgs, description, status: status || "active", demo: true }];
+  const listings = Object.fromEntries([
+    L("d1", "demo_ines", "Jean droit brut", "Levi’s", "femme", "38", "Très bon état", 24, 2, ["pants", "#CFE0F2", "#2E4E7E"], "Coupe droite taille haute, denim rigide. Porté quelques fois, aucun défaut."),
+    L("d2", "demo_karim", "Sweat à capuche gris chiné", "Nike", "homme", "L", "Bon état", 18, 5, ["sweat", "#E4E6E3", "#7B817D"], "Molleton doux, poche kangourou. Légère bouloche sous les bras."),
+    L("d3", "demo_lea", "Robe midi fleurie", "Sézane", "femme", "36", "Neuf avec étiquette", 55, 9, ["dress", "#F7DCD3", "#C2553F"], "Jamais portée, étiquette encore attachée. Longueur mi-mollet."),
+    L("d4", "demo_tom", "Baskets blanches cuir", "Veja", "chaussures", "42", "Très bon état", 48, 20, ["shoe", "#E8ECEF", "#B9C3CC"], "Portées une saison, semelles propres. Boîte d’origine fournie."),
+    L("d5", "demo_ines", "Tote bag en toile épaisse", "Sans marque", "sacs", "Taille unique", "Très bon état", 9, 28, ["bag", "#EFE3C8", "#A7803A"], "Grand format, tient un ordinateur 14 pouces."),
+    L("d6", "demo_karim", "T-shirt vintage délavé", "Carhartt", "homme", "M", "Satisfaisant", 12, 36, ["tshirt", "#D8E8DA", "#3F7A52"], "Look usé assumé, petit trou au col (voir description)."),
+    L("d7", "demo_lea", "Pull col roulé laine", "Uniqlo", "femme", "S", "Très bon état", 16, 50, ["sweat", "#F1E4D8", "#8A5A3B"], "Mérinos extra-fin, lavé à la main uniquement."),
+    L("d8", "demo_tom", "Maillot de foot rétro", "Adidas", "sport", "L", "Bon état", 30, 70, ["tshirt", "#DDE3F6", "#2233A8"], "Réédition, flocage intact."),
+    L("d9", "demo_ines", "Combinaison bébé coton bio", "Petit Bateau", "enfant", "12 mois", "Neuf sans étiquette", 8, 90, ["tshirt", "#FBE9EF", "#D46C8E"], "Lavée une fois, jamais portée."),
+    L("d10", "demo_karim", "Chino beige coupe slim", "Zara", "homme", "42", "Bon état", 14, 120, ["pants", "#EFE8DA", "#B39A6C"], "Taille un peu petit.", "sold"),
+  ]);
+  const reviews = {
+    r1: { sellerId: "demo_ines", buyerId: "demo_tom", stars: 5, text: "Envoi le lendemain, jean nickel.", at: now - 80 * H },
+    r2: { sellerId: "demo_karim", buyerId: "demo_lea", stars: 4, text: "Conforme, emballage léger.", at: now - 100 * H },
+    r3: { sellerId: "demo_lea", buyerId: "demo_ines", stars: 5, text: "", at: now - 140 * H },
+  };
+  return { listings, photos: {}, orders: {}, threads: {}, reviews, favs: [], seen: {} };
+}
+
+/* ---------- Wiring ---------- */
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g) { go(g.dataset.go); return; }
+  const a = e.target.closest('[data-action="sell"]'); if (a) openSell();
+});
+$("#logo").addEventListener("click", () => { S.f = { q: "", cat: "all", size: "", cond: "", max: "", sort: "recent" }; $("#q").value = ""; go("home"); });
+let qT; $("#q").addEventListener("input", e => { clearTimeout(qT); qT = setTimeout(() => { S.f.q = e.target.value; if (S.view !== "home" && S.view !== "favs") S.view = "home"; render(); }, 160); });
+
+boot();
+})();
+</script>
+
+</body>
+</html>
