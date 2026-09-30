@@ -18,7 +18,8 @@
   price     une fourchette, jamais un prix exact (il change tout le temps)
   query     ce qu'on tape dans la recherche Amazon, ou laissez vide et mettez
   url       un lien Amazon direct vers la fiche produit
-  image     (optionnel) chemin vers VOTRE photo, ex. "img/airtag.jpg".
+  image     (optionnel) lien direct vers la photo officielle sur le site de la
+            marque, ou chemin vers votre photo (ex. "img/airtag.jpg").
             N'utilisez pas les photos d'Amazon.
 */
 
@@ -56,7 +57,7 @@ window.TOP1 = {
       alternative: "Sous Android, un traqueur compatible avec le réseau Localiser de Google fait le même travail.",
       query: "Apple AirTag",
       url: "",
-      image: ""
+      image: "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airtag-1pack-witb-202601?wid=1000&hei=1000&fmt=jpeg&qlt=90"
     },
     {
       id: "ninja-dual-zone",
@@ -72,13 +73,13 @@ window.TOP1 = {
       alternative: "Pour une ou deux personnes, une friteuse sans huile à un seul panier (Cosori, par exemple) coûte moins cher et prend moins de place.",
       query: "Ninja Foodi Dual Zone AF300EU",
       url: "",
-      image: ""
+      image: "https://assets.sharkninja.com/image/upload/c_fill,w_690,h_690,f_auto,g_auto,q_auto,dpr_2.0,b_rgb:FFFFFF/v1/SharkNinja-EU/AF300UK_01"
     },
     {
       id: "cerave-creme",
       category: "beaute",
       brand: "CeraVe",
-      name: "Crème Hydratante",
+      name: "Baume Hydratant",
       price: "Moins de 20 €",
       verdict: "merite",
       headline: "Le pot que les dermatologues citent avant les marques de luxe.",
@@ -86,9 +87,9 @@ window.TOP1 = {
       forWho: "Peaux sèches à normales, visage et corps, et les peaux qui réagissent aux parfums.",
       catch: "La texture est riche. Sur une peau grasse, elle peut paraître lourde en journée.",
       alternative: "Pour une peau mixte ou grasse, la Lotion Hydratante de la même marque est plus légère.",
-      query: "CeraVe Crème Hydratante",
+      query: "CeraVe Baume Hydratant",
       url: "",
-      image: ""
+      image: "https://www.cerave.fr/-/media/project/loreal/brand-sites/cerave/emea/fr/fr-all-product-details-latest/new-pdp-images/baume-hydratant/moisturising-cream-icon-fr-sm.webp?rev=-1"
     },
     {
       id: "dualsense",
@@ -104,7 +105,7 @@ window.TOP1 = {
       alternative: "Une DualSense reconditionnée par un vendeur sérieux, avec garantie, pour payer moins cher.",
       query: "Manette DualSense PS5",
       url: "",
-      image: ""
+      image: "https://gmedia.playstation.com/is/image/SIEPDC/dualsense-controller-product-thumbnail-01-en-14sep21"
     },
     {
       id: "uno",
@@ -120,7 +121,7 @@ window.TOP1 = {
       alternative: "Dobble, encore plus rapide et jouable dès 6 ans.",
       query: "UNO Mattel jeu de cartes",
       url: "",
-      image: ""
+      image: "https://shop.mattel.com/cdn/shop/files/k33zfqfgrq9bwdfuxu7k.png?v=1781708126"
     },
     {
       id: "duracell-aa",
@@ -136,7 +137,7 @@ window.TOP1 = {
       alternative: "Des piles rechargeables Panasonic Eneloop et un chargeur : plus cher au départ, rentabilisé en quelques mois.",
       query: "Piles Duracell Plus AA",
       url: "",
-      image: ""
+      image: "https://www.duracell.fr/upload/sites/3/2025/07/PACKSHOT_EA_PLUS_AA_4_KP_5000394176027_5019102_FOP-1.png"
     },
     {
       id: "stanley-quencher",
@@ -152,7 +153,7 @@ window.TOP1 = {
       alternative: "Une gourde isotherme en inox avec un bouchon vissé : étanche, plus légère, deux fois moins chère.",
       query: "Stanley Quencher H2.0 1,18 L",
       url: "",
-      image: ""
+      image: "https://www.stanley1913.com/cdn/shop/files/Web_PNG_Square-The_Quencher_H2.0_FlowState_Tumbler_40OZ_-_Purple_Dust_-_Front.png?v=1770952011"
     },
     {
       id: "oral-b-pro3",
