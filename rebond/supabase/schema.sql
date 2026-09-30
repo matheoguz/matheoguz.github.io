@@ -120,7 +120,7 @@ create table if not exists public.orders (
   auth                   boolean not null default false,
   auth_price             numeric(10,2) not null default 0,
   total                  numeric(10,2) not null,
-  status                 text not null default 'paid' check (status in ('paid','shipped','verified','rejected','done','cancelled')),
+  status                 text not null default 'paid' check (status in ('paid','shipped','verified','disputed','rejected','done','cancelled')),
   shipping_name          text not null default '',
   shipping_address       text not null default '',
   shipping_zip           text not null default '',
@@ -439,6 +439,87 @@ create policy "photos : je supprime les miennes" on storage.objects for delete t
 drop policy if exists "photos : je liste les miennes" on storage.objects;
 create policy "photos : je liste les miennes" on storage.objects for select to authenticated
   using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ---------------------------------------------------------------------
+-- Litiges, préférences e-mail, informations fiscales (DAC7)
+-- ---------------------------------------------------------------------
+alter table public.orders drop constraint if exists orders_status_check;
+alter table public.orders add constraint orders_status_check
+  check (status in ('paid','shipped','verified','disputed','rejected','done','cancelled'));
+alter table public.orders add column if not exists dispute_reason text
+  check (dispute_reason is null or dispute_reason in ('non_recue','non_conforme','contrefacon','abimee','autre'));
+alter table public.orders add column if not exists dispute_details text check (char_length(dispute_details) <= 1000);
+alter table public.orders add column if not exists dispute_opened_at timestamptz;
+alter table public.orders add column if not exists dispute_resolution text;
+
+alter table public.user_settings add column if not exists email_notifs boolean not null default true;
+
+-- L'acheteur ouvre un litige avant de confirmer la réception : l'argent reste bloqué
+-- jusqu'à la décision de la modération (fonction order-action : dispute-refund / dispute-release).
+create or replace function public.open_dispute(p_order uuid, p_reason text, p_details text) returns void
+language plpgsql security definer set search_path = public as $$
+declare o public.orders;
+begin
+  select * into o from public.orders where id = p_order for update;
+  if not found or o.buyer_id is distinct from auth.uid() then raise exception 'Commande introuvable'; end if;
+  if o.status not in ('shipped','verified') then raise exception 'Un litige s’ouvre après l’envoi et avant la confirmation de réception'; end if;
+  if p_reason not in ('non_recue','non_conforme','contrefacon','abimee','autre') then raise exception 'Motif de litige inconnu'; end if;
+  if coalesce(trim(p_details), '') = '' then raise exception 'Décris le problème en quelques mots'; end if;
+  update public.orders set status = 'disputed', dispute_reason = p_reason, dispute_details = left(trim(p_details), 1000),
+    dispute_opened_at = now(), updated_at = now() where id = p_order;
+end $$;
+revoke execute on function public.open_dispute(uuid, text, text) from public, anon;
+grant execute on function public.open_dispute(uuid, text, text) to authenticated;
+
+-- Informations fiscales des vendeurs, demandées pour la déclaration DAC7.
+-- Visibles par leur propriétaire et par la modération uniquement.
+create table if not exists public.seller_tax_info (
+  user_id     uuid primary key references auth.users(id) on delete cascade,
+  legal_name  text not null check (char_length(legal_name) between 3 and 120),
+  birth_date  date not null check (birth_date < current_date - interval '18 years'),
+  address     text not null check (char_length(address) between 5 and 200),
+  tin         text not null check (tin ~ '^[0-9 ]{13,17}$'),   -- numéro fiscal français : 13 chiffres
+  updated_at  timestamptz not null default now()
+);
+alter table public.seller_tax_info enable row level security;
+drop policy if exists "mes infos fiscales" on public.seller_tax_info;
+create policy "mes infos fiscales" on public.seller_tax_info for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+drop policy if exists "infos fiscales : modération" on public.seller_tax_info;
+create policy "infos fiscales : modération" on public.seller_tax_info for select to authenticated
+  using (public.is_admin());
+
+-- Rapport annuel DAC7 : vendeurs ayant au moins 30 ventes ou au moins 2 000 € sur l'année civile.
+-- Montants = prix des paires (contrepartie reçue par le vendeur), commandes terminées.
+create or replace function public.dac7_report(p_year int)
+returns table (seller_id uuid, username text, email text, legal_name text, birth_date date, address text, tin text,
+               sales_count bigint, sales_total numeric, q1 numeric, q2 numeric, q3 numeric, q4 numeric)
+language plpgsql stable security definer set search_path = public, auth as $$
+begin
+  if not public.is_admin() then raise exception 'Réservé à la modération'; end if;
+  return query
+  with s as (
+    select o.seller_id, count(*) as n, sum(o.price) as total,
+      sum(o.price) filter (where extract(quarter from coalesce(o.delivered_at, o.created_at)) = 1) as t1,
+      sum(o.price) filter (where extract(quarter from coalesce(o.delivered_at, o.created_at)) = 2) as t2,
+      sum(o.price) filter (where extract(quarter from coalesce(o.delivered_at, o.created_at)) = 3) as t3,
+      sum(o.price) filter (where extract(quarter from coalesce(o.delivered_at, o.created_at)) = 4) as t4
+    from public.orders o
+    where o.status = 'done' and o.seller_id is not null
+      and extract(year from coalesce(o.delivered_at, o.created_at)) = p_year
+    group by o.seller_id
+  )
+  select s.seller_id, p.username, u.email::text, t.legal_name, t.birth_date, t.address, t.tin,
+         s.n, s.total, coalesce(s.t1, 0), coalesce(s.t2, 0), coalesce(s.t3, 0), coalesce(s.t4, 0)
+  from s
+  join public.profiles p on p.id = s.seller_id
+  join auth.users u on u.id = s.seller_id
+  left join public.seller_tax_info t on t.user_id = s.seller_id
+  where s.n >= 30 or s.total >= 2000
+  order by s.total desc;
+end $$;
+revoke execute on function public.dac7_report(int) from public, anon;
+grant execute on function public.dac7_report(int) to authenticated;
 
 -- ---------------------------------------------------------------------
 -- Temps réel : l'appli se met à jour dès qu'une ligne change.

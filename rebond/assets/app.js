@@ -42,6 +42,8 @@ const CARRIERS = {
 };
 const REASONS = { contrefacon: "Contrefaçon", interdit: "Objet interdit ou dangereux", arnaque: "Arnaque ou tentative de fraude", inapproprie: "Contenu inapproprié ou offensant", autre: "Autre problème" };
 const CONTACT = CFG.contactEmail || "contact@rebond.example";
+const DISPUTES = { non_recue: "Colis jamais reçu", non_conforme: "Paire différente de l’annonce (modèle, pointure, état)", contrefacon: "Je pense que c’est une contrefaçon", abimee: "Paire abîmée pendant le transport", autre: "Autre problème" };
+const DAC7 = { sales: 30, amount: 2000 };
 
 /* ================= Outils ================= */
 const $ = (s, r = document) => r.querySelector(s);
@@ -212,7 +214,7 @@ const S = {
   mode: "loading", me: null, email: "",
   profile: { username: "", city: "", isAdmin: false, payoutsReady: false },
   profiles: {}, listings: [], orders: [], threads: [], reviews: [], reports: [],
-  mySize: "", seen: {},
+  mySize: "", seen: {}, emailNotifs: true, taxInfo: null,
   route: { name: "home" }, f: blankFilters(), pop: null, built: "",
 };
 
@@ -232,6 +234,7 @@ const Demo = {
     S.listings = toArr(d.listings); S.orders = toArr(d.orders); S.threads = toArr(d.threads);
     S.reviews = toArr(d.reviews); S.reports = toArr(d.reports);
     S.mySize = d.mySize || ""; S.seen = { ...(d.seen || {}) }; S.profile = { ...d.profile };
+    S.emailNotifs = d.emailNotifs !== false; S.taxInfo = d.taxInfo || null;
     S.profiles = Object.fromEntries(Object.entries(DEMO_PEOPLE).map(([id, [username, city]]) => [id, { username, city }]));
     S.profiles.moi = { username: d.profile.username, city: d.profile.city };
     render();
@@ -239,7 +242,26 @@ const Demo = {
   commit() { this.save(); this.pull(); },
   async start() { S.mode = "demo"; S.me = "moi"; this.load(); this.pull(); },
   photosOf(l) { return (this.data.photos || {})[l.id] || []; },
-  async saveSettings() { this.data.mySize = S.mySize; this.data.seen = S.seen; this.save(); },
+  async saveSettings() { this.data.mySize = S.mySize; this.data.seen = S.seen; this.data.emailNotifs = S.emailNotifs; this.save(); },
+  async saveTaxInfo(t) { this.data.taxInfo = t; this.commit(); },
+  async openDispute(o, reason, details) { Object.assign(this.data.orders[o.id], { status: "disputed", disputeReason: reason, disputeDetails: details, disputeOpenedAt: Date.now() }); this.commit(); },
+  async resolveDispute(o, action, note) {
+    const x = this.data.orders[o.id]; x.disputeResolution = note;
+    if (action === "dispute-refund") Object.assign(x, { status: "cancelled", payoutStatus: "refunded" });
+    else Object.assign(x, { status: "done", payoutStatus: x.sellerId !== "moi" || this.data.profile.payoutsReady ? "paid" : "awaiting_seller" });
+    this.commit();
+  },
+  async dac7(year) {
+    const by = {};
+    for (const o of Object.values(this.data.orders)) {
+      if (o.status !== "done" || new Date(o.createdAt).getFullYear() !== year) continue;
+      const q = Math.floor(new Date(o.createdAt).getMonth() / 3), r = (by[o.sellerId] ||= { n: 0, total: 0, q: [0, 0, 0, 0] });
+      r.n++; r.total += o.price; r.q[q] += o.price;
+    }
+    return Object.entries(by).filter(([, r]) => r.n >= DAC7.sales || r.total >= DAC7.amount).map(([id, r]) => ({
+      username: nameOf(id), email: id === "moi" ? "toi@exemple.fr" : "", ...(id === "moi" && this.data.taxInfo ? this.data.taxInfo : {}),
+      salesCount: r.n, salesTotal: r.total, quarters: r.q }));
+  },
   async saveProfile(p) { Object.assign(this.data.profile, p); this.commit(); },
   async createListing(fields, photos) {
     const id = rid();
@@ -332,7 +354,8 @@ const mapListing = r => ({ id: r.id, sellerId: r.seller_id, title: r.title, desc
 const mapOrder = r => ({ id: r.id, listingId: r.listing_id, title: r.title, size: r.size, thumb: r.thumb, sellerId: r.seller_id, buyerId: r.buyer_id,
   price: Number(r.price), protection: Number(r.protection), shipping: r.ship_method, shipLabel: r.ship_label, shipPrice: Number(r.ship_price), auth: r.auth,
   authPrice: Number(r.auth_price), total: Number(r.total), status: r.status, payoutStatus: r.payout_status, carrier: r.carrier, tracking: r.tracking,
-  shippingName: r.shipping_name, shippingAddress: r.shipping_address, shippingZip: r.shipping_zip, createdAt: Date.parse(r.created_at), shippedAt: r.shipped_at ? Date.parse(r.shipped_at) : null });
+  shippingName: r.shipping_name, shippingAddress: r.shipping_address, shippingZip: r.shipping_zip, createdAt: Date.parse(r.created_at), shippedAt: r.shipped_at ? Date.parse(r.shipped_at) : null,
+  disputeReason: r.dispute_reason, disputeDetails: r.dispute_details, disputeResolution: r.dispute_resolution });
 
 const Live = {
   sb: null, raw: [], likes: [], timers: {},
@@ -351,7 +374,7 @@ const Live = {
   setUser(sess) { S.me = sess?.user?.id || null; S.email = sess?.user?.email || ""; },
   async loadAll() {
     $("#loadingBar").hidden = false;
-    await Promise.all(["profiles", "listings", "likes", "reviews", "threads", "orders", "reports", "settings"].map(k => this.load(k)));
+    await Promise.all(["profiles", "listings", "likes", "reviews", "threads", "orders", "reports", "settings", "taxinfo"].map(k => this.load(k)));
     $("#loadingBar").hidden = true;
     S.built = ""; render();
   },
@@ -371,7 +394,7 @@ const Live = {
       } else if (k === "reviews") {
         S.reviews = (await this.q(sb.from("reviews").select("*"))).map(r => ({ id: r.order_id, sellerId: r.seller_id, buyerId: r.buyer_id, stars: r.stars, text: r.body, at: Date.parse(r.created_at) }));
       } else if (!S.me) {
-        if (k === "threads") S.threads = []; if (k === "orders") S.orders = []; if (k === "reports") S.reports = []; if (k === "settings") { S.mySize = ""; S.seen = {}; }
+        if (k === "threads") S.threads = []; if (k === "orders") S.orders = []; if (k === "reports") S.reports = []; if (k === "settings") { S.mySize = ""; S.seen = {}; S.emailNotifs = true; } if (k === "taxinfo") S.taxInfo = null;
       } else if (k === "threads") {
         const [ts, ms] = await Promise.all([this.q(sb.from("threads").select("*")), this.q(sb.from("messages").select("*").order("id").limit(5000))]);
         const by = {}; for (const m of ms) (by[m.thread_id] ||= []).push({ id: m.id, from: m.from_id, kind: m.kind, text: m.body, amount: m.amount == null ? null : Number(m.amount), state: m.state, at: Date.parse(m.created_at) });
@@ -382,7 +405,10 @@ const Live = {
         S.reports = (await this.q(sb.from("reports").select("*").order("created_at", { ascending: false }))).map(r => ({ id: r.id, reporterId: r.reporter_id, listingId: r.listing_id, reason: r.reason, details: r.details, status: r.status, decision: r.decision, at: Date.parse(r.created_at), handledAt: r.handled_at ? Date.parse(r.handled_at) : null }));
       } else if (k === "settings") {
         const row = await this.q(sb.from("user_settings").select("*").eq("user_id", S.me).maybeSingle());
-        S.mySize = row?.my_size || ""; S.seen = row?.seen || {};
+        S.mySize = row?.my_size || ""; S.seen = row?.seen || {}; S.emailNotifs = row?.email_notifs !== false;
+      } else if (k === "taxinfo") {
+        const row = await this.q(sb.from("seller_tax_info").select("*").eq("user_id", S.me).maybeSingle());
+        S.taxInfo = row ? { legalName: row.legal_name, birthDate: row.birth_date, address: row.address, tin: row.tin } : null;
       }
     } catch (e) { console.warn("Chargement", k, e); }
   },
@@ -403,7 +429,18 @@ const Live = {
     return data;
   },
   photosOf(l) { return l.photos || []; },
-  async saveSettings() { if (S.me) await this.sb.from("user_settings").upsert({ user_id: S.me, my_size: S.mySize, seen: S.seen, updated_at: new Date().toISOString() }); },
+  async saveSettings() { if (S.me) await this.sb.from("user_settings").upsert({ user_id: S.me, my_size: S.mySize, seen: S.seen, email_notifs: S.emailNotifs, updated_at: new Date().toISOString() }); },
+  async saveTaxInfo(t) {
+    await this.q(this.sb.from("seller_tax_info").upsert({ user_id: S.me, legal_name: t.legalName, birth_date: t.birthDate, address: t.address, tin: t.tin, updated_at: new Date().toISOString() }));
+    await this.load("taxinfo"); render();
+  },
+  async openDispute(o, reason, details) { await this.q(this.sb.rpc("open_dispute", { p_order: o.id, p_reason: reason, p_details: details })); await this.load("orders"); },
+  async resolveDispute(o, action, note) { await this.fn("order-action", { orderId: o.id, action, note }); await this.load("orders"); },
+  async dac7(year) {
+    const rows = await this.q(this.sb.rpc("dac7_report", { p_year: year }));
+    return rows.map(r => ({ username: r.username, email: r.email, legalName: r.legal_name, birthDate: r.birth_date, address: r.address, tin: r.tin,
+      salesCount: Number(r.sales_count), salesTotal: Number(r.sales_total), quarters: [r.q1, r.q2, r.q3, r.q4].map(Number) }));
+  },
   async saveProfile(p) { await this.q(this.sb.from("profiles").update({ username: p.username, city: p.city }).eq("id", S.me)); await this.load("profiles"); render(); },
   async upload(path, blob) {
     const st = this.sb.storage.from("photos");
@@ -459,7 +496,7 @@ const Live = {
     return { exporte_le: new Date().toISOString(), compte: { id: S.me, email: S.email, pseudo: S.profile.username, ville: S.profile.city }, reglages: { pointure: S.mySize },
       annonces: S.listings.filter(l => l.sellerId === S.me), favoris: S.listings.filter(liked).map(l => ({ id: l.id, titre: l.title })),
       conversations: myThreads(), commandes: S.orders, avis_recus: S.reviews.filter(r => r.sellerId === S.me), avis_donnes: S.reviews.filter(r => r.buyerId === S.me),
-      signalements: S.reports.filter(r => r.reporterId === S.me) };
+      signalements: S.reports.filter(r => r.reporterId === S.me), informations_fiscales: S.taxInfo };
   },
   async deleteAccount() {
     if (S.orders.some(o => ["paid", "shipped", "verified"].includes(o.status))) throw uerr("Termine d’abord tes commandes en cours.");
@@ -1058,7 +1095,7 @@ function pageCheckout() {
 /* ---------- Commandes ---------- */
 function steps(o) {
   const s = ["Payée", o.shipping === "hand" ? "Remise" : "Expédiée"]; if (o.auth) s.push("Authentifiée"); s.push("Reçue");
-  const idx = { paid: 0, shipped: 1, verified: 2, done: s.length - 1 }[o.status] ?? 0;
+  const idx = { paid: 0, shipped: 1, verified: 2, disputed: o.auth ? 2 : 1, done: s.length - 1 }[o.status] ?? 0;
   return { s, idx };
 }
 function pageOrders() {
@@ -1078,6 +1115,7 @@ function statusLabel(o, role) {
   if (o.status === "paid") return role === "seller" ? ["À expédier", "warn"] : ["Payée · en attente d’envoi", "warn"];
   if (o.status === "shipped") return o.auth ? ["En route vers la vérification", "blue"] : [o.shipping === "hand" ? "Remise déclarée" : "Expédiée", "blue"];
   if (o.status === "verified") return ["Authentifiée · en route", "blue"];
+  if (o.status === "disputed") return ["Litige en cours d’examen", "warn"];
   if (o.status === "done") return ["Terminée", "good"];
   if (o.status === "rejected") return ["Refusée à l’authentification · remboursée", ""];
   return ["Annulée · remboursée", ""];
@@ -1097,8 +1135,9 @@ function orderRow(o, role) {
   if (role === "buyer" && o.status === "paid" && late) acts.push(h("button", { class: "btn ghost sm", onclick: () => confirmAction(o, "cancel", "Annuler et être remboursé·e ?", `Le vendeur n’a pas envoyé la paire sous ${SELLER_SHIP_DAYS} jours. Tu seras remboursé·e intégralement.`) }, "Annuler et être remboursé·e"));
   if (role === "buyer" && ((o.status === "shipped" && !o.auth) || o.status === "verified")) {
     acts.push(h("button", { class: "btn primary sm", onclick: () => confirmAction(o, "confirm", "Tout est conforme ?", "En confirmant, tu indiques que la paire correspond à l’annonce. Le vendeur reçoit alors son argent : tu ne pourras plus demander de remboursement.") }, "J’ai reçu ma paire, tout est OK"));
-    acts.push(h("button", { class: "btn ghost sm", onclick: threadWith }, "Signaler un problème"));
+    acts.push(h("button", { class: "btn ghost sm", onclick: () => disputeDialog(o) }, "Signaler un problème"));
   }
+  if (o.status === "disputed") acts.push(h("button", { class: "btn ghost sm", onclick: threadWith }, role === "buyer" ? "Écrire au vendeur" : "Répondre à l’acheteur"));
   if (role === "buyer" && o.status === "shipped" && o.auth) acts.push(h("span", { class: "small muted" }, "Notre équipe contrôle la paire dès son arrivée, puis te l’envoie."),
     S.profile.isAdmin && S.mode === "demo" ? h("button", { class: "btn ghost sm", onclick: () => go("admin", { tab: "authentification" }) }, "Faire le contrôle (démo)") : null);
   if (role === "buyer" && o.status === "done" && !S.reviews.some(r => r.id === o.id)) acts.push(h("button", { class: "btn outline sm", onclick: () => reviewDialog(o) }, "Évaluer le vendeur"));
@@ -1113,9 +1152,25 @@ function orderRow(o, role) {
       trk ? h("div", { class: "small" }, `${trk.label} · ${o.tracking} `, trk.url ? h("a", { class: "track-link", href: trk.url(o.tracking), target: "_blank", rel: "noopener" }, "Suivre le colis") : null) : null,
       !ended ? h("div", { class: "track", "aria-label": `Étape : ${s[idx]}` }, s.map((_, i) => h("i", { class: i <= idx ? "on" : "" }))) : null,
       !ended ? h("div", { class: "xs muted", style: "display:flex;justify-content:space-between;gap:6px;margin-top:4px" }, s.map((x, i) => h("span", { style: i === idx ? "color:var(--ink);font-weight:700" : "" }, x))) : null,
+      o.disputeReason ? h("div", { class: "small", style: "margin-top:6px" }, h("span", { class: "reason" }, DISPUTES[o.disputeReason] || o.disputeReason), " ", o.disputeDetails || "") : null,
+      o.disputeResolution ? h("div", { class: "small muted" }, "Décision de Rebond : ", o.disputeResolution) : null,
       role === "seller" ? payoutLine(o) : null),
     h("span", { class: "st " + cls }, label),
     acts.length ? h("div", { class: "order-actions" }, acts) : null);
+}
+function disputeDialog(o) {
+  let reason = "non_conforme";
+  const details = h("textarea", { id: "dispDetails", maxlength: "1000", placeholder: "Décris le problème : ce qui est différent, depuis quand, ce que tu as constaté…" });
+  const msg = h("div", { class: "formmsg err", hidden: true });
+  modal("Signaler un problème",
+    h("p", { class: "small", style: "margin:0" }, "L’argent reste bloqué pendant l’examen. Garde la paire et son emballage, et prépare des photos : notre équipe peut te les demander. Réponse sous 72 h."),
+    h("div", { class: "conds", role: "radiogroup", "aria-label": "Motif" }, Object.entries(DISPUTES).map(([k, t]) => h("label", null, h("input", { type: "radio", name: "disp", checked: k === reason, onchange: () => reason = k }), h("span", null, t)))),
+    h("label", { class: "field", for: "dispDetails" }, "Détails", details), msg,
+    h("div", { class: "actions-end" }, h("button", { class: "btn ghost", onclick: closeLayer }, "Annuler"),
+      h("button", { class: "btn primary", onclick: async () => {
+        if (!details.value.trim()) { msg.hidden = false; msg.textContent = "Décris le problème en quelques mots."; details.focus(); return; }
+        if (await attempt(() => Api.openDispute(o, reason, details.value.trim().slice(0, 1000)), "Litige ouvert. Le vendeur et notre équipe sont prévenus.")) closeLayer();
+      } }, "Ouvrir un litige")));
 }
 function shipDialog(o) {
   if (o.shipping === "hand") { confirmAction(o, "ship", "Paire remise ?", "Confirme que tu as remis la paire à l’acheteur. Il devra ensuite confirmer que tout est conforme."); return; }
@@ -1196,13 +1251,19 @@ function pageAccount() {
       h("div", { class: "stat" }, h("b", { class: "num" }, S.orders.filter(o => o.sellerId === S.me && !["cancelled", "rejected"].includes(o.status)).length), h("span", null, "vendues")),
       h("div", { class: "stat" }, h("b", { class: "num" }, eur(earned)), h("span", null, "versés"))),
     wallet,
+    (() => {
+      const y = new Date().getFullYear(), mine = S.orders.filter(o => o.sellerId === S.me && o.status === "done" && new Date(o.createdAt).getFullYear() === y);
+      const total = mine.reduce((a, o) => a + o.price, 0);
+      return !S.taxInfo && (mine.length >= DAC7.sales - 5 || total >= DAC7.amount * 0.75)
+        ? h("div", { class: "notice" }, `Tu approches du seuil de déclaration fiscale (${mine.length} ventes, ${eur(total)} cette année). `, h("button", { class: "linkbtn", onclick: () => go("settings") }, "Renseigne tes informations fiscales")) : null;
+    })(),
     h("div", { class: "menu" },
       item("Mon dressing", `${onSale} paire${onSale > 1 ? "s" : ""} en vente`, () => go("member", { id: S.me })),
       item("Mes commandes", pendingSales() ? `${pendingSales()} vente${pendingSales() > 1 ? "s" : ""} à expédier` : "Achats et ventes", () => go("orders", { tab: pendingSales() ? "ventes" : "achats" })),
       item("Mes favoris", null, () => go("favs")),
       item("Ma pointure", S.mySize ? `${sz(S.mySize)} EU · toucher pour changer` : "Non renseignée", () => { setSize(""); go("home"); }),
       item("Paramètres du compte", "Pseudo, ville, données personnelles, suppression", () => go("settings")),
-      S.profile.isAdmin ? item("Modération", `${S.reports.filter(r => r.status === "open").length} signalement(s) · ${S.orders.filter(o => o.auth && o.status === "shipped").length} paire(s) à authentifier`, () => go("admin")) : null,
+      S.profile.isAdmin ? item("Modération", `${S.reports.filter(r => r.status === "open").length} signalement(s) · ${S.orders.filter(o => o.status === "disputed").length} litige(s) · ${S.orders.filter(o => o.auth && o.status === "shipped").length} paire(s) à authentifier`, () => go("admin")) : null,
       item("Aide, règles et signalement", null, () => { location.href = "legal/regles.html"; }),
       S.mode === "live" ? item("Se déconnecter", null, async () => { await attempt(() => Api.signOut(), "À bientôt !"); go("home", {}, { replace: true }); }) : null)];
 }
@@ -1224,6 +1285,11 @@ function pageSettings() {
       if (!/^[a-z0-9._-]{3,24}$/.test(u)) { msg.hidden = false; msg.className = "formmsg err"; msg.textContent = "Pseudo : 3 à 24 caractères, lettres minuscules, chiffres, point, tiret ou underscore."; return; }
       if (await attempt(() => Api.saveProfile({ username: u, city: city.value.trim() }))) { msg.hidden = false; msg.className = "formmsg ok"; msg.textContent = "Profil enregistré."; }
     } }, "Enregistrer")),
+    h("h2", { class: "section-title" }, "Notifications"),
+    h("div", { class: "fcard", style: "padding:16px 18px;display:grid;gap:8px" },
+      h("label", { class: "check", for: "setNotifs" }, h("input", { id: "setNotifs", type: "checkbox", checked: S.emailNotifs, onchange: e => { S.emailNotifs = e.target.checked; Api.saveSettings().then(() => toast(S.emailNotifs ? "E-mails de messagerie activés" : "E-mails de messagerie coupés")).catch(e2 => toast(friendly(e2))); } }),
+        h("span", null, h("b", null, "Recevoir un e-mail pour les nouveaux messages et les offres"), h("br"), h("span", { class: "small muted" }, "Les e-mails liés à tes commandes (vente, envoi, remboursement) sont toujours envoyés.")))),
+    taxSection(),
     h("h2", { class: "section-title" }, "Mes données"),
     h("div", { class: "fcard", style: "padding:16px 18px;display:grid;gap:10px" },
       h("p", { style: "margin:0" }, "Télécharge une copie de tes données (profil, annonces, messages, commandes, avis) au format JSON. C’est ton droit d’accès et de portabilité (RGPD)."),
@@ -1238,6 +1304,30 @@ function pageSettings() {
         if (confirmDel.value.trim().toUpperCase() !== "SUPPRIMER") { toast("Tape SUPPRIMER pour confirmer."); confirmDel.focus(); return; }
         if (await attempt(() => Api.deleteAccount(), "Ton compte a été supprimé.")) go("home", {}, { replace: true });
       } }, "Supprimer définitivement mon compte"))));
+}
+function taxSection() {
+  const t = S.taxInfo || {};
+  const name = h("input", { id: "taxName", value: t.legalName || "", maxlength: "120", autocomplete: "name", placeholder: "Prénom et nom tels que sur ta pièce d’identité" });
+  const birth = h("input", { id: "taxBirth", type: "date", value: t.birthDate || "", autocomplete: "bday" });
+  const addr = h("input", { id: "taxAddr", value: t.address || "", maxlength: "200", autocomplete: "street-address", placeholder: "Numéro, rue, code postal, ville" });
+  const tin = h("input", { id: "taxTin", value: t.tin || "", maxlength: "17", inputmode: "numeric", placeholder: "13 chiffres, sur ton avis d’imposition" });
+  const msg = h("div", { class: "formmsg", hidden: true });
+  const show = (text, kind) => { msg.hidden = false; msg.className = "formmsg " + kind; msg.textContent = text; };
+  return [h("h2", { class: "section-title" }, "Informations fiscales (vendeurs)"),
+    h("div", { class: "fcard" },
+      h("p", { class: "small muted", style: "margin:14px 0 0" }, `Obligatoire à partir de ${DAC7.sales} ventes ou ${eur(DAC7.amount)} de ventes par an : Rebond doit alors les déclarer à l’administration fiscale (directive européenne DAC7). Visibles uniquement par toi et l’équipe Rebond.`),
+      h("div", { class: "frow" }, h("label", { for: "taxName" }, "Nom légal"), name),
+      h("div", { class: "frow" }, h("label", { for: "taxBirth" }, "Date de naissance"), birth),
+      h("div", { class: "frow" }, h("label", { for: "taxAddr" }, "Adresse"), addr),
+      h("div", { class: "frow" }, h("label", { for: "taxTin" }, "Numéro fiscal"), tin)),
+    msg,
+    h("div", { class: "actions-end" }, h("button", { class: "btn ghost", onclick: async () => {
+      const info = { legalName: name.value.trim(), birthDate: birth.value, address: addr.value.trim(), tin: tin.value.replace(/\s/g, "") };
+      if (info.legalName.length < 3 || !info.birthDate || info.address.length < 5) { show("Remplis tous les champs.", "err"); return; }
+      if (!/^\d{13}$/.test(info.tin)) { show("Le numéro fiscal français compte 13 chiffres.", "err"); return; }
+      if (Date.now() - Date.parse(info.birthDate) < 18 * 365.25 * DAY) { show("Il faut être majeur·e pour vendre sur Rebond.", "err"); return; }
+      if (await attempt(() => Api.saveTaxInfo(info))) show("Informations fiscales enregistrées.", "ok");
+    } }, "Enregistrer mes informations fiscales"))];
 }
 function myReports() {
   const rs = S.reports.filter(r => r.reporterId === S.me);
@@ -1263,9 +1353,10 @@ function pageAdmin() {
   const tab = S.route.tab || "signalements";
   const open = S.reports.filter(r => r.status === "open"), done = S.reports.filter(r => r.status !== "open");
   const toAuth = S.orders.filter(o => o.auth && o.status === "shipped");
+  const disputed = S.orders.filter(o => o.status === "disputed");
   const T = (id, label) => h("button", { role: "tab", "aria-selected": String(tab === id), onclick: () => go("admin", { tab: id }, { replace: true, keepScroll: true }) }, label);
   const out = [h("h1", { class: "page-h", style: "margin-top:22px" }, "Modération", S.mode === "demo" ? h("span", { class: "demo-pill" }, "Démo") : null),
-    h("div", { class: "tabs", role: "tablist" }, T("signalements", `Signalements (${open.length})`), T("authentification", `Authentification (${toAuth.length})`), T("historique", `Historique (${done.length})`))];
+    h("div", { class: "tabs", role: "tablist" }, T("signalements", `Signalements (${open.length})`), T("litiges", `Litiges (${disputed.length})`), T("authentification", `Authentification (${toAuth.length})`), T("historique", `Historique (${done.length})`), T("dac7", "Déclaration DAC7"))];
   if (tab === "signalements") {
     out.push(open.length ? h("div", { class: "olist" }, open.map(r => {
       const l = L(r.listingId), dec = h("textarea", { "aria-label": "Motif de la décision", placeholder: "Motif de la décision (affiché au vendeur et à l’auteur du signalement)", maxlength: "500" });
@@ -1278,6 +1369,41 @@ function pageAdmin() {
           h("button", { class: "btn danger sm", onclick: () => decide(r, true, dec) }, "Retirer l’annonce"),
           h("button", { class: "btn ghost sm", onclick: () => decide(r, false, dec) }, "Classer sans suite")));
     })) : h("div", { class: "empty" }, h("h2", null, "Aucun signalement en attente")));
+  } else if (tab === "litiges") {
+    out.push(disputed.length ? h("div", { class: "olist" }, disputed.map(o => {
+      const note = h("textarea", { "aria-label": "Motif de la décision", placeholder: "Motif de la décision (envoyé à l’acheteur et au vendeur)", maxlength: "500" });
+      const t = S.threads.find(x => x.listingId === o.listingId && x.buyerId === o.buyerId);
+      const decide2 = async action => {
+        if (!note.value.trim()) { toast("Indique le motif de la décision."); note.focus(); return; }
+        await attempt(() => Api.resolveDispute(o, action, note.value.trim()), action === "dispute-refund" ? "Acheteur remboursé." : "Vendeur payé.");
+      };
+      return h("div", { class: "admin-card" },
+        h("div", { class: "mini" }, h("img", { src: o.thumb || sneakerImg(o.illo || DEFAULT_ILLO), alt: "" }), h("div", null, h("b", null, o.title), h("div", { class: "small muted" }, `${eur(o.total)} payés · ${nameOf(o.sellerId)} → ${nameOf(o.buyerId)} · ${o.shipLabel}`),
+          o.tracking ? h("div", { class: "small muted" }, `${CARRIERS[o.carrier]?.label || ""} ${o.tracking}`) : null)),
+        h("div", null, h("span", { class: "reason" }, DISPUTES[o.disputeReason] || o.disputeReason || "Litige")),
+        o.disputeDetails ? h("p", { class: "desc", style: "margin:0" }, o.disputeDetails) : null,
+        t ? h("button", { class: "linkbtn small", style: "justify-self:start", onclick: () => go("inbox", { id: t.id }) }, `Lire la conversation (${t.messages.length} messages)`) : h("span", { class: "small muted" }, "Pas de conversation entre les deux membres."),
+        h("label", { class: "field" }, note),
+        h("div", { class: "order-actions" },
+          h("button", { class: "btn primary sm", onclick: () => decide2("dispute-refund") }, "Rembourser l’acheteur"),
+          h("button", { class: "btn ghost sm", onclick: () => decide2("dispute-release") }, "Donner raison au vendeur et le payer")));
+    })) : h("div", { class: "empty" }, h("h2", null, "Aucun litige en cours")));
+  } else if (tab === "dac7") {
+    const year = h("select", { id: "dacYear", "aria-label": "Année" }, [0, 1].map(d => { const y = new Date().getFullYear() - d; return h("option", { value: y }, y); }));
+    const res = h("div");
+    const run = async () => {
+      const rows = await attempt(() => Api.dac7(+year.value)); if (!rows) return;
+      const missing = rows.filter(r => !r.tin).length;
+      res.replaceChildren(
+        h("p", null, rows.length ? `${rows.length} vendeur(s) atteignent le seuil en ${year.value}.${missing ? ` ${missing} n’ont pas encore rempli leurs informations fiscales.` : ""}` : `Aucun vendeur n’atteint le seuil en ${year.value}.`),
+        rows.length ? h("div", { style: "overflow-x:auto" }, h("table", { class: "details", style: "display:table;width:100%;border:0" },
+          h("tr", null, ["Pseudo", "Nom légal", "Ventes", "Total", "Infos fiscales"].map(t => h("th", { style: "text-align:left;padding:6px" }, t))),
+          rows.map(r => h("tr", null, [r.username, r.legalName || "—", r.salesCount, eur(r.salesTotal), r.tin ? "Complètes" : "Manquantes"].map(v => h("td", { style: "padding:6px" }, String(v))))))) : null,
+        h("button", { class: "btn primary", onclick: () => downloadCsv(rows, year.value) }, "Télécharger le CSV"));
+    };
+    out.push(h("div", { class: "admin-card" },
+      h("p", { style: "margin:0" }, `Vendeurs ayant réalisé au moins ${DAC7.sales} ventes ou au moins ${eur(DAC7.amount)} de ventes terminées sur l’année. À déclarer sur impots.gouv.fr avant le 31 janvier de l’année suivante, et à transmettre à chaque vendeur concerné.`),
+      h("div", { class: "order-actions" }, year, h("button", { class: "btn ghost", onclick: run }, "Générer le rapport")), res));
   } else if (tab === "authentification") {
     out.push(toAuth.length ? h("div", { class: "olist" }, toAuth.map(o => h("div", { class: "admin-card" },
       h("div", { class: "mini" }, h("img", { src: o.thumb || sneakerImg(o.illo || DEFAULT_ILLO), alt: "" }), h("div", null, h("b", null, o.title), h("div", { class: "small muted" }, `${sz(o.size)} EU · ${eur(o.price)} · ${nameOf(o.sellerId)} → ${nameOf(o.buyerId)}`),
@@ -1293,6 +1419,14 @@ function pageAdmin() {
       r.decision ? h("div", { class: "small muted" }, "Motif : ", r.decision) : null))) : h("div", { class: "empty" }, h("h2", null, "Aucune décision pour l’instant")));
   }
   return out;
+}
+function downloadCsv(rows, year) {
+  const head = ["pseudo", "email", "nom_legal", "date_naissance", "adresse", "numero_fiscal", "nombre_ventes", "total_eur", "t1_eur", "t2_eur", "t3_eur", "t4_eur"];
+  const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [head.join(";"), ...rows.map(r => [r.username, r.email, r.legalName, r.birthDate, r.address, r.tin, r.salesCount, r.salesTotal.toFixed(2), ...r.quarters.map(q => (+q).toFixed(2))].map(cell).join(";"))];
+  const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = h("a", { href: URL.createObjectURL(blob), download: `rebond-dac7-${year}.csv` });
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 async function decide(r, remove, dec) {
   const d = dec.value.trim();

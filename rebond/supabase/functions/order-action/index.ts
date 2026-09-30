@@ -2,13 +2,14 @@
 //  - confirm : l'acheteur a reçu une paire conforme → le vendeur est payé
 //  - cancel  : le vendeur annule, ou l'acheteur annule après 5 jours sans envoi → remboursement
 //  - verify / reject : la modération valide ou refuse l'authenticité → envoi à l'acheteur ou remboursement
+//  - dispute-refund / dispute-release : la modération tranche un litige → remboursement ou versement au vendeur
 //  - auto-release : tâche planifiée, confirme les commandes restées sans réponse (voir README)
 import { admin, body, currentUser, HttpError, isAdmin, payout, refund, SELLER_SHIP_DAYS, serve } from "../_shared/common.ts";
 
 const AUTO_CONFIRM_DAYS = 14; // sans litige ni confirmation, l'argent part au vendeur
 
 serve(async (req) => {
-  const input = await body<{ orderId?: string; action: string }>(req);
+  const input = await body<{ orderId?: string; action: string; note?: string }>(req);
 
   if (input.action === "auto-release") {
     if (req.headers.get("x-cron-secret") !== Deno.env.get("CRON_SECRET") || !Deno.env.get("CRON_SECRET")) throw new HttpError(403, "Accès refusé.");
@@ -57,6 +58,21 @@ serve(async (req) => {
       await refund(order, "rejected");
       if (order.listing_id) await admin.from("listings").update({ status: "removed" }).eq("id", order.listing_id);
       return { status: "rejected" };
+    }
+    case "dispute-refund":
+    case "dispute-release": {
+      if (!(await isAdmin(user.id))) throw new HttpError(403, "Réservé à la modération.");
+      if (order.status !== "disputed") throw new HttpError(409, "Cette commande n’a pas de litige en cours.");
+      const note = (input.note ?? "").trim().slice(0, 500);
+      if (!note) throw new HttpError(400, "Indique le motif de la décision.");
+      await admin.from("orders").update({ dispute_resolution: note, updated_at: now }).eq("id", order.id);
+      if (input.action === "dispute-refund") {
+        await refund({ ...order, dispute_resolution: note }, "cancelled");
+        return { status: "cancelled" };
+      }
+      await admin.from("orders").update({ status: "done", delivered_at: now, updated_at: now }).eq("id", order.id);
+      await payout(order);
+      return { status: "done" };
     }
     default:
       throw new HttpError(400, "Action inconnue.");

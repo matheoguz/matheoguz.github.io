@@ -1,6 +1,6 @@
 // Service worker : rend Rebond installable et affiche l'interface même avec un réseau faible.
 // Ne met jamais en cache les appels à Supabase ou Stripe (autres domaines) : les données restent toujours fraîches.
-const CACHE = "rebond-v1";
+const CACHE = "rebond-v2";
 const SHELL = ["./", "index.html", "config.js", "assets/styles.css", "assets/app.js", "assets/consent.js", "manifest.webmanifest",
   "assets/fonts.css", "assets/vendor/supabase.js", "assets/icons/icon-192.png", "assets/icons/icon-512.png", "assets/icons/favicon.svg"];
 
