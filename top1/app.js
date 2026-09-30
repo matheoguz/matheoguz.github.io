@@ -45,14 +45,16 @@
 
   function plate(p, opts) {
     opts = opts || {};
-    var photo = p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(p.brand + " " + p.name) + '" loading="lazy">' : "";
+    var photo = p.image
+      ? '<img src="' + esc(p.image) + '" alt="' + esc(p.brand + " " + p.name) + '" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove(\'plate--photo\');this.remove()">'
+      : "";
     return (
       '<div class="plate' + (p.image ? " plate--photo" : "") + '">' +
+        '<span class="plate__num" aria-hidden="true">1</span>' +
         photo +
-        (p.image ? "" : '<span class="plate__num" aria-hidden="true">1</span>') +
         '<div class="plate__top mono"><span>N°1 · ' + esc(catLabel(p)) + "</span>" +
           (opts.edition ? "<span>Éd. " + pad(cfg.edition) + "</span>" : "") + "</div>" +
-        (p.image ? "" : '<div class="plate__icon" aria-hidden="true"><svg><use href="#i-' + catIcon(p) + '"/></svg></div>') +
+        '<div class="plate__icon" aria-hidden="true"><svg><use href="#i-' + catIcon(p) + '"/></svg></div>' +
       "</div>"
     );
   }

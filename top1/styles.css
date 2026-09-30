@@ -96,8 +96,11 @@ button{font:inherit;color:inherit}
 .plate__top{position:absolute;top:18px;left:18px;right:18px;display:flex;justify-content:space-between;color:var(--ink-2)}
 .plate__icon{position:absolute;inset:0;display:grid;place-items:center;transition:transform .6s var(--ease)}
 .plate__icon svg{width:44%;height:44%;fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
-.plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
-.plate--photo::before,.plate--photo .plate__num{display:none}
+.plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:14% 12% 10%;mix-blend-mode:multiply;z-index:0;transition:transform .6s var(--ease)}
+.plate--photo .plate__icon{display:none}
+.plate--photo .plate__num{color:color-mix(in srgb,var(--paper-3) 60%,var(--paper-2))}
+.cover:hover .plate img{transform:translateY(-6px) scale(1.02)}
+.plate__top{z-index:1}
 
 /* ---------- facts ---------- */
 .facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
