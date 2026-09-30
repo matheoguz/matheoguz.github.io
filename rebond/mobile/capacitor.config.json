@@ -1,0 +1,11 @@
+{
+  "appId": "fr.rebond.app",
+  "appName": "Rebond",
+  "webDir": "www",
+  "server": {
+    "url": "https://matheoguz.github.io/rebond/",
+    "allowNavigation": ["matheoguz.github.io", "*.supabase.co", "checkout.stripe.com", "connect.stripe.com"]
+  },
+  "android": { "backgroundColor": "#FFFFFF" },
+  "ios": { "backgroundColor": "#FFFFFF", "contentInset": "always" }
+}
