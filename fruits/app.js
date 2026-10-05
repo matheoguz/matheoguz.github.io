@@ -8,6 +8,8 @@
   const E = window.FruitEngine;
   const $ = (s, el) => (el || document).querySelector(s);
   const uid = () => Math.random().toString(36).slice(2, 9);
+  // clé propre à l'objet (pas « constructor », « __proto__ »… venus d'un lien piégé)
+  const has = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const VOICE_FX = { normal: 'Voix normale', aigue: 'Aiguë', 'tres-aigue': 'Très aiguë (hélium)', grave: 'Grave' };
@@ -77,7 +79,142 @@
         [0, 'Normal. Je suis une pêche.', 'neutre'],
       ],
     },
+    {
+      title: '🥕 L\'imposteur',
+      cast: [['carotte', 'Carlos', 'grave'], ['fraise', 'Fraisy', 'aigue'], ['kiwi', 'Kiki', 'normal']],
+      bg: 'frigo', music: 'suspense',
+      lines: [
+        [1, 'Attendez… on est combien de fruits dans ce bac ?', 'malin'],
+        [2, 'Trois. Moi, toi et… lui.', 'neutre'],
+        [1, 'Carlos. T\'es quel fruit exactement ?', 'malin'],
+        [0, 'Euh… un fruit… orange. Genre une orange longue.', 'choque'],
+        [2, 'C\'EST UN LÉGUME ! IL Y A UN LÉGUME PARMI NOUS !', 'fache'],
+        [0, 'Bon ok. Mais j\'ai des feuilles, ça compte pas ?', 'triste'],
+      ],
+    },
+    {
+      title: '🍇 Papy raisin sec',
+      cast: [['raisin', 'Raymond', 'aigue'], ['pomme', 'Paulo', 'normal']],
+      bg: 'cuisine', music: 'drame',
+      lines: [
+        [1, 'Raymond, pourquoi t\'es triste ?', 'neutre'],
+        [0, 'Mon grand-père est parti en vacances au soleil…', 'triste'],
+        [1, 'Mais c\'est bien ça !', 'content'],
+        [0, 'Il est resté trop longtemps. Maintenant c\'est un raisin sec.', 'triste'],
+        [1, '…paix à son jus.', 'triste'],
+      ],
+    },
+    {
+      title: '🥥 Coco à la salle',
+      cast: [['coco', 'Coco', 'grave'], ['banane', 'Bernard', 'normal']],
+      bg: 'studio', music: 'fete',
+      lines: [
+        [1, 'Coco, tu fais quoi depuis tout à l\'heure ?', 'neutre'],
+        [0, 'Je travaille ma coque. Regarde-moi ces abdos.', 'content'],
+        [1, 'Tu es… une boule.', 'malin'],
+        [0, 'Dur à l\'extérieur, tendre à l\'intérieur. Comme les vrais.', 'malin'],
+        [1, 'Moi je suis mou partout et je vis très bien.', 'content'],
+      ],
+    },
+    {
+      title: '🥝 Kiwi en crise',
+      cast: [['kiwi', 'Kiwi', 'aigue'], ['citron', 'Citronnelle', 'normal']],
+      bg: 'nuit', music: 'lofi',
+      lines: [
+        [0, 'Tu savais qu\'il existe un oiseau qui s\'appelle comme moi ?', 'choque'],
+        [1, 'Et alors ?', 'neutre'],
+        [0, 'Et alors je suis peut-être un oiseau ! J\'ai des poils !', 'choque'],
+        [1, 'Saute du frigo pour voir.', 'malin'],
+        [0, 'Non merci. Je suis un fruit. J\'assume.', 'triste'],
+      ],
+    },
+    {
+      title: '🍒 La star',
+      cast: [['cerise', 'Cerisette', 'aigue'], ['tomate', 'Tom', 'grave']],
+      bg: 'studio', music: 'joyeuse',
+      lines: [
+        [0, 'Pousse-toi, c\'est moi qu\'on met sur le gâteau.', 'malin'],
+        [1, 'Et moi on me met sur la pizza. Respect.', 'fache'],
+        [0, 'La cerise sur le gâteau, chéri. Pas la tomate sur le gâteau.', 'content'],
+        [1, 'Attends que je trouve un gâteau à la tomate.', 'fache'],
+      ],
+    },
+    {
+      title: '🍐 La bonne poire',
+      cast: [['poire', 'Pierre', 'normal'], ['ananas', 'Ananas', 'grave']],
+      bg: 'marche', music: 'joyeuse',
+      lines: [
+        [1, 'Pierre, tu peux me prêter 10 euros ?', 'malin'],
+        [0, 'Bien sûr mon ami !', 'content'],
+        [1, 'Et ta place au soleil ?', 'malin'],
+        [0, 'Tiens, prends-la !', 'content'],
+        [1, 'Et ta copine la pêche ?', 'malin'],
+        [0, 'Attends… je suis une bonne poire en fait ?', 'choque'],
+      ],
+    },
+    {
+      title: '🍋 Le citron aigri',
+      cast: [['citron', 'Citron', 'grave']],
+      bg: 'cuisine', music: 'drame',
+      lines: [
+        [0, 'Pourquoi tout le monde fait cette tête quand il me goûte ?', 'triste'],
+        [0, 'Je suis pas acide. Je suis honnête.', 'fache'],
+        [0, 'Si la vie te donne des citrons… respecte-les.', 'malin'],
+        [0, 'Abonne-toi. Ou je te pique les yeux.', 'fache'],
+      ],
+    },
   ];
+
+  // ---------------------------------------------------------------------------
+  // Script au hasard : on mélange des morceaux de dialogue
+  // ---------------------------------------------------------------------------
+  const RANDOM_PARTS = {
+    a1: [
+      ['{B}, faut que je te dise un truc important.', 'neutre'],
+      ['Eh {B} ! Pourquoi tu me regardes comme ça ?', 'fache'],
+      ['{B}… je crois qu\'on va finir en smoothie.', 'choque'],
+      ['Tu savais que les humains nous mangent ?', 'choque'],
+      ['J\'ai entendu le frigo parler de toi…', 'malin'],
+      ['{B}, tu veux sortir avec moi ce soir ?', 'amoureux'],
+    ],
+    b1: [
+      ['Quoi ? Moi ? J\'ai rien fait !', 'choque'],
+      ['Laisse-moi tranquille, je suis en train de mûrir.', 'fache'],
+      ['Arrête, tu me fais flipper là.', 'triste'],
+      ['Mdr t\'es trop bizarre toi.', 'content'],
+      ['Parle-moi mieux, je suis un fruit de luxe.', 'fache'],
+    ],
+    a2: [
+      ['Le couteau a disparu de la cuisine.', 'choque'],
+      ['Hier la mamie a acheté du sucre et un mixeur.', 'malin'],
+      ['Tout le monde dit que t\'es plus très frais.', 'malin'],
+      ['Je t\'aime depuis le rayon fruits et légumes.', 'amoureux'],
+      ['On est dans une vidéo TikTok là, souris !', 'content'],
+    ],
+    b2: [
+      ['Bon… adieu le monde cruel.', 'triste'],
+      ['Abonne-toi ou je pourris.', 'fache'],
+      ['Ok mais d\'abord on va en compote ensemble.', 'content'],
+      ['Je m\'en fiche, je suis bio.', 'malin'],
+      ['Appelez mon avocat. Littéralement.', 'malin'],
+      ['NOOOOOOOON !', 'choque'],
+    ],
+  };
+
+  function randomTemplate() {
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const fruits = Object.keys(E.FRUITS).sort(() => Math.random() - 0.5);
+    const voices = Object.keys(VOICE_FX);
+    const cast = fruits.slice(0, 2).map((f) => [f, E.FRUITS[f].label, pick(voices)]);
+    const fill = ([text, emo]) => [text.replace('{B}', cast[1][1]), emo];
+    const order = [['a1', 0], ['b1', 1], ['a2', 0], ['b2', 1]];
+    return {
+      cast,
+      bg: pick(Object.keys(E.BACKGROUNDS)),
+      music: pick(Object.keys(window.FruitSound.MUSIC).filter((m) => m !== 'aucune')),
+      lines: order.map(([part, who]) => [who, ...fill(pick(RANDOM_PARTS[part]))]),
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // État du projet
@@ -93,7 +230,24 @@
       background: tp.bg,
       camera: 'all',
       captions: true,
+      title: '',
+      music: tp.music || 'joyeuse',
+      voiceMode: 'bla',
+      sfx: true,
+      effects: true,
+      outro: true,
     };
+  }
+
+  // Complète un projet (ancienne sauvegarde, lien partagé) avec les réglages par défaut.
+  function withDefaults(p) {
+    const d = { camera: 'all', captions: true, title: '', music: 'joyeuse', voiceMode: 'bla', sfx: true, effects: true, outro: true };
+    Object.keys(d).forEach((k) => { if (p[k] === undefined) p[k] = d[k]; });
+    if (!has(E.BACKGROUNDS, p.background) && p.background !== 'perso') p.background = 'cuisine';
+    if (!has(window.FruitSound.MUSIC, p.music)) p.music = 'aucune';
+    if (!['bla', 'robot', 'muet'].includes(p.voiceMode)) p.voiceMode = 'bla';
+    p.title = String(p.title || '').slice(0, 40);
+    return p;
   }
 
   function load() {
@@ -101,9 +255,10 @@
       const saved = JSON.parse(localStorage.getItem('fs_project') || 'null');
       if (saved && Array.isArray(saved.cast) && Array.isArray(saved.lines)) {
         // Ignore les personnages invalides (ancienne version, stockage modifié…)
-        saved.cast = saved.cast.filter((c) => c && E.FRUITS[c.fruit]).slice(0, MAX_CHARS);
+        saved.cast = saved.cast.filter((c) => c && has(E.FRUITS, c.fruit)).slice(0, MAX_CHARS);
+        saved.cast.forEach((c) => { if (!has(VOICE_FX, c.voice)) c.voice = 'normal'; });
         saved.lines = saved.lines.filter((l) => l && typeof l.text === 'string');
-        if (saved.cast.length) return saved;
+        if (saved.cast.length) return withDefaults(saved);
       }
     } catch (e) { /* stockage indisponible */ }
     return fromTemplate(TEMPLATES[0]);
@@ -115,8 +270,48 @@
 
   function projectForRender() {
     return Object.assign({}, project, {
-      lines: project.lines.map((l) => Object.assign({}, l, { audio: audioStore[l.id] ? audioStore[l.id].buffer : null })),
+      outro: project.outro !== false && !!CFG.WATERMARK,
+      lines: project.lines.map((l) => Object.assign({}, l, {
+        audio: audioStore[l.id] ? audioStore[l.id].buffer : null,
+        // bla-bla seulement s'il y a des lettres (« … » ou « 🍌 » seuls restent muets)
+        voiced: !!audioStore[l.id] || (project.voiceMode === 'bla' && /[\p{L}\p{N}]/u.test(l.text)),
+      })),
     });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lien de partage : le script est rangé dans l'adresse (#s=...)
+  // ---------------------------------------------------------------------------
+  function encodeProject() {
+    const ids = project.cast.map((c) => c.id);
+    const data = {
+      c: project.cast.map((c) => [c.fruit, c.name, c.voice]),
+      l: project.lines.filter((l) => l.text.trim()).map((l) => [Math.max(0, ids.indexOf(l.charId)), l.text, l.emotion]),
+      b: project.background === 'perso' ? 'cuisine' : project.background,
+      m: project.music, t: project.title, v: project.voiceMode,
+    };
+    const bytes = new TextEncoder().encode(JSON.stringify(data));
+    let bin = '';
+    bytes.forEach((x) => { bin += String.fromCharCode(x); });
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  function decodeProject(str) {
+    try {
+      const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+      const d = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (ch) => ch.charCodeAt(0))));
+      const cast = (d.c || []).filter((c) => Array.isArray(c) && has(E.FRUITS, c[0])).slice(0, MAX_CHARS)
+        .map(([fruit, name, voice]) => [fruit, String(name || E.FRUITS[fruit].label).slice(0, 20), has(VOICE_FX, voice) ? voice : 'normal']);
+      if (!cast.length) return null;
+      const lines = (d.l || []).filter((l) => Array.isArray(l)).slice(0, 40)
+        .map(([ci, text, emo]) => [Math.min(cast.length - 1, Math.max(0, ci | 0)), String(text || '').slice(0, 200), has(E.EMOTIONS, emo) ? emo : 'neutre']);
+      const p = fromTemplate({ cast, lines, bg: d.b, music: d.m });
+      p.title = d.t || '';
+      if (d.v === 'robot' || d.v === 'muet') p.voiceMode = d.v;
+      return withDefaults(p);
+    } catch (e) {
+      return null;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -253,7 +448,21 @@
     bgSel.value = project.background === 'perso' && !bgImage ? 'cuisine' : project.background;
     $('#camSelect').value = project.camera;
     $('#captionsToggle').checked = project.captions !== false;
+    $('#titleInput').value = project.title || '';
+    $('#musicSelect').value = project.music;
+    $('#voiceMode').value = project.voiceMode;
+    $('#sfxToggle').checked = project.sfx !== false;
+    $('#fxToggle').checked = project.effects !== false;
+    $('#outroToggle').checked = project.outro !== false;
+    $('#outroWrap').hidden = !CFG.WATERMARK;
   }
+  $('#musicSelect').innerHTML = Object.entries(window.FruitSound.MUSIC).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+  $('#titleInput').addEventListener('input', (e) => { project.title = e.target.value.slice(0, 40); save(); });
+  $('#musicSelect').addEventListener('change', (e) => { project.music = e.target.value; save(); previewMusic(); });
+  $('#voiceMode').addEventListener('change', (e) => { project.voiceMode = e.target.value; save(); });
+  $('#sfxToggle').addEventListener('change', (e) => { project.sfx = e.target.checked; save(); });
+  $('#fxToggle').addEventListener('change', (e) => { project.effects = e.target.checked; save(); });
+  $('#outroToggle').addEventListener('change', (e) => { project.outro = e.target.checked; save(); updateDuration(); });
   bgSel.addEventListener('change', () => { project.background = bgSel.value; save(); });
   $('#camSelect').addEventListener('change', (e) => { project.camera = e.target.value; save(); });
   $('#captionsToggle').addEventListener('change', (e) => { project.captions = e.target.checked; save(); });
@@ -269,17 +478,42 @@
     img.src = URL.createObjectURL(f);
   });
 
-  $('#templates').innerHTML = TEMPLATES.map((t, i) => `<button class="chip" data-i="${i}">${t.title}</button>`).join('');
+  $('#templates').innerHTML = '<button class="chip random" data-i="r">🎲 Au hasard</button>' +
+    TEMPLATES.map((t, i) => `<button class="chip" data-i="${i}">${t.title}</button>`).join('');
   $('#templates').addEventListener('click', (e) => {
     const b = e.target.closest('[data-i]');
     if (!b) return;
-    if (project.lines.some((l) => l.text.trim()) && !confirm('Remplacer ton dialogue actuel par ce script ?')) return;
     stopPlayback();
+    if (mode !== 'idle') return;
+    const random = b.dataset.i === 'r';
+    if (!random && project.lines.some((l) => l.text.trim()) && !confirm('Remplacer ton dialogue actuel par ce script ?')) return;
     Object.keys(audioStore).forEach((k) => delete audioStore[k]);
-    project = fromTemplate(TEMPLATES[+b.dataset.i]);
+    const keep = { title: project.title, voiceMode: project.voiceMode, sfx: project.sfx, effects: project.effects, outro: project.outro, captions: project.captions, camera: project.camera };
+    project = Object.assign(fromTemplate(random ? randomTemplate() : TEMPLATES[+b.dataset.i]), keep, { title: '' });
     save();
     renderAll();
   });
+
+  $('#shareScript').addEventListener('click', async () => {
+    if (!project.lines.some((l) => l.text.trim())) return alert('Écris au moins une réplique !');
+    const url = location.origin + location.pathname + '#s=' + encodeProject();
+    try {
+      if (navigator.share && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+        await navigator.share({ title: 'Mon script FruitStudio', url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      flash($('#shareScript'), '✅ Lien copié !');
+    } catch (e) {
+      prompt('Copie ce lien :', url);
+    }
+  });
+
+  function flash(btn, text) {
+    const old = btn.textContent;
+    btn.textContent = text;
+    setTimeout(() => { btn.textContent = old; }, 1800);
+  }
 
   function renderAll() {
     renderCast();
@@ -354,6 +588,20 @@
     return out;
   }
 
+  let musicPreview = null;
+  function previewMusic() {
+    if (musicPreview) { try { musicPreview.disconnect(); } catch (e) { /* ignore */ } musicPreview = null; }
+    if (mode !== 'idle' || project.music === 'aucune') return;
+    const ctx = audioCtx();
+    const out = ctx.createGain();
+    out.connect(ctx.destination);
+    out.gain.setValueAtTime(1, ctx.currentTime + 3.5);
+    out.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+    musicPreview = out;
+    window.FruitSound.schedule(ctx, out, out, { items: [], total: 4 }, ctx.currentTime + 0.05, { cast: [], music: project.music, voiceMode: 'muet', sfx: false });
+    setTimeout(() => { if (musicPreview === out) { out.disconnect(); musicPreview = null; } }, 4300);
+  }
+
   function rateOf(charId) {
     const ch = project.cast.find((c) => c.id === charId);
     return E.RATES[ch && ch.voice] || 1;
@@ -386,6 +634,8 @@
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 1024;
     analyser.connect(dest);
+    const mix = ctx.createGain();
+    mix.connect(dest);
     const t0 = ctx.currentTime + 0.15;
     const sources = [];
     const timers = [];
@@ -397,11 +647,14 @@
         src.connect(analyser);
         src.start(t0 + it.start);
         sources.push(src);
-      } else if (mode === 'play' && $('#ttsPreview').checked && 'speechSynthesis' in window && it.line.text.trim()) {
+      } else if (mode === 'play' && proj.voiceMode === 'robot' && 'speechSynthesis' in window && it.line.text.trim()) {
         timers.push(setTimeout(() => speak(it.line.text, it.rate), (it.start + 0.15) * 1000));
       }
     });
-    return { ctx, proj, tl, analyser, t0, sources, timers, level: 0, buf: new Float32Array(analyser.fftSize) };
+    const sound = window.FruitSound.schedule(ctx, analyser, mix, tl, t0, {
+      cast: proj.cast, music: proj.music, voiceMode: proj.voiceMode, sfx: proj.sfx !== false,
+    });
+    return { ctx, proj, tl, analyser, mix, sound, t0, sources, timers, level: 0, buf: new Float32Array(analyser.fftSize) };
   }
 
   function speak(text, rate) {
@@ -431,6 +684,9 @@
   function endSession() {
     if (!session) return;
     session.sources.forEach((s) => { try { s.stop(); } catch (e) { /* déjà arrêté */ } });
+    // coupe la musique, la voix bla-bla et les bruitages déjà programmés
+    session.sound.stop();
+    try { session.analyser.disconnect(); session.mix.disconnect(); } catch (e) { /* déjà coupé */ }
     session.timers.forEach(clearTimeout);
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     session = null;
@@ -446,6 +702,7 @@
 
   $('#playBtn').addEventListener('click', () => {
     if (mode === 'play') return stopPlayback();
+    if (musicPreview) { musicPreview.disconnect(); musicPreview = null; }
     if (mode !== 'idle') return;
     if (!project.lines.some((l) => l.text.trim() || audioStore[l.id])) return alert('Écris au moins une réplique !');
     mode = 'play';
@@ -501,6 +758,7 @@
     }
     // On bloque tout de suite les autres boutons (double clic, aperçu) pendant le chargement de la police.
     mode = 'export';
+    if (musicPreview) { musicPreview.disconnect(); musicPreview = null; }
     const ctx = audioCtx(); // créé pendant le clic (obligatoire sur iPhone)
     showOverlay('progress');
     try { await document.fonts.load('800 64px "Baloo 2"'); } catch (e) { /* police de secours */ }
@@ -838,11 +1096,17 @@
   // ---------------------------------------------------------------------------
   // Démarrage
   // ---------------------------------------------------------------------------
+  const params = new URLSearchParams(location.search);
   project = load();
+  const shared = location.hash.startsWith('#s=') ? decodeProject(location.hash.slice(3)) : null;
+  if (shared) {
+    project = shared;
+    save();
+    history.replaceState(null, '', location.pathname + location.search);
+  }
   renderAll();
   requestAnimationFrame(loop);
 
-  const params = new URLSearchParams(location.search);
   if (params.get('paid') === '1' || location.hash === '#ia') {
     showTab('ia');
     if (params.get('paid') === '1') {

@@ -4,7 +4,8 @@ const FRUITS = {
   pomme: 'a shiny red apple', banane: 'a ripe yellow banana', fraise: 'a juicy red strawberry',
   orange: 'an orange (citrus fruit)', citron: 'a bright yellow lemon', pasteque: 'a watermelon slice',
   avocat: 'an avocado cut in half with its pit', peche: 'a fuzzy peach', ananas: 'a pineapple with its green crown',
-  tomate: 'a red tomato',
+  tomate: 'a red tomato', kiwi: 'a fuzzy brown kiwi fruit', cerise: 'a shiny red cherry with its stem',
+  poire: 'a green pear', raisin: 'a bunch of purple grapes', coco: 'a hairy brown coconut', carotte: 'an orange carrot with green leaves',
 };
 
 const STYLES = {
@@ -27,7 +28,7 @@ export async function POST(request) {
   try { body = await request.json(); } catch { return json({ error: 'Requête invalide' }, 400); }
 
   const user = String(body.user || '');
-  const text = clean(body.text, 250);
+  const text = clean(body.text, 150);
   const style = STYLES[body.style] ? body.style : 'realiste';
   const voice = VOICES.includes(body.voice) ? body.voice : 'Aria';
   const scene = clean(body.scene, 80);

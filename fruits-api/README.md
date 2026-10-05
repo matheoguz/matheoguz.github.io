@@ -13,7 +13,7 @@ Le Studio gratuit n'en a pas besoin : il marche déjà tout seul.
 3. Le site demande `/api/status` toutes les 6 s jusqu'à ce que la vidéo soit prête.
    Si la génération échoue, le crédit est **remboursé automatiquement**.
 
-**Coût pour toi** : environ 0,35 $ pour 5 s, 0,90 $ max pour 15 s (texte limité à 250 caractères).
+**Coût pour toi** : environ 0,35 $ pour 5 s, 0,60 $ max pour 10 s (texte limité à 150 caractères), donc chaque pack reste rentable même avec des textes longs.
 **Prix de vente** (modifiable dans `lib/common.js` → `PACKS`) : 3 vidéos 3,99 €, 10 vidéos 9,99 €, 25 vidéos 19,99 €.
 
 ## Mise en ligne (environ 20 minutes)

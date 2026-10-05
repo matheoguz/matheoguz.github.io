@@ -339,6 +339,165 @@
         gloss(ctx, -52, -36, 16, 26);
       },
     },
+    kiwi: {
+      label: 'Kiwi', emoji: '🥝', color: '#8d6e3f', top: -92, bottom: 90,
+      face: { x: 0, y: 4, s: 0.95 },
+      draw(ctx) {
+        ctx.fillStyle = shade(ctx, 0, 0, 100, '#c9a77a', '#8d6e3f', '#4e3a1f');
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 104, 90, 0, 0, Math.PI * 2);
+        ctx.fill();
+        const r = rng(11);
+        ctx.strokeStyle = 'rgba(60,40,15,0.35)';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 160; i++) {
+          const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 96;
+          const x = Math.cos(a) * d, y = Math.sin(a) * d * 0.86;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + (r() - 0.5) * 6, y + (r() - 0.5) * 6);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#5d4037';
+        ctx.beginPath();
+        ctx.ellipse(-104, 0, 6, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        gloss(ctx, -50, -40, 14, 24);
+      },
+    },
+    cerise: {
+      label: 'Cerise', emoji: '🍒', color: '#c2185b', top: -178, bottom: 92,
+      face: { x: 0, y: 8, s: 0.95 },
+      draw(ctx) {
+        ctx.strokeStyle = '#5d7a2a';
+        ctx.lineWidth = 7;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, -84);
+        ctx.quadraticCurveTo(10, -140, 40, -172);
+        ctx.stroke();
+        leaf(ctx, 38, -170, 56, 18, -0.2, GREEN_LEAF);
+        const p = new Path2D();
+        p.moveTo(0, -78);
+        p.bezierCurveTo(30, -102, 96, -82, 96, -6);
+        p.bezierCurveTo(96, 60, 50, 92, 0, 92);
+        p.bezierCurveTo(-50, 92, -96, 60, -96, -6);
+        p.bezierCurveTo(-96, -82, -30, -102, 0, -78);
+        ctx.fillStyle = shade(ctx, 0, 0, 100, '#ff6f91', '#c2185b', '#5e0a2a');
+        ctx.fill(p);
+        gloss(ctx, -46, -40, 16, 28);
+      },
+    },
+    poire: {
+      label: 'Poire', emoji: '🍐', color: '#9ccc3c', top: -158, bottom: 124,
+      face: { x: 0, y: 38, s: 0.92 },
+      draw(ctx) {
+        const p = new Path2D();
+        p.moveTo(0, -122);
+        p.bezierCurveTo(34, -122, 44, -82, 50, -44);
+        p.bezierCurveTo(56, -10, 102, 10, 102, 58);
+        p.bezierCurveTo(102, 104, 60, 124, 0, 124);
+        p.bezierCurveTo(-60, 124, -102, 104, -102, 58);
+        p.bezierCurveTo(-102, 10, -56, -10, -50, -44);
+        p.bezierCurveTo(-44, -82, -34, -122, 0, -122);
+        ctx.fillStyle = shade(ctx, 0, 20, 115, '#e6f59d', '#9ccc3c', '#5b7f12');
+        ctx.fill(p);
+        ctx.strokeStyle = '#6d3b1e';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, -120);
+        ctx.quadraticCurveTo(4, -140, -6, -156);
+        ctx.stroke();
+        leaf(ctx, 0, -138, 46, 15, -0.5, GREEN_LEAF);
+        gloss(ctx, -44, 10, 16, 32);
+      },
+    },
+    raisin: {
+      label: 'Raisin', emoji: '🍇', color: '#7b3fa0', top: -150, bottom: 140,
+      face: { x: 0, y: -18, s: 0.88 },
+      draw(ctx) {
+        ctx.strokeStyle = '#6d4c2a';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, -112);
+        ctx.quadraticCurveTo(-4, -134, 8, -148);
+        ctx.stroke();
+        leaf(ctx, 4, -130, 60, 22, -0.25, GREEN_LEAF);
+        const rows = [[-75, 4], [-22, 4], [30, 3], [78, 2], [116, 1]];
+        rows.forEach(([y, n]) => {
+          for (let i = 0; i < n; i++) {
+            const x = (i - (n - 1) / 2) * 52;
+            ctx.fillStyle = shade(ctx, x, y, 32, '#d7a8f0', '#8e44ad', '#4a1a63');
+            ctx.beginPath();
+            ctx.arc(x, y - 6, 31, 0, Math.PI * 2);
+            ctx.fill();
+            gloss(ctx, x - 11, y - 18, 5, 9);
+          }
+        });
+      },
+    },
+    coco: {
+      label: 'Noix de coco', emoji: '🥥', color: '#6d4c41', top: -100, bottom: 100,
+      face: { x: 0, y: 6, s: 1 },
+      draw(ctx) {
+        ctx.fillStyle = shade(ctx, 0, 0, 100, '#a1887f', '#6d4c41', '#3e2723');
+        ctx.beginPath();
+        ctx.arc(0, 0, 100, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(0, 0, 100, 0, Math.PI * 2);
+        ctx.clip();
+        const r = rng(5);
+        ctx.strokeStyle = 'rgba(30,15,5,0.35)';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 70; i++) {
+          const x = r() * 200 - 100, y = r() * 200 - 100;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.quadraticCurveTo(x + 8, y + 10, x + (r() - 0.5) * 10, y + 22);
+          ctx.stroke();
+        }
+        ctx.restore();
+        ctx.fillStyle = '#2b1a14';
+        [[-16, -78], [16, -78], [0, -62]].forEach(([x, y]) => {
+          ctx.beginPath();
+          ctx.arc(x, y, 6, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        gloss(ctx, -50, -40, 13, 22);
+      },
+    },
+    carotte: {
+      label: 'Carotte', emoji: '🥕', color: '#f57c00', top: -178, bottom: 150,
+      face: { x: 0, y: -26, s: 0.78 },
+      draw(ctx) {
+        for (let i = 0; i < 5; i++) leaf(ctx, 0, -86, 90 - Math.abs(i - 2) * 12, 14, -Math.PI / 2 + (i - 2) * 0.3, GREEN_LEAF);
+        const p = new Path2D();
+        p.moveTo(-74, -88);
+        p.quadraticCurveTo(0, -112, 74, -88);
+        p.quadraticCurveTo(84, -20, 12, 146);
+        p.quadraticCurveTo(0, 156, -12, 146);
+        p.quadraticCurveTo(-84, -20, -74, -88);
+        const g = ctx.createLinearGradient(-80, 0, 80, 0);
+        g.addColorStop(0, '#c65100');
+        g.addColorStop(0.35, '#ffa040');
+        g.addColorStop(1, '#d35400');
+        ctx.fillStyle = g;
+        ctx.fill(p);
+        ctx.strokeStyle = 'rgba(120,50,0,0.35)';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        [[-40, 30], [10, -26], [50, 18], [90, -10], [120, 6]].forEach(([y, x]) => {
+          ctx.beginPath();
+          ctx.moveTo(x - 14, y);
+          ctx.lineTo(x + 14, y + 4);
+          ctx.stroke();
+        });
+      },
+    },
   };
 
   // ---------------------------------------------------------------------------
@@ -693,7 +852,8 @@
       items.push({ idx, charId: ch ? ch.id : null, start: t, end: t + dur, words: ws, line, rate });
       t += dur + 0.28;
     });
-    return { items, total: t + 0.5 };
+    const end = t + 0.5;
+    return { items, end, total: project.outro ? end + 2 : end };
   }
 
   function currentItem(tl, t) {
@@ -837,8 +997,14 @@
     ctx.fill();
     ctx.restore();
 
+    // tremblement quand il est fâché ou choqué
+    let shake = 0;
+    if (st.fxTime != null && (st.emotion === 'fache' || st.emotion === 'choque') && st.fxTime < 0.6) {
+      shake = Math.sin(st.fxTime * 70) * 5 * (1 - st.fxTime / 0.6);
+    }
+
     ctx.save();
-    ctx.translate(x, GROUND - hop);
+    ctx.translate(x + shake, GROUND - hop);
     ctx.scale(s * sx, s * sy);
     ctx.rotate((st.speaking ? 0.035 * Math.sin(t * 3.1 + phase) : 0.01 * Math.sin(t * 1.3 + phase)));
     ctx.translate(0, -fr.bottom);
@@ -846,6 +1012,101 @@
     fr.draw(ctx);
     ctx.filter = 'none';
     drawFace(ctx, fr.face, st);
+    if (st.fxTime != null) drawFx(ctx, fr, st.emotion, st.fxTime);
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Effets d'émotion (cœurs, larmes, vapeur…) autour de celui qui parle
+  // ---------------------------------------------------------------------------
+  function heart(ctx, x, y, r) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + r * 0.9);
+    ctx.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.7, y - r * 1.5, x, y - r * 0.5);
+    ctx.bezierCurveTo(x + r * 0.7, y - r * 1.5, x + r * 1.6, y - r * 0.2, x, y + r * 0.9);
+    ctx.fill();
+  }
+
+  function drawFx(ctx, fr, emotion, lt) {
+    const f = fr.face;
+    const top = fr.top;
+    ctx.save();
+    switch (emotion) {
+      case 'amoureux':
+        for (let i = 0; i < 4; i++) {
+          const p = ((lt * 0.7 + i / 4) % 1);
+          ctx.globalAlpha = Math.sin(p * Math.PI);
+          ctx.fillStyle = i % 2 ? '#ff4d8d' : '#ff7aa8';
+          heart(ctx, (i - 1.5) * 50 + Math.sin(lt * 3 + i) * 10, top - 10 - p * 110, 14 + (i % 2) * 5);
+        }
+        break;
+      case 'triste': {
+        ctx.fillStyle = '#6ec6ff';
+        [-1, 1].forEach((d) => {
+          const p = (lt * 1.2 + (d > 0 ? 0.5 : 0)) % 1;
+          const x = f.x + d * 33 * f.s, y = f.y + (-2 + p * 70) * f.s;
+          ctx.globalAlpha = 1 - p * 0.6;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 12);
+          ctx.quadraticCurveTo(x + 9, y + 2, x, y + 8);
+          ctx.quadraticCurveTo(x - 9, y + 2, x, y - 12);
+          ctx.fill();
+        });
+        break;
+      }
+      case 'fache':
+        for (let i = 0; i < 6; i++) {
+          const p = ((lt * 1.4 + i / 6) % 1);
+          const d = i % 2 ? 1 : -1;
+          ctx.globalAlpha = 0.75 * (1 - p);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(d * (60 + p * 40), top + 20 - p * 70, 10 + p * 16, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#e53935';
+        ctx.font = '800 54px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('💢', 70, top + 10);
+        break;
+      case 'choque': {
+        const pop = Math.min(1, lt / 0.15);
+        ctx.globalAlpha = pop;
+        ctx.font = `900 ${Math.round(70 * (0.6 + 0.4 * pop))}px system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#111';
+        ctx.fillStyle = '#ffe14d';
+        ctx.strokeText('!', 0, top - 10);
+        ctx.fillText('!', 0, top - 10);
+        ctx.fillStyle = '#9fe0ff';
+        const sy = f.y - 50 + (lt % 1.2) * 20;
+        ctx.beginPath();
+        ctx.moveTo(f.x + 78, sy - 16);
+        ctx.quadraticCurveTo(f.x + 90, sy + 4, f.x + 78, sy + 10);
+        ctx.quadraticCurveTo(f.x + 66, sy + 4, f.x + 78, sy - 16);
+        ctx.fill();
+        break;
+      }
+      case 'content':
+        ctx.fillStyle = '#fff59d';
+        for (let i = 0; i < 5; i++) {
+          const a = i * 1.26 + lt * 0.8;
+          const tw = 0.5 + 0.5 * Math.sin(lt * 6 + i * 2);
+          const x = Math.cos(a) * 125, y = (top + 60) + Math.sin(a) * 70;
+          ctx.globalAlpha = tw;
+          ctx.beginPath();
+          for (let k = 0; k < 8; k++) {
+            const rr = k % 2 ? 4 : 13 * (0.6 + 0.4 * tw);
+            ctx.lineTo(x + Math.cos(k * Math.PI / 4) * rr, y + Math.sin(k * Math.PI / 4) * rr);
+          }
+          ctx.fill();
+        }
+        break;
+      default:
+        break;
+    }
     ctx.restore();
   }
 
@@ -877,13 +1138,18 @@
       const speaking = ch.id === speakerId;
       const lineIt = it && it.charId === ch.id ? it : null;
       let open = 0;
-      if (speaking) open = level != null && it.line.audio ? level : syntheticMouth(it, t);
+      if (speaking) open = level != null && (it.line.audio || it.line.voiced) ? level : syntheticMouth(it, t);
       const lookTarget = speaking ? 0 : speakerIdx >= 0 ? Math.sign(pos[speakerIdx].x - pos[i].x) : 0;
       const hop = lineIt ? 26 * Math.max(0, Math.sin(clamp((t - lineIt.start) / 0.3, 0, 1) * Math.PI)) : 0;
-      const emotion = lineIt ? lineIt.line.emotion : (ch.lastEmotion || 'neutre');
-      const s = pos[i].s * (visible.length > 1 ? (speaking ? 1.07 : 0.97) : 1);
+      // garde l'émotion de sa dernière réplique
+      let emotion = 'neutre';
+      for (const x of tl.items) if (x.charId === ch.id && x.start <= t) emotion = x.line.emotion || 'neutre';
+      const fxTime = speaking && project.effects !== false ? t - lineIt.start : null;
+      // les fruits hauts (carotte, ananas…) sont réduits pour ne pas cacher les sous-titres
+      const fr = FRUITS[ch.fruit] || FRUITS.pomme;
+      const s = Math.min(pos[i].s * (visible.length > 1 ? (speaking ? 1.07 : 0.97) : 1), 540 / (fr.bottom - fr.top));
       drawCharacter(ctx, ch, pos[i].x, s, {
-        open, blink: blinkAt(t, i * 0.37 + 0.2), emotion, look: lookTarget, speaking, hop,
+        open, blink: blinkAt(t, i * 0.37 + 0.2), emotion, look: lookTarget, speaking, hop, fxTime,
         dim: visible.length > 1 && speakerId && !speaking,
       }, t, i);
     });
@@ -894,7 +1160,11 @@
       drawCaptions(ctx, it && t < it.end + 0.2 ? it : null, t, ch);
     }
 
-    if (opts.watermark) {
+    if (project.title) drawTitle(ctx, project.title);
+
+    if (tl.end != null && tl.total > tl.end && t >= tl.end) drawOutro(ctx, t - tl.end, opts.watermark);
+
+    if (opts.watermark && !(tl.end != null && tl.total > tl.end && t >= tl.end)) {
       ctx.font = '600 24px "Baloo 2", system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -904,6 +1174,59 @@
       ctx.strokeText(opts.watermark, W / 2, GROUND + 70);
       ctx.fillText(opts.watermark, W / 2, GROUND + 70);
     }
+  }
+
+  // Titre fixe en haut de la vidéo (l'accroche TikTok)
+  function drawTitle(ctx, title) {
+    ctx.save();
+    let size = 40;
+    ctx.font = `800 ${size}px "Baloo 2", system-ui, sans-serif`;
+    let tw = ctx.measureText(title).width;
+    if (tw > W - 100) {
+      size = Math.floor(size * (W - 100) / tw);
+      ctx.font = `800 ${size}px "Baloo 2", system-ui, sans-serif`;
+      tw = ctx.measureText(title).width;
+    }
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = 12;
+    roundRect(ctx, W / 2 - tw / 2 - 24, 40, tw + 48, size + 26, 16);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(title, W / 2, 40 + (size + 26) / 2 + 2);
+    ctx.restore();
+  }
+
+  // Écran de fin : renvoie vers le site (c'est ce qui fait venir de nouveaux visiteurs)
+  function drawOutro(ctx, lt, site) {
+    const a = ease(lt / 0.4);
+    ctx.save();
+    ctx.globalAlpha = a * 0.82;
+    ctx.fillStyle = '#1a0f0a';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = a;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '120px system-ui, sans-serif';
+    const bob = Math.sin(lt * 6) * 10;
+    ctx.fillText('🍓🍌🥑', W / 2, H * 0.36 + bob);
+    ctx.font = '800 56px "Baloo 2", system-ui, sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Crée ta vidéo', W / 2, H * 0.5);
+    ctx.fillText('de fruits qui parlent', W / 2, H * 0.5 + 66);
+    if (site) {
+      ctx.font = '800 40px "Baloo 2", system-ui, sans-serif';
+      const tw = ctx.measureText(site).width;
+      ctx.fillStyle = '#ffe14d';
+      roundRect(ctx, W / 2 - tw / 2 - 26, H * 0.66 - 36, tw + 52, 72, 36);
+      ctx.fill();
+      ctx.fillStyle = '#111';
+      ctx.fillText(site, W / 2, H * 0.66 + 2);
+    }
+    ctx.restore();
   }
 
   window.FruitEngine = {
