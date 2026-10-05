@@ -73,6 +73,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange)}
 .templates{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:2px solid var(--line);background:#fffdfb;border-radius:99px;padding:6px 12px;cursor:pointer;font-weight:600}
 .chip:hover{border-color:var(--orange)}
+.chip.random{background:var(--yellow);border-color:var(--yellow)}
+.share-btn{width:100%;margin-top:8px}
 
 .row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
 .row select,.row input{margin-top:0}

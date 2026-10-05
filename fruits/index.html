@@ -8,6 +8,13 @@
 <meta property="og:title" content="FruitStudio — Fais parler des fruits 🍓🍌">
 <meta property="og:description" content="Crée ta vidéo de fruits qui parlent en 1 minute, gratuit, format TikTok.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://matheoguz.github.io/fruits/">
+<meta property="og:image" content="https://matheoguz.github.io/fruits/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ff4d5e">
+<link rel="canonical" href="https://matheoguz.github.io/fruits/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍓</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -23,7 +30,7 @@
 
 <section class="hero">
   <h1>Fais parler des fruits <span class="wiggle">🍌</span></h1>
-  <p>Écris le dialogue, choisis tes fruits, enregistre ta voix… et télécharge ta vidéo prête pour TikTok.</p>
+  <p>16 fruits, musique, bruitages, sous-titres TikTok… Écris le dialogue (ou prends un script au hasard) et télécharge ta vidéo. Gratuit, sans inscription.</p>
   <div class="tabs" role="tablist">
     <button class="tab active" data-tab="studio" role="tab">🎬 Studio gratuit</button>
     <button class="tab" data-tab="ia" role="tab">✨ IA réaliste</button>
@@ -50,7 +57,7 @@
         <button class="btn" id="playBtn">▶ Aperçu</button>
         <button class="btn primary" id="exportBtn">⬇ Télécharger la vidéo</button>
       </div>
-      <label class="check"><input type="checkbox" id="ttsPreview" checked> Voix robot dans l'aperçu (les répliques sans enregistrement)</label>
+      <button class="btn share-btn" id="shareScript">🔗 Partager mon script</button>
       <p class="hint" id="durationHint"></p>
     </div>
 
@@ -76,11 +83,31 @@
           <button class="btn small" id="addLine">+ Réplique</button>
         </div>
         <div id="lineList"></div>
-        <p class="hint">🎙️ Enregistre ta voix sur chaque réplique : la bouche du fruit bouge avec ta voix, et l'effet de voix (aiguë, grave…) est appliqué automatiquement. Sans enregistrement, la vidéo est muette avec sous-titres : tu peux ajouter la voix « Synthèse vocale » directement dans TikTok.</p>
+        <p class="hint">🎙️ Enregistre ta voix sur chaque réplique : la bouche du fruit bouge avec ta voix, et l'effet (aiguë, grave…) est appliqué automatiquement. Sans enregistrement, le fruit parle en « bla-bla » rigolo, ou tu peux ajouter la voix « Synthèse vocale » de TikTok.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>🎵 Son</h2></div>
+        <div class="grid2">
+          <label>Musique de fond
+            <select id="musicSelect"></select>
+          </label>
+          <label>Voix sans micro
+            <select id="voiceMode">
+              <option value="bla">Bla-bla rigolo</option>
+              <option value="robot">Voix robot (aperçu seulement)</option>
+              <option value="muet">Muet (sous-titres)</option>
+            </select>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" id="sfxToggle" checked> Bruitages selon l'émotion (dun dun duuun, trombone triste…)</label>
       </div>
 
       <div class="card">
         <div class="card-head"><h2>🎨 Décor &amp; caméra</h2></div>
+        <label>Titre en haut de la vidéo (facultatif)
+          <input type="text" id="titleInput" maxlength="40" placeholder="ex : POV : t'es une banane 🍌">
+        </label>
         <div class="grid2">
           <label>Décor
             <select id="bgSelect"></select>
@@ -96,6 +123,8 @@
           <input type="file" id="bgUpload" accept="image/*" hidden>
         </label>
         <label class="check"><input type="checkbox" id="captionsToggle" checked> Sous-titres animés</label>
+        <label class="check"><input type="checkbox" id="fxToggle" checked> Effets d'émotion (cœurs, larmes, vapeur…)</label>
+        <label class="check" id="outroWrap"><input type="checkbox" id="outroToggle" checked> Écran de fin « Crée ta vidéo »</label>
       </div>
     </div>
   </div>
@@ -113,7 +142,7 @@
       <div class="card credits-card">
         <div>
           <div class="credits-num"><span id="creditCount">–</span> crédit(s)</div>
-          <small>1 crédit = 1 vidéo IA (jusqu'à 15 secondes)</small>
+          <small>1 crédit = 1 vidéo IA (jusqu'à 10 secondes)</small>
         </div>
         <div class="packs" id="packs"></div>
       </div>
@@ -144,8 +173,8 @@
 
         <div class="card">
           <h2>2. Ce qu'il dit</h2>
-          <textarea id="iaText" maxlength="250" rows="5" placeholder="Écris ici ce que le fruit va dire…"></textarea>
-          <div class="counter"><span id="iaCount">0</span>/250</div>
+          <textarea id="iaText" maxlength="150" rows="5" placeholder="Écris ici ce que le fruit va dire…"></textarea>
+          <div class="counter"><span id="iaCount">0</span>/150</div>
           <button class="btn primary big" id="iaGo">✨ Générer la vidéo (1 crédit)</button>
           <p class="hint">La génération prend 2 à 5 minutes. Si elle échoue, ton crédit est remboursé automatiquement.</p>
         </div>
@@ -187,6 +216,7 @@
 </footer>
 
 <script src="engine.js"></script>
+<script src="sound.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
