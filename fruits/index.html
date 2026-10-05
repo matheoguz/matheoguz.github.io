@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FruitStudio — Crée ta vidéo de fruits qui parlent</title>
+<meta name="description" content="Crée gratuitement une vidéo TikTok de fruits qui parlent : choisis tes fruits, écris le dialogue, enregistre ta voix et télécharge la vidéo. Mode IA réaliste disponible.">
+<meta property="og:title" content="FruitStudio — Fais parler des fruits 🍓🍌">
+<meta property="og:description" content="Crée ta vidéo de fruits qui parlent en 1 minute, gratuit, format TikTok.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍓</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="./">🍓 Fruit<span>Studio</span></a>
+  <a class="tiktok" id="tiktokLink" hidden target="_blank" rel="noopener">Mon TikTok</a>
+</header>
+
+<section class="hero">
+  <h1>Fais parler des fruits <span class="wiggle">🍌</span></h1>
+  <p>Écris le dialogue, choisis tes fruits, enregistre ta voix… et télécharge ta vidéo prête pour TikTok.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="studio" role="tab">🎬 Studio gratuit</button>
+    <button class="tab" data-tab="ia" role="tab">✨ IA réaliste</button>
+  </div>
+</section>
+
+<div class="ad-wrap" data-ad></div>
+
+<!-- ======================= STUDIO GRATUIT ======================= -->
+<main id="tab-studio" class="panel">
+  <div class="studio">
+    <div class="preview-col">
+      <div class="stage">
+        <canvas id="stage" width="720" height="1280"></canvas>
+        <div class="stage-overlay" id="exportOverlay" hidden>
+          <div class="spinner"></div>
+          <p>Création de la vidéo…</p>
+          <div class="bar"><div id="exportBar"></div></div>
+          <small>Laisse cet onglet ouvert</small>
+          <div class="ad-wrap small" data-ad></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="playBtn">▶ Aperçu</button>
+        <button class="btn primary" id="exportBtn">⬇ Télécharger la vidéo</button>
+      </div>
+      <label class="check"><input type="checkbox" id="ttsPreview" checked> Voix robot dans l'aperçu (les répliques sans enregistrement)</label>
+      <p class="hint" id="durationHint"></p>
+    </div>
+
+    <div class="editor-col">
+      <div class="card">
+        <div class="card-head">
+          <h2>💡 Idées de scripts</h2>
+        </div>
+        <div class="templates" id="templates"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>🍎 Personnages</h2>
+          <button class="btn small" id="addChar">+ Ajouter</button>
+        </div>
+        <div id="castList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>💬 Dialogue</h2>
+          <button class="btn small" id="addLine">+ Réplique</button>
+        </div>
+        <div id="lineList"></div>
+        <p class="hint">🎙️ Enregistre ta voix sur chaque réplique : la bouche du fruit bouge avec ta voix, et l'effet de voix (aiguë, grave…) est appliqué automatiquement. Sans enregistrement, la vidéo est muette avec sous-titres : tu peux ajouter la voix « Synthèse vocale » directement dans TikTok.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>🎨 Décor &amp; caméra</h2></div>
+        <div class="grid2">
+          <label>Décor
+            <select id="bgSelect"></select>
+          </label>
+          <label>Caméra
+            <select id="camSelect">
+              <option value="all">Tous à l'écran</option>
+              <option value="focus">Gros plan sur celui qui parle</option>
+            </select>
+          </label>
+        </div>
+        <label class="file-btn" id="bgUploadLabel">📷 Mettre ma propre photo en décor
+          <input type="file" id="bgUpload" accept="image/*" hidden>
+        </label>
+        <label class="check"><input type="checkbox" id="captionsToggle" checked> Sous-titres animés</label>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ======================= IA REALISTE ======================= -->
+<main id="tab-ia" class="panel" hidden>
+  <div class="ia">
+    <div class="card ia-off" id="iaOff" hidden>
+      <h2>✨ Bientôt disponible</h2>
+      <p>Le mode IA réaliste (vrai fruit 3D qui parle avec une voix IA) arrive très vite. En attendant, utilise le Studio gratuit !</p>
+    </div>
+
+    <div id="iaOn" hidden>
+      <div class="card credits-card">
+        <div>
+          <div class="credits-num"><span id="creditCount">–</span> crédit(s)</div>
+          <small>1 crédit = 1 vidéo IA (jusqu'à 15 secondes)</small>
+        </div>
+        <div class="packs" id="packs"></div>
+      </div>
+
+      <div class="ia-grid">
+        <div class="card">
+          <h2>1. Ton personnage</h2>
+          <div class="fruit-pick" id="iaFruits"></div>
+          <label id="iaCustomWrap" hidden>Quel fruit / légume ?
+            <input type="text" id="iaCustom" maxlength="40" placeholder="ex : un kiwi avec des lunettes de soleil">
+          </label>
+          <div class="grid2">
+            <label>Style
+              <select id="iaStyle">
+                <option value="realiste">Réaliste 3D</option>
+                <option value="pixar">Film d'animation 3D</option>
+                <option value="cartoon">Dessin animé 2D</option>
+              </select>
+            </label>
+            <label>Voix
+              <select id="iaVoice"></select>
+            </label>
+          </div>
+          <label>Décor (facultatif)
+            <input type="text" id="iaScene" maxlength="80" placeholder="ex : dans une cuisine, sur une plage…">
+          </label>
+        </div>
+
+        <div class="card">
+          <h2>2. Ce qu'il dit</h2>
+          <textarea id="iaText" maxlength="250" rows="5" placeholder="Écris ici ce que le fruit va dire…"></textarea>
+          <div class="counter"><span id="iaCount">0</span>/250</div>
+          <button class="btn primary big" id="iaGo">✨ Générer la vidéo (1 crédit)</button>
+          <p class="hint">La génération prend 2 à 5 minutes. Si elle échoue, ton crédit est remboursé automatiquement.</p>
+        </div>
+      </div>
+
+      <div class="card" id="iaResult" hidden>
+        <h2>Ta vidéo</h2>
+        <div class="ia-status" id="iaStatus"></div>
+        <div class="ia-media">
+          <img id="iaImage" alt="" hidden>
+          <video id="iaVideo" controls playsinline hidden></video>
+        </div>
+        <a class="btn primary" id="iaDownload" hidden download>⬇ Télécharger</a>
+      </div>
+
+      <div class="card" id="iaHistoryCard" hidden>
+        <h2>Mes vidéos IA</h2>
+        <div class="history" id="iaHistory"></div>
+      </div>
+
+      <details class="card account">
+        <summary>🔑 Mon code de récupération</summary>
+        <p>Tes crédits sont liés à ce navigateur. Garde ce code pour les récupérer sur un autre appareil :</p>
+        <code id="userCode"></code>
+        <div class="grid2">
+          <input type="text" id="restoreInput" placeholder="Coller un code de récupération">
+          <button class="btn small" id="restoreBtn">Restaurer</button>
+        </div>
+      </details>
+    </div>
+  </div>
+</main>
+
+<div class="ad-wrap" data-ad></div>
+
+<footer class="foot">
+  <p>FruitStudio — vidéos de fruits qui parlent. Le Studio gratuit fonctionne entièrement dans ton navigateur : rien n'est envoyé sur un serveur.</p>
+  <p><a href="conditions.html">Conditions &amp; remboursements</a> · <a href="/">Portfolio</a></p>
+</footer>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
