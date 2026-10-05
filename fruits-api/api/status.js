@@ -29,22 +29,25 @@ export async function GET(request) {
   if (!isFalUrl(j.status_url) || !isFalUrl(j.response_url)) return json({ status: 'failed' });
 
   const st = await falGet(j.status_url);
-  if (!st.ok) return json({ status: 'pending' });
+  const expired = Date.now() - Number(j.created || 0) > 30 * 60 * 1000;
+  if (!st.ok && !expired) return json({ status: 'pending' });
 
-  if (st.data.status === 'COMPLETED') {
+  if (st.ok && st.data.status === 'COMPLETED') {
     const res = await falGet(j.response_url);
     const video = res.ok && res.data.video && res.data.video.url;
     if (video) {
       await redis('HSET', key, 'video', video);
       return json({ status: 'done', video });
     }
+    // Erreur passagère de fal (5xx) : la vidéo existe peut-être, on réessaie au prochain tour.
+    if (res.status >= 500 && !expired) return json({ status: 'pending' });
     console.error('fal job failed', job, res.status, JSON.stringify(res.data).slice(0, 500));
     await refundOnce(key, user);
     return json({ status: 'failed' });
   }
 
   // Sécurité : au-delà de 30 minutes, on considère que c'est raté et on rembourse.
-  if (Date.now() - Number(j.created || 0) > 30 * 60 * 1000) {
+  if (expired) {
     await refundOnce(key, user);
     return json({ status: 'failed' });
   }

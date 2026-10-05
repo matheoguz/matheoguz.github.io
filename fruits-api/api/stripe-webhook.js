@@ -31,6 +31,15 @@ export async function POST(request) {
 
   // Une session = un seul ajout de crédits, même si Stripe renvoie l'événement.
   const first = await redis('SET', `paid:${s.id}`, '1', 'NX', 'EX', 60 * 60 * 24 * 90);
-  if (first === 'OK') await giveCredits(user, credits);
+  if (first === 'OK') {
+    try {
+      await giveCredits(user, credits);
+    } catch (e) {
+      // Échec : on libère la session pour que Stripe puisse renvoyer l'événement.
+      console.error('webhook credits failed', s.id, e);
+      await redis('DEL', `paid:${s.id}`).catch(() => {});
+      return new Response('erreur', { status: 500 });
+    }
+  }
   return new Response('ok', { status: 200 });
 }

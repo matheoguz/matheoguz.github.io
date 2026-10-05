@@ -760,8 +760,14 @@
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     const words = chunk.map((i) => it.words[i].w.toUpperCase());
-    const space = 18;
-    const widths = words.map((w) => ctx.measureText(w).width);
+    const space = 24;
+    let widths = words.map((w) => ctx.measureText(w).width);
+    // mot trop long pour l'écran (ex : « NOOOOOOOOON ») : on réduit la police
+    const widest = Math.max(...widths);
+    if (widest > W - 80) {
+      ctx.font = `800 ${Math.floor(64 * (W - 80) / widest)}px "Baloo 2", system-ui, sans-serif`;
+      widths = words.map((w) => ctx.measureText(w).width);
+    }
     // retour à la ligne si trop large
     const lines = [[]];
     let lw = 0;

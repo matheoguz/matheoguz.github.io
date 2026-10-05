@@ -99,7 +99,12 @@
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem('fs_project') || 'null');
-      if (saved && saved.cast && saved.cast.length) return saved;
+      if (saved && Array.isArray(saved.cast) && Array.isArray(saved.lines)) {
+        // Ignore les personnages invalides (ancienne version, stockage modifié…)
+        saved.cast = saved.cast.filter((c) => c && E.FRUITS[c.fruit]).slice(0, MAX_CHARS);
+        saved.lines = saved.lines.filter((l) => l && typeof l.text === 'string');
+        if (saved.cast.length) return saved;
+      }
     } catch (e) { /* stockage indisponible */ }
     return fromTemplate(TEMPLATES[0]);
   }
@@ -138,8 +143,9 @@
     const k = e.target.dataset.k;
     if (!row || !k) return;
     const c = project.cast.find((x) => x.id === row.dataset.id);
+    const oldLabel = E.FRUITS[c.fruit].label;
     c[k] = e.target.value;
-    if (k === 'fruit' && !c.nameEdited) {
+    if (k === 'fruit' && !c.nameEdited && c.name === oldLabel) {
       c.name = E.FRUITS[c.fruit].label;
       row.querySelector('[data-k=name]').value = c.name;
     }
@@ -292,20 +298,27 @@
   }
 
   let recorder = null;
+  let micPending = false;
   async function toggleRecord(lineId, btn) {
     if (recorder && recorder.state === 'recording') {
       recorder.stop();
       return;
     }
+    if (micPending || recorder) return; // demande de micro déjà en cours
+    audioCtx(); // créé pendant le clic (obligatoire sur iPhone)
     let stream;
+    micPending = true;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      recorder = new MediaRecorder(stream);
     } catch (err) {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
       alert('Impossible d\'accéder au micro. Autorise le micro dans ton navigateur puis réessaie.');
       return;
+    } finally {
+      micPending = false;
     }
     const chunks = [];
-    recorder = new MediaRecorder(stream);
     recorder.ondataavailable = (ev) => ev.data.size && chunks.push(ev.data);
     recorder.onstop = async () => {
       stream.getTracks().forEach((t) => t.stop());
@@ -443,6 +456,7 @@
   // Boucle de rendu unique
   const idleTl = { items: [], total: 0 };
   function loop() {
+    requestAnimationFrame(loop);
     if ((mode === 'play' || mode === 'export') && session) {
       const t = sessionTime();
       E.renderFrame(g, session.proj, session.tl, Math.max(0, t), {
@@ -450,7 +464,8 @@
         bgImage,
         watermark: CFG.WATERMARK,
       });
-      if (mode === 'export') $('#exportBar').style.width = Math.min(100, (t / session.tl.total) * 100) + '%';
+      const bar = mode === 'export' && $('#exportBar');
+      if (bar) bar.style.width = Math.min(100, (t / session.tl.total) * 100) + '%';
       if (t > session.tl.total) {
         if (mode === 'play') stopPlayback();
         else if (mode === 'export') finishExport();
@@ -458,7 +473,6 @@
     } else if (mode === 'idle') {
       E.renderFrame(g, project, idleTl, performance.now() / 1000, { bgImage, watermark: CFG.WATERMARK });
     }
-    requestAnimationFrame(loop);
   }
 
   // ---------------------------------------------------------------------------
@@ -485,19 +499,28 @@
     if (!window.MediaRecorder || !canvas.captureStream) {
       return alert('Ton navigateur ne permet pas de créer la vidéo. Essaie avec Chrome, Edge ou Safari à jour.');
     }
-    try { await document.fonts.load('800 64px "Baloo 2"'); } catch (e) { /* police de secours */ }
-    const ctx = audioCtx();
-    const dest = ctx.createMediaStreamDestination();
+    // On bloque tout de suite les autres boutons (double clic, aperçu) pendant le chargement de la police.
     mode = 'export';
-    session = startSession(dest);
-    const stream = new MediaStream([...canvas.captureStream(30).getVideoTracks(), ...dest.stream.getAudioTracks()]);
-    recMime = pickMime();
-    recChunks = [];
-    rec = new MediaRecorder(stream, recMime ? { mimeType: recMime, videoBitsPerSecond: 6e6 } : undefined);
-    rec.ondataavailable = (ev) => ev.data.size && recChunks.push(ev.data);
-    rec.onstop = onExportDone;
-    rec.start(250);
+    const ctx = audioCtx(); // créé pendant le clic (obligatoire sur iPhone)
     showOverlay('progress');
+    try { await document.fonts.load('800 64px "Baloo 2"'); } catch (e) { /* police de secours */ }
+    try {
+      const dest = ctx.createMediaStreamDestination();
+      session = startSession(dest);
+      const stream = new MediaStream([...canvas.captureStream(30).getVideoTracks(), ...dest.stream.getAudioTracks()]);
+      recMime = pickMime();
+      recChunks = [];
+      rec = new MediaRecorder(stream, recMime ? { mimeType: recMime, videoBitsPerSecond: 6e6 } : undefined);
+      rec.ondataavailable = (ev) => ev.data.size && recChunks.push(ev.data);
+      rec.onstop = onExportDone;
+      rec.start(250);
+    } catch (err) {
+      endSession();
+      rec = null;
+      mode = 'idle';
+      $('#exportOverlay').hidden = true;
+      alert('La vidéo n\'a pas pu être créée sur ce navigateur. Essaie avec Chrome, Edge ou Safari à jour.');
+    }
   });
 
   function finishExport() {
@@ -737,7 +760,7 @@
             done(j.video, image);
           } else if (j.status === 'failed') {
             clearInterval(polling);
-            localStorage.removeItem('fs_pending');
+            removeKey('fs_pending');
             showStatus('❌ La génération a échoué. Ton crédit a été remboursé, réessaie avec un autre texte.');
             $('#iaGo').disabled = false;
             refreshCredits();
@@ -746,7 +769,16 @@
           } else {
             showStatus('🎬 Animation de la bouche en cours… (2 à 5 min)');
           }
-        } catch (e) { /* réessaie au prochain tour */ }
+        } catch (e) {
+          // Vidéo introuvable (expirée, autre code de récupération) : on arrête d'attendre.
+          if (e.status === 404 || e.status === 400) {
+            clearInterval(polling);
+            removeKey('fs_pending');
+            showStatus('❌ Cette vidéo est introuvable (expirée ou liée à un autre code).');
+            $('#iaGo').disabled = false;
+          }
+          /* sinon : réessaie au prochain tour */
+        }
       };
       polling = setInterval(tick, 6000);
       tick();
@@ -754,7 +786,7 @@
 
     function done(video, image) {
       const pending = readJson('fs_pending') || {};
-      localStorage.removeItem('fs_pending');
+      removeKey('fs_pending');
       $('#iaImage').hidden = true;
       const v = $('#iaVideo');
       v.src = video;
@@ -783,6 +815,7 @@
 
     function readJson(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
     function writeJson(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+    function removeKey(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
 
     return {
       open() {
