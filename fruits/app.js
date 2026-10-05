@@ -8,6 +8,8 @@
   const E = window.FruitEngine;
   const $ = (s, el) => (el || document).querySelector(s);
   const uid = () => Math.random().toString(36).slice(2, 9);
+  // clé propre à l'objet (pas « constructor », « __proto__ »… venus d'un lien piégé)
+  const has = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const VOICE_FX = { normal: 'Voix normale', aigue: 'Aiguë', 'tres-aigue': 'Très aiguë (hélium)', grave: 'Grave' };
@@ -241,8 +243,9 @@
   function withDefaults(p) {
     const d = { camera: 'all', captions: true, title: '', music: 'joyeuse', voiceMode: 'bla', sfx: true, effects: true, outro: true };
     Object.keys(d).forEach((k) => { if (p[k] === undefined) p[k] = d[k]; });
-    if (!E.BACKGROUNDS[p.background] && p.background !== 'perso') p.background = 'cuisine';
-    if (!window.FruitSound.MUSIC[p.music]) p.music = 'aucune';
+    if (!has(E.BACKGROUNDS, p.background) && p.background !== 'perso') p.background = 'cuisine';
+    if (!has(window.FruitSound.MUSIC, p.music)) p.music = 'aucune';
+    if (!['bla', 'robot', 'muet'].includes(p.voiceMode)) p.voiceMode = 'bla';
     p.title = String(p.title || '').slice(0, 40);
     return p;
   }
@@ -252,7 +255,8 @@
       const saved = JSON.parse(localStorage.getItem('fs_project') || 'null');
       if (saved && Array.isArray(saved.cast) && Array.isArray(saved.lines)) {
         // Ignore les personnages invalides (ancienne version, stockage modifié…)
-        saved.cast = saved.cast.filter((c) => c && E.FRUITS[c.fruit]).slice(0, MAX_CHARS);
+        saved.cast = saved.cast.filter((c) => c && has(E.FRUITS, c.fruit)).slice(0, MAX_CHARS);
+        saved.cast.forEach((c) => { if (!has(VOICE_FX, c.voice)) c.voice = 'normal'; });
         saved.lines = saved.lines.filter((l) => l && typeof l.text === 'string');
         if (saved.cast.length) return withDefaults(saved);
       }
@@ -269,7 +273,8 @@
       outro: project.outro !== false && !!CFG.WATERMARK,
       lines: project.lines.map((l) => Object.assign({}, l, {
         audio: audioStore[l.id] ? audioStore[l.id].buffer : null,
-        voiced: !!audioStore[l.id] || project.voiceMode === 'bla',
+        // bla-bla seulement s'il y a des lettres (« … » ou « 🍌 » seuls restent muets)
+        voiced: !!audioStore[l.id] || (project.voiceMode === 'bla' && /[\p{L}\p{N}]/u.test(l.text)),
       })),
     });
   }
@@ -295,11 +300,11 @@
     try {
       const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
       const d = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (ch) => ch.charCodeAt(0))));
-      const cast = (d.c || []).filter((c) => Array.isArray(c) && E.FRUITS[c[0]]).slice(0, MAX_CHARS)
-        .map(([fruit, name, voice]) => [fruit, String(name || E.FRUITS[fruit].label).slice(0, 20), VOICE_FX[voice] ? voice : 'normal']);
+      const cast = (d.c || []).filter((c) => Array.isArray(c) && has(E.FRUITS, c[0])).slice(0, MAX_CHARS)
+        .map(([fruit, name, voice]) => [fruit, String(name || E.FRUITS[fruit].label).slice(0, 20), has(VOICE_FX, voice) ? voice : 'normal']);
       if (!cast.length) return null;
       const lines = (d.l || []).filter((l) => Array.isArray(l)).slice(0, 40)
-        .map(([ci, text, emo]) => [Math.min(cast.length - 1, Math.max(0, ci | 0)), String(text || '').slice(0, 200), E.EMOTIONS[emo] ? emo : 'neutre']);
+        .map(([ci, text, emo]) => [Math.min(cast.length - 1, Math.max(0, ci | 0)), String(text || '').slice(0, 200), has(E.EMOTIONS, emo) ? emo : 'neutre']);
       const p = fromTemplate({ cast, lines, bg: d.b, music: d.m });
       p.title = d.t || '';
       if (d.v === 'robot' || d.v === 'muet') p.voiceMode = d.v;
@@ -646,10 +651,10 @@
         timers.push(setTimeout(() => speak(it.line.text, it.rate), (it.start + 0.15) * 1000));
       }
     });
-    window.FruitSound.schedule(ctx, analyser, mix, tl, t0, {
+    const sound = window.FruitSound.schedule(ctx, analyser, mix, tl, t0, {
       cast: proj.cast, music: proj.music, voiceMode: proj.voiceMode, sfx: proj.sfx !== false,
     });
-    return { ctx, proj, tl, analyser, mix, t0, sources, timers, level: 0, buf: new Float32Array(analyser.fftSize) };
+    return { ctx, proj, tl, analyser, mix, sound, t0, sources, timers, level: 0, buf: new Float32Array(analyser.fftSize) };
   }
 
   function speak(text, rate) {
@@ -680,6 +685,7 @@
     if (!session) return;
     session.sources.forEach((s) => { try { s.stop(); } catch (e) { /* déjà arrêté */ } });
     // coupe la musique, la voix bla-bla et les bruitages déjà programmés
+    session.sound.stop();
     try { session.analyser.disconnect(); session.mix.disconnect(); } catch (e) { /* déjà coupé */ }
     session.timers.forEach(clearTimeout);
     if ('speechSynthesis' in window) speechSynthesis.cancel();
@@ -1090,17 +1096,17 @@
   // ---------------------------------------------------------------------------
   // Démarrage
   // ---------------------------------------------------------------------------
+  const params = new URLSearchParams(location.search);
   project = load();
   const shared = location.hash.startsWith('#s=') ? decodeProject(location.hash.slice(3)) : null;
   if (shared) {
     project = shared;
     save();
-    history.replaceState(null, '', location.pathname);
+    history.replaceState(null, '', location.pathname + location.search);
   }
   renderAll();
   requestAnimationFrame(loop);
 
-  const params = new URLSearchParams(location.search);
   if (params.get('paid') === '1' || location.hash === '#ia') {
     showTab('ia');
     if (params.get('paid') === '1') {

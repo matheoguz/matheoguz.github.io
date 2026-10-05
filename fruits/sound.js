@@ -127,50 +127,54 @@
     minor: [[9, 12, 16], [5, 9, 12], [0, 4, 7], [7, 11, 14]], // Lam Fa Do Sol
   };
 
-  function scheduleMusic(ctx, out, style, t0, dur) {
+  function scheduleMusic(jobs, ctx, out, style, t0, dur) {
     if (!MUSIC[style] || style === 'aucune') return;
     const bpm = { joyeuse: 118, lofi: 78, fete: 126, suspense: 96, drame: 68 }[style];
+    if (!bpm) return;
     const beat = 60 / bpm;
     const bar = beat * 4;
     const end = t0 + dur;
     for (let b = 0, tb = t0; tb < end; b++, tb += bar) {
-      const i = b % 4;
-      if (style === 'joyeuse') {
-        const ch = CHORDS.pop[i];
-        for (let k = 0; k < 8; k++) {
-          const t = tb + k * beat / 2;
-          if (t >= end) break;
-          pluck(ctx, out, t, NOTE(C4 + 12 + ch[[0, 1, 2, 1, 0, 2, 1, 2][k]]), 0.16);
-          if (k % 2 === 1) hat(ctx, out, t, 0.05);
-        }
-        for (let k = 0; k < 4; k++) bass(ctx, out, tb + k * beat, NOTE(C4 - 24 + ch[0]), beat * 0.9, 0.3);
-      } else if (style === 'lofi') {
-        const ch = CHORDS.lofi[i];
-        pad(ctx, out, tb, ch.map((n) => NOTE(C4 + n)), bar, 0.06);
-        kick(ctx, out, tb, 0.5);
-        kick(ctx, out, tb + beat * 2.5, 0.4);
-        for (let k = 0; k < 8; k++) hat(ctx, out, tb + k * beat / 2 + (k % 2 ? 0.03 : 0), k % 2 ? 0.025 : 0.04);
-        bass(ctx, out, tb, NOTE(C4 - 24 + ch[0]), beat * 1.8, 0.28);
-        pluck(ctx, out, tb + beat * 1.5, NOTE(C4 + 12 + ch[2]), 0.07);
-      } else if (style === 'fete') {
-        const ch = CHORDS.minor[i];
-        for (let k = 0; k < 4; k++) {
-          const t = tb + k * beat;
-          kick(ctx, out, t, 0.7);
-          hat(ctx, out, t + beat / 2, 0.07);
-          bass(ctx, out, t + beat / 2, NOTE(C4 - 24 + ch[0]), beat * 0.45, 0.35);
-        }
-        [0, 1.5, 3].forEach((k) => ch.forEach((n) => pluck(ctx, out, tb + k * beat, NOTE(C4 + 12 + n), 0.07)));
-      } else if (style === 'suspense') {
-        for (let k = 0; k < 8; k++) bass(ctx, out, tb + k * beat / 2, NOTE(33 + (i === 3 && k > 3 ? 1 : 0)), beat * 0.35, 0.32);
-        pad(ctx, out, tb, [NOTE(57), NOTE(60), NOTE(64 + (i % 2))], bar, 0.04);
-        for (let k = 0; k < 4; k++) pluck(ctx, out, tb + k * beat, NOTE(93), 0.03);
-      } else if (style === 'drame') {
-        const ch = CHORDS.minor[i];
-        pad(ctx, out, tb, ch.map((n) => NOTE(C4 + n)), bar, 0.07);
-        bass(ctx, out, tb, NOTE(C4 - 24 + ch[0]), bar * 0.9, 0.25);
-        [0, 1, 2, 3].forEach((k) => pluck(ctx, out, tb + k * beat, NOTE(C4 + 12 + ch[k % 3]), 0.08));
+      jobs.push({ t: tb, run: () => musicBar(ctx, out, style, b % 4, tb, beat, bar, end) });
+    }
+  }
+
+  function musicBar(ctx, out, style, i, tb, beat, bar, end) {
+    if (style === 'joyeuse') {
+      const ch = CHORDS.pop[i];
+      for (let k = 0; k < 8; k++) {
+        const t = tb + k * beat / 2;
+        if (t >= end) break;
+        pluck(ctx, out, t, NOTE(C4 + 12 + ch[[0, 1, 2, 1, 0, 2, 1, 2][k]]), 0.16);
+        if (k % 2 === 1) hat(ctx, out, t, 0.05);
       }
+      for (let k = 0; k < 4; k++) bass(ctx, out, tb + k * beat, NOTE(C4 - 24 + ch[0]), beat * 0.9, 0.3);
+    } else if (style === 'lofi') {
+      const ch = CHORDS.lofi[i];
+      pad(ctx, out, tb, ch.map((n) => NOTE(C4 + n)), bar, 0.06);
+      kick(ctx, out, tb, 0.5);
+      kick(ctx, out, tb + beat * 2.5, 0.4);
+      for (let k = 0; k < 8; k++) hat(ctx, out, tb + k * beat / 2 + (k % 2 ? 0.03 : 0), k % 2 ? 0.025 : 0.04);
+      bass(ctx, out, tb, NOTE(C4 - 24 + ch[0]), beat * 1.8, 0.28);
+      pluck(ctx, out, tb + beat * 1.5, NOTE(C4 + 12 + ch[2]), 0.07);
+    } else if (style === 'fete') {
+      const ch = CHORDS.minor[i];
+      for (let k = 0; k < 4; k++) {
+        const t = tb + k * beat;
+        kick(ctx, out, t, 0.7);
+        hat(ctx, out, t + beat / 2, 0.07);
+        bass(ctx, out, t + beat / 2, NOTE(C4 - 24 + ch[0]), beat * 0.45, 0.35);
+      }
+      [0, 1.5, 3].forEach((k) => ch.forEach((n) => pluck(ctx, out, tb + k * beat, NOTE(C4 + 12 + n), 0.07)));
+    } else if (style === 'suspense') {
+      for (let k = 0; k < 8; k++) bass(ctx, out, tb + k * beat / 2, NOTE(33 + (i === 3 && k > 3 ? 1 : 0)), beat * 0.35, 0.32);
+      pad(ctx, out, tb, [NOTE(57), NOTE(60), NOTE(64 + (i % 2))], bar, 0.04);
+      for (let k = 0; k < 4; k++) pluck(ctx, out, tb + k * beat, NOTE(93), 0.03);
+    } else if (style === 'drame') {
+      const ch = CHORDS.minor[i];
+      pad(ctx, out, tb, ch.map((n) => NOTE(C4 + n)), bar, 0.07);
+      bass(ctx, out, tb, NOTE(C4 - 24 + ch[0]), bar * 0.9, 0.25);
+      [0, 1, 2, 3].forEach((k) => pluck(ctx, out, tb + k * beat, NOTE(C4 + 12 + ch[k % 3]), 0.08));
     }
   }
 
@@ -271,7 +275,12 @@
   //   voiceOut : passe par l'analyseur (fait bouger la bouche)
   //   mixOut   : musique et bruitages (ne font pas bouger la bouche)
   // ---------------------------------------------------------------------------
+  // Les notes sont créées au fur et à mesure (quelques secondes d'avance) :
+  // tout créer d'un coup (des milliers de nœuds) fait ramer l'audio sur les longues vidéos.
+  const LOOKAHEAD = 6;
+
   function schedule(ctx, voiceOut, mixOut, tl, t0, opts) {
+    const jobs = [];
     const music = ctx.createGain();
     music.connect(mixOut);
     const full = 0.55, ducked = 0.28;
@@ -280,15 +289,25 @@
       music.gain.setTargetAtTime(ducked, t0 + it.start - 0.05, 0.08);
       music.gain.setTargetAtTime(full, t0 + it.end + 0.1, 0.25);
     });
-    scheduleMusic(ctx, music, opts.music, t0, tl.total);
+    scheduleMusic(jobs, ctx, music, opts.music, t0, tl.total);
 
     tl.items.forEach((it) => {
       const ch = opts.cast.find((c) => c.id === it.charId);
-      if (!it.line.audio && opts.voiceMode === 'bla') babble(ctx, voiceOut, it, t0, ch ? ch.voice : 'normal');
-      if (opts.sfx) sfx(ctx, mixOut, it.line.emotion, t0 + it.start - 0.05);
+      if (!it.line.audio && opts.voiceMode === 'bla') jobs.push({ t: t0 + it.start, run: () => babble(ctx, voiceOut, it, t0, ch ? ch.voice : 'normal') });
+      if (opts.sfx) jobs.push({ t: t0 + it.start - 0.05, run: () => sfx(ctx, mixOut, it.line.emotion, t0 + it.start - 0.05) });
     });
-    if (opts.sfx && tl.end != null && tl.total > tl.end) sfx(ctx, mixOut, 'amoureux', t0 + tl.end);
-    return [music];
+    if (opts.sfx && tl.end != null && tl.total > tl.end) jobs.push({ t: t0 + tl.end, run: () => sfx(ctx, mixOut, 'amoureux', t0 + tl.end) });
+
+    jobs.sort((a, b) => a.t - b.t);
+    let next = 0;
+    let timer = null;
+    const pump = () => {
+      while (next < jobs.length && jobs[next].t < ctx.currentTime + LOOKAHEAD) jobs[next++].run();
+      if (next >= jobs.length) clearInterval(timer);
+    };
+    pump();
+    if (next < jobs.length) timer = setInterval(pump, 1000);
+    return { stop() { clearInterval(timer); } };
   }
 
   window.FruitSound = { MUSIC, schedule, sfx };

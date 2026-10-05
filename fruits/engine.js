@@ -414,7 +414,7 @@
       },
     },
     raisin: {
-      label: 'Raisin', emoji: '🍇', color: '#7b3fa0', top: -150, bottom: 118,
+      label: 'Raisin', emoji: '🍇', color: '#7b3fa0', top: -150, bottom: 140,
       face: { x: 0, y: -18, s: 0.88 },
       draw(ctx) {
         ctx.strokeStyle = '#6d4c2a';
@@ -1145,7 +1145,9 @@
       let emotion = 'neutre';
       for (const x of tl.items) if (x.charId === ch.id && x.start <= t) emotion = x.line.emotion || 'neutre';
       const fxTime = speaking && project.effects !== false ? t - lineIt.start : null;
-      const s = pos[i].s * (visible.length > 1 ? (speaking ? 1.07 : 0.97) : 1);
+      // les fruits hauts (carotte, ananas…) sont réduits pour ne pas cacher les sous-titres
+      const fr = FRUITS[ch.fruit] || FRUITS.pomme;
+      const s = Math.min(pos[i].s * (visible.length > 1 ? (speaking ? 1.07 : 0.97) : 1), 540 / (fr.bottom - fr.top));
       drawCharacter(ctx, ch, pos[i].x, s, {
         open, blink: blinkAt(t, i * 0.37 + 0.2), emotion, look: lookTarget, speaking, hop, fxTime,
         dim: visible.length > 1 && speakerId && !speaking,
