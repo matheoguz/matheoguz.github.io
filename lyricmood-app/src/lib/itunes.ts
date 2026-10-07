@@ -22,7 +22,7 @@ type ItunesResult = {
   artworkUrl100?: string;
 };
 
-const CACHE_PREFIX = "lm:itunes:v1:";
+const CACHE_PREFIX = "lm:itunes:v2:"; // bump to invalidate visitors' cached matches
 const CACHE_TTL = 1000 * 60 * 60 * 24 * 3; // previews URLs are stable, refresh every 3 days
 
 export const trackKey = (t: Track) => `${t.artist}|${t.title}`.toLowerCase();
@@ -93,24 +93,29 @@ function jsonp<T>(url: string, timeoutMs = 8000): Promise<T> {
   });
 }
 
+const ALT_VERSION = /remix|club edit|radio edit|\bedit\b|\blive\b|sped up|slowed|acoustic|instrumental|karaoke|tribute|cover|reprise|version|\bmix\b/i;
+
+/** Picks the original recording: artist AND title must match, alternate versions are penalized. */
 function pickBest(track: Track, results: ItunesResult[]): ItunesResult | undefined {
   const title = norm(track.title);
   const firstArtist = norm(track.artist.split(/&|,| feat\.? | x /i)[0]);
+  const wantsAlt = ALT_VERSION.test(track.title);
   const scored = results
     .filter((r) => r.trackName && r.artistName)
     .map((r) => {
       const rt = norm(r.trackName!);
       const ra = norm(r.artistName!);
-      let score = 0;
-      if (ra.includes(firstArtist) || (ra.length >= 3 && firstArtist.includes(ra))) score += 4;
-      if (rt === title) score += 4;
-      else if (rt.startsWith(title) || title.startsWith(rt)) score += 2;
-      if (/karaoke|instrumental|tribute|cover/i.test(`${r.trackName} ${r.collectionName}`)) score -= 5;
+      const artistOk = ra.includes(firstArtist) || (ra.length >= 3 && firstArtist.includes(ra));
+      const titleScore = rt === title ? 4 : rt.startsWith(title + " ") || title.startsWith(rt + " ") ? 2 : 0;
+      if (!artistOk || !titleScore) return { r, score: -1 };
+      let score = 4 + titleScore;
+      if (!wantsAlt && ALT_VERSION.test(`${r.trackName} ${r.collectionName ?? ""}`)) score -= 3;
       if (r.previewUrl) score += 1;
       return { r, score };
     })
-    .sort((a, b) => b.score - a.score);
-  return scored[0] && scored[0].score >= 5 ? scored[0].r : undefined;
+    .filter((x) => x.score >= 0)
+    .sort((a, b) => b.score - a.score); // stable: keeps Apple's relevance order on ties
+  return scored[0]?.r;
 }
 
 // Small queue so a mood page never fires 10 requests at the exact same time.
@@ -148,7 +153,7 @@ export function lookupTrack(track: Track): Promise<TrackInfo> {
 
   const p = withSlot(async () => {
     const term = encodeURIComponent(`${track.artist} ${track.title}`);
-    const url = `https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=10`;
+    const url = `https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=25`;
     try {
       // One retry: the free API occasionally rate-limits bursts of requests.
       const data = await jsonp<{ results: ItunesResult[] }>(url).catch(async () => {
