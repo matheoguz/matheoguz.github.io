@@ -17,6 +17,8 @@ export type Mood = {
   name: string;
   emoji: string;
   tagline: string;
+  /** Short SEO / social description, e.g. "Music for your 2AM moments." */
+  seo: string;
   description: string;
   /** Original one-liner shown on the mood page (never copyrighted lyrics). */
   caption: string;
@@ -29,6 +31,7 @@ export type Mood = {
 export const moods: Mood[] = [
   {
     slug: "late-night",
+    seo: "Music for your 2AM moments.",
     name: "Late Night",
     emoji: "🌙",
     tagline: "For when the world is asleep and your mind isn't.",
@@ -52,6 +55,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "heartbreak",
+    seo: "Songs for when it hurts — and for healing after.",
     name: "Heartbreak",
     emoji: "💔",
     tagline: "It's okay to not be okay tonight.",
@@ -75,6 +79,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "in-love",
+    seo: "Songs for when someone lives in your head rent-free.",
     name: "In Love",
     emoji: "❤️",
     tagline: "Butterflies, but make it a playlist.",
@@ -98,6 +103,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "gym",
+    seo: "High-energy songs for your hardest sets.",
     name: "Gym",
     emoji: "🏋️",
     tagline: "One more rep. Then another.",
@@ -121,6 +127,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "night-drive",
+    seo: "Songs for empty roads and city lights at 2AM.",
     name: "Night Drive",
     emoji: "🚗",
     tagline: "Empty roads. City lights. Volume up.",
@@ -144,6 +151,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "sad-rainy",
+    seo: "Soft, sad songs for grey days and rainy windows.",
     name: "Sad & Rainy",
     emoji: "🌧️",
     tagline: "Raindrops on the window. Thoughts on repeat.",
@@ -167,6 +175,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "sunset",
+    seo: "Golden hour songs for warm skies and slow evenings.",
     name: "Sunset",
     emoji: "🌅",
     tagline: "Golden hour feels, all day long.",
@@ -190,6 +199,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "chill",
+    seo: "Laid-back songs to slow down, study or do nothing.",
     name: "Chill",
     emoji: "😌",
     tagline: "Slow down. Breathe. Press play.",
@@ -213,6 +223,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "motivation",
+    seo: "Anthems to get up, lock in and chase it.",
     name: "Motivation",
     emoji: "🔥",
     tagline: "Main character energy, on demand.",
@@ -236,6 +247,7 @@ export const moods: Mood[] = [
   },
   {
     slug: "sleep",
+    seo: "Calm music to quiet your mind and fall asleep.",
     name: "Sleep",
     emoji: "😴",
     tagline: "Let the music carry you under.",
@@ -267,6 +279,19 @@ export const site = {
   name: "LyricMood",
   url: "https://matheoguz.github.io/lyricmood",
   description: "Find the music that matches how you feel. Pick your mood, press play.",
-  // Put your TikTok handle here once the account is live (without @), e.g. "lyricmood".
-  tiktok: "",
+  /**
+   * 👉 YOUR TIKTOK HANDLE GOES HERE (without the @), e.g. tiktok: "lyricmood",
+   * then run `npm run publish-site`. While it is the placeholder below,
+   * the "FOLLOW ON TIKTOK" buttons stay hidden so visitors never hit a broken link.
+   */
+  tiktok: "REMPLACE_PAR_MON_PSEUDO",
 };
+
+const TIKTOK_PLACEHOLDER = "REMPLACE_PAR_MON_PSEUDO";
+
+/** Public TikTok profile URL, or null while the handle has not been configured. */
+export function tiktokUrl(): string | null {
+  const handle = site.tiktok.trim().replace(/^@/, "");
+  if (!handle || handle === TIKTOK_PLACEHOLDER) return null;
+  return `https://www.tiktok.com/@${encodeURIComponent(handle)}`;
+}

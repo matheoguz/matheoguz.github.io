@@ -2,7 +2,12 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { Mood, Track } from "@/lib/moods";
-import { lookupTrack, trackKey, type TrackInfo } from "@/lib/itunes";
+import { lookupTrack, peekTrack, trackKey, type TrackInfo } from "@/lib/itunes";
+
+// 0.05s of silence. Played synchronously inside the first tap so iOS / in-app browsers
+// allow the real preview to start after the async lookup.
+const SILENCE =
+  "data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA";
 
 type Current = { mood: Mood; index: number; track: Track; info: TrackInfo };
 
@@ -46,32 +51,46 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     return audioRef.current;
   }, []);
 
+  const unlockedRef = useRef(false);
+
+  const start = useCallback((audio: HTMLAudioElement, mood: Mood, i: number, track: Track, info: TrackInfo) => {
+    setLoadingKey(null);
+    setCurrent({ mood, index: i, track, info });
+    setProgress(0);
+    audio.src = info.previewUrl!;
+    audio.play().catch(() => setPlaying(false));
+  }, []);
+
   /** Plays the preview at `index`, skipping forward over tracks without one. */
   const playMood = useCallback(
     async (mood: Mood, index = 0, direction: 1 | -1 = 1) => {
       const req = ++requestRef.current;
       const audio = getAudio();
-      for (let tries = 0; tries < mood.tracks.length; tries++) {
-        const i = (index + direction * tries + mood.tracks.length) % mood.tracks.length;
+      const n = mood.tracks.length;
+      const at = (k: number) => (index + direction * k + n * 2) % n;
+
+      // Fast path, still inside the user gesture: preview URL already known.
+      const known = peekTrack(mood.tracks[at(0)]);
+      if (known?.previewUrl) return start(audio, mood, at(0), mood.tracks[at(0)], known);
+
+      if (!unlockedRef.current) {
+        unlockedRef.current = true;
+        audio.src = SILENCE;
+        audio.play().catch(() => {});
+      }
+
+      for (let tries = 0; tries < n; tries++) {
+        const i = at(tries);
         const track = mood.tracks[i];
         setLoadingKey(trackKey(track));
         const info = await lookupTrack(track);
         if (req !== requestRef.current) return; // a newer click won
         if (!info.previewUrl) continue;
-        setLoadingKey(null);
-        setCurrent({ mood, index: i, track, info });
-        setProgress(0);
-        audio.src = info.previewUrl;
-        try {
-          await audio.play();
-        } catch {
-          setPlaying(false);
-        }
-        return;
+        return start(audio, mood, i, track, info);
       }
       setLoadingKey(null);
     },
-    [getAudio],
+    [getAudio, start],
   );
 
   const toggle = useCallback(() => {
@@ -101,10 +120,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const audio = getAudio();
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => setPlaying(audio.src !== SILENCE);
     const onPause = () => setPlaying(false);
     const onTime = () => setProgress(audio.duration ? audio.currentTime / audio.duration : 0);
-    const onEnded = () => next();
+    const onEnded = () => {
+      if (audio.src !== SILENCE) next();
+    };
     audio.addEventListener("play", onPlay);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("timeupdate", onTime);

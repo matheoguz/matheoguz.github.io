@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { SurpriseButton } from "./SurpriseButton";
+import { TikTokButton } from "./TikTokButton";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,10 +25,11 @@ export function Header() {
         <Link href="/" aria-label="LyricMood home" className="rounded-xl focus-visible:outline-2 focus-visible:outline-white/60">
           <Logo />
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="flex items-center gap-1.5 text-sm">
           <Link href="/#moods" className="hidden rounded-full px-4 py-2 text-white/70 transition hover:text-white sm:block">
             Moods
           </Link>
+          <TikTokButton variant="compact" className="mr-1" />
           <SurpriseButton compact />
         </nav>
       </div>

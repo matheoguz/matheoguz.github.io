@@ -12,7 +12,7 @@ export function MoodCard({ mood, index = 0, size = "md" }: { mood: Mood; index?:
       }`}
       style={{ boxShadow: `0 30px 80px -40px ${c1}` }}
     >
-      <div className="absolute inset-0 transition duration-700 group-hover:scale-[1.06]">
+      <div className="art-still absolute inset-0 transition duration-700 group-hover:scale-[1.06]">
         <MoodArt mood={mood} />
       </div>
       <div
@@ -22,10 +22,10 @@ export function MoodCard({ mood, index = 0, size = "md" }: { mood: Mood; index?:
       <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
         <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-white/60">
           <span>{String(index + 1).padStart(2, "0")}</span>
-          <span className="h-px w-5 bg-white/30" />
-          <span>{mood.tracks.length} songs</span>
+          <span className="h-px w-5 bg-white/30 max-[399px]:hidden" />
+          <span className="max-[399px]:hidden">{mood.tracks.length} songs</span>
         </div>
-        <h3 className={`mt-1.5 font-semibold tracking-tight ${size === "sm" ? "text-lg" : "text-xl sm:text-2xl"}`}>
+        <h3 className={`mt-1.5 font-semibold tracking-tight ${size === "sm" ? "text-lg" : "text-lg min-[400px]:text-xl sm:text-2xl"}`}>
           <span className="mr-1.5">{mood.emoji}</span>
           {mood.name}
         </h3>

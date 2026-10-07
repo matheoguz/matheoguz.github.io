@@ -37,12 +37,17 @@ const norm = (s: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
+const memory = new Map<string, TrackInfo>();
+
 function readCache(key: string): TrackInfo | undefined {
+  const hit = memory.get(key);
+  if (hit) return hit;
   try {
     const raw = localStorage.getItem(CACHE_PREFIX + key);
     if (!raw) return undefined;
     const { at, info } = JSON.parse(raw) as { at: number; info: TrackInfo };
     if (Date.now() - at > CACHE_TTL) return undefined;
+    memory.set(key, info);
     return info;
   } catch {
     return undefined;
@@ -50,6 +55,7 @@ function readCache(key: string): TrackInfo | undefined {
 }
 
 function writeCache(key: string, info: TrackInfo) {
+  memory.set(key, info);
   try {
     localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ at: Date.now(), info }));
   } catch {
@@ -126,6 +132,13 @@ async function withSlot<T>(fn: () => Promise<T>): Promise<T> {
 
 const EMPTY: TrackInfo = { previewUrl: null, appleUrl: null, artwork: null, album: null };
 
+/** Already-known info for a track, synchronously (lets the player start inside the tap handler). */
+export function peekTrack(track: Track): TrackInfo | undefined {
+  return readCache(trackKey(track));
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export function lookupTrack(track: Track): Promise<TrackInfo> {
   const key = trackKey(track);
   const cached = readCache(key);
@@ -137,7 +150,11 @@ export function lookupTrack(track: Track): Promise<TrackInfo> {
     const term = encodeURIComponent(`${track.artist} ${track.title}`);
     const url = `https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=10`;
     try {
-      const data = await jsonp<{ results: ItunesResult[] }>(url);
+      // One retry: the free API occasionally rate-limits bursts of requests.
+      const data = await jsonp<{ results: ItunesResult[] }>(url).catch(async () => {
+        await sleep(1500 + Math.random() * 1000);
+        return jsonp<{ results: ItunesResult[] }>(url);
+      });
       const best = pickBest(track, data.results ?? []);
       const info: TrackInfo = best
         ? {

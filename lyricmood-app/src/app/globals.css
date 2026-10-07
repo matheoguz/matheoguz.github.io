@@ -215,11 +215,21 @@ body {
   }
 }
 
-.reveal {
+/* Scroll reveals only hide content once JS is confirmed running (see layout <head>). */
+.js .reveal:not(.is-in) {
   opacity: 0;
 }
-.reveal.is-in {
+.reveal.is-in,
+.reveal-now {
   animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+}
+
+/* Mood card art stays still (cheap on phones) and comes alive on hover. */
+.art-still * {
+  animation-play-state: paused !important;
+}
+.group:hover .art-still * {
+  animation-play-state: running !important;
 }
 
 .eq-bar {
@@ -242,7 +252,7 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .reveal {
+  .js .reveal:not(.is-in) {
     opacity: 1;
   }
 }

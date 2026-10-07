@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { moods, site } from "@/lib/moods";
+import { moods } from "@/lib/moods";
+import { TikTokButton } from "@/components/TikTokButton";
 import { MoodCard } from "@/components/MoodCard";
 import { MoodArt } from "@/components/MoodArt";
 import { Reveal } from "@/components/Reveal";
@@ -29,7 +30,7 @@ export default function Home() {
         </div>
 
         <div className="relative">
-          <Reveal>
+          <Reveal immediate>
             <span className="glass inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-xs font-medium text-white/75 sm:text-[13px]">
               <span className="text-[#8b7bff]">
                 <Equalizer bars={4} className="h-3" />
@@ -38,7 +39,7 @@ export default function Home() {
             </span>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal immediate delay={120}>
             <h1 className="mt-7 text-[clamp(3.2rem,15vw,9.5rem)] font-extrabold leading-[0.86] tracking-[-0.055em]">
               <span className="block">YOUR MOOD.</span>
               <span className="block">
@@ -48,13 +49,13 @@ export default function Home() {
             </h1>
           </Reveal>
 
-          <Reveal delay={260}>
+          <Reveal immediate delay={260}>
             <p className="mx-auto mt-6 max-w-md text-lg text-white/65 sm:text-xl">
               Find the music that matches how you feel.
             </p>
           </Reveal>
 
-          <Reveal delay={380} className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Reveal immediate delay={380} className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="#moods"
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-white px-8 py-4 text-[15px] font-bold tracking-wide text-black shadow-[0_20px_70px_-15px_#8b7bff] transition hover:scale-[1.04] active:scale-[0.97]"
@@ -148,11 +149,7 @@ export default function Home() {
             <Link href="#moods" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-bold tracking-wide text-black transition hover:scale-105 active:scale-95">
               FIND YOUR MOOD →
             </Link>
-            {site.tiktok && (
-              <a href={`https://www.tiktok.com/@${site.tiktok}`} target="_blank" rel="noopener noreferrer" className="glass inline-flex items-center gap-2 rounded-full px-7 py-4 text-sm font-semibold transition hover:bg-white/10">
-                New moods daily on TikTok
-              </a>
-            )}
+            <TikTokButton variant="glass" />
           </div>
         </Reveal>
       </section>

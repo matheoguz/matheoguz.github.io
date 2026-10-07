@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { moods, site } from "@/lib/moods";
+import { moods } from "@/lib/moods";
+import { TikTokButton } from "./TikTokButton";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -12,16 +13,7 @@ export function Footer() {
             Your mood. Your music. A free, hand-curated guide to the songs that match how you feel — no account, no
             ads, just press play.
           </p>
-          {site.tiktok && (
-            <a
-              href={`https://www.tiktok.com/@${site.tiktok}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/30 hover:text-white"
-            >
-              Follow @{site.tiktok} on TikTok
-            </a>
-          )}
+          <TikTokButton variant="glass" className="mt-6" />
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">Moods</p>

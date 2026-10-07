@@ -18,13 +18,14 @@ function walk(dir, fn) {
 }
 
 // GitHub Pages serves extensionless files as octet-stream, which social apps reject for previews.
+const IMAGE_ROUTES = ["opengraph-image"];
 walk(out, (p, name) => {
-  if (name === "opengraph-image") renameSync(p, p + ".png");
+  if (IMAGE_ROUTES.includes(name)) renameSync(p, p + ".png");
 });
 walk(out, (p, name) => {
-  if (!/\.(html|txt)$/.test(name)) return;
+  if (!/\.(html|txt|webmanifest)$/.test(name)) return;
   const src = readFileSync(p, "utf8");
-  const next = src.replace(/opengraph-image\?/g, "opengraph-image.png?");
+  const next = src.replace(/(opengraph-image)(?=[?"])/g, "$1.png");
   if (next !== src) writeFileSync(p, next);
 });
 

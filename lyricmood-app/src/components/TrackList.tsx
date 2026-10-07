@@ -85,6 +85,7 @@ function TrackRow({ mood, track, index }: { mood: Mood; track: Track; index: num
           {track.artist}
           {info?.album && <span className="hidden text-white/30 md:inline"> · {info.album}</span>}
         </p>
+        {noPreview && <p className="mt-0.5 truncate text-[11px] text-white/35">Preview unavailable</p>}
         {active && (
           <div className="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full transition-[width] duration-200" style={{ width: `${player.progress * 100}%`, background: c1 }} />
@@ -98,11 +99,11 @@ function TrackRow({ mood, track, index }: { mood: Mood; track: Track; index: num
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Listen to ${track.title} on Apple Music`}
-          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white px-3 text-xs font-semibold text-black transition hover:scale-105 active:scale-95"
+          className="inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-full bg-white px-3 text-xs font-semibold text-black transition hover:scale-105 active:scale-95 max-[399px]:px-0"
         >
-          <AppleIcon className="h-3.5 w-3.5" />
+          <AppleIcon className="h-4 w-4 min-[400px]:h-3.5 min-[400px]:w-3.5" />
           <span className="hidden sm:inline">Apple Music</span>
-          <span className="sm:hidden">Listen</span>
+          <span className="hidden min-[400px]:inline sm:hidden">Listen</span>
         </a>
         <a
           href={links.spotify}

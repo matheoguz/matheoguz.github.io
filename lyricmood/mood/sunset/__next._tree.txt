@@ -1,6 +1,6 @@
-:HL["/lyricmood/_next/static/chunks/2x320ssnj7h4t.css","style"]
+:HL["/lyricmood/_next/static/chunks/16kyxw79brc5c.css","style"]
 :HC["/",""]
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"d","k":"sunset","s":[]},"h":65632,"c":"$Q3"}]]
 1:[["children",{"s":"mood","h":131136,"c":"$Q2"}]]
-0:{"b":"8518VKd1Tl-YUKupn7p5E","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}
+0:{"b":"pLebOqdZCq8S4meP4iqBt","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}

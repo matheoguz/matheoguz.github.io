@@ -19,12 +19,18 @@ No audio files and no lyrics are stored or hosted here.
 | What | Where |
 | --- | --- |
 | Moods, songs, descriptions, colors | `src/lib/moods.ts` |
-| TikTok handle (shows follow buttons) | `site.tiktok` in `src/lib/moods.ts` |
+| TikTok handle (shows the “FOLLOW ON TIKTOK” buttons) | `site.tiktok` in `src/lib/moods.ts` — replace `REMPLACE_PAR_MON_PSEUDO` by your handle without `@` |
 | Mood illustrations | `src/components/MoodArt.tsx` |
 | Home page | `src/app/page.tsx` |
 | Mood page | `src/app/mood/[slug]/page.tsx` |
 
 Add a new mood = add one object to `moods` (pick an existing `scene`). Its page and social preview image are generated automatically.
+
+## SEO & sharing
+
+Per-page title (`Late Night — LyricMood`), description (`seo` field of each mood), canonical URL,
+Open Graph + Twitter/X card with a generated 1200×630 image, SVG favicon, Apple touch icon,
+web manifest and `sitemap.xml` are all generated at build time.
 
 ## Commands
 

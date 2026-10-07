@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getMood, moods } from "@/lib/moods";
+import { getMood, moods, tiktokUrl } from "@/lib/moods";
 import { MoodArt } from "@/components/MoodArt";
 import { TrackList } from "@/components/TrackList";
 import { PlayMoodButton } from "@/components/PlayMoodButton";
@@ -10,6 +10,7 @@ import { AccentTheme } from "@/components/AccentTheme";
 import { MoodCard } from "@/components/MoodCard";
 import { Reveal } from "@/components/Reveal";
 import { SurpriseButton } from "@/components/SurpriseButton";
+import { TikTokButton } from "@/components/TikTokButton";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -22,16 +23,18 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const mood = getMood((await params).slug);
   if (!mood) return {};
-  const title = `${mood.emoji} ${mood.name} songs`;
-  const description = `${mood.tagline} ${mood.tracks.length} hand-picked songs with instant previews — ${mood.tracks
+  const title = `${mood.name} — LyricMood`;
+  const description = `${mood.seo} ${mood.tracks.length} hand-picked songs with instant previews: ${mood.tracks
     .slice(0, 3)
     .map((t) => `${t.title} by ${t.artist}`)
-    .join(", ")} and more.`;
+    .join(", ")} & more.`;
+  const url = `mood/${mood.slug}/`;
   return {
-    title,
+    title: { absolute: title },
     description,
-    alternates: { canonical: `mood/${mood.slug}/` },
-    openGraph: { title: `${title} · LyricMood`, description, url: `mood/${mood.slug}/` },
+    alternates: { canonical: url },
+    openGraph: { type: "music.playlist", title, description: mood.seo, url, siteName: "LyricMood" },
+    twitter: { card: "summary_large_image", title, description: mood.seo },
   };
 }
 
@@ -53,29 +56,29 @@ export default async function MoodPage({ params }: Props) {
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[78svh] max-w-6xl flex-col justify-end px-5 pb-12 pt-32 sm:min-h-[82svh] sm:px-6 sm:pb-16">
-          <Reveal>
+          <Reveal immediate>
             <Link href="/#moods" className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-white/80 transition hover:text-white">
               ← All moods
             </Link>
           </Reveal>
-          <Reveal delay={100}>
+          <Reveal immediate delay={100}>
             <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
               Mood playlist · {mood.tracks.length} songs
             </p>
           </Reveal>
-          <Reveal delay={180}>
+          <Reveal immediate delay={180}>
             <h1 className="mt-3 [text-shadow:0_4px_40px_rgb(0_0_0/0.45)] text-[clamp(3.2rem,14vw,8.5rem)] font-extrabold leading-[0.88] tracking-[-0.05em]">
               <span className="mr-3 inline-block align-middle text-[0.6em]">{mood.emoji}</span>
               {mood.name}
             </h1>
           </Reveal>
-          <Reveal delay={260}>
+          <Reveal immediate delay={260}>
             <p className="mt-5 max-w-xl font-serif text-2xl italic leading-snug text-white/85 sm:text-3xl">
               “{mood.caption}”
             </p>
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/60 sm:text-base">{mood.description}</p>
           </Reveal>
-          <Reveal delay={340} className="mt-8 flex flex-wrap items-center gap-3">
+          <Reveal immediate delay={340} className="mt-8 flex flex-wrap items-center gap-3">
             <PlayMoodButton mood={mood} />
             <ShareButton title={`${mood.name} · LyricMood`} text={`${mood.emoji} ${mood.tagline}`} />
           </Reveal>
@@ -95,6 +98,7 @@ export default async function MoodPage({ params }: Props) {
           <p className="mt-4 px-2 text-center text-[11px] text-white/30">
             Previews courtesy of Apple Music. Full songs open on your favorite platform.
           </p>
+          <TikTokCallout />
         </div>
       </section>
 
@@ -125,5 +129,15 @@ export default async function MoodPage({ params }: Props) {
         </div>
       </section>
     </>
+  );
+}
+
+function TikTokCallout() {
+  if (!tiktokUrl()) return null;
+  return (
+    <div className="mt-10 flex flex-col items-center gap-4 text-center">
+      <p className="font-serif text-xl italic text-white/60 sm:text-2xl">New mood playlists every day on TikTok.</p>
+      <TikTokButton />
+    </div>
   );
 }
