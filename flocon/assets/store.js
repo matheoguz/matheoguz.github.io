@@ -13,7 +13,7 @@ var CONFIG = {
   // Solution de secours utilisée tant que paypalMerchantId est vide :
   // lien PayPal.me + récapitulatif de commande envoyé par email.
   paypalMe: 'MatheoGuzzi',
-  contactEmail: '', // email où tu reçois les commandes (obligatoire en mode secours)
+  contactEmail: 'matheoguzzi11@gmail.com', // email où tu reçois les commandes (obligatoire en mode secours)
 
   shippingFee: 4.90,
   freeShippingFrom: 39,
@@ -292,7 +292,7 @@ function renderChrome() {
     '<footer class="site"><div class="wrap"><div class="foot">' +
       '<div><a class="logo" href="index.html">Flocon</a><p>Maison de décoration de Noël. Des pièces choisies pour la lumière qu\'elles apportent, livrées partout en France.</p></div>' +
       '<div><h4>Univers</h4><a href="index.html?univers=tradition#collection">Tradition</a><a href="index.html?univers=givre#collection">Givre</a><a href="index.html?univers=chalet#collection">Chalet</a><a href="produit.html?id=pack-salon">Coffret Salon de Noël</a></div>' +
-      '<div><h4>Service</h4><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
+      '<div><h4>Service</h4><a href="mailto:' + CONFIG.contactEmail + '">' + CONFIG.contactEmail + '</a><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
     '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
 
   var mnav = document.getElementById('mnav');
