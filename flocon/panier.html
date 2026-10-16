@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panier — Flocon</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#1f3d2f">
+<meta name="theme-color" content="#16291f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a3242c' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2316291f'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' fill='%23d8c29a'%3EF%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div id="top"></div>
 
 <main class="wrap">
-  <h1 class="page-title">Ton panier</h1>
+  <div class="page-head"><span class="caps">Commande</span><h1>Votre panier</h1></div>
   <div id="content"></div>
 </main>
 
@@ -29,46 +29,38 @@ var content = document.getElementById('content');
 function render() {
   var cart = readCart();
   if (!cart.length) {
-    content.innerHTML = '<div class="empty panel"><p>Ton panier est vide pour l\'instant.</p><a class="btn btn-green" href="index.html#boutique">Découvrir la collection</a></div>';
+    content.innerHTML = '<div class="empty-state"><p>Votre panier est vide.</p><a class="btn btn-dark" href="index.html#collection">Découvrir la collection</a></div>';
     return;
   }
   var t = cartTotals(cart);
   var remain = CONFIG.freeShippingFrom - t.sub;
+  var pct = Math.min(100, Math.round(t.sub / CONFIG.freeShippingFrom * 100));
   content.innerHTML =
     '<div class="checkout">' +
       '<div class="panel"><h2>Articles</h2>' +
-        cart.map(function (l) {
-          var p = getProduct(l.id);
-          return '<div class="line"><img src="' + U(p.images[0], 200) + '" alt="">' +
-            '<div><h3>' + esc(p.name) + '</h3><small>' + eur(p.price) + ' / unité</small><div style="margin-top:8px"><div class="qty">' +
-            '<button data-dec="' + p.id + '" aria-label="Moins">−</button><span>' + l.qty + '</span><button data-inc="' + p.id + '" aria-label="Plus">+</button></div></div></div>' +
-            '<div class="line-right"><strong>' + eur(p.price * l.qty) + '</strong><button class="rm" data-rm="' + p.id + '">Retirer</button></div></div>';
-        }).join('') +
-        '<div class="totals"><div><span>Sous-total</span><span>' + eur(t.sub) + '</span></div>' +
-        '<div><span>Livraison</span><span>' + (t.ship ? eur(t.ship) : 'Offerte') + '</span></div>' +
-        '<div class="grand"><span>Total</span><span>' + eur(t.total) + '</span></div></div>' +
-        (remain > 0 ? '<div class="free-ship">Plus que ' + eur(remain) + ' pour la livraison offerte.</div>' : '') +
+        cart.map(lineHTML).join('') +
+        '<div class="progress" style="margin-top:22px"><span>' + (remain > 0 ? 'Plus que ' + eur(remain) + ' pour la livraison offerte' : 'Livraison offerte') + '</span><div class="bar"><span style="width:' + pct + '%"></span></div></div>' +
       '</div>' +
-      '<div class="panel"><h2>Livraison</h2>' +
+      '<div class="aside"><h2 style="font-family:var(--display);font-weight:500;font-size:1.7rem;margin-bottom:18px">Livraison et paiement</h2>' +
         '<form class="form" id="form" novalidate>' +
           '<div class="row"><label>Prénom<input name="first" autocomplete="given-name" required></label><label>Nom<input name="last" autocomplete="family-name" required></label></div>' +
           '<label>Email<input name="email" type="email" autocomplete="email" required></label>' +
-          '<label>Téléphone (pour le livreur)<input name="phone" type="tel" autocomplete="tel"></label>' +
+          '<label>Téléphone<input name="phone" type="tel" autocomplete="tel" placeholder="Pour le transporteur"></label>' +
           '<label>Adresse<input name="address" autocomplete="street-address" required></label>' +
           '<div class="row"><label>Code postal<input name="zip" autocomplete="postal-code" inputmode="numeric" required></label><label>Ville<input name="city" autocomplete="address-level2" required></label></div>' +
           '<label>Pays<select name="country">' + CONFIG.countries.map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
+          '<div class="totals"><div><span>Sous-total</span><span>' + eur(t.sub) + '</span></div>' +
+            '<div><span>Livraison</span><span>' + (t.ship ? eur(t.ship) : 'Offerte') + '</span></div>' +
+            '<div class="grand"><span>Total TTC</span><span>' + eur(t.total) + '</span></div></div>' +
           '<label class="check"><input type="checkbox" name="cgv" required><span>J\'accepte les <a href="legal.html#cgv" target="_blank">conditions de vente</a> et j\'ai pris connaissance de mon <a href="legal.html#retours" target="_blank">droit de rétractation</a>.</span></label>' +
           '<p class="err" id="err" role="alert"></p>' +
-          '<button class="pay-btn" type="submit" id="payBtn">Payer ' + eur(t.total) + ' avec PayPal</button>' +
-          '<p class="secure">Paiement sécurisé par PayPal, avec ton compte ou ta carte bancaire. Commande avec obligation de paiement.</p>' +
+          '<button class="pay-btn" type="submit" id="payBtn">Payer ' + eur(t.total) + ' avec <b>PayPal</b></button>' +
+          '<p class="secure">' + ICON.lock + 'Paiement sécurisé · compte PayPal ou carte bancaire</p>' +
         '</form>' +
         '<div id="fallback" hidden></div>' +
       '</div>' +
     '</div>';
-
-  content.querySelectorAll('[data-inc]').forEach(function (b) { b.onclick = function () { var l = readCart().find(function (x) { return x.id === b.dataset.inc; }); setQty(l.id, Math.min(20, l.qty + 1)); render(); }; });
-  content.querySelectorAll('[data-dec]').forEach(function (b) { b.onclick = function () { var l = readCart().find(function (x) { return x.id === b.dataset.dec; }); setQty(l.id, l.qty - 1); render(); }; });
-  content.querySelectorAll('[data-rm]').forEach(function (b) { b.onclick = function () { setQty(b.dataset.rm, 0); render(); }; });
+  bindLineControls(content, render);
   document.getElementById('form').addEventListener('submit', submit);
 }
 
@@ -77,8 +69,8 @@ function submit(e) {
   var f = e.target, err = document.getElementById('err');
   var c = {};
   ['first', 'last', 'email', 'phone', 'address', 'zip', 'city', 'country'].forEach(function (k) { c[k] = f.elements[k].value.trim(); });
-  if (!c.first || !c.last || !c.address || !c.zip || !c.city) { err.textContent = 'Remplis toutes les informations de livraison.'; return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) { err.textContent = 'Vérifie ton adresse email.'; return; }
+  if (!c.first || !c.last || !c.address || !c.zip || !c.city) { err.textContent = 'Merci de compléter votre adresse de livraison.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) { err.textContent = 'Merci de vérifier votre adresse email.'; return; }
   if (!f.elements.cgv.checked) { err.textContent = 'Merci d\'accepter les conditions de vente.'; return; }
   err.textContent = '';
 
@@ -86,24 +78,25 @@ function submit(e) {
   try { localStorage.setItem('flocon_last_order', JSON.stringify({ ref: ref, total: t.total, cart: cart, customer: c, at: Date.now() })); } catch (x) {}
 
   if (CONFIG.paypalMerchantId) {
-    document.getElementById('payBtn').disabled = true;
-    document.getElementById('payBtn').textContent = 'Redirection vers PayPal…';
+    var b = document.getElementById('payBtn');
+    b.disabled = true;
+    b.textContent = 'Redirection vers PayPal';
     paypalCartForm(cart, t, c, ref).submit();
     return;
   }
 
   // Mode secours : récapitulatif par email + paiement PayPal.me
-  if (!CONFIG.contactEmail) { err.textContent = 'Le paiement n\'est pas encore activé sur cette boutique.'; return; }
+  if (!CONFIG.contactEmail) { err.textContent = 'Le paiement en ligne sera disponible très prochainement.'; return; }
   var mail = 'mailto:' + CONFIG.contactEmail + '?subject=' + encodeURIComponent('Commande Flocon ' + ref) + '&body=' + encodeURIComponent(orderSummaryText(cart, t, c, ref));
   var pay = 'https://paypal.me/' + CONFIG.paypalMe + '/' + t.total.toFixed(2) + 'EUR';
   f.hidden = true;
   var fb = document.getElementById('fallback');
   fb.hidden = false;
   fb.innerHTML =
-    '<p style="margin-bottom:14px">Ta commande <strong>' + ref + '</strong> est prête. Deux étapes :</p>' +
-    '<div class="form"><a class="btn btn-green" href="' + mail + '">1. Envoyer ma commande</a>' +
-    '<a class="pay-btn" style="text-decoration:none" href="' + pay + '" target="_blank" rel="noopener">2. Payer ' + eur(t.total) + ' sur PayPal</a>' +
-    '<p class="secure">Indique la référence <strong>' + ref + '</strong> dans la note PayPal.</p></div>';
+    '<p style="margin-bottom:18px">Votre commande <strong>' + ref + '</strong> est prête. Deux étapes pour la finaliser :</p>' +
+    '<div class="form"><a class="btn btn-line btn-block" href="' + mail + '">1 &nbsp; Envoyer ma commande</a>' +
+    '<a class="pay-btn" href="' + pay + '" target="_blank" rel="noopener">2 &nbsp; Payer ' + eur(t.total) + ' avec <b>PayPal</b></a>' +
+    '<p class="secure">Indiquez la référence ' + ref + ' dans la note PayPal.</p></div>';
 }
 
 render();

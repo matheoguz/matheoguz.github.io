@@ -25,87 +25,87 @@ var CONFIG = {
 /* Photos libres de droits (licence Unsplash, usage commercial autorisé).
    À remplacer par les photos de ton fournisseur ou de tes échantillons. */
 function U(id, w) {
-  return 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + (w || 900) + '&q=72';
+  return 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + (w || 900) + '&q=75';
 }
 
 var PRODUCTS = [
   {
     id: 'guirlande-rideau',
     name: 'Rideau lumineux Étoiles',
-    short: 'Guirlande rideau LED 3 m pour fenêtre ou mur',
+    short: 'Rideau LED trois mètres, lumière chaude',
     price: 19.90,
-    tag: 'Le plus vu',
+    tag: 'Signature',
     images: ['photo-1681433241280-aae50a102255', 'photo-1608211194323-10b2dda88e25', 'photo-1534780087173-e6bc5e994fe0'],
-    desc: "Transforme une fenêtre, une tête de lit ou un mur en ciel étoilé. Le rideau se fixe en deux minutes avec les crochets fournis et s'allume par USB : pas besoin de prise près de la fenêtre, une batterie externe suffit.",
-    features: ['3 m de large, 12 fils lumineux tombants', '8 modes : fixe, scintillement, vagues…', 'Alimentation USB + télécommande', 'LED blanc chaud, ne chauffe pas'],
+    desc: "Une fenêtre, une tête de lit ou un mur nu deviennent un ciel d'hiver. Douze fils de lumière chaude tombent en cascade ; le rideau se fixe en quelques minutes et s'alimente par USB, sans prise à proximité.",
+    features: ['Trois mètres de large, douze fils lumineux', 'Huit effets, de la lumière fixe au scintillement lent', 'Alimentation USB et télécommande', 'LED blanc chaud, sans échauffement'],
     specs: { 'Dimensions': '300 × 100 cm', 'Lumière': 'LED blanc chaud', 'Alimentation': 'USB 5 V (adaptateur non inclus)', 'Usage': 'Intérieur' }
   },
   {
     id: 'bougies-led',
-    name: 'Bougies LED flamme vacillante',
-    short: 'Lot de 6, sans flamme, avec minuteur',
+    name: 'Bougies à flamme LED',
+    short: 'Coffret de six, vraie cire, minuteur',
     price: 14.90,
-    tag: 'Sans danger',
+    tag: 'Sans flamme',
     images: ['photo-1765628710664-dbce4f4d45b5', 'photo-1763290808558-921cf9257bf2', 'photo-1607838660853-a2cf34eec5b9'],
-    desc: "L'ambiance d'une vraie bougie, sans le risque. La flamme LED bouge comme une vraie, la cire est véritable, et le minuteur les rallume chaque soir automatiquement. Parfait près du sapin, avec des enfants ou des animaux.",
-    features: ['6 bougies en vraie cire (3 tailles)', 'Flamme LED qui vacille', 'Minuteur 6 h allumé / 18 h éteint', 'Fonctionne à piles (non incluses)'],
-    specs: { 'Hauteurs': '10, 12,5 et 15 cm', 'Matière': 'Cire de paraffine + LED', 'Piles': '2 × AAA par bougie', 'Usage': 'Intérieur' }
+    desc: "La lumière vivante d'une bougie, sans flamme ni fumée. La cire est véritable, la flamme LED vacille doucement, et le minuteur les rallume chaque soir. À poser près du sapin, sur une table de fête ou dans une chambre d'enfant.",
+    features: ['Six bougies en cire, trois hauteurs', 'Flamme LED au mouvement naturel', 'Minuteur : six heures allumées, dix-huit éteintes', 'Fonctionnent sur piles (non incluses)'],
+    specs: { 'Hauteurs': '10, 12,5 et 15 cm', 'Matière': 'Cire de paraffine, LED', 'Piles': '2 × AAA par bougie', 'Usage': 'Intérieur' }
   },
   {
     id: 'couronne-porte',
-    name: 'Couronne de porte Sapin & Baies',
-    short: 'Couronne 40 cm, nœud velours rouge',
+    name: 'Couronne Sapin & Baies',
+    short: 'Quarante centimètres, nœud de velours',
     price: 24.90,
     tag: null,
     images: ['photo-1703187439179-9b8c323294a8', 'photo-1544890930-fa67ca7d3a11', 'photo-1639880005608-6e0688ce2c9c'],
-    desc: "La première chose que voient tes invités. Branches de sapin artificiel bien fournies, baies rouges, pommes de pin et un grand nœud en velours. Elle se réutilise d'une année sur l'autre sans perdre ses aiguilles.",
-    features: ['Diamètre 40 cm', 'Nœud en velours rouge', 'Pommes de pin et baies décoratives', 'Réutilisable chaque année'],
-    specs: { 'Diamètre': '40 cm', 'Matière': 'PVC, velours, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur / porte abritée' }
+    desc: "Le premier geste d'accueil de la saison. Des branches de sapin denses, des baies rouges, des pommes de pin et un large nœud de velours. Elle garde son allure d'une année à l'autre, sans perdre une aiguille.",
+    features: ['Diamètre de quarante centimètres', 'Nœud en velours rouge profond', 'Pommes de pin et baies décoratives', 'Se conserve et se réutilise chaque année'],
+    specs: { 'Diamètre': '40 cm', 'Matière': 'PVC, velours, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur ou porte abritée' }
   },
   {
     id: 'boules-noel',
-    name: 'Coffret 24 boules incassables',
-    short: 'Rouge, vert et or, finitions mixtes',
+    name: 'Coffret de vingt-quatre boules',
+    short: 'Rouge, vert et or, incassables',
     price: 17.90,
-    tag: null,
+    tag: 'Coffret',
     images: ['photo-1767741857489-b28dcaa531a4', 'photo-1513885251266-04dcfa26e979', 'photo-1609125303972-255c84ac9f01'],
-    desc: "De quoi habiller tout un sapin d'un coup. Les boules sont en plastique incassable avec des finitions brillantes, mates et pailletées : elles ont l'air de verre, mais survivent aux chats et aux enfants.",
-    features: ['24 boules, 3 tailles (3, 4 et 6 cm)', 'Incassables', 'Finitions brillantes, mates et pailletées', 'Attaches incluses'],
-    specs: { 'Quantité': '24 pièces', 'Tailles': '3 / 4 / 6 cm', 'Matière': 'Plastique incassable', 'Coloris': 'Rouge, vert, or' }
+    desc: "De quoi habiller un sapin entier dans une palette accordée. Finitions brillantes, mates et pailletées : l'éclat du verre soufflé, la résistance en plus.",
+    features: ['Vingt-quatre boules, trois diamètres', 'Matière incassable', 'Finitions brillantes, mates et pailletées', 'Attaches fournies'],
+    specs: { 'Quantité': '24 pièces', 'Diamètres': '3, 4 et 6 cm', 'Matière': 'Plastique incassable', 'Coloris': 'Rouge, vert, or' }
   },
   {
     id: 'calendrier-avent',
-    name: "Calendrier de l'Avent à remplir",
-    short: '24 sachets en tissu + pinces en bois',
+    name: "Calendrier de l'Avent",
+    short: 'Vingt-quatre sachets en tissu à garnir',
     price: 16.90,
-    tag: 'Avant le 1er déc.',
+    tag: 'Avant le 1er décembre',
     images: ['photo-1764341127020-842a97295c15', 'photo-1606844358484-ab8725cab420', 'photo-1766425221306-4d44f4011d4a'],
-    desc: "Tu choisis ce qu'il y a dedans : chocolats, petits mots, bons pour une soirée… 24 sachets en tissu numérotés, une corde et des mini-pinces en bois pour l'accrocher au mur ou sur une cheminée. Réutilisable chaque année.",
-    features: ['24 sachets en tissu numérotés', 'Corde 2,5 m + 24 pinces en bois', 'Réutilisable', 'À commander avant mi-novembre pour le 1er décembre'],
-    specs: { 'Sachets': '10 × 14 cm', 'Matière': 'Coton / jute', 'Corde': '2,5 m', 'Contenu': 'Sachets vides, à remplir' }
+    desc: "Vingt-quatre sachets numérotés, une cordelette et de petites pinces en bois. Vous choisissez ce qui s'y cache : chocolats, mots doux, promesses de sorties. Un rituel qui se réinvente chaque année.",
+    features: ['Vingt-quatre sachets en tissu numérotés', 'Cordelette de 2,5 m et pinces en bois', 'Réutilisable', 'À commander avant mi-novembre pour le 1er décembre'],
+    specs: { 'Sachets': '10 × 14 cm', 'Matière': 'Coton et jute', 'Cordelette': '2,5 m', 'Contenu': 'Sachets vides, à garnir' }
   },
   {
     id: 'chaussette-geante',
-    name: 'Chaussette de Noël géante',
-    short: 'Tricot rouge et blanc, 45 cm',
+    name: 'Chaussette de Noël',
+    short: 'Grand format, tricot et fausse fourrure',
     price: 9.90,
     tag: null,
     images: ['photo-1543772857-a9d7ebc0cf63', 'photo-1642335911245-238e13dcabf2'],
-    desc: "La chaussette à accrocher à la cheminée, à une étagère ou à la porte de la chambre. Grande taille pour y glisser de vrais cadeaux, tricot doux et revers en fausse fourrure.",
-    features: ['Hauteur 45 cm', 'Tricot épais rouge et blanc', 'Revers en fausse fourrure', 'Boucle de suspension'],
+    desc: "La chaussette à suspendre à la cheminée, à une étagère ou à une porte. Assez grande pour de vrais présents, en tricot épais rouge et blanc, avec un revers en fausse fourrure.",
+    features: ['Hauteur de quarante-cinq centimètres', 'Tricot épais rouge et blanc', 'Revers en fausse fourrure', 'Boucle de suspension'],
     specs: { 'Hauteur': '45 cm', 'Matière': 'Acrylique tricoté', 'Entretien': 'Lavage à la main' }
   },
   {
     id: 'pack-salon',
-    name: 'Pack Salon de Noël',
-    short: 'Rideau lumineux + 6 bougies LED + chaussette',
+    name: 'Coffret Salon de Noël',
+    short: 'Rideau lumineux, bougies et chaussette',
     price: 37.90,
-    tag: 'Pack',
+    tag: 'Coffret cadeau',
     pack: ['guirlande-rideau', 'bougies-led', 'chaussette-geante'],
     images: ['photo-1766422646104-49661299db4b', 'photo-1681433241280-aae50a102255', 'photo-1765628710664-dbce4f4d45b5'],
-    desc: "Tout ce qu'il faut pour transformer une pièce en salon de Noël en dix minutes : le rideau lumineux pour la fenêtre, les bougies LED pour la table et la chaussette pour la cheminée. Idéal à offrir.",
-    features: ['Rideau lumineux Étoiles (3 m)', 'Lot de 6 bougies LED', 'Chaussette de Noël géante', "Moins cher que les 3 articles achetés séparément"],
-    specs: { 'Contenu': '3 produits', 'Usage': 'Intérieur' }
+    desc: "Trois pièces choisies pour transformer une pièce en salon de Noël en quelques minutes : la lumière pour la fenêtre, la chaleur des bougies pour la table, la chaussette pour la cheminée. Une idée de cadeau toute trouvée.",
+    features: ['Rideau lumineux Étoiles, trois mètres', 'Coffret de six bougies à flamme LED', 'Chaussette de Noël grand format', 'Plus avantageux que les trois pièces séparément'],
+    specs: { 'Contenu': '3 pièces', 'Usage': 'Intérieur' }
   }
 ];
 
@@ -137,6 +137,7 @@ function readCart() {
 function writeCart(c) {
   try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) {}
   updateCount();
+  renderDrawer();
 }
 function addToCart(id, qty) {
   var c = readCart();
@@ -144,7 +145,7 @@ function addToCart(id, qty) {
   if (line) line.qty = Math.min(20, line.qty + qty);
   else c.push({ id: id, qty: qty });
   writeCart(c);
-  toast('Ajouté au panier', true);
+  openDrawer();
 }
 function setQty(id, qty) {
   var c = readCart().map(function (l) { if (l.id === id) l.qty = qty; return l; })
@@ -159,57 +160,147 @@ function cartTotals(c) {
 }
 function updateCount() {
   var n = readCart().reduce(function (s, l) { return s + l.qty; }, 0);
-  document.querySelectorAll('.cart-count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+  document.querySelectorAll('.cart-count').forEach(function (el) { el.textContent = '(' + n + ')'; });
 }
 
 var toastTimer;
-function toast(msg, withLink) {
+function toast(msg) {
   var t = document.querySelector('.toast');
   if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
-  t.innerHTML = esc(msg) + (withLink ? ' <a href="panier.html">Voir le panier</a>' : '');
+  t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2400);
 }
 
-/* ---------- En-tête et pied de page communs ---------- */
-var ICON_FLAKE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5M3 9.7l3.4.9-.9 3.4M21 14.3l-3.4-.9.9-3.4M3 14.3l3.4-.9-.9-3.4M21 9.7l-3.4.9.9 3.4"/></svg>';
-var ICON_BAG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
+/* ---------- Icônes (traits fins) ---------- */
+var ICON = {
+  bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 8h13l-1 12.5h-11L5.5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'
+};
 
+/* ---------- En-tête, menu, panier latéral, pied de page ---------- */
 function renderChrome() {
   var top = document.getElementById('top');
   if (top) top.outerHTML =
-    '<div class="topbar">Livraison offerte dès ' + CONFIG.freeShippingFrom + ' € · <strong>Commande avant le ' + CONFIG.christmasDeadline + '</strong> pour être livré avant Noël</div>' +
+    '<div class="topbar">Livraison offerte dès ' + CONFIG.freeShippingFrom + ' € &nbsp;·&nbsp; Commandez avant le ' + CONFIG.christmasDeadline + ' pour Noël</div>' +
     '<header class="site"><div class="wrap head">' +
-    '<a class="logo" href="index.html">' + ICON_FLAKE + 'Flocon</a>' +
-    '<nav class="nav" aria-label="Navigation"><a href="index.html#boutique">Boutique</a><a href="produit.html?id=pack-salon">Le pack</a><a href="index.html#livraison">Livraison</a><a href="index.html#faq">FAQ</a></nav>' +
-    '<a class="cart-btn" href="panier.html" aria-label="Panier">' + ICON_BAG + '<span class="lbl">Panier</span><span class="cart-count" data-n="0">0</span></a>' +
-    '</div></header>';
+      '<nav class="nav" aria-label="Navigation principale"><a href="index.html#collection">Collection</a><a href="produit.html?id=pack-salon">Coffret</a><a href="index.html#service">Service</a></nav>' +
+      '<button class="icon-btn burger" id="burger" aria-label="Ouvrir le menu">' + ICON.menu + '</button>' +
+      '<a class="logo" href="index.html">Flocon</a>' +
+      '<div class="head-right"><button class="icon-btn" id="cartOpen" aria-label="Ouvrir le panier">' + ICON.bag + '<span class="lbl">Panier</span><span class="cart-count">(0)</span></button></div>' +
+    '</div></header>' +
+    '<div class="mnav" id="mnav" aria-hidden="true">' +
+      '<div class="mnav-top"><span class="logo" style="justify-self:start;padding-left:0">Flocon</span><button class="icon-btn" id="mnavClose" aria-label="Fermer le menu">' + ICON.close + '</button></div>' +
+      '<a class="big" href="index.html#collection">Collection</a><a class="big" href="produit.html?id=pack-salon">Coffret cadeau</a><a class="big" href="index.html#service">Service</a><a class="big" href="index.html#faq">Questions</a>' +
+      '<div class="small"><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours</a><a href="legal.html#mentions">Mentions légales</a></div>' +
+    '</div>' +
+    '<div class="veil" id="veil"></div>' +
+    '<aside class="drawer" id="drawer" aria-label="Panier" aria-hidden="true">' +
+      '<div class="drawer-head"><h2>Votre panier</h2><button class="icon-btn" id="cartClose" aria-label="Fermer le panier">' + ICON.close + '</button></div>' +
+      '<div class="drawer-body" id="drawerBody"></div>' +
+      '<div class="drawer-foot" id="drawerFoot"></div>' +
+    '</aside>';
+
   var foot = document.getElementById('foot');
   if (foot) foot.outerHTML =
     '<footer class="site"><div class="wrap"><div class="foot">' +
-    '<div><a class="logo" href="index.html">' + ICON_FLAKE + 'Flocon</a><p>Déco de Noël lumineuse et chaleureuse, livrée chez toi depuis notre entrepôt européen.</p></div>' +
-    '<div><h4>Boutique</h4><a href="index.html#boutique">Tous les produits</a><a href="produit.html?id=pack-salon">Pack Salon de Noël</a><a href="panier.html">Panier</a></div>' +
-    '<div><h4>Infos</h4><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
-    '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé via PayPal · Photos d\'ambiance : Unsplash</span></div></div></footer>';
+      '<div><a class="logo" href="index.html">Flocon</a><p>Maison de décoration de Noël. Des pièces choisies pour la lumière qu\'elles apportent, expédiées depuis notre entrepôt européen.</p></div>' +
+      '<div><h4>Boutique</h4><a href="index.html#collection">La collection</a><a href="produit.html?id=pack-salon">Coffret Salon de Noël</a><a href="panier.html">Panier</a></div>' +
+      '<div><h4>Service</h4><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
+    '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
+
+  var mnav = document.getElementById('mnav');
+  document.getElementById('burger').onclick = function () { mnav.classList.add('open'); mnav.setAttribute('aria-hidden', 'false'); document.body.classList.add('lock'); };
+  document.getElementById('mnavClose').onclick = closeMenu;
+  mnav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+  document.getElementById('cartOpen').onclick = openDrawer;
+  document.getElementById('cartClose').onclick = closeDrawer;
+  document.getElementById('veil').onclick = closeDrawer;
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeDrawer(); closeMenu(); } });
+
   updateCount();
+  renderDrawer();
+  initReveal();
+}
+function closeMenu() {
+  var m = document.getElementById('mnav');
+  if (!m) return;
+  m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); document.body.classList.remove('lock');
+}
+function openDrawer() {
+  var d = document.getElementById('drawer');
+  if (!d || /panier\.html/.test(location.pathname)) { toast('Ajouté au panier'); return; }
+  d.classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  document.getElementById('veil').classList.add('on');
+  document.body.classList.add('lock');
+}
+function closeDrawer() {
+  var d = document.getElementById('drawer');
+  if (!d) return;
+  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true');
+  document.getElementById('veil').classList.remove('on');
+  document.body.classList.remove('lock');
+}
+function renderDrawer() {
+  var body = document.getElementById('drawerBody'), foot = document.getElementById('drawerFoot');
+  if (!body) return;
+  var cart = readCart();
+  if (!cart.length) {
+    body.innerHTML = '<div class="drawer-empty"><p>Votre panier est vide.</p></div>';
+    foot.innerHTML = '<a class="btn btn-dark btn-block" href="index.html#collection">Découvrir la collection</a>';
+    return;
+  }
+  var t = cartTotals(cart);
+  var pct = Math.min(100, Math.round(t.sub / CONFIG.freeShippingFrom * 100));
+  var remain = CONFIG.freeShippingFrom - t.sub;
+  body.innerHTML = cart.map(lineHTML).join('');
+  foot.innerHTML =
+    '<div class="progress"><span>' + (remain > 0 ? 'Plus que ' + eur(remain) + ' pour la livraison offerte' : 'Livraison offerte') + '</span><div class="bar"><span style="width:' + pct + '%"></span></div></div>' +
+    '<div class="sum"><span class="caps">Sous-total</span><strong>' + eur(t.sub) + '</strong></div>' +
+    '<a class="btn btn-dark btn-block" href="panier.html">Commander</a>';
+  bindLineControls(body, renderDrawer);
+}
+function lineHTML(l) {
+  var p = getProduct(l.id);
+  return '<div class="line"><a href="produit.html?id=' + p.id + '"><img src="' + U(p.images[0], 240) + '" alt=""></a>' +
+    '<div><h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><small>' + eur(p.price) + '</small>' +
+    '<div class="qty"><button data-dec="' + p.id + '" aria-label="Retirer un">&minus;</button><span>' + l.qty + '</span><button data-inc="' + p.id + '" aria-label="Ajouter un">+</button></div></div>' +
+    '<div class="line-right"><span>' + eur(p.price * l.qty) + '</span><button class="rm" data-rm="' + p.id + '">Retirer</button></div></div>';
+}
+function bindLineControls(root, after) {
+  root.querySelectorAll('[data-inc]').forEach(function (b) { b.onclick = function () { var l = readCart().find(function (x) { return x.id === b.dataset.inc; }); setQty(l.id, Math.min(20, l.qty + 1)); if (after) after(); }; });
+  root.querySelectorAll('[data-dec]').forEach(function (b) { b.onclick = function () { var l = readCart().find(function (x) { return x.id === b.dataset.dec; }); setQty(l.id, l.qty - 1); if (after) after(); }; });
+  root.querySelectorAll('[data-rm]').forEach(function (b) { b.onclick = function () { setQty(b.dataset.rm, 0); if (after) after(); }; });
+}
+
+/* ---------- Apparition douce au défilement ---------- */
+function initReveal() {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function (e) { io.observe(e); });
 }
 
 /* ---------- Carte produit ---------- */
 function cardHTML(p) {
-  return '<article class="card">' +
-    '<a class="card-media" href="produit.html?id=' + p.id + '"><img loading="lazy" src="' + U(p.images[0], 700) + '" alt="' + esc(p.name) + '">' +
-    (p.tag ? '<span class="tag' + (p.pack ? ' red' : '') + '">' + esc(p.tag) + '</span>' : '') + '</a>' +
-    '<div class="card-body"><h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><p>' + esc(p.short) + '</p>' +
-    '<div class="card-foot"><span class="price">' + eur(p.price) + '</span><button class="add" data-add="' + p.id + '">Ajouter</button></div></div></article>';
+  return '<article class="card reveal">' +
+    '<div class="card-media"><a href="produit.html?id=' + p.id + '" aria-label="' + esc(p.name) + '">' +
+      '<img loading="lazy" src="' + U(p.images[0], 800) + '" alt="' + esc(p.name) + '">' +
+      (p.images[1] ? '<img class="alt" loading="lazy" src="' + U(p.images[1], 800) + '" alt="">' : '') +
+      (p.tag ? '<span class="tag">' + esc(p.tag) + '</span>' : '') +
+    '</a>' +
+    '<button class="quick" data-add="' + p.id + '">Ajouter au panier</button></div>' +
+    '<div class="card-body"><div><h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><p>' + esc(p.short) + '</p></div>' +
+    '<span class="price">' + eur(p.price) + '</span></div></article>';
 }
 function bindAddButtons(root) {
   (root || document).querySelectorAll('[data-add]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      addToCart(b.getAttribute('data-add'), 1);
-      b.classList.add('done'); b.textContent = 'Ajouté ✓';
-      setTimeout(function () { b.classList.remove('done'); b.textContent = 'Ajouter'; }, 1600);
-    });
+    b.addEventListener('click', function (e) { e.preventDefault(); addToCart(b.getAttribute('data-add'), 1); });
   });
 }
 
