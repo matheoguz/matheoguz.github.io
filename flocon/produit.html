@@ -41,8 +41,9 @@ if (!p) {
   document.title = p.name + ' — Flocon';
   var specs = Object.keys(p.specs).map(function (k) { return '<dt>' + esc(k) + '</dt><dd>' + esc(p.specs[k]) + '</dd>'; }).join('');
   var worth = packWorth(p);
+  var th = p.theme ? THEMES[p.theme] : null;
   main.innerHTML =
-    '<div class="crumbs"><a href="index.html">Accueil</a> &nbsp;/&nbsp; <a href="index.html#collection">Collection</a> &nbsp;/&nbsp; ' + esc(p.name) + '</div>' +
+    '<div class="crumbs"><a href="index.html">Accueil</a> &nbsp;/&nbsp; ' + (th ? '<a href="index.html?univers=' + p.theme + '#collection">Univers ' + esc(th.name) + '</a>' : '<a href="index.html#collection">Collection</a>') + ' &nbsp;/&nbsp; ' + esc(p.name) + '</div>' +
     '<div class="product">' +
       '<div class="gallery">' +
         '<div class="thumbs">' + p.images.map(function (im, i) {
@@ -52,7 +53,7 @@ if (!p) {
         '<p class="photo-note">Photographies d\'ambiance ; la pièce livrée peut présenter de légères différences.</p>' +
       '</div>' +
       '<div class="info">' +
-        '<span class="caps">' + esc(p.tag || 'Collection Noël') + '</span>' +
+        '<span class="caps">' + (th ? 'Univers ' + esc(th.name) : 'Coffret cadeau') + (p.tag && p.tag !== 'Coffret cadeau' ? ' &nbsp;·&nbsp; ' + esc(p.tag) : '') + '</span>' +
         '<h1>' + esc(p.name) + '</h1>' +
         '<div class="price-lg">' + eur(p.price) + (worth ? '<small>au lieu de ' + eur(worth) + ' séparément</small>' : '') + '</div>' +
         '<p class="lead">' + esc(p.desc) + '</p>' +
@@ -90,7 +91,10 @@ if (!p) {
     new IntersectionObserver(function (en) { sticky.classList.toggle('show', !en[0].isIntersecting && en[0].boundingClientRect.top < 0); }).observe(addBtn);
   }
 
-  var related = PRODUCTS.filter(function (x) { return x.id !== p.id && !x.pack; }).slice(0, 3);
+  var others = PRODUCTS.filter(function (x) { return x.id !== p.id && !x.pack; });
+  var related = others.filter(function (x) { return p.theme && x.theme === p.theme; })
+    .concat(others.filter(function (x) { return !p.theme || x.theme !== p.theme; })).slice(0, 3);
+  if (th) document.querySelector('#relatedWrap h2').textContent = 'Dans l\'univers ' + th.name;
   document.getElementById('related').innerHTML = related.map(cardHTML).join('');
   bindAddButtons(document.getElementById('related'));
 }

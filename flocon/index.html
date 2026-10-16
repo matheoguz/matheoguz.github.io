@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flocon — Maison de décoration de Noël</title>
-<meta name="description" content="Rideaux lumineux, bougies à flamme LED, couronnes et calendriers de l'Avent. Une collection courte de décorations de Noël, livraison offerte dès 39 €.">
+<meta name="description" content="Boules, guirlandes, bougies et couronnes de Noël en trois univers : Tradition, Givre et Chalet. Livraison offerte dès 39 €.">
 <meta property="og:title" content="Flocon — Maison de décoration de Noël">
 <meta property="og:description" content="Une collection courte de décorations de Noël, choisies pour la lumière qu'elles apportent.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1642335911245-238e13dcabf2?auto=format&fit=crop&w=1200&h=630&q=75">
@@ -25,8 +25,8 @@
     <div class="wrap">
       <span class="caps">Collection Noël</span>
       <h1>La lumière<br><em>de décembre.</em></h1>
-      <p>Une collection courte de décorations, choisies pour une seule raison : la chaleur qu'elles apportent à une pièce.</p>
-      <div><a class="btn btn-light" href="#collection">Découvrir la collection</a></div>
+      <p>Boules, guirlandes et décorations de Noël, réunies en trois univers : Tradition, Givre et Chalet.</p>
+      <div><a class="btn btn-light" href="#univers">Découvrir les univers</a></div>
     </div>
   </section>
 
@@ -39,11 +39,26 @@
     </ul>
   </div>
 
-  <section class="block" id="collection">
+  <section class="block" id="univers">
     <div class="wrap">
       <div class="sec-head reveal">
-        <div><span class="caps">La collection</span><h2>Six pièces,<br>une atmosphère.</h2></div>
-        <p>Peu de références, chacune choisie pour changer réellement l'ambiance d'une pièce.</p>
+        <div><span class="caps">Trois univers</span><h2>Choisissez<br>votre Noël.</h2></div>
+        <p>Chaque univers réunit des boules, des guirlandes et des décorations pensées pour aller ensemble.</p>
+      </div>
+      <div class="universes" id="universes"></div>
+    </div>
+  </section>
+
+  <section class="block" id="collection" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div><span class="caps">La collection</span><h2 id="collTitle">Toutes les pièces</h2></div>
+        <p id="collText">Boules, guirlandes, bougies et décorations, à composer selon votre univers.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrer la collection">
+        <div class="filter-row" id="themeFilters"><span class="caps">Univers</span></div>
+        <div class="filter-row" id="catFilters"><span class="caps">Catégorie</span></div>
+        <span class="result-count" id="count" aria-live="polite"></span>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -104,13 +119,60 @@
 
 <script src="assets/store.js"></script>
 <script>
-document.getElementById('grid').innerHTML = PRODUCTS.filter(function (p) { return !p.pack; }).map(cardHTML).join('');
+var params = new URLSearchParams(location.search);
+var state = { theme: THEMES[params.get('univers')] ? params.get('univers') : 'all', cat: CATEGORIES[params.get('categorie')] ? params.get('categorie') : 'all' };
+
+document.getElementById('universes').innerHTML = Object.keys(THEMES).map(function (k) {
+  var th = THEMES[k];
+  return '<a class="universe reveal" href="?univers=' + k + '#collection" data-theme-link="' + k + '">' +
+    '<img loading="lazy" src="' + U(th.image, 900) + '" alt="Univers ' + esc(th.name) + '">' +
+    '<div class="universe-body"><span class="caps">' + esc(th.colors) + '</span><h3>' + esc(th.name) + '</h3><p>' + esc(th.text) + '</p><span class="link">Découvrir</span></div></a>';
+}).join('');
+
+function chip(group, value, label) {
+  return '<button class="chip" data-group="' + group + '" data-value="' + value + '">' + esc(label) + '</button>';
+}
+document.getElementById('themeFilters').insertAdjacentHTML('beforeend', chip('theme', 'all', 'Tous') + Object.keys(THEMES).map(function (k) { return chip('theme', k, THEMES[k].name); }).join(''));
+document.getElementById('catFilters').insertAdjacentHTML('beforeend', chip('cat', 'all', 'Tout') + Object.keys(CATEGORIES).map(function (k) { return chip('cat', k, CATEGORIES[k]); }).join(''));
+
+function renderGrid() {
+  var list = PRODUCTS.filter(function (p) {
+    var okTheme = state.theme === 'all' || p.theme === state.theme || (p.pack && p.pack.some(function (id) { return getProduct(id).theme === state.theme; }));
+    var okCat = state.cat === 'all' || p.cat === state.cat;
+    return okTheme && okCat;
+  });
+  var grid = document.getElementById('grid');
+  grid.innerHTML = list.length ? list.map(cardHTML).join('') : '<p class="no-result">Aucune pièce ne correspond à ces filtres pour le moment.</p>';
+  grid.querySelectorAll('.reveal').forEach(function (e) { e.classList.add('in'); });
+  bindAddButtons(grid);
+  document.getElementById('count').textContent = list.length + (list.length > 1 ? ' pièces' : ' pièce');
+  var th = THEMES[state.theme];
+  document.getElementById('collTitle').textContent = th ? 'Univers ' + th.name : 'Toutes les pièces';
+  document.getElementById('collText').textContent = th ? th.text : 'Boules, guirlandes, bougies et décorations, à composer selon votre univers.';
+  document.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', String(state[c.dataset.group] === c.dataset.value)); });
+  var q = new URLSearchParams();
+  if (state.theme !== 'all') q.set('univers', state.theme);
+  if (state.cat !== 'all') q.set('categorie', state.cat);
+  try { history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch (e) {}
+}
+document.querySelectorAll('.chip').forEach(function (c) {
+  c.addEventListener('click', function () { state[c.dataset.group] = c.dataset.value; renderGrid(); });
+});
+document.querySelectorAll('[data-theme-link]').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    state.theme = a.dataset.themeLink; state.cat = 'all'; renderGrid();
+    document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+renderGrid();
+
 var pack = getProduct('pack-salon');
 document.getElementById('packNow').textContent = eur(pack.price);
 document.getElementById('packWas').textContent = 'au lieu de ' + eur(packWorth(pack)) + ' séparément';
 document.querySelectorAll('.days').forEach(function (e) { e.textContent = CONFIG.deliveryDays; });
 document.querySelectorAll('.deadline').forEach(function (e) { e.textContent = CONFIG.christmasDeadline; });
-bindAddButtons();
+bindAddButtons(document.querySelector('.editorial'));
 </script>
 </body>
 </html>

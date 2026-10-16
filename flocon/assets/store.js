@@ -28,79 +28,161 @@ function U(id, w) {
   return 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + (w || 900) + '&q=75';
 }
 
+var THEMES = {
+  tradition: { name: 'Tradition', colors: 'Rouge, vert et or', image: 'photo-1609125303972-255c84ac9f01',
+    text: "Le Noël de toujours : des boules rouges et dorées, du velours et des branches de sapin." },
+  givre: { name: 'Givre', colors: 'Blanc, argent et cristal', image: 'photo-1767659473873-300af5ccd7c0',
+    text: "Un sapin blanc comme un matin de neige, des reflets argentés et une lumière claire." },
+  chalet: { name: 'Chalet', colors: 'Bois, lin et lumière chaude', image: 'photo-1763909130794-89784b8f447a',
+    text: "Le bois, les matières naturelles et des guirlandes ambrées, pour un Noël au coin du feu." }
+};
+var CATEGORIES = {
+  boules: 'Boules', guirlandes: 'Guirlandes', bougies: 'Bougies', deco: 'Décoration', coffrets: 'Coffrets'
+};
+
 var PRODUCTS = [
+  /* ----- Univers Tradition ----- */
   {
-    id: 'guirlande-rideau',
-    name: 'Rideau lumineux Étoiles',
-    short: 'Rideau LED trois mètres, lumière chaude',
-    price: 19.90,
-    tag: 'Signature',
-    images: ['photo-1681433241280-aae50a102255', 'photo-1608211194323-10b2dda88e25', 'photo-1534780087173-e6bc5e994fe0'],
-    desc: "Une fenêtre, une tête de lit ou un mur nu deviennent un ciel d'hiver. Douze fils de lumière chaude tombent en cascade ; le rideau se fixe en quelques minutes et s'alimente par USB, sans prise à proximité.",
-    features: ['Trois mètres de large, douze fils lumineux', 'Huit effets, de la lumière fixe au scintillement lent', 'Alimentation USB et télécommande', 'LED blanc chaud, sans échauffement'],
-    specs: { 'Dimensions': '300 × 100 cm', 'Lumière': 'LED blanc chaud', 'Alimentation': 'USB 5 V (adaptateur non inclus)', 'Usage': 'Intérieur' }
-  },
-  {
-    id: 'bougies-led',
-    name: 'Bougies à flamme LED',
-    short: 'Coffret de six, vraie cire, minuteur',
-    price: 14.90,
-    tag: 'Sans flamme',
-    images: ['photo-1765628710664-dbce4f4d45b5', 'photo-1763290808558-921cf9257bf2', 'photo-1607838660853-a2cf34eec5b9'],
-    desc: "La lumière vivante d'une bougie, sans flamme ni fumée. La cire est véritable, la flamme LED vacille doucement, et le minuteur les rallume chaque soir. À poser près du sapin, sur une table de fête ou dans une chambre d'enfant.",
-    features: ['Six bougies en cire, trois hauteurs', 'Flamme LED au mouvement naturel', 'Minuteur : six heures allumées, dix-huit éteintes', 'Fonctionnent sur piles (non incluses)'],
-    specs: { 'Hauteurs': '10, 12,5 et 15 cm', 'Matière': 'Cire de paraffine, LED', 'Piles': '2 × AAA par bougie', 'Usage': 'Intérieur' }
-  },
-  {
-    id: 'couronne-porte',
-    name: 'Couronne Sapin & Baies',
-    short: 'Quarante centimètres, nœud de velours',
-    price: 24.90,
-    tag: null,
-    images: ['photo-1703187439179-9b8c323294a8', 'photo-1544890930-fa67ca7d3a11', 'photo-1639880005608-6e0688ce2c9c'],
-    desc: "Le premier geste d'accueil de la saison. Des branches de sapin denses, des baies rouges, des pommes de pin et un large nœud de velours. Elle garde son allure d'une année à l'autre, sans perdre une aiguille.",
-    features: ['Diamètre de quarante centimètres', 'Nœud en velours rouge profond', 'Pommes de pin et baies décoratives', 'Se conserve et se réutilise chaque année'],
-    specs: { 'Diamètre': '40 cm', 'Matière': 'PVC, velours, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur ou porte abritée' }
-  },
-  {
-    id: 'boules-noel',
-    name: 'Coffret de vingt-quatre boules',
-    short: 'Rouge, vert et or, incassables',
-    price: 17.90,
-    tag: 'Coffret',
+    id: 'boules-tradition', theme: 'tradition', cat: 'boules',
+    name: 'Coffret Tradition',
+    short: 'Vingt-quatre boules rouge, vert et or',
+    price: 17.90, tag: 'Coffret',
     images: ['photo-1767741857489-b28dcaa531a4', 'photo-1513885251266-04dcfa26e979', 'photo-1609125303972-255c84ac9f01'],
     desc: "De quoi habiller un sapin entier dans une palette accordée. Finitions brillantes, mates et pailletées : l'éclat du verre soufflé, la résistance en plus.",
     features: ['Vingt-quatre boules, trois diamètres', 'Matière incassable', 'Finitions brillantes, mates et pailletées', 'Attaches fournies'],
     specs: { 'Quantité': '24 pièces', 'Diamètres': '3, 4 et 6 cm', 'Matière': 'Plastique incassable', 'Coloris': 'Rouge, vert, or' }
   },
   {
-    id: 'calendrier-avent',
+    id: 'boules-or', theme: 'tradition', cat: 'boules',
+    name: 'Coffret Or',
+    short: 'Seize boules dorées, pailletées et satinées',
+    price: 15.90, tag: null,
+    images: ['photo-1770181339706-ebac8624a342', 'photo-1764519430094-f2ca483dcd64', 'photo-1640608928732-c4f398796f2d'],
+    desc: "Seize boules dans toutes les nuances d'or, du champagne au doré profond. Seules, elles donnent un sapin lumineux et élégant ; mêlées au Coffret Tradition, elles réchauffent le rouge.",
+    features: ['Seize boules, deux diamètres', 'Finitions pailletées, satinées et miroir', 'Matière incassable', 'Attaches fournies'],
+    specs: { 'Quantité': '16 pièces', 'Diamètres': '6 et 8 cm', 'Matière': 'Plastique incassable', 'Coloris': 'Or et champagne' }
+  },
+  {
+    id: 'guirlande-sapin', theme: 'tradition', cat: 'guirlandes',
+    name: 'Guirlande Sapin & Rubans',
+    short: 'Branches de sapin, nœuds rouges et LED',
+    price: 29.90, tag: 'Signature',
+    images: ['photo-1765465427945-5baadf865adf', 'photo-1639042992943-042f6e01e6ea', 'photo-1767464950529-e41dbc0b885c'],
+    desc: "Une guirlande de branches de sapin dense, ponctuée de nœuds rouges et traversée de petites LED chaudes. Elle se pose sur une cheminée, une rampe d'escalier ou au-dessus d'une porte.",
+    features: ['Longueur de 1,80 m', 'Nœuds rouges et pommes de pin', 'Trente LED blanc chaud intégrées', 'Fonctionne à piles, minuteur intégré'],
+    specs: { 'Longueur': '180 cm', 'Lumière': '30 LED blanc chaud', 'Alimentation': '3 × AA (non incluses)', 'Usage': 'Intérieur' }
+  },
+  {
+    id: 'couronne-porte', theme: 'tradition', cat: 'deco',
+    name: 'Couronne Sapin & Baies',
+    short: 'Quarante centimètres, nœud de velours',
+    price: 24.90, tag: null,
+    images: ['photo-1703187439179-9b8c323294a8', 'photo-1544890930-fa67ca7d3a11', 'photo-1639880005608-6e0688ce2c9c'],
+    desc: "Le premier geste d'accueil de la saison. Des branches de sapin denses, des baies rouges, des pommes de pin et un large nœud de velours. Elle garde son allure d'une année à l'autre, sans perdre une aiguille.",
+    features: ['Diamètre de quarante centimètres', 'Nœud en velours rouge profond', 'Pommes de pin et baies décoratives', 'Se conserve et se réutilise chaque année'],
+    specs: { 'Diamètre': '40 cm', 'Matière': 'PVC, velours, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur ou porte abritée' }
+  },
+  {
+    id: 'chaussette-geante', theme: 'tradition', cat: 'deco',
+    name: 'Chaussette de Noël',
+    short: 'Grand format, tricot et fausse fourrure',
+    price: 9.90, tag: null,
+    images: ['photo-1543772857-a9d7ebc0cf63', 'photo-1763820650837-37afdb417c82'],
+    desc: "La chaussette à suspendre à la cheminée, à une étagère ou à une porte. Assez grande pour de vrais présents, en tricot épais rouge et blanc, avec un revers en fausse fourrure.",
+    features: ['Hauteur de quarante-cinq centimètres', 'Tricot épais rouge et blanc', 'Revers en fausse fourrure', 'Boucle de suspension'],
+    specs: { 'Hauteur': '45 cm', 'Matière': 'Acrylique tricoté', 'Entretien': 'Lavage à la main' }
+  },
+
+  /* ----- Univers Givre ----- */
+  {
+    id: 'boules-givre', theme: 'givre', cat: 'boules',
+    name: 'Coffret Givre',
+    short: 'Vingt-quatre boules blanc, argent et cristal',
+    price: 17.90, tag: 'Coffret',
+    images: ['photo-1607492704940-8701bbb45d9c', 'photo-1605045929661-c451b81a55cb', 'photo-1574853856463-890db4ac9985'],
+    desc: "Des boules blanc nacré, argent miroir et transparentes pailletées, pour un sapin clair et lumineux. Elles s'accordent aussi bien avec un sapin vert qu'avec un sapin floqué.",
+    features: ['Vingt-quatre boules, trois diamètres', 'Blanc nacré, argent et transparent', 'Matière incassable', 'Attaches fournies'],
+    specs: { 'Quantité': '24 pièces', 'Diamètres': '3, 4 et 6 cm', 'Matière': 'Plastique incassable', 'Coloris': 'Blanc, argent, transparent' }
+  },
+  {
+    id: 'guirlande-rideau', theme: 'givre', cat: 'guirlandes',
+    name: 'Rideau lumineux Étoiles',
+    short: 'Rideau LED trois mètres pour fenêtre',
+    price: 19.90, tag: null,
+    images: ['photo-1681433241280-aae50a102255', 'photo-1608211194323-10b2dda88e25', 'photo-1534780087173-e6bc5e994fe0'],
+    desc: "Une fenêtre, une tête de lit ou un mur nu deviennent un ciel d'hiver. Douze fils de lumière tombent en cascade ; le rideau se fixe en quelques minutes et s'alimente par USB, sans prise à proximité.",
+    features: ['Trois mètres de large, douze fils lumineux', 'Huit effets, de la lumière fixe au scintillement lent', 'Alimentation USB et télécommande', 'LED basse tension, sans échauffement'],
+    specs: { 'Dimensions': '300 × 100 cm', 'Lumière': 'LED blanc chaud', 'Alimentation': 'USB 5 V (adaptateur non inclus)', 'Usage': 'Intérieur' }
+  },
+  {
+    id: 'guirlande-givre', theme: 'givre', cat: 'guirlandes',
+    name: 'Guirlande Cristal',
+    short: 'Dix mètres, cent LED blanc froid',
+    price: 12.90, tag: null,
+    images: ['photo-1764351632444-ffa53905f948', 'photo-1764424450013-41e65afb6da1', 'photo-1606050948679-5087f8929aa4'],
+    desc: "Une guirlande fine à la lumière blanche et nette, comme du givre au soleil. Le fil transparent disparaît dans les branches : seule reste la lumière.",
+    features: ['Dix mètres, cent LED', 'Lumière blanc froid', 'Fil transparent quasi invisible', 'Huit effets et minuteur'],
+    specs: { 'Longueur': '10 m', 'Lumière': '100 LED blanc froid', 'Alimentation': 'USB 5 V', 'Usage': 'Intérieur' }
+  },
+  {
+    id: 'couronne-givre', theme: 'givre', cat: 'deco',
+    name: 'Couronne Neige',
+    short: 'Branches enneigées et baies blanches',
+    price: 27.90, tag: null,
+    images: ['photo-1544002112-aa68bd940a8b', 'photo-1767659473873-300af5ccd7c0'],
+    desc: "Une couronne aux branches poudrées de neige artificielle, ponctuée de baies blanches et de pommes de pin givrées. Elle apporte la douceur d'un paysage d'hiver à une porte ou un mur.",
+    features: ['Diamètre de quarante centimètres', 'Branches floquées effet neige', 'Baies blanches et pommes de pin givrées', 'Réutilisable chaque année'],
+    specs: { 'Diamètre': '40 cm', 'Matière': 'PVC floqué, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur' }
+  },
+
+  /* ----- Univers Chalet ----- */
+  {
+    id: 'suspensions-bois', theme: 'chalet', cat: 'boules',
+    name: 'Suspensions en bois',
+    short: 'Douze pièces sculptées, étoiles et sapins',
+    price: 14.90, tag: null,
+    images: ['photo-1765181521065-42ac01106c3f', 'photo-1761520878781-3daf621edf5f', 'photo-1702491209980-f7f1d55c221d'],
+    desc: "Douze décorations en bois naturel : étoiles, sapins, flocons et petites maisons. Leur teinte chaude se marie avec les guirlandes ambrées et le lin.",
+    features: ['Douze pièces, six motifs', 'Bois naturel non verni', 'Cordelettes en jute fournies', 'Légères, pour toutes les branches'],
+    specs: { 'Quantité': '12 pièces', 'Hauteur': '6 à 8 cm', 'Matière': 'Bois de bouleau', 'Coloris': 'Naturel' }
+  },
+  {
+    id: 'guirlande-cuivre', theme: 'chalet', cat: 'guirlandes',
+    name: 'Guirlande Fil de cuivre',
+    short: 'Dix mètres, cent micro-LED ambrées',
+    price: 9.90, tag: null,
+    images: ['photo-1513538416877-f11f5fb85d83', 'photo-1703411731787-9125ef4d1174', 'photo-1606270507233-d7cfc1436842'],
+    desc: "Un fil de cuivre souple semé de cent petites lumières ambrées. Il s'enroule autour d'un sapin, d'une branche, d'un miroir, ou se glisse dans un bocal pour une lanterne improvisée.",
+    features: ['Dix mètres, cent micro-LED', 'Fil de cuivre souple et façonnable', 'Lumière ambrée', 'Alimentation USB et télécommande'],
+    specs: { 'Longueur': '10 m', 'Lumière': '100 micro-LED blanc chaud', 'Alimentation': 'USB 5 V', 'Usage': 'Intérieur' }
+  },
+  {
+    id: 'bougies-led', theme: 'chalet', cat: 'bougies',
+    name: 'Bougies à flamme LED',
+    short: 'Coffret de six, vraie cire, minuteur',
+    price: 14.90, tag: 'Sans flamme',
+    images: ['photo-1765628710664-dbce4f4d45b5', 'photo-1763290808558-921cf9257bf2', 'photo-1607838660853-a2cf34eec5b9'],
+    desc: "La lumière vivante d'une bougie, sans flamme ni fumée. La cire est véritable, la flamme LED vacille doucement, et le minuteur les rallume chaque soir. À poser près du sapin, sur une table de fête ou dans une chambre d'enfant.",
+    features: ['Six bougies en cire, trois hauteurs', 'Flamme LED au mouvement naturel', 'Minuteur : six heures allumées, dix-huit éteintes', 'Fonctionnent sur piles (non incluses)'],
+    specs: { 'Hauteurs': '10, 12,5 et 15 cm', 'Matière': 'Cire de paraffine, LED', 'Piles': '2 × AAA par bougie', 'Usage': 'Intérieur' }
+  },
+  {
+    id: 'calendrier-avent', theme: 'chalet', cat: 'deco',
     name: "Calendrier de l'Avent",
     short: 'Vingt-quatre sachets en tissu à garnir',
-    price: 16.90,
-    tag: 'Avant le 1er décembre',
+    price: 16.90, tag: 'Avant le 1er décembre',
     images: ['photo-1764341127020-842a97295c15', 'photo-1606844358484-ab8725cab420', 'photo-1766425221306-4d44f4011d4a'],
     desc: "Vingt-quatre sachets numérotés, une cordelette et de petites pinces en bois. Vous choisissez ce qui s'y cache : chocolats, mots doux, promesses de sorties. Un rituel qui se réinvente chaque année.",
     features: ['Vingt-quatre sachets en tissu numérotés', 'Cordelette de 2,5 m et pinces en bois', 'Réutilisable', 'À commander avant mi-novembre pour le 1er décembre'],
     specs: { 'Sachets': '10 × 14 cm', 'Matière': 'Coton et jute', 'Cordelette': '2,5 m', 'Contenu': 'Sachets vides, à garnir' }
   },
+
+  /* ----- Coffret ----- */
   {
-    id: 'chaussette-geante',
-    name: 'Chaussette de Noël',
-    short: 'Grand format, tricot et fausse fourrure',
-    price: 9.90,
-    tag: null,
-    images: ['photo-1543772857-a9d7ebc0cf63', 'photo-1642335911245-238e13dcabf2'],
-    desc: "La chaussette à suspendre à la cheminée, à une étagère ou à une porte. Assez grande pour de vrais présents, en tricot épais rouge et blanc, avec un revers en fausse fourrure.",
-    features: ['Hauteur de quarante-cinq centimètres', 'Tricot épais rouge et blanc', 'Revers en fausse fourrure', 'Boucle de suspension'],
-    specs: { 'Hauteur': '45 cm', 'Matière': 'Acrylique tricoté', 'Entretien': 'Lavage à la main' }
-  },
-  {
-    id: 'pack-salon',
+    id: 'pack-salon', theme: null, cat: 'coffrets',
     name: 'Coffret Salon de Noël',
     short: 'Rideau lumineux, bougies et chaussette',
-    price: 37.90,
-    tag: 'Coffret cadeau',
+    price: 37.90, tag: 'Coffret cadeau',
     pack: ['guirlande-rideau', 'bougies-led', 'chaussette-geante'],
     images: ['photo-1766422646104-49661299db4b', 'photo-1681433241280-aae50a102255', 'photo-1765628710664-dbce4f4d45b5'],
     desc: "Trois pièces choisies pour transformer une pièce en salon de Noël en quelques minutes : la lumière pour la fenêtre, la chaleur des bougies pour la table, la chaussette pour la cheminée. Une idée de cadeau toute trouvée.",
@@ -187,14 +269,14 @@ function renderChrome() {
   if (top) top.outerHTML =
     '<div class="topbar">Livraison offerte dès ' + CONFIG.freeShippingFrom + ' € &nbsp;·&nbsp; Commandez avant le ' + CONFIG.christmasDeadline + ' pour Noël</div>' +
     '<header class="site"><div class="wrap head">' +
-      '<nav class="nav" aria-label="Navigation principale"><a href="index.html#collection">Collection</a><a href="produit.html?id=pack-salon">Coffret</a><a href="index.html#service">Service</a></nav>' +
+      '<nav class="nav" aria-label="Navigation principale"><a href="index.html#univers">Univers</a><a href="index.html#collection">Collection</a><a href="produit.html?id=pack-salon">Coffret</a></nav>' +
       '<button class="icon-btn burger" id="burger" aria-label="Ouvrir le menu">' + ICON.menu + '</button>' +
       '<a class="logo" href="index.html">Flocon</a>' +
       '<div class="head-right"><button class="icon-btn" id="cartOpen" aria-label="Ouvrir le panier">' + ICON.bag + '<span class="lbl">Panier</span><span class="cart-count">(0)</span></button></div>' +
     '</div></header>' +
     '<div class="mnav" id="mnav" aria-hidden="true">' +
       '<div class="mnav-top"><span class="logo" style="justify-self:start;padding-left:0">Flocon</span><button class="icon-btn" id="mnavClose" aria-label="Fermer le menu">' + ICON.close + '</button></div>' +
-      '<a class="big" href="index.html#collection">Collection</a><a class="big" href="produit.html?id=pack-salon">Coffret cadeau</a><a class="big" href="index.html#service">Service</a><a class="big" href="index.html#faq">Questions</a>' +
+      '<a class="big" href="index.html?univers=tradition#collection">Tradition</a><a class="big" href="index.html?univers=givre#collection">Givre</a><a class="big" href="index.html?univers=chalet#collection">Chalet</a><a class="big" href="index.html#collection">Toute la collection</a><a class="big" href="produit.html?id=pack-salon">Coffret cadeau</a>' +
       '<div class="small"><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours</a><a href="legal.html#mentions">Mentions légales</a></div>' +
     '</div>' +
     '<div class="veil" id="veil"></div>' +
@@ -208,7 +290,7 @@ function renderChrome() {
   if (foot) foot.outerHTML =
     '<footer class="site"><div class="wrap"><div class="foot">' +
       '<div><a class="logo" href="index.html">Flocon</a><p>Maison de décoration de Noël. Des pièces choisies pour la lumière qu\'elles apportent, expédiées depuis notre entrepôt européen.</p></div>' +
-      '<div><h4>Boutique</h4><a href="index.html#collection">La collection</a><a href="produit.html?id=pack-salon">Coffret Salon de Noël</a><a href="panier.html">Panier</a></div>' +
+      '<div><h4>Univers</h4><a href="index.html?univers=tradition#collection">Tradition</a><a href="index.html?univers=givre#collection">Givre</a><a href="index.html?univers=chalet#collection">Chalet</a><a href="produit.html?id=pack-salon">Coffret Salon de Noël</a></div>' +
       '<div><h4>Service</h4><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
     '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
 
@@ -295,7 +377,7 @@ function cardHTML(p) {
       (p.tag ? '<span class="tag">' + esc(p.tag) + '</span>' : '') +
     '</a>' +
     '<button class="quick" data-add="' + p.id + '">Ajouter au panier</button></div>' +
-    '<div class="card-body"><div><h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><p>' + esc(p.short) + '</p></div>' +
+    '<div class="card-body"><div>' + (p.theme ? '<span class="card-theme">' + THEMES[p.theme].name + '</span>' : '<span class="card-theme">Coffret</span>') + '<h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><p>' + esc(p.short) + '</p></div>' +
     '<span class="price">' + eur(p.price) + '</span></div></article>';
 }
 function bindAddButtons(root) {
