@@ -59,7 +59,7 @@ function render() {
         '<form class="form" id="form" novalidate>' +
           '<div class="row"><label>Prénom<input name="first" autocomplete="given-name" required></label><label>Nom<input name="last" autocomplete="family-name" required></label></div>' +
           '<label>Email<input name="email" type="email" autocomplete="email" required></label>' +
-          '<label>Téléphone<input name="phone" type="tel" autocomplete="tel" placeholder="Pour le transporteur"></label>' +
+          '<label>Téléphone<input name="phone" type="tel" autocomplete="tel" required placeholder="Pour le transporteur"></label>' +
           '<label>Adresse<input name="address" autocomplete="street-address" required></label>' +
           '<div class="row"><label>Code postal<input name="zip" autocomplete="postal-code" inputmode="numeric" required></label><label>Ville<input name="city" autocomplete="address-level2" required></label></div>' +
           '<label>Pays<select name="country">' + CONFIG.countries.map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
@@ -86,12 +86,24 @@ function submit(e) {
   var c = {};
   ['first', 'last', 'email', 'phone', 'address', 'zip', 'city', 'country'].forEach(function (k) { c[k] = f.elements[k].value.trim(); });
   if (!c.first || !c.last || !c.address || !c.zip || !c.city) { err.textContent = 'Merci de compléter votre adresse de livraison.'; return; }
+  if (c.phone.replace(/[^0-9]/g, '').length < 9) { err.textContent = 'Merci d\'indiquer un numéro de téléphone valide.'; return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) { err.textContent = 'Merci de vérifier votre adresse email.'; return; }
   if (!f.elements.cgv.checked) { err.textContent = 'Merci d\'accepter les conditions de vente.'; return; }
   err.textContent = '';
 
   var cart = readCart(), t = cartTotals(cart), ref = orderRef();
+  var b = document.getElementById('payBtn');
+  b.disabled = true;
+  b.textContent = 'Enregistrement de la commande';
+  sendOrder(cart, c, ref).then(function (saved) {
+    b.disabled = false;
+    b.innerHTML = 'Payer ' + eur(t.total) + ' avec <b>PayPal</b>';
+    finish(f, cart, t, c, ref, saved);
+  });
+}
 
+function finish(f, cart, t, c, ref, saved) {
+  var err = document.getElementById('err');
   if (CONFIG.paypalMerchantId) {
     var b = document.getElementById('payBtn');
     b.disabled = true;
@@ -107,11 +119,14 @@ function submit(e) {
   f.hidden = true;
   var fb = document.getElementById('fallback');
   fb.hidden = false;
-  fb.innerHTML =
-    '<p style="margin-bottom:18px">Votre commande <strong>' + ref + '</strong> est prête. Deux étapes pour la finaliser :</p>' +
-    '<div class="form"><a class="btn btn-line btn-block" href="' + mail + '">1 &nbsp; Envoyer ma commande</a>' +
-    '<a class="pay-btn" href="' + pay + '" target="_blank" rel="noopener">2 &nbsp; Payer ' + eur(t.total) + ' avec <b>PayPal</b></a>' +
-    '<p class="secure">Indiquez la référence ' + ref + ' dans la note PayPal.</p></div>';
+  fb.innerHTML = saved
+    ? '<p style="margin-bottom:18px">Votre commande <strong>' + ref + '</strong> est enregistrée. Il ne reste plus qu\'à la régler :</p>' +
+      '<div class="form"><a class="pay-btn" href="' + pay + '" target="_blank" rel="noopener">Payer ' + eur(t.total) + ' avec <b>PayPal</b></a>' +
+      '<p class="secure">Indiquez la référence ' + ref + ' dans la note PayPal. Votre commande est expédiée dès réception du paiement.</p></div>'
+    : '<p style="margin-bottom:18px">Votre commande <strong>' + ref + '</strong> est prête. Deux étapes pour la finaliser :</p>' +
+      '<div class="form"><a class="btn btn-line btn-block" href="' + mail + '">1 &nbsp; Envoyer ma commande</a>' +
+      '<a class="pay-btn" href="' + pay + '" target="_blank" rel="noopener">2 &nbsp; Payer ' + eur(t.total) + ' avec <b>PayPal</b></a>' +
+      '<p class="secure">Indiquez la référence ' + ref + ' dans la note PayPal.</p></div>';
   fb.querySelector('.pay-btn').addEventListener('click', function () { writeCart([]); });
 }
 

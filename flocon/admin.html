@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commandes — Flocon</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#16291f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2316291f'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' fill='%23d8c29a'%3EF%3C/text%3E%3C/svg%3E">
+<style>
+.dash{padding:40px 0 100px}
+.dash-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.dash-head h1{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,4vw,3rem);line-height:1}
+.dash-head .caps{color:var(--gold);display:block;margin-bottom:8px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tools .btn{padding:12px 18px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:28px}
+.kpi{background:var(--paper);padding:18px 20px}
+.kpi span{display:block;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.kpi strong{display:block;font-variant-numeric:lining-nums tabular-nums;font-family:var(--display);font-size:2rem;font-weight:500;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi.good strong{color:#2f6b45}
+.filters-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.orders{display:grid;gap:14px}
+.order{background:var(--paper);border:1px solid var(--line);display:grid;grid-template-columns:1.1fr 1.3fr 1fr;gap:0}
+.order>div{padding:18px 20px;min-width:0}
+.order>div+div{border-left:1px solid var(--line)}
+.order h3{font-family:var(--display);font-weight:500;font-size:1.35rem;line-height:1.15}
+.meta{font-size:.78rem;color:var(--muted);margin-bottom:6px;font-variant-numeric:tabular-nums}
+.contact{display:grid;gap:3px;font-size:.88rem;margin-top:8px;word-break:break-word}
+.contact a{text-decoration:none;border-bottom:1px solid var(--line)}
+.addr{white-space:pre-line;font-size:.88rem;margin-top:10px;padding:10px 12px;background:var(--ivory);border:1px dashed var(--line)}
+.items{font-size:.9rem;display:grid;gap:4px}
+.money{display:grid;gap:5px;font-size:.88rem;font-variant-numeric:tabular-nums}
+.money div{display:flex;justify-content:space-between;gap:10px}
+.money .margin{font-weight:600;border-top:1px solid var(--line);padding-top:6px}
+.money .margin.neg{color:var(--wine)}
+.status{margin-top:12px;width:100%;font:inherit;font-size:.85rem;padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--ivory)}
+.pill{display:inline-block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:var(--ivory-2);color:var(--ink-2);margin-left:6px;vertical-align:middle}
+.pill[data-s="Payée"]{background:#e3efe6;color:#2f6b45}
+.pill[data-s="En attente de paiement"]{background:#f6e7c4;color:#7a5a13}
+.pill[data-s="Annulée"]{background:#f3dcdc;color:var(--wine)}
+.pill[data-s="Expédiée"],.pill[data-s="Livrée"],.pill[data-s="Commandée au fournisseur"]{background:#e2e8f2;color:#2c4566}
+.copy{margin-top:8px;background:none;border:1px solid var(--line);padding:7px 10px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
+.setup{max-width:560px;background:var(--paper);border:1px solid var(--line);padding:28px;margin:30px 0}
+.setup h2{font-family:var(--display);font-weight:500;font-size:1.6rem;margin-bottom:8px}
+.setup p{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.state{padding:40px 0;color:var(--muted);text-align:center}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.order{grid-template-columns:1fr}.order>div+div{border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<main class="wrap dash">
+  <div class="dash-head">
+    <div><span class="caps">Flocon · Espace vendeur</span><h1>Commandes</h1></div>
+    <div class="tools" id="tools" hidden>
+      <button class="btn btn-line" id="refresh">Actualiser</button>
+      <button class="btn btn-line" id="csv">Exporter CSV</button>
+      <button class="btn btn-line" id="logout">Se déconnecter</button>
+    </div>
+  </div>
+
+  <form class="setup form" id="setup" hidden>
+    <h2>Connexion</h2>
+    <p>Colle l'URL de ton script Google (elle finit par /exec) et ta clé admin. Elles restent enregistrées uniquement sur cet appareil.</p>
+    <label>URL du script<input id="endpoint" type="url" required placeholder="https://script.google.com/macros/s/.../exec"></label>
+    <label>Clé admin<input id="key" type="password" required autocomplete="current-password"></label>
+    <p class="err" id="setupErr" role="alert"></p>
+    <button class="pay-btn" type="submit">Afficher les commandes</button>
+  </form>
+
+  <div id="board" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="filters-bar" id="statusFilters" role="group" aria-label="Filtrer par statut"></div>
+    <div class="orders" id="orders"></div>
+  </div>
+  <p class="state" id="state" hidden></p>
+</main>
+
+<script src="assets/store.js"></script>
+<script>
+var LS = 'flocon_admin_v1';
+var conf = {};
+try { conf = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) {}
+if (!conf.endpoint && CONFIG.ordersEndpoint) conf.endpoint = CONFIG.ordersEndpoint;
+var data = { orders: [], statuses: [] }, filter = 'Toutes';
+
+function $(id) { return document.getElementById(id); }
+function num(v) { var n = Number(v); return isFinite(n) ? n : 0; }
+function show(id, on) { $(id).hidden = !on; }
+function setState(msg) { $('state').textContent = msg; show('state', !!msg); }
+
+function askSetup(msg) {
+  show('setup', true); show('board', false); show('tools', false);
+  $('endpoint').value = conf.endpoint || '';
+  $('setupErr').textContent = msg || '';
+}
+
+$('setup').addEventListener('submit', function (e) {
+  e.preventDefault();
+  conf = { endpoint: $('endpoint').value.trim(), key: $('key').value };
+  try { localStorage.setItem(LS, JSON.stringify(conf)); } catch (x) {}
+  load();
+});
+$('logout').onclick = function () { try { localStorage.removeItem(LS); } catch (x) {} conf = { endpoint: conf.endpoint }; askSetup(); };
+$('refresh').onclick = load;
+
+function load() {
+  if (!conf.endpoint || !conf.key) { askSetup(); return; }
+  show('setup', false); setState('Chargement des commandes…');
+  fetch(conf.endpoint + (conf.endpoint.indexOf('?') < 0 ? '?' : '&') + 'key=' + encodeURIComponent(conf.key))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j.ok) { askSetup(j.error === 'forbidden' ? 'Clé admin incorrecte.' : 'Le script a répondu : ' + j.error); setState(''); return; }
+      data = j; setState(''); show('board', true); show('tools', true); render();
+    })
+    .catch(function () { setState(''); askSetup('Impossible de joindre le script. Vérifie l\'URL et que le déploiement est accessible à « Tout le monde ».'); });
+}
+
+function render() {
+  var all = data.orders;
+  var live = all.filter(function (o) { return o['Statut'] !== 'Annulée'; });
+  var paid = live.filter(function (o) { return o['Statut'] !== 'En attente de paiement'; });
+  var sum = function (list, k) { return list.reduce(function (s, o) { return s + num(o[k]); }, 0); };
+  var k = [
+    ['Commandes', String(live.length)],
+    ['À encaisser', eur(sum(live.filter(function (o) { return o['Statut'] === 'En attente de paiement'; }), 'Total payé'))],
+    ["Chiffre d'affaires payé", eur(sum(paid, 'Total payé'))],
+    ['Coûts (fournisseur + PayPal)', eur(sum(paid, 'Coût fournisseur') + sum(paid, 'Frais PayPal'))],
+    ['Marge sur payées', eur(sum(paid, 'Marge')), true]
+  ];
+  $('kpis').innerHTML = k.map(function (x) { return '<div class="kpi' + (x[2] ? ' good' : '') + '"><span>' + esc(x[0]) + '</span><strong>' + esc(x[1]) + '</strong></div>'; }).join('');
+
+  var filters = ['Toutes'].concat(data.statuses || []);
+  $('statusFilters').innerHTML = filters.map(function (s) {
+    var n = s === 'Toutes' ? all.length : all.filter(function (o) { return o['Statut'] === s; }).length;
+    return '<button class="chip" data-f="' + esc(s) + '" aria-pressed="' + (s === filter) + '">' + esc(s) + ' (' + n + ')</button>';
+  }).join('');
+  $('statusFilters').querySelectorAll('[data-f]').forEach(function (b) { b.onclick = function () { filter = b.dataset.f; render(); }; });
+
+  var list = filter === 'Toutes' ? all : all.filter(function (o) { return o['Statut'] === filter; });
+  if (!list.length) { $('orders').innerHTML = '<p class="state">Aucune commande ' + (filter === 'Toutes' ? 'pour le moment.' : 'avec ce statut.') + '</p>'; return; }
+  $('orders').innerHTML = list.map(orderHTML).join('');
+  $('orders').querySelectorAll('select[data-ref]').forEach(function (s) { s.onchange = function () { setStatus(s.dataset.ref, s.value, s); }; });
+  $('orders').querySelectorAll('[data-copy]').forEach(function (b) {
+    b.onclick = function () {
+      var text = b.dataset.copy;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { b.textContent = 'Adresse copiée'; }, function () { b.textContent = 'Copie impossible'; });
+    };
+  });
+}
+
+function orderHTML(o) {
+  var d = o['Date'] ? new Date(o['Date']) : null;
+  var date = d && !isNaN(d) ? d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+  var addr = o['Prénom'] + ' ' + o['Nom'] + '\n' + o['Adresse'] + '\n' + o['Code postal'] + ' ' + o['Ville'] + '\n' + o['Pays'] + '\n' + o['Téléphone'];
+  var margin = num(o['Marge']);
+  var opts = (data.statuses || []).map(function (s) { return '<option' + (s === o['Statut'] ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('');
+  return '<article class="order">' +
+    '<div><p class="meta">' + esc(o['Référence']) + ' · ' + esc(date) + '</p>' +
+      '<h3>' + esc(o['Prénom']) + ' ' + esc(o['Nom']) + '<span class="pill" data-s="' + esc(o['Statut']) + '">' + esc(o['Statut']) + '</span></h3>' +
+      '<div class="contact"><a href="mailto:' + esc(o['Email']) + '">' + esc(o['Email']) + '</a><a href="tel:' + esc(String(o['Téléphone']).replace(/\s/g, '')) + '">' + esc(o['Téléphone']) + '</a></div>' +
+      '<div class="addr">' + esc(addr) + '</div><button class="copy" data-copy="' + esc(addr) + '">Copier l\'adresse</button></div>' +
+    '<div><p class="meta">Articles (' + esc(o['Nb articles']) + ')</p><div class="items">' +
+      String(o['Articles'] || '').split(', ').map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('') + '</div>' +
+      '<label class="meta" style="display:block;margin-top:14px">Statut<select class="status" data-ref="' + esc(o['Référence']) + '">' + opts + '</select></label></div>' +
+    '<div class="money">' +
+      '<div><span>Sous-total</span><span>' + eur(num(o['Sous-total'])) + '</span></div>' +
+      '<div><span>Livraison</span><span>' + (num(o['Livraison']) ? eur(num(o['Livraison'])) : 'Offerte') + '</span></div>' +
+      '<div><strong>Payé par le client</strong><strong>' + eur(num(o['Total payé'])) + '</strong></div>' +
+      '<div><span>Coût fournisseur</span><span>− ' + eur(num(o['Coût fournisseur'])) + '</span></div>' +
+      '<div><span>Frais PayPal (est.)</span><span>− ' + eur(num(o['Frais PayPal'])) + '</span></div>' +
+      '<div class="margin' + (margin < 0 ? ' neg' : '') + '"><span>Ta marge</span><span>' + eur(margin) + '</span></div>' +
+    '</div></article>';
+}
+
+function setStatus(ref, status, sel) {
+  sel.disabled = true;
+  fetch(conf.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'status', key: conf.key, ref: ref, status: status }) })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j.ok) throw new Error(j.error);
+      data.orders.forEach(function (o) { if (o['Référence'] === ref) o['Statut'] = status; });
+      render();
+    })
+    .catch(function () { sel.disabled = false; alertBox('Le statut n\'a pas pu être enregistré. Réessaie.'); });
+}
+function alertBox(msg) { setState(msg); setTimeout(function () { setState(''); }, 4000); }
+
+$('csv').onclick = function () {
+  var cols = ['Date', 'Référence', 'Statut', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Adresse', 'Code postal', 'Ville', 'Pays', 'Articles', 'Total payé', 'Coût fournisseur', 'Frais PayPal', 'Marge'];
+  var q = function (v) { v = String(v == null ? '' : v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+  var csv = [cols.map(q).join(';')].concat(data.orders.map(function (o) { return cols.map(function (c) { return q(o[c]); }).join(';'); })).join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'flocon-commandes.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+};
+
+load();
+</script>
+</body>
+</html>

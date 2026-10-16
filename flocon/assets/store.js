@@ -15,6 +15,10 @@ var CONFIG = {
   paypalMe: 'MatheoGuzzi',
   contactEmail: 'matheoguzzi11@gmail.com', // email où tu reçois les commandes (obligatoire en mode secours)
 
+  // URL /exec du script Google (flocon/apps-script.gs) : chaque commande y est enregistrée
+  // dans ton Google Sheet et apparaît dans le tableau de bord (admin.html).
+  ordersEndpoint: '',
+
   shippingFee: 4.90,
   freeShippingFrom: 39,
   deliveryDays: '7 à 10 jours',
@@ -296,6 +300,7 @@ function renderChrome() {
     '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
 
   var mnav = document.getElementById('mnav');
+  if (!mnav) { initReveal(); return; }
   mnav.inert = true; document.getElementById('drawer').inert = true;
   document.getElementById('burger').onclick = openMenu;
   document.getElementById('mnavClose').onclick = closeMenu;
@@ -436,6 +441,19 @@ function paypalCartForm(cart, t, c, ref) {
   });
   document.body.appendChild(f);
   return f;
+}
+
+/* Envoie la commande au Google Sheet. Résout true si elle est enregistrée. */
+function sendOrder(cart, c, ref) {
+  if (!CONFIG.ordersEndpoint || !window.fetch) return Promise.resolve(false);
+  var ctrl = window.AbortController ? new AbortController() : null;
+  var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 12000);
+  var body = JSON.stringify({ action: 'order', order: { ref: ref, customer: c, items: cart.map(function (l) { return { id: l.id, qty: l.qty }; }) } });
+  return fetch(CONFIG.ordersEndpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body, signal: ctrl ? ctrl.signal : undefined })
+    .then(function (r) { return r.json(); })
+    .then(function (j) { return !!(j && j.ok); })
+    .catch(function () { return false; })
+    .then(function (ok) { clearTimeout(timer); return ok; });
 }
 
 function orderSummaryText(cart, t, c, ref) {
