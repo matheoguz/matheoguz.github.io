@@ -85,7 +85,8 @@ header.site{position:sticky;top:0;z-index:60;background:rgba(248,244,236,.92);ba
 .hero{position:relative;height:min(88vh,820px);min-height:560px;color:var(--ivory);overflow:hidden;background:var(--pine)}
 .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:slowzoom 18s var(--ease) forwards}
 @keyframes slowzoom{from{transform:scale(1.08)}to{transform:scale(1)}}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,18,14,.25) 0%,rgba(10,18,14,.1) 40%,rgba(10,18,14,.7) 100%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,18,14,.72) 0%,rgba(10,18,14,.45) 45%,rgba(10,18,14,.05) 80%),linear-gradient(180deg,rgba(10,18,14,.15) 0%,rgba(10,18,14,0) 45%,rgba(10,18,14,.55) 100%)}
+@media (max-width:600px){.hero::after{background:linear-gradient(180deg,rgba(10,18,14,.25) 0%,rgba(10,18,14,.35) 40%,rgba(10,18,14,.85) 100%)}}
 .hero .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:72px}
 .hero .caps{color:var(--gold-soft);margin-bottom:18px}
 .hero h1{font-family:var(--display);font-weight:400;font-size:clamp(3rem,8vw,6.4rem);line-height:.95;letter-spacing:-.01em;max-width:820px}
