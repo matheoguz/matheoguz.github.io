@@ -90,11 +90,18 @@ if (!p) {
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (en) { sticky.classList.toggle('show', !en[0].isIntersecting && en[0].boundingClientRect.top < 0); }).observe(addBtn);
   }
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () { sticky.classList.toggle('show', addBtn.getBoundingClientRect().bottom < 0); ticking = false; });
+  }, { passive: true });
+  document.body.classList.add('has-sticky');
 
-  var others = PRODUCTS.filter(function (x) { return x.id !== p.id && !x.pack; });
+  var others = p.pack ? p.pack.map(getProduct) : PRODUCTS.filter(function (x) { return x.id !== p.id && !x.pack; });
   var related = others.filter(function (x) { return p.theme && x.theme === p.theme; })
     .concat(others.filter(function (x) { return !p.theme || x.theme !== p.theme; })).slice(0, 3);
   if (th) document.querySelector('#relatedWrap h2').textContent = 'Dans l\'univers ' + th.name;
+  if (p.pack) { document.querySelector('#relatedWrap h2').textContent = 'Le contenu du coffret'; document.querySelector('#relatedWrap .caps').textContent = 'Inclus'; }
   document.getElementById('related').innerHTML = related.map(cardHTML).join('');
   bindAddButtons(document.getElementById('related'));
 }

@@ -46,7 +46,7 @@ var PRODUCTS = [
     id: 'boules-tradition', theme: 'tradition', cat: 'boules',
     name: 'Coffret Tradition',
     short: 'Vingt-quatre boules rouge, vert et or',
-    price: 17.90, tag: 'Coffret',
+    price: 17.90, tag: null,
     images: ['photo-1767741857489-b28dcaa531a4', 'photo-1513885251266-04dcfa26e979', 'photo-1609125303972-255c84ac9f01'],
     desc: "De quoi habiller un sapin entier dans une palette accordée. Finitions brillantes, mates et pailletées : l'éclat du verre soufflé, la résistance en plus.",
     features: ['Vingt-quatre boules, trois diamètres', 'Matière incassable', 'Finitions brillantes, mates et pailletées', 'Attaches fournies'],
@@ -67,7 +67,7 @@ var PRODUCTS = [
     name: 'Guirlande Sapin & Rubans',
     short: 'Branches de sapin, nœuds rouges et LED',
     price: 29.90, tag: 'Signature',
-    images: ['photo-1765465427945-5baadf865adf', 'photo-1639042992943-042f6e01e6ea', 'photo-1767464950529-e41dbc0b885c'],
+    images: ['photo-1765465427945-5baadf865adf', 'photo-1767464950529-e41dbc0b885c'],
     desc: "Une guirlande de branches de sapin dense, ponctuée de nœuds rouges et traversée de petites LED chaudes. Elle se pose sur une cheminée, une rampe d'escalier ou au-dessus d'une porte.",
     features: ['Longueur de 1,80 m', 'Nœuds rouges et pommes de pin', 'Trente LED blanc chaud intégrées', 'Fonctionne à piles, minuteur intégré'],
     specs: { 'Longueur': '180 cm', 'Lumière': '30 LED blanc chaud', 'Alimentation': '3 × AA (non incluses)', 'Usage': 'Intérieur' }
@@ -98,7 +98,7 @@ var PRODUCTS = [
     id: 'boules-givre', theme: 'givre', cat: 'boules',
     name: 'Coffret Givre',
     short: 'Vingt-quatre boules blanc, argent et cristal',
-    price: 17.90, tag: 'Coffret',
+    price: 17.90, tag: null,
     images: ['photo-1607492704940-8701bbb45d9c', 'photo-1605045929661-c451b81a55cb', 'photo-1574853856463-890db4ac9985'],
     desc: "Des boules blanc nacré, argent miroir et transparentes pailletées, pour un sapin clair et lumineux. Elles s'accordent aussi bien avec un sapin vert qu'avec un sapin floqué.",
     features: ['Vingt-quatre boules, trois diamètres', 'Blanc nacré, argent et transparent', 'Matière incassable', 'Attaches fournies'],
@@ -129,8 +129,8 @@ var PRODUCTS = [
     name: 'Couronne Neige',
     short: 'Branches enneigées et baies blanches',
     price: 27.90, tag: null,
-    images: ['photo-1544002112-aa68bd940a8b', 'photo-1605045929661-c451b81a55cb'],
-    desc: "Une couronne aux branches poudrées de neige artificielle, ponctuée de baies blanches et de pommes de pin givrées. Elle apporte la douceur d'un paysage d'hiver à une porte ou un mur.",
+    images: ['photo-1544002112-aa68bd940a8b'],
+    desc: "Une couronne aux branches poudrées de neige artificielle, ponctuée de baies blanches et de pommes de pin givrées. Elle apporte la douceur d'un paysage d'hiver à une porte intérieure, un mur ou une cheminée.",
     features: ['Diamètre de quarante centimètres', 'Branches floquées effet neige', 'Baies blanches et pommes de pin givrées', 'Réutilisable chaque année'],
     specs: { 'Diamètre': '40 cm', 'Matière': 'PVC floqué, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur' }
   },
@@ -154,7 +154,7 @@ var PRODUCTS = [
     images: ['photo-1513538416877-f11f5fb85d83', 'photo-1703411731787-9125ef4d1174', 'photo-1606270507233-d7cfc1436842'],
     desc: "Un fil de cuivre souple semé de cent petites lumières ambrées. Il s'enroule autour d'un sapin, d'une branche, d'un miroir, ou se glisse dans un bocal pour une lanterne improvisée.",
     features: ['Dix mètres, cent micro-LED', 'Fil de cuivre souple et façonnable', 'Lumière ambrée', 'Alimentation USB et télécommande'],
-    specs: { 'Longueur': '10 m', 'Lumière': '100 micro-LED blanc chaud', 'Alimentation': 'USB 5 V', 'Usage': 'Intérieur' }
+    specs: { 'Longueur': '10 m', 'Lumière': '100 micro-LED ambrées', 'Alimentation': 'USB 5 V', 'Usage': 'Intérieur' }
   },
   {
     id: 'bougies-led', theme: 'chalet', cat: 'bougies',
@@ -227,8 +227,9 @@ function addToCart(id, qty) {
   if (line) line.qty = Math.min(20, line.qty + qty);
   else c.push({ id: id, qty: qty });
   writeCart(c);
-  openDrawer();
+  if (onCartPage()) toast('Ajouté au panier'); else openDrawer();
 }
+function onCartPage() { return /panier(\.html)?$/.test(location.pathname); }
 function setQty(id, qty) {
   var c = readCart().map(function (l) { if (l.id === id) l.qty = qty; return l; })
     .filter(function (l) { return l.qty > 0; });
@@ -270,17 +271,17 @@ function renderChrome() {
     '<div class="topbar">Livraison offerte dès ' + CONFIG.freeShippingFrom + ' € &nbsp;·&nbsp; Commandez avant le ' + CONFIG.christmasDeadline + ' pour Noël</div>' +
     '<header class="site"><div class="wrap head">' +
       '<nav class="nav" aria-label="Navigation principale"><a href="index.html#univers">Univers</a><a href="index.html#collection">Collection</a><a href="produit.html?id=pack-salon">Coffret</a></nav>' +
-      '<button class="icon-btn burger" id="burger" aria-label="Ouvrir le menu">' + ICON.menu + '</button>' +
+      '<button class="icon-btn burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mnav">' + ICON.menu + '</button>' +
       '<a class="logo" href="index.html">Flocon</a>' +
       '<div class="head-right"><button class="icon-btn" id="cartOpen" aria-label="Ouvrir le panier">' + ICON.bag + '<span class="lbl">Panier</span><span class="cart-count">(0)</span></button></div>' +
     '</div></header>' +
-    '<div class="mnav" id="mnav" aria-hidden="true">' +
+    '<div class="mnav" id="mnav" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">' +
       '<div class="mnav-top"><span class="logo" style="justify-self:start;padding-left:0">Flocon</span><button class="icon-btn" id="mnavClose" aria-label="Fermer le menu">' + ICON.close + '</button></div>' +
       '<a class="big" href="index.html?univers=tradition#collection">Tradition</a><a class="big" href="index.html?univers=givre#collection">Givre</a><a class="big" href="index.html?univers=chalet#collection">Chalet</a><a class="big" href="index.html#collection">Toute la collection</a><a class="big" href="produit.html?id=pack-salon">Coffret cadeau</a>' +
       '<div class="small"><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours</a><a href="legal.html#mentions">Mentions légales</a></div>' +
     '</div>' +
     '<div class="veil" id="veil"></div>' +
-    '<aside class="drawer" id="drawer" aria-label="Panier" aria-hidden="true">' +
+    '<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Panier" aria-hidden="true">' +
       '<div class="drawer-head"><h2>Votre panier</h2><button class="icon-btn" id="cartClose" aria-label="Fermer le panier">' + ICON.close + '</button></div>' +
       '<div class="drawer-body" id="drawerBody"></div>' +
       '<div class="drawer-foot" id="drawerFoot"></div>' +
@@ -295,7 +296,8 @@ function renderChrome() {
     '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
 
   var mnav = document.getElementById('mnav');
-  document.getElementById('burger').onclick = function () { mnav.classList.add('open'); mnav.setAttribute('aria-hidden', 'false'); document.body.classList.add('lock'); };
+  mnav.inert = true; document.getElementById('drawer').inert = true;
+  document.getElementById('burger').onclick = openMenu;
   document.getElementById('mnavClose').onclick = closeMenu;
   mnav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
   document.getElementById('cartOpen').onclick = openDrawer;
@@ -307,24 +309,41 @@ function renderChrome() {
   renderDrawer();
   initReveal();
 }
+var lastFocus = null;
+function openMenu() {
+  var m = document.getElementById('mnav');
+  lastFocus = document.activeElement;
+  m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); m.inert = false;
+  document.getElementById('burger').setAttribute('aria-expanded', 'true');
+  document.body.classList.add('lock');
+  document.getElementById('mnavClose').focus();
+}
 function closeMenu() {
   var m = document.getElementById('mnav');
-  if (!m) return;
-  m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); document.body.classList.remove('lock');
+  if (!m || !m.classList.contains('open')) return;
+  m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); m.inert = true;
+  document.getElementById('burger').setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('lock');
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 function openDrawer() {
   var d = document.getElementById('drawer');
-  if (!d || /panier\.html/.test(location.pathname)) { toast('Ajouté au panier'); return; }
-  d.classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  if (!d) return;
+  if (onCartPage()) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  lastFocus = document.activeElement;
+  d.classList.add('open'); d.setAttribute('aria-hidden', 'false'); d.inert = false;
   document.getElementById('veil').classList.add('on');
   document.body.classList.add('lock');
+  document.getElementById('cartClose').focus();
 }
 function closeDrawer() {
   var d = document.getElementById('drawer');
   if (!d) return;
-  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true');
+  if (!d.classList.contains('open')) return;
+  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); d.inert = true;
   document.getElementById('veil').classList.remove('on');
   document.body.classList.remove('lock');
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 function renderDrawer() {
   var body = document.getElementById('drawerBody'), foot = document.getElementById('drawerFoot');
@@ -347,7 +366,7 @@ function renderDrawer() {
 }
 function lineHTML(l) {
   var p = getProduct(l.id);
-  return '<div class="line"><a href="produit.html?id=' + p.id + '"><img src="' + U(p.images[0], 240) + '" alt=""></a>' +
+  return '<div class="line"><a href="produit.html?id=' + p.id + '" aria-label="' + esc(p.name) + '"><img src="' + U(p.images[0], 240) + '" alt=""></a>' +
     '<div><h3><a href="produit.html?id=' + p.id + '">' + esc(p.name) + '</a></h3><small>' + eur(p.price) + '</small>' +
     '<div class="qty"><button data-dec="' + p.id + '" aria-label="Retirer un">&minus;</button><span>' + l.qty + '</span><button data-inc="' + p.id + '" aria-label="Ajouter un">+</button></div></div>' +
     '<div class="line-right"><span>' + eur(p.price * l.qty) + '</span><button class="rm" data-rm="' + p.id + '">Retirer</button></div></div>';

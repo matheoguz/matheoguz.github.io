@@ -31,10 +31,10 @@
 <script>
 var ref = new URLSearchParams(location.search).get('ref');
 if (ref && /^FL-[0-9A-Z-]+$/.test(ref)) {
+  writeCart([]);
   document.getElementById('msg').textContent = 'Commande ' + ref + ' : votre paiement a bien été transmis à PayPal. Une confirmation vous est envoyée par email.';
 }
 document.querySelectorAll('.days').forEach(function (e) { e.textContent = CONFIG.deliveryDays; });
-writeCart([]);
 </script>
 </body>
 </html>

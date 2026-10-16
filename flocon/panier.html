@@ -26,7 +26,21 @@
 <script>
 var content = document.getElementById('content');
 
+var saved = {};
+function saveForm() {
+  var f = document.getElementById('form');
+  if (!f) return;
+  Array.prototype.forEach.call(f.elements, function (el) { if (el.name) saved[el.name] = el.type === 'checkbox' ? el.checked : el.value; });
+}
+function restoreForm() {
+  var f = document.getElementById('form');
+  if (!f) return;
+  Object.keys(saved).forEach(function (k) { var el = f.elements[k]; if (!el) return; if (el.type === 'checkbox') el.checked = saved[k]; else el.value = saved[k]; });
+}
+var payReady = !!(CONFIG.paypalMerchantId || CONFIG.contactEmail);
+
 function render() {
+  saveForm();
   var cart = readCart();
   if (!cart.length) {
     content.innerHTML = '<div class="empty-state"><p>Votre panier est vide.</p><a class="btn btn-dark" href="index.html#collection">Découvrir la collection</a></div>';
@@ -54,7 +68,8 @@ function render() {
             '<div class="grand"><span>Total TTC</span><span>' + eur(t.total) + '</span></div></div>' +
           '<label class="check"><input type="checkbox" name="cgv" required><span>J\'accepte les <a href="legal.html#cgv" target="_blank">conditions de vente</a> et j\'ai pris connaissance de mon <a href="legal.html#retours" target="_blank">droit de rétractation</a>.</span></label>' +
           '<p class="err" id="err" role="alert"></p>' +
-          '<button class="pay-btn" type="submit" id="payBtn">Payer ' + eur(t.total) + ' avec <b>PayPal</b></button>' +
+          (payReady ? '' : '<p class="notice">Le paiement en ligne ouvre très prochainement. Votre panier reste enregistré sur cet appareil.</p>') +
+          '<button class="pay-btn" type="submit" id="payBtn"' + (payReady ? '' : ' disabled') + '>Payer ' + eur(t.total) + ' avec <b>PayPal</b></button>' +
           '<p class="secure">' + ICON.lock + 'Paiement sécurisé · compte PayPal ou carte bancaire</p>' +
         '</form>' +
         '<div id="fallback" hidden></div>' +
@@ -62,6 +77,7 @@ function render() {
     '</div>';
   bindLineControls(content, render);
   document.getElementById('form').addEventListener('submit', submit);
+  restoreForm();
 }
 
 function submit(e) {
@@ -75,7 +91,6 @@ function submit(e) {
   err.textContent = '';
 
   var cart = readCart(), t = cartTotals(cart), ref = orderRef();
-  try { localStorage.setItem('flocon_last_order', JSON.stringify({ ref: ref, total: t.total, cart: cart, customer: c, at: Date.now() })); } catch (x) {}
 
   if (CONFIG.paypalMerchantId) {
     var b = document.getElementById('payBtn');
@@ -97,6 +112,7 @@ function submit(e) {
     '<div class="form"><a class="btn btn-line btn-block" href="' + mail + '">1 &nbsp; Envoyer ma commande</a>' +
     '<a class="pay-btn" href="' + pay + '" target="_blank" rel="noopener">2 &nbsp; Payer ' + eur(t.total) + ' avec <b>PayPal</b></a>' +
     '<p class="secure">Indiquez la référence ' + ref + ' dans la note PayPal.</p></div>';
+  fb.querySelector('.pay-btn').addEventListener('click', function () { writeCart([]); });
 }
 
 render();

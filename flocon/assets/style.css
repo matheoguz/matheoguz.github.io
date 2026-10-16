@@ -1,5 +1,6 @@
 /* Flocon — Maison de décoration de Noël */
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 :root{
   --ivory:#f8f4ec;
   --ivory-2:#efe8db;
@@ -46,8 +47,8 @@ header.site{position:sticky;top:0;z-index:60;background:rgba(248,244,236,.92);ba
 .burger{display:none}
 
 /* Menu mobile */
-.mnav{position:fixed;inset:0;z-index:80;background:var(--ivory);transform:translateX(-100%);transition:transform .45s var(--ease);display:flex;flex-direction:column;padding:24px 28px}
-.mnav.open{transform:none}
+.mnav{position:fixed;inset:0;z-index:80;background:var(--ivory);transform:translateX(-100%);visibility:hidden;transition:transform .45s var(--ease),visibility 0s linear .45s;display:flex;flex-direction:column;padding:24px 28px}
+.mnav.open{transform:none;visibility:visible;transition:transform .45s var(--ease)}
 .mnav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px}
 .mnav a.big{display:block;font-family:var(--display);font-size:2.4rem;line-height:1.25;text-decoration:none;color:var(--pine)}
 .mnav .small{margin-top:auto;display:grid;gap:10px;color:var(--muted);font-size:.85rem}
@@ -56,8 +57,8 @@ header.site{position:sticky;top:0;z-index:60;background:rgba(248,244,236,.92);ba
 /* Panier latéral */
 .veil{position:fixed;inset:0;background:rgba(22,32,27,.38);opacity:0;pointer-events:none;transition:opacity .35s;z-index:85}
 .veil.on{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--paper);z-index:90;transform:translateX(100%);transition:transform .45s var(--ease);display:flex;flex-direction:column}
-.drawer.open{transform:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--paper);z-index:90;transform:translateX(100%);visibility:hidden;transition:transform .45s var(--ease),visibility 0s linear .45s;display:flex;flex-direction:column}
+.drawer.open{transform:none;visibility:visible;transition:transform .45s var(--ease)}
 .drawer-head{display:flex;justify-content:space-between;align-items:center;padding:22px 26px;border-bottom:1px solid var(--line)}
 .drawer-head h2{font-family:var(--display);font-weight:500;font-size:1.7rem}
 .drawer-body{flex:1;overflow:auto;padding:8px 26px}
@@ -308,6 +309,7 @@ footer.site{background:var(--pine);color:rgba(248,244,236,.7);padding:90px 0 36p
   .aside{padding:24px 18px}
   .sticky-buy{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-top:1px solid var(--line);padding:12px 16px;gap:12px;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .35s var(--ease)}
   .sticky-buy.show{transform:none}
+  body.has-sticky{padding-bottom:76px}
   .sticky-buy .btn{padding:15px 22px}
 }
 
@@ -350,3 +352,7 @@ footer.site{background:var(--pine);color:rgba(248,244,236,.7);padding:90px 0 36p
   .filter-row .caps{display:none}
   .chip{flex:none}
 }
+
+.notice{background:var(--ivory-2);border-left:2px solid var(--gold);padding:12px 14px;font-size:.84rem;color:var(--ink-2)}
+.legal-box{border:1px solid var(--ink);padding:20px 22px;margin:14px 0 18px;background:var(--paper)}
+.legal-box p{font-size:.9rem}
