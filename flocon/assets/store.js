@@ -29,11 +29,11 @@ function U(id, w) {
 }
 
 var THEMES = {
-  tradition: { name: 'Tradition', colors: 'Rouge, vert et or', image: 'photo-1609125303972-255c84ac9f01',
+  tradition: { name: 'Tradition', colors: 'Rouge, vert et or', image: 'photo-1512474932049-78ac69ede12c',
     text: "Le Noël de toujours : des boules rouges et dorées, du velours et des branches de sapin." },
-  givre: { name: 'Givre', colors: 'Blanc, argent et cristal', image: 'photo-1767659473873-300af5ccd7c0',
+  givre: { name: 'Givre', colors: 'Blanc, argent et cristal', image: 'photo-1764424450013-41e65afb6da1',
     text: "Un sapin blanc comme un matin de neige, des reflets argentés et une lumière claire." },
-  chalet: { name: 'Chalet', colors: 'Bois, lin et lumière chaude', image: 'photo-1763909130794-89784b8f447a',
+  chalet: { name: 'Chalet', colors: 'Bois, lin et lumière chaude', image: 'photo-1639042992943-042f6e01e6ea',
     text: "Le bois, les matières naturelles et des guirlandes ambrées, pour un Noël au coin du feu." }
 };
 var CATEGORIES = {
@@ -129,7 +129,7 @@ var PRODUCTS = [
     name: 'Couronne Neige',
     short: 'Branches enneigées et baies blanches',
     price: 27.90, tag: null,
-    images: ['photo-1544002112-aa68bd940a8b', 'photo-1767659473873-300af5ccd7c0'],
+    images: ['photo-1544002112-aa68bd940a8b', 'photo-1605045929661-c451b81a55cb'],
     desc: "Une couronne aux branches poudrées de neige artificielle, ponctuée de baies blanches et de pommes de pin givrées. Elle apporte la douceur d'un paysage d'hiver à une porte ou un mur.",
     features: ['Diamètre de quarante centimètres', 'Branches floquées effet neige', 'Baies blanches et pommes de pin givrées', 'Réutilisable chaque année'],
     specs: { 'Diamètre': '40 cm', 'Matière': 'PVC floqué, éléments naturels', 'Fixation': 'Boucle de suspension', 'Usage': 'Intérieur' }
