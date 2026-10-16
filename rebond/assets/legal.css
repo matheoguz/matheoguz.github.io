@@ -1,0 +1,39 @@
+/* Pages légales : lecture confortable, mêmes couleurs que l'appli. */
+:root{
+  --bg:#FFFFFF; --soft:#F3F4F6; --ink:#121417; --muted:#666E76; --line:#E2E5E9; --accent:#1D4ED8; --mark:#FFF3C4; --mark-ink:#5A4300;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101215; --soft:#181B1F; --ink:#ECEEF1; --muted:#9BA2AA; --line:#2A2F35; --accent:#7393FF; --mark:#3A3214; --mark-ink:#F3DE8A; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#101215; --soft:#181B1F; --ink:#ECEEF1; --muted:#9BA2AA; --line:#2A2F35; --accent:#7393FF; --mark:#3A3214; --mark-ink:#F3DE8A; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.top .in{max-width:900px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.logo{font-family:var(--f-display);font-weight:800;font-size:1.5rem;letter-spacing:-.04em;color:var(--ink);text-decoration:none}
+.logo span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-left:1px}
+.top nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.9rem}
+.top nav a{color:var(--muted);text-decoration:none}
+.top nav a[aria-current="page"]{color:var(--ink);font-weight:700}
+main{max-width:760px;margin:0 auto;padding:32px 16px 60px}
+h1{font-family:var(--f-display);font-size:clamp(1.8rem,5vw,2.5rem);letter-spacing:-.03em;line-height:1.1;margin:0 0 6px;text-wrap:balance}
+h2{font-size:1.2rem;margin:36px 0 8px;line-height:1.25}
+h3{font-size:1rem;margin:22px 0 6px}
+.updated{color:var(--muted);font-size:.9rem;margin:0 0 20px}
+.lead{font-size:1.05rem}
+.toc{background:var(--soft);border-radius:10px;padding:14px 18px;font-size:.92rem}
+.toc ol{margin:6px 0 0;padding-left:20px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+.tbl{overflow-x:auto;margin:10px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 3px;border-radius:3px}
+.box{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+footer .in{max-width:760px;margin:0 auto;padding:20px 16px;display:flex;gap:8px 18px;flex-wrap:wrap}
+footer a,footer button{color:var(--muted);background:none;border:0;padding:0;font:inherit;cursor:pointer;text-decoration:none}
+footer a:hover,footer button:hover{color:var(--ink);text-decoration:underline}
+@media (max-width:600px){.top{position:static}}

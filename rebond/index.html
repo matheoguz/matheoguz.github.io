@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rebond · Sneakers de seconde main</title>
+<meta name="description" content="Achète et vends tes sneakers de seconde main. 0 % de commission vendeur, vérification d’authenticité, protection acheteur plafonnée à 5 €.">
+<meta name="theme-color" content="#1D4ED8">
+<meta property="og:title" content="Rebond · Sneakers de seconde main">
+<meta property="og:description" content="0 % de commission vendeur, vérification d’authenticité, protection acheteur plafonnée à 5 €.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="hdr">
+  <div class="wrap hdr-top">
+    <button class="logo" id="logo" aria-label="Rebond, accueil">rebond<span></span></button>
+    <span class="demo-pill" id="demoPill" hidden>Démo</span>
+    <label class="search" for="q">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Rechercher une paire : Dunk, Samba, 550…" autocomplete="off">
+    </label>
+    <div class="hdr-icons">
+      <button class="ibtn" data-go="favs" aria-label="Favoris"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+      <button class="ibtn" data-go="inbox" aria-label="Messages"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></button>
+      <button class="ibtn" data-go="orders" aria-label="Commandes"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 13H5z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg></button>
+      <button class="ibtn" data-go="account" aria-label="Mon compte" id="meBtn"></button>
+      <button class="btn ghost" id="loginBtn" hidden>Se connecter</button>
+      <button class="btn primary" data-go="sell">Vendre tes paires</button>
+    </div>
+  </div>
+  <div class="wrap"><nav class="nav" id="nav" aria-label="Catégories"></nav></div>
+  <div class="loading-bar" id="loadingBar"></div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<footer class="wrap">
+  <p><b>Rebond</b> · la marketplace des sneakers de seconde main. 0 % de commission vendeur, vérification d’authenticité, protection acheteur plafonnée à 5 €.</p>
+  <nav class="foot-links" aria-label="Informations légales">
+    <a href="legal/cgu.html">Conditions d’utilisation</a>
+    <a href="legal/confidentialite.html">Confidentialité</a>
+    <a href="legal/cookies.html">Cookies</a>
+    <a href="legal/mentions-legales.html">Mentions légales</a>
+    <a href="legal/regles.html">Règles et signalement</a>
+    <button type="button" id="cookieBtn">Gérer les cookies</button>
+  </nav>
+  <p id="modeNote"></p>
+</footer>
+
+<nav class="tabbar" aria-label="Navigation mobile">
+  <button data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 4l9 7v9H3z"/></svg>Accueil</button>
+  <button data-go="catalog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Rechercher</button>
+  <button data-go="sell"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Vendre</button>
+  <button data-go="inbox"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Messages</button>
+  <button data-go="account"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Profil</button>
+</nav>
+
+<div id="layer"></div>
+<div id="toastHost" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/consent.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

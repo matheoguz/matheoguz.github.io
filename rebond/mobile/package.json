@@ -1,0 +1,19 @@
+{
+  "name": "rebond-mobile",
+  "private": true,
+  "description": "Rebond emballé en application Android et iOS avec Capacitor",
+  "type": "module",
+  "scripts": {
+    "web": "node copy-web.mjs",
+    "android": "npm run web && npx cap add android --skip-sync 2>/dev/null; npx cap sync android && npx cap open android",
+    "ios": "npm run web && npx cap add ios --skip-sync 2>/dev/null; npx cap sync ios && npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2"
+  }
+}

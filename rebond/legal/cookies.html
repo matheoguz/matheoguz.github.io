@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cookies · Rebond</title>
+<meta name="description" content="Les cookies et le stockage utilisés par Rebond, et comment gérer tes choix.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/fonts.css">
+<link rel="stylesheet" href="../assets/legal.css">
+</head>
+<body>
+<!-- Texte type à faire relire par un·e juriste avant l'ouverture au public.
+     Les passages surlignés [EN MAJUSCULES] sont à compléter. -->
+<header class="top">
+  <div class="in">
+    <a class="logo" href="../">rebond<span></span></a>
+    <nav aria-label="Pages légales">
+      <a href="cgu.html">Conditions d’utilisation</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="cookies.html" aria-current="page">Cookies</a>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="regles.html">Règles et signalement</a>
+    </nav>
+  </div>
+</header>
+<main>
+
+<h1>Politique cookies</h1>
+<p class="updated">Dernière mise à jour : <mark>[DATE DE MISE EN LIGNE]</mark></p>
+<p class="lead">Rebond n’utilise <b>aucun cookie publicitaire</b> et ne te suit pas sur d’autres sites. Nous utilisons uniquement ce qui est nécessaire au fonctionnement du site et, si tu l’acceptes, une mesure d’audience.</p>
+
+<h2>Ce qu’on appelle « cookies » ici</h2>
+<p>Ce sont les petits fichiers et le stockage local (localStorage) que ton navigateur garde pour un site. Les règles sont les mêmes pour les deux.</p>
+
+<h2>Nécessaires (sans consentement)</h2>
+<p>Ils sont indispensables : sans eux, tu ne pourrais pas rester connecté·e ni payer. La loi les dispense de consentement.</p>
+<div class="tbl"><table>
+<tr><th>Nom</th><th>Rôle</th><th>Durée</th></tr>
+<tr><td><code>sb-…-auth-token</code></td><td>Garder ta session de connexion (Supabase)</td><td>Jusqu’à la déconnexion</td></tr>
+<tr><td><code>rebond.consent</code></td><td>Mémoriser tes choix sur les cookies</td><td>6 mois</td></tr>
+<tr><td><code>rebond.demo.v2</code></td><td>Uniquement en mode démo : garder les annonces de démonstration dans ton navigateur</td><td>Jusqu’à ce que tu vides ton navigateur</td></tr>
+<tr><td>Cache de l’application (service worker)</td><td>Afficher le site rapidement et quand le réseau est faible</td><td>Jusqu’à la prochaine mise à jour du site</td></tr>
+<tr><td>Cookies Stripe (sur la page de paiement Stripe)</td><td>Sécuriser le paiement et prévenir la fraude</td><td>Voir la politique de Stripe</td></tr>
+</table></div>
+
+<h2>Mesure d’audience (avec ton accord)</h2>
+<p>Si tu l’acceptes, nous pouvons mesurer la fréquentation (pages vues, type d’appareil) de façon anonyme pour améliorer le site. Aucun outil de mesure n’est chargé tant que tu n’as pas donné ton accord. <mark>[NOM DE L’OUTIL si tu en ajoutes un, ex. Matomo auto-hébergé]</mark></p>
+
+<h2>Changer d’avis</h2>
+<p>Tu peux modifier tes choix à tout moment : <button type="button" onclick="window.RebondConsent && window.RebondConsent.open()" style="font:inherit;color:var(--accent);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer">gérer mes cookies</button> (lien aussi présent en bas de chaque page). Ton choix est gardé 6 mois, puis nous te le redemandons. Tu peux aussi effacer les données du site dans les réglages de ton navigateur.</p>
+
+<h2>Polices et bibliothèques</h2>
+<p>Les polices de caractères et la bibliothèque Supabase sont hébergées directement sur notre site : ta navigation ne déclenche aucune requête vers Google Fonts ou un CDN tiers.</p>
+
+</main>
+<footer>
+  <div class="in">
+    <a href="../">Retour à Rebond</a>
+    <a href="cgu.html">Conditions d’utilisation</a>
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="cookies.html" aria-current="page">Cookies</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="regles.html">Règles et signalement</a>
+    <button type="button" onclick="window.RebondConsent && window.RebondConsent.open()">Gérer les cookies</button>
+  </div>
+</footer>
+<script src="../assets/consent.js" data-policy="cookies.html"></script>
+</body>
+</html>
