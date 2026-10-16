@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N°1 — Le meilleur vendeur de chaque rayon, passé au crible</title>
+<meta name="description" content="Chaque semaine, le produit numéro un des ventes dans chaque catégorie, analysé sans filtre : pourquoi il est en tête, pour qui, et ce qu'on ne vous dit pas.">
+<link rel="canonical" href="https://matheoguz.github.io/top1/">
+<meta property="og:title" content="N°1 — Le meilleur vendeur de chaque rayon">
+<meta property="og:description" content="Un produit par rayon. Le numéro un des ventes, passé au crible chaque semaine.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://matheoguz.github.io/top1/">
+<meta property="og:image" content="https://matheoguz.github.io/top1/og.png">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F3EFE6">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#classement">Aller au classement</a>
+
+<header class="bar">
+  <div class="wrap bar__in">
+    <a class="logo" href="#" aria-label="N°1, accueil">N<sup>o</sup>1</a>
+    <nav class="bar__nav" aria-label="Navigation principale">
+      <a href="#classement">Le classement</a>
+      <a href="#methode">La méthode</a>
+      <a href="#" class="js-tiktok" hidden>TikTok</a>
+    </nav>
+    <p class="bar__ed mono"><span class="js-edition"></span></p>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <div class="hero__text">
+      <p class="kicker mono"><span class="dot" aria-hidden="true"></span>Relevé du <span class="js-date"></span></p>
+      <h1>Le meilleur vendeur de chaque rayon.<br><em>Et ce qu'il vaut vraiment.</em></h1>
+      <p class="lede">Chaque semaine, on relève le produit numéro un des ventes dans chaque catégorie. On vous dit pourquoi il est en tête, pour qui il est fait, et quand il ne mérite pas sa place.</p>
+      <div class="hero__cta">
+        <a class="btn btn--ink" href="#classement">Voir le classement</a>
+        <a class="link-under" href="#methode">Comment on choisit</a>
+      </div>
+    </div>
+
+    <figure class="cover js-cover" aria-label="À la une"></figure>
+  </section>
+
+  <section class="facts wrap" aria-label="En bref">
+    <div class="fact"><span class="fact__n serif js-count"></span><span class="fact__l">rayons suivis</span></div>
+    <div class="fact"><span class="fact__n serif">1</span><span class="fact__l">seul produit par rayon</span></div>
+    <div class="fact"><span class="fact__n serif">7<small> j</small></span><span class="fact__l">entre deux relevés</span></div>
+    <div class="fact"><span class="fact__n serif">0</span><span class="fact__l">produit envoyé par une marque</span></div>
+  </section>
+
+  <section class="board wrap" id="classement" aria-labelledby="board-title">
+    <div class="board__head">
+      <div>
+        <p class="label mono">Le classement</p>
+        <h2 id="board-title" class="h2">Les numéros un<br>de la semaine</h2>
+      </div>
+      <div class="legend" aria-label="Légende des verdicts">
+        <span class="verdict verdict--merite">Mérité</span>
+        <span class="verdict verdict--reserve">Avec réserves</span>
+        <span class="verdict verdict--surcote">Surcoté</span>
+      </div>
+    </div>
+
+    <div class="filters js-filters" role="toolbar" aria-label="Filtrer par rayon"></div>
+
+    <ol class="rows js-rows"></ol>
+    <p class="empty js-empty" hidden>Aucun produit dans ce rayon cette semaine.</p>
+  </section>
+
+  <section class="method" id="methode" aria-labelledby="method-title">
+    <div class="wrap">
+      <p class="label mono">La méthode</p>
+      <h2 id="method-title" class="h2">Trois étapes,<br>pas de place achetée.</h2>
+      <ol class="steps">
+        <li>
+          <span class="steps__n mono">01</span>
+          <h3>On relève</h3>
+          <p>Chaque semaine, on note le produit classé premier des meilleures ventes dans chaque rayon suivi. Pas de sélection à la main : c'est le numéro un, point.</p>
+        </li>
+        <li>
+          <span class="steps__n mono">02</span>
+          <h3>On vérifie</h3>
+          <p>On lit les avis négatifs avant les positifs, on compare avec les produits juste derrière, et on cherche ce que la fiche ne dit pas.</p>
+        </li>
+        <li>
+          <span class="steps__n mono">03</span>
+          <h3>On tranche</h3>
+          <p>Mérité, avec réserves ou surcoté. Et quand le numéro un n'est pas le bon choix, on vous donne l'alternative.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="follow js-follow" hidden>
+    <div class="wrap follow__in">
+      <h2 class="follow__t serif">Le relevé de la semaine,<br><em>en soixante secondes.</em></h2>
+      <a class="btn btn--paper js-tiktok" href="#">Suivre sur TikTok <span class="js-handle"></span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div>
+      <a class="logo logo--sm" href="#">N<sup>o</sup>1</a>
+      <p class="foot__tag">Le meilleur vendeur de chaque rayon, passé au crible.</p>
+    </div>
+    <div class="foot__legal">
+      <p class="js-disclosure" hidden>En tant que Partenaire Amazon, N°1 réalise un bénéfice sur les achats remplissant les conditions requises. Cela ne change ni le prix que vous payez, ni nos verdicts.</p>
+      <p>Site indépendant, sans lien avec Amazon. Les classements correspondent à la date du relevé et peuvent avoir changé depuis. Les fourchettes de prix sont indicatives : le prix affiché sur le site marchand fait foi.</p>
+      <p>Photos des produits : © leurs marques respectives, utilisées à titre d'illustration.</p>
+      <p><a href="mentions-legales.html">Mentions légales</a></p>
+    </div>
+  </div>
+</footer>
+
+<dialog class="sheet js-sheet" aria-labelledby="sheet-title">
+  <div class="sheet__in js-sheet-body"></div>
+</dialog>
+
+<div class="toast js-toast" role="status" aria-live="polite"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-tag" viewBox="0 0 64 64"><circle cx="30" cy="36" r="18"/><circle cx="30" cy="36" r="12"/><path d="M42 22c2-6 8-10 14-8 4 2 5 7 2 11-3 3-8 3-11 1"/></symbol>
+    <symbol id="i-pot" viewBox="0 0 64 64"><rect x="10" y="14" width="44" height="40" rx="6"/><path d="M10 34h44M18 22h12M44 21v2"/><rect x="22" y="40" width="20" height="8" rx="2"/></symbol>
+    <symbol id="i-jar" viewBox="0 0 64 64"><path d="M16 26h32v24a6 6 0 0 1-6 6H22a6 6 0 0 1-6-6z"/><rect x="14" y="16" width="36" height="10" rx="3"/><path d="M24 40h16"/></symbol>
+    <symbol id="i-pad" viewBox="0 0 64 64"><path d="M20 20h24c7 0 11 6 12 14l2 12c1 5-5 8-8 4l-6-8H20l-6 8c-3 4-9 1-8-4l2-12c1-8 5-14 12-14z"/><path d="M20 28v8M16 32h8"/><circle cx="43" cy="29" r="1.8"/><circle cx="47" cy="34" r="1.8"/><circle cx="26" cy="39" r="3"/><circle cx="38" cy="39" r="3"/></symbol>
+    <symbol id="i-cards" viewBox="0 0 64 64"><rect x="12" y="16" width="24" height="34" rx="3" transform="rotate(-10 24 33)"/><rect x="28" y="14" width="24" height="34" rx="3" transform="rotate(8 40 31)"/><ellipse cx="40" cy="31" rx="6" ry="9" transform="rotate(30 40 31)"/></symbol>
+    <symbol id="i-battery" viewBox="0 0 64 64"><rect x="14" y="20" width="14" height="36" rx="2"/><rect x="36" y="20" width="14" height="36" rx="2"/><path d="M19 20v-4h4v4M41 20v-4h4v4M18 30h6M40 30h6M43 27v6"/></symbol>
+    <symbol id="i-bottle" viewBox="0 0 64 64"><path d="M20 20h24l-2 34a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4z"/><path d="M18 20h28v-5H18zM36 15l2-10M44 26c6 0 8 3 8 8s-2 8-8 8"/></symbol>
+    <symbol id="i-brush" viewBox="0 0 64 64"><rect x="24" y="20" width="16" height="38" rx="7"/><path d="M28 20V8h8v12M32 30v4"/><circle cx="32" cy="42" r="3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M8 16 16 8M9 8h7v7"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  </defs>
+</svg>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
