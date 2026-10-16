@@ -17,9 +17,9 @@ var CONFIG = {
 
   shippingFee: 4.90,
   freeShippingFrom: 39,
-  deliveryDays: '3 à 7 jours ouvrés',
-  christmasDeadline: '15 décembre',
-  countries: ['France', 'Belgique', 'Luxembourg']
+  deliveryDays: '7 à 10 jours',
+  christmasDeadline: '10 décembre',
+  countries: ['France']
 };
 
 /* Photos libres de droits (licence Unsplash, usage commercial autorisé).
@@ -290,7 +290,7 @@ function renderChrome() {
   var foot = document.getElementById('foot');
   if (foot) foot.outerHTML =
     '<footer class="site"><div class="wrap"><div class="foot">' +
-      '<div><a class="logo" href="index.html">Flocon</a><p>Maison de décoration de Noël. Des pièces choisies pour la lumière qu\'elles apportent, expédiées depuis notre entrepôt européen.</p></div>' +
+      '<div><a class="logo" href="index.html">Flocon</a><p>Maison de décoration de Noël. Des pièces choisies pour la lumière qu\'elles apportent, livrées partout en France.</p></div>' +
       '<div><h4>Univers</h4><a href="index.html?univers=tradition#collection">Tradition</a><a href="index.html?univers=givre#collection">Givre</a><a href="index.html?univers=chalet#collection">Chalet</a><a href="produit.html?id=pack-salon">Coffret Salon de Noël</a></div>' +
       '<div><h4>Service</h4><a href="legal.html#livraison">Livraison</a><a href="legal.html#retours">Retours et remboursements</a><a href="legal.html#cgv">Conditions de vente</a><a href="legal.html#mentions">Mentions légales</a><a href="legal.html#confidentialite">Confidentialité</a></div>' +
     '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Flocon</span><span>Paiement sécurisé par PayPal</span></div></div></footer>';
