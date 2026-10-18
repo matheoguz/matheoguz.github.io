@@ -4,7 +4,7 @@ Site GitHub Pages de Matheo Guzzi (publié depuis `main`). Chaque dossier est un
 
 Écrire en français pour tout ce qui est visible par Matheo ou ses clients.
 
-**Aperçu obligatoire :** dès qu'une page est créée ou modifiée visuellement, envoyer à Matheo le rendu à tester dans le panneau d'aperçu (SendUserFile, `display: "render"`), sans attendre qu'il le demande. Les pages qui lisent d'autres fichiers (le cockpit) doivent être envoyées en version autonome : `node agence/agence.mjs apercu <dossier> [slug]` produit `workspace.html`, `questionnaire.html` et `site-<slug>.html`.
+**Aperçu obligatoire :** dès qu'une page est créée ou modifiée visuellement, commit + push, puis donner à Matheo un **lien cliquable vers la page rendue**, sans attendre qu'il le demande. Ne pas lui envoyer le fichier `.html` (son appli affiche le code, pas le site). Tant que la branche n'est pas fusionnée dans `main`, le lien est `https://raw.githack.com/matheoguz/matheoguz.github.io/<sha-du-commit>/<chemin>` (une page d'avertissement s'affiche d'abord, il faut cliquer pour continuer) ; une fois fusionné, c'est `https://matheoguz.github.io/<chemin>`.
 
 ## Agence de sites vitrines
 
