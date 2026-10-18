@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workspace Atelier — agence de Matheo</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0f1a;--frame:#151a2b;--line:#2a3150;--text:#e9ecf8;--muted:#8990ad;
+  --room:#f1eee6;--room2:#e4e0d4;--wood:#c9a46b;--wood2:#a9834c;--ink:#1d2033;
+  --blue:#4f7cff;--green:#43c27a;--orange:#ff9f43;--pink:#e2649a;--violet:#9d7bff;--yellow:#ffd34f;--red:#ff5c6c;
+  --head:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;
+}
+body{background:radial-gradient(circle at 50% 0,#18203a 0,var(--bg) 60%);color:var(--text);font-family:var(--body);min-height:100vh;padding:28px 16px 64px}
+.top{max-width:1240px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.top h1{font-family:var(--head);letter-spacing:.3em;font-size:.95rem;font-weight:700}
+.top h1 span{color:var(--blue)}
+.top p{color:var(--muted);font-size:.85rem}
+.clock{font-family:var(--head);font-size:.85rem;color:var(--muted);text-align:right}
+.clock b{display:block;color:var(--text);font-size:1.6rem;letter-spacing:.05em}
+
+/* ---------- carte du workspace ---------- */
+.map{max-width:1240px;margin:0 auto;background:var(--frame);border:2px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:12px;
+  grid-template-columns:1.1fr 1.4fr 1.1fr;grid-template-areas:"entree orch controle" "brief contenu build" "client memoire livre";box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.room{position:relative;background:var(--room);color:var(--ink);border-radius:10px;padding:34px 14px 14px;min-height:190px;overflow:hidden;
+  background-image:linear-gradient(rgba(0,0,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.035) 1px,transparent 1px);background-size:22px 22px}
+.room>.tag{position:absolute;top:10px;left:10px;background:var(--ink);color:#fff;font-family:var(--head);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px;border-radius:5px}
+.room>.who{position:absolute;top:10px;right:12px;font-family:var(--head);font-size:.7rem;color:#6a6d80;letter-spacing:.08em}
+.room.active{box-shadow:inset 0 0 0 3px var(--yellow)}
+.room.active>.tag{background:#3a2f00;color:var(--yellow)}
+
+.desks{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;justify-content:center;margin-top:6px}
+.desk{position:relative;width:96px;display:grid;justify-items:center}
+.desk .table{width:96px;height:40px;background:linear-gradient(var(--wood),var(--wood2));border-radius:6px;box-shadow:0 4px 0 #8a6a3c;display:flex;gap:6px;justify-content:center;align-items:center}
+.desk .table i{width:26px;height:17px;background:#253055;border-radius:3px;border:2px solid #10162b;position:relative}
+.desk .table i::after{content:'';position:absolute;inset:3px;background:var(--c,#4f7cff);opacity:.55;border-radius:1px;animation:screen 2.4s infinite steps(2)}
+.agent{width:30px;height:30px;border-radius:50%;background:var(--c,#4f7cff);border:3px solid var(--ink);margin-top:-6px;position:relative;z-index:1}
+.agent::before{content:'';position:absolute;inset:-9px 3px auto;height:10px;border-radius:8px 8px 3px 3px;background:#2b2b38}
+.desk small{font-family:var(--head);font-size:.66rem;margin-top:5px;color:#4b4e63;letter-spacing:.06em}
+.room.active .agent{animation:work .9s infinite alternate}
+.room.active .desk .table i::after{opacity:1}
+@keyframes work{to{transform:translateY(-3px)}}
+@keyframes screen{50%{opacity:.25}}
+
+.cards{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+.chip{background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:7px;padding:4px 8px;font-size:.72rem;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.08);white-space:nowrap}
+.chip.test{border-style:dashed;color:#6a6d80}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--orange)}
+.empty{font-size:.74rem;color:#8c8fa3;text-align:center;margin-top:12px}
+
+/* salles particulières */
+.entree{grid-area:entree}
+.belt{margin:10px auto 0;height:34px;background:#2e3448;border-radius:6px;display:flex;align-items:center;gap:18px;padding:0 10px;overflow:hidden;position:relative}
+.belt::after{content:'';position:absolute;inset:auto 0 3px;height:2px;background:repeating-linear-gradient(90deg,#596079 0 10px,transparent 10px 20px);animation:belt 1s linear infinite}
+.belt b{width:22px;height:18px;border-radius:4px;flex:none;animation:slide 6s linear infinite}
+.belt b:nth-child(1){background:var(--green)}.belt b:nth-child(2){background:var(--red);animation-delay:-2s}.belt b:nth-child(3){background:var(--yellow);animation-delay:-4s}
+@keyframes belt{to{background-position:20px 0}}
+@keyframes slide{from{transform:translateX(-40px)}to{transform:translateX(320px)}}
+.entree .reception{margin:12px auto 0;width:140px;height:28px;background:linear-gradient(var(--wood),var(--wood2));border-radius:6px;display:grid;place-items:center;font-family:var(--head);font-size:.66rem;color:#3d2d14;letter-spacing:.1em}
+
+.orch{grid-area:orch;background-color:#d9d3c2}
+.orch .center{display:flex;justify-content:center;align-items:center;gap:26px;margin-top:4px}
+.human{display:grid;justify-items:center;gap:6px}
+.human .agent{width:44px;height:44px;background:var(--orange);box-shadow:0 0 0 6px rgba(255,159,67,.25),0 0 0 12px rgba(255,159,67,.1)}
+.human .ring{animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px rgba(255,159,67,.3),0 0 0 18px rgba(255,159,67,.08)}}
+.human small,.pilot small{font-family:var(--head);font-size:.68rem;letter-spacing:.06em;color:#3c3f52;text-align:center}
+.pilot{display:grid;justify-items:center;gap:6px}
+.pilot .core{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,var(--blue) 20% 55%,#1c2f78 57%);border:3px solid var(--ink);animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wire{flex:1;max-width:90px;height:3px;background:repeating-linear-gradient(90deg,var(--ink) 0 6px,transparent 6px 12px);animation:belt .8s linear infinite}
+.todo{margin-top:12px;background:#fff;border-radius:8px;padding:8px 10px;font-size:.74rem;max-height:84px;overflow:auto}
+.todo b{font-family:var(--head);font-size:.66rem;letter-spacing:.1em;color:#b14b18}
+.todo li{margin-left:16px}
+
+.controle{grid-area:controle;background-color:#e7efe9}
+.check{margin:2px auto 8px;width:150px;height:60px;background:#13261c;border-radius:8px;display:grid;place-items:center;border:3px solid #0a140f}
+.check svg{width:46px;height:46px}
+.check path{stroke:var(--green);stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;animation:draw 2.6s infinite}
+@keyframes draw{0%{stroke-dashoffset:60}40%,100%{stroke-dashoffset:0}}
+
+.brief{grid-area:brief}.contenu{grid-area:contenu}.build{grid-area:build}
+.client{grid-area:client;background-color:#f3e6e6}
+.livre{grid-area:livre;background-color:#e6ebf6}
+.memoire{grid-area:memoire;background-color:#1c2136;color:var(--text)}
+.memoire>.tag{background:#2c3354}
+.memoire>.who{color:#8990ad}
+.shelf{display:flex;gap:3px;align-items:flex-end;justify-content:center;margin-top:8px;padding-bottom:6px;border-bottom:6px solid #5a4630}
+.shelf a{width:20px;border-radius:2px 2px 0 0;display:block;position:relative;transition:transform .2s}
+.shelf a:hover{transform:translateY(-6px)}
+.shelf a span{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);background:#000;color:#fff;font-size:.66rem;padding:2px 6px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none}
+.shelf a:hover span,.shelf a:focus span{opacity:1}
+.night{margin-top:12px;display:flex;align-items:center;gap:10px;justify-content:center;font-size:.74rem;color:var(--muted)}
+.fan{width:34px;height:34px;border-radius:50%;border:2px solid #3e4670;background:conic-gradient(var(--violet) 0 25%,transparent 0 50%,var(--violet) 0 75%,transparent 0);animation:spin 3s linear infinite}
+
+/* ---------- panneau bas ---------- */
+.panel{max-width:1240px;margin:22px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--frame);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat small{color:var(--muted);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase}
+.stat b{display:block;font-family:var(--head);font-size:1.9rem;margin-top:4px}
+.board{max-width:1240px;margin:12px auto 0;background:var(--frame);border:1px solid var(--line);border-radius:14px;overflow:auto}
+.board table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:640px}
+.board th{text-align:left;font-weight:500;color:var(--muted);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;border-bottom:1px solid var(--line)}
+.board td{padding:12px 14px;border-bottom:1px solid rgba(42,49,80,.5)}
+.board tr:last-child td{border-bottom:0}
+.board a{color:var(--blue)}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:.74rem;font-weight:600;background:#262d48}
+.late{color:var(--red);font-weight:600}
+.msg{max-width:1240px;margin:12px auto 0;color:var(--muted);font-size:.8rem}
+.msg code{background:#1d2340;padding:2px 6px;border-radius:4px;color:var(--text)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+@media(max-width:900px){
+  .map{grid-template-columns:1fr 1fr;grid-template-areas:"orch orch" "entree controle" "brief contenu" "build client" "memoire livre"}
+  .panel{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .map{grid-template-columns:1fr;grid-template-areas:"orch" "entree" "brief" "contenu" "build" "controle" "client" "livre" "memoire"}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h1>WORKSPACE <span>ATELIER</span></h1>
+    <p>Agence de sites vitrines · 1 humain, 4 agents · <span id="gen">chargement…</span></p>
+  </div>
+  <div class="clock"><b id="time">--:--</b><span id="date"></span></div>
+</div>
+
+<div class="map" id="map">
+  <div class="room entree" data-stages="">
+    <span class="tag">Flux d'entrée</span><span class="who">ComeUp · Fiverr</span>
+    <div class="belt" aria-hidden="true"><b></b><b></b><b></b></div>
+    <div class="reception">RÉCEPTION</div>
+    <p class="empty">Le client remplit <a href="../../sites/brief/" style="color:inherit">le questionnaire</a> et colle ses réponses sur la plateforme.</p>
+  </div>
+
+  <div class="room orch" data-stages="">
+    <span class="tag">L'orchestrateur</span><span class="who">/nouveau-client · /modifs · /livrer</span>
+    <div class="center">
+      <div class="human"><div class="agent ring"></div><small>MATHEO<br>le seul humain</small></div>
+      <div class="wire" aria-hidden="true"></div>
+      <div class="pilot"><div class="core"></div><small>CLAUDE<br>pilote</small></div>
+    </div>
+    <div class="todo" id="todo"><b>À FAIRE PAR MATHEO</b><ul><li>…</li></ul></div>
+  </div>
+
+  <div class="room controle" data-stages="verification">
+    <span class="tag">Boucle de contrôle</span><span class="who">ARGUS</span>
+    <div class="check" aria-hidden="true"><svg viewBox="0 0 50 50"><path d="M10 26 L21 37 L41 13"/></svg></div>
+    <div class="desks"><div class="desk" style="--c:var(--green)"><div class="agent"></div><div class="table"><i></i><i></i></div><small>Vérificateur</small></div></div>
+    <div class="cards"></div>
+  </div>
+
+  <div class="room brief" data-stages="brief">
+    <span class="tag">Pôle brief</span><span class="who">NOVA</span>
+    <div class="desks"><div class="desk" style="--c:var(--pink)"><div class="agent"></div><div class="table"><i></i><i></i></div><small>Brief</small></div></div>
+    <div class="cards"></div>
+  </div>
+
+  <div class="room contenu" data-stages="build">
+    <span class="tag">Pôles contenu & build</span><span class="who">PLUME · FORGE</span>
+    <div class="desks">
+      <div class="desk" style="--c:var(--violet)"><div class="agent"></div><div class="table"><i></i><i></i></div><small>Contenu</small></div>
+      <div class="desk" style="--c:var(--blue)"><div class="agent"></div><div class="table"><i></i><i></i></div><small>Build</small></div>
+    </div>
+    <div class="cards"></div>
+  </div>
+
+  <div class="room build" data-stages="modifs">
+    <span class="tag">Atelier retouches</span><span class="who">PLUME · FORGE</span>
+    <div class="desks"><div class="desk" style="--c:var(--orange)"><div class="agent"></div><div class="table"><i></i><i></i></div><small>Modifs</small></div></div>
+    <div class="cards"></div>
+  </div>
+
+  <div class="room client" data-stages="apercu">
+    <span class="tag">Chez le client</span><span class="who">en attente de retour</span>
+    <div class="desks"><div class="desk" style="--c:#ff7a59"><div class="agent"></div><div class="table"><i></i></div><small>Aperçu envoyé</small></div></div>
+    <div class="cards"></div>
+  </div>
+
+  <div class="room memoire" data-stages="">
+    <span class="tag">Mémoire persistante</span><span class="who">agence/memoire</span>
+    <div class="shelf" id="shelf"></div>
+    <div class="night"><div class="fan" aria-hidden="true"></div><span>Night run : <b>/point-du-jour</b> chaque matin</span></div>
+  </div>
+
+  <div class="room livre" data-stages="livre paye">
+    <span class="tag">Livrés</span><span class="who">en ligne</span>
+    <div class="desks"><div class="desk" style="--c:var(--green)"><div class="agent"></div><div class="table"><i></i></div><small>Publication</small></div></div>
+    <div class="cards"></div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="stat"><small>Clients actifs</small><b id="s-actifs">–</b></div>
+  <div class="stat"><small>En retard</small><b id="s-retard">–</b></div>
+  <div class="stat"><small>Payé</small><b id="s-paye">–</b></div>
+  <div class="stat"><small>En attente</small><b id="s-attente">–</b></div>
+</div>
+
+<div class="board"><table>
+  <thead><tr><th>Client</th><th>Étape</th><th>Formule</th><th>Échéance</th><th>Dernière action</th><th>Site</th></tr></thead>
+  <tbody id="rows"><tr><td colspan="6">Chargement…</td></tr></tbody>
+</table></div>
+<p class="msg" id="msg"></p>
+
+<script>
+const BOOKS = [
+  ['regles.md', 'Règles', 'var(--red)', 64], ['tarifs.md', 'Tarifs', 'var(--yellow)', 54], ['style.md', 'Style', 'var(--violet)', 70],
+  ['lecons.md', 'Leçons apprises', 'var(--green)', 60], ['../../CLAUDE.md', 'CLAUDE.md', 'var(--blue)', 76], ['../../sites/ANNONCE.md', 'Annonce', 'var(--orange)', 50],
+  ['../themes.mjs', 'Thèmes', 'var(--pink)', 58], ['../templates/brief.exemple.json', 'Modèle de brief', '#7fd1ff', 66],
+];
+const shelf = document.getElementById('shelf');
+const REPO = 'https://github.com/matheoguz/matheoguz.github.io/blob/main/agence/memoire/';
+for (const [f, label, c, h] of BOOKS) {
+  const a = document.createElement('a');
+  a.href = new URL(f, REPO).href; a.target = '_blank'; a.rel = 'noopener';
+  a.style.cssText = `height:${h}px;background:${c}`;
+  a.innerHTML = `<span>${label}</span>`;
+  a.setAttribute('aria-label', label);
+  shelf.appendChild(a);
+}
+
+function tick() {
+  const d = new Date();
+  document.getElementById('time').textContent = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('date').textContent = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+tick(); setInterval(tick, 10000);
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const euro = (n) => n.toLocaleString('fr-FR') + ' €';
+const todayISO = new Date().toISOString().slice(0, 10);
+
+function render(data) {
+  const { clients, etapes, genere_le } = data;
+  document.getElementById('gen').textContent = 'mis à jour le ' + new Date(genere_le).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
+  const real = clients.filter((c) => !c.test);
+  const shown = clients; // les clients test restent visibles, en pointillés
+  const late = (c) => c.echeance && c.echeance < todayISO && !['livre', 'paye'].includes(c.statut);
+
+  document.querySelectorAll('.room[data-stages]').forEach((room) => {
+    const stages = room.dataset.stages.split(' ').filter(Boolean);
+    if (!stages.length) return;
+    const here = shown.filter((c) => stages.includes(c.statut));
+    room.classList.toggle('active', here.some((c) => !['apercu', 'livre', 'paye'].includes(c.statut)));
+    const box = room.querySelector('.cards');
+    box.innerHTML = here.length
+      ? here.map((c) => `<span class="chip${c.test ? ' test' : ''}" title="${esc(c.derniere_action)}"><span class="dot" style="background:${late(c) ? 'var(--red)' : c.test ? '#b8bacb' : 'var(--orange)'}"></span>${esc(c.nom)}${c.test ? ' (test)' : ''}</span>`).join('')
+      : '<p class="empty">Personne ici pour l’instant</p>';
+  });
+
+  const todo = [];
+  for (const c of shown) {
+    (c.a_valider || []).forEach((q) => todo.push(`${c.nom} : ${q}`));
+    if (c.statut === 'apercu') todo.push(`${c.nom} : envoyer l’aperçu / attendre son retour`);
+    if (c.statut === 'livre') todo.push(`${c.nom} : vérifier le paiement et demander un avis`);
+    if (late(c)) todo.push(`${c.nom} : EN RETARD (échéance ${c.echeance})`);
+  }
+  document.querySelector('#todo ul').innerHTML = (todo.length ? todo : ['Rien à faire, les agents s’occupent de tout']).map((t) => `<li>${esc(t)}</li>`).join('');
+
+  const base = real;
+  document.getElementById('s-actifs').textContent = base.filter((c) => c.statut !== 'paye').length;
+  document.getElementById('s-retard').textContent = base.filter(late).length;
+  document.getElementById('s-paye').textContent = euro(base.filter((c) => c.statut === 'paye').reduce((s, c) => s + (c.prix || 0), 0));
+  document.getElementById('s-attente').textContent = euro(base.filter((c) => c.statut !== 'paye').reduce((s, c) => s + (c.prix || 0), 0));
+
+  document.getElementById('rows').innerHTML = shown.length
+    ? shown.map((c) => `<tr>
+        <td><b>${esc(c.nom)}</b>${c.test ? ' <span class="pill">test</span>' : ''}<br><span style="color:var(--muted);font-size:.78rem">${esc(c.activite)}</span></td>
+        <td><span class="pill">${esc(etapes[c.statut] || c.statut)}</span></td>
+        <td>${esc(c.formule)} · ${euro(c.prix || 0)}</td>
+        <td class="${late(c) ? 'late' : ''}">${esc(c.echeance || '—')}</td>
+        <td>${esc(c.derniere_action)}<br><span style="color:var(--muted);font-size:.78rem">${esc(c.maj)}</span></td>
+        <td><a href="../../clients/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener">voir →</a></td>
+      </tr>`).join('')
+    : '<tr><td colspan="6">Aucun client pour l’instant. Lance <b>/nouveau-client</b> avec le message d’un client.</td></tr>';
+  if (!real.length) document.getElementById('msg').innerHTML = 'Seul le client fictif <code>exemple-boulangerie-dupont</code> est présent : les compteurs ne comptent que les vrais clients.';
+}
+
+fetch('../../clients/index.json', { cache: 'no-store' })
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById('gen').textContent = 'données indisponibles';
+    document.getElementById('rows').innerHTML = '<tr><td colspan="6">Impossible de lire clients/index.json.</td></tr>';
+    document.getElementById('msg').innerHTML = 'En local, ouvre la page avec un petit serveur : <code>npx serve .</code> à la racine du dépôt, puis <code>/agence/workspace/</code>.';
+  });
+</script>
+</body>
+</html>

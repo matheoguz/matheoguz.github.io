@@ -1,0 +1,30 @@
+{
+  "genere_le": "2026-10-18T20:03:20.721Z",
+  "etapes": {
+    "brief": "Brief reçu",
+    "build": "En construction",
+    "verification": "En vérification",
+    "apercu": "Aperçu envoyé",
+    "modifs": "Modifications",
+    "livre": "Livré",
+    "paye": "Payé"
+  },
+  "clients": [
+    {
+      "slug": "exemple-boulangerie-dupont",
+      "nom": "Boulangerie Dupont",
+      "activite": "Boulangerie artisanale",
+      "theme": "commerce",
+      "statut": "apercu",
+      "formule": "standard",
+      "prix": 150,
+      "plateforme": "comeup",
+      "cree_le": "2026-10-18",
+      "echeance": "2026-10-23",
+      "test": true,
+      "derniere_action": "Vérificateur OK — aperçu prêt à envoyer",
+      "maj": "2026-10-18",
+      "a_valider": []
+    }
+  ]
+}
