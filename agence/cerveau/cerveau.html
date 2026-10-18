@@ -237,8 +237,9 @@ body.open .drawer{transform:none;visibility:visible}
 .lg{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink2);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
 .graph .lg{color:#c9cee3;background:rgba(14,16,26,.72);border-color:rgba(255,255,255,.08);backdrop-filter:blur(6px)}
 .graph .lg i{box-shadow:0 0 6px currentColor}
+.graph .icon[aria-pressed="false"]{opacity:.55}
 .graph .icon{background:rgba(14,16,26,.72);border-color:rgba(255,255,255,.1);color:#c9cee3;backdrop-filter:blur(6px)}
-.graph .aide{position:absolute;left:12px;top:12px;font-size:11.5px;color:#8b91ab;background:rgba(14,16,26,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:4px 8px;max-width:calc(100% - 150px)}
+.graph .aide{position:absolute;left:12px;top:12px;font-size:11.5px;line-height:1.45;color:#8b91ab;background:rgba(14,16,26,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:4px 8px;max-width:min(520px,calc(100% - 210px))}
 .graph canvas:focus-visible{outline:2px solid #8ea2ff;outline-offset:-2px}
 .lg i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .note-panel{max-height:min(760px,calc(100dvh - 140px));overflow:auto}
@@ -386,7 +387,7 @@ const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
 
 // ---------- rendu ----------
 // Icônes Lucide (licence ISC), recopiées dans la page : rien à charger depuis Internet.
-const ICONES = {"bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","calendar":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","circle-dashed":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","flask-conical":"<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\"/><path d=\"M8.5 2h7\"/><path d=\"M7 16h10\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","library":"<path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/>","message-square":"<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/>","minus":"<path d=\"M5 12h14\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\"/><path d=\"M12 12V8\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","scan":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","store":"<path d=\"m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7\"/><path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><path d=\"M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4\"/><path d=\"M2 7h20\"/><path d=\"M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","clipboard-list":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","loader":"<path d=\"M12 2v4\"/><path d=\"m16.2 7.8 2.9-2.9\"/><path d=\"M18 12h4\"/><path d=\"m16.2 16.2 2.9 2.9\"/><path d=\"M12 18v4\"/><path d=\"m4.9 19.1 2.9-2.9\"/><path d=\"M2 12h4\"/><path d=\"m4.9 4.9 2.9 2.9\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","pencil-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/><path d=\"m15 5 3 3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>","file-text":"<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","layers-3":"<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/><path d=\"m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/>","arrow-right":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>"};
+const ICONES = {"rotate-3d":"<path d=\"M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2\"/><path d=\"m15.194 13.707 3.814 1.86-1.86 3.814\"/><path d=\"M19 15.57c-1.804.885-4.274 1.43-7 1.43-5.523 0-10-2.239-10-5s4.477-5 10-5c4.838 0 8.873 1.718 9.8 4\"/>","bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","calendar":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","circle-dashed":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","flask-conical":"<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\"/><path d=\"M8.5 2h7\"/><path d=\"M7 16h10\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","library":"<path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/>","message-square":"<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/>","minus":"<path d=\"M5 12h14\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\"/><path d=\"M12 12V8\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","scan":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","store":"<path d=\"m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7\"/><path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><path d=\"M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4\"/><path d=\"M2 7h20\"/><path d=\"M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","clipboard-list":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","loader":"<path d=\"M12 2v4\"/><path d=\"m16.2 7.8 2.9-2.9\"/><path d=\"M18 12h4\"/><path d=\"m16.2 16.2 2.9 2.9\"/><path d=\"M12 18v4\"/><path d=\"m4.9 19.1 2.9-2.9\"/><path d=\"M2 12h4\"/><path d=\"m4.9 4.9 2.9 2.9\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","pencil-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/><path d=\"m15 5 3 3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>","file-text":"<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","layers-3":"<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/><path d=\"m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/>","arrow-right":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>"};
 function icons() {
   document.querySelectorAll('i[data-lucide]').forEach((el) => {
     const corps = ICONES[el.dataset.lucide] || ICONES.circle;
@@ -672,18 +673,18 @@ function vueCerveau() {
   G.cur = data;
   const sel = data.noeuds.find((n) => n.id === S.note) || data.noeuds[0];
   return `<div class="graph-wrap">
-    <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau : toutes les bases de l'agence reliées. Glissez ou flèches du clavier pour vous déplacer, pincez ou Ctrl + molette pour zoomer, cliquez sur un neurone pour l'ouvrir."></canvas>
-      <div class="aide">Glisser ou 2 doigts : se déplacer · Pincer, Ctrl + molette ou + / − : zoomer · Flèches du clavier</div>
-      <div class="tools"><button class="icon" type="button" id="g-zoomin" aria-label="Zoomer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
+    <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau en 3D : toutes les bases de l'agence reliées. Glissez pour tourner, deux doigts pour vous déplacer, pincez pour avancer, touches ZQSD ou flèches pour voler, cliquez sur un neurone pour y aller et l'ouvrir."></canvas>
+      <div class="aide">Glisser : tourner · 2 doigts ou clic droit : se déplacer · Pincer ou molette : avancer · ZQSD / flèches : voler (E monter, C descendre) · Clic : aller au neurone</div>
+      <div class="tools"><button class="icon" type="button" id="g-auto" aria-label="Rotation automatique" title="Rotation automatique"><i data-lucide="rotate-3d"></i></button><button class="icon" type="button" id="g-zoomin" aria-label="Avancer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
       <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${NEURONE[k]};color:${NEURONE[k]}"></i>${l}</span>`).join('')}</div>
     </div>
     <section class="card note-panel" aria-live="polite">${panneauNoeud(sel)}</section>
   </div>`;
 }
 
-// Moteur physique du graphe (même principe que d3-force / Obsidian) :
-// forces de répulsion, ressorts sur les liens, collisions, gravité douce, vitesse amortie.
-// Pendant qu'on tire un point, la simulation reste « chaude » et tout le réseau suit.
+// Le cerveau en 3D, dessiné à la main sur un canvas (aucune bibliothèque à charger).
+// Physique en 3D (répulsion, ressorts, chaque neurone retenu dans son lobe), caméra libre :
+// tourner autour, avancer dans le cerveau, voler au clavier, aller jusqu'à un neurone.
 function demarrerGraphe() {
   arreterGraphe();
   const cv = $('#cv');
@@ -694,120 +695,125 @@ function demarrerGraphe() {
   G.data = construireGraphe();
   const { noeuds, aretes } = G.data;
   const neuf = !anc.size;
-  // Chaque base est un lobe à une place fixe : à droite l'activité clients, à gauche l'agence.
-  const ANGLES = { entreprise: 0, personne: 50, reponse: 100, agent: 152, memoire: 205, journal: 258, message: 310 };
-  const R_LOBE = 250, R_ZONE = 430;
-  const SOUS = { '': 0, Agence: -1, Projets: 1, Personnes: 2 };
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ----- anatomie : deux hémisphères (clients à droite, agence à gauche) -----
+  const AX = { x: 560, y: 400, z: 470 };
+  const DIR = {
+    entreprise: [0.86, -0.12, 0.48], personne: [0.66, 0.5, 0.22], reponse: [0.5, 0.22, -0.8], message: [0.62, -0.58, -0.3],
+    agent: [-0.66, 0.42, 0.44], memoire: [-0.82, -0.28, -0.24], journal: [-0.28, -0.72, 0.56],
+  };
+  const SOUS = { '': [0, 0, 0], Agence: [0, -0.22, 0.2], Projets: [0, 0.22, 0.12], Personnes: [0, 0.05, -0.28] };
   const regionDe = (n) => (n.id === 'hub:cerveau' ? null : n.hub ? n.g : n.quoi === 'note' ? (n.g === 'agent' ? 'agent' : 'memoire') : n.quoi === 'agent' ? 'agent' : n.quoi === 'jour' ? 'journal' : n.g);
   for (const n of noeuds) {
     n.region = regionDe(n);
-    if (!n.region) { n.ax = 0; n.ay = 0; continue; }
-    const t = (ANGLES[n.region] * Math.PI) / 180, ux = Math.cos(t), uy = Math.sin(t);
-    if (n.hub) { n.ax = ux * R_LOBE; n.ay = uy * R_LOBE; continue; }
-    const off = n.region === 'memoire' && n.data ? (SOUS[n.data.dossier || ''] ?? 0) * 120 : 0;
-    n.ax = ux * R_ZONE - uy * off; n.ay = uy * R_ZONE + ux * off;
+    if (!n.region) { n.ax = n.ay = n.az = 0; continue; }
+    const [dx, dy, dz] = DIR[n.region];
+    const f = n.hub ? 0.5 : 0.84;
+    const [ox, oy, oz] = n.region === 'memoire' && n.data ? SOUS[n.data.dossier || ''] || [0, 0, 0] : [0, 0, 0];
+    n.ax = (dx * f + ox) * AX.x; n.ay = (dy * f + oy) * AX.y; n.az = (dz * f + oz) * AX.z;
   }
   noeuds.forEach((n, i) => {
     const o = anc.get(n.id);
-    if (o) { n.x = o.x; n.y = o.y; n.vx = o.vx || 0; n.vy = o.vy || 0; }
-    else { const a = i * 2.399963; n.x = n.ax + Math.cos(a) * 30; n.y = n.ay + Math.sin(a) * 30; n.vx = n.vy = 0; }
-    n.fx = null; n.fy = null; n.vis = 1;
+    if (o && o.z !== undefined) { n.x = o.x; n.y = o.y; n.z = o.z; }
+    else { const a = i * 2.399963, b = i * 1.3; n.x = n.ax + Math.cos(a) * 40; n.y = n.ay + Math.sin(a) * 40; n.z = n.az + Math.sin(b) * 40; }
+    n.vx = n.vy = n.vz = 0; n.fx = null; n.vis = 1; n.flash = 0;
   });
-  // Ressorts : force plus douce pour les points très reliés (comme d3).
   const degre = new Map(noeuds.map((n) => [n, 0]));
   for (const [a, b] of aretes) { degre.set(a, degre.get(a) + 1); degre.set(b, degre.get(b) + 1); }
   const ressorts = aretes.map(([a, b, hub]) => ({
     a, b, hub,
-    L: a.id === 'hub:cerveau' ? R_LOBE : hub ? R_ZONE - R_LOBE : 90,
-    k: (hub ? 0.5 : a.region === b.region ? 0.3 : 0.04) / Math.min(degre.get(a), degre.get(b)),
+    L: a.id === 'hub:cerveau' ? 260 : hub ? 190 : 110,
+    k: (hub ? 0.4 : a.region === b.region ? 0.3 : 0.03) / Math.min(degre.get(a), degre.get(b)),
     biais: degre.get(a) / (degre.get(a) + degre.get(b)),
   }));
-  const SIM = { alpha: neuf ? 1 : 0.35, alphaCible: 0, alphaMin: 0.002, decroissance: 1 - Math.pow(0.002, 1 / 320), frein: 0.42 };
-  G.sim = SIM;
-  const rBase = (n) => n.r || 5 + Math.min(4, (degre.get(n) || 0) * 0.7);
+  const SIM = { alpha: neuf ? 1 : 0.3, alphaCible: 0, decroissance: 1 - Math.pow(0.002, 1 / 320), frein: 0.42 };
+  const rBase = (n) => n.r || 6 + Math.min(4, (degre.get(n) || 0) * 0.7);
 
   function tic() {
     const a = SIM.alpha;
-    // répulsion entre tous les points (charge négative)
     for (let i = 0; i < noeuds.length; i++) {
       const p = noeuds[i];
       for (let j = i + 1; j < noeuds.length; j++) {
         const q = noeuds[j];
-        let dx = q.x - p.x || (Math.random() - 0.5) * 1e-3, dy = q.y - p.y || (Math.random() - 0.5) * 1e-3;
-        let d2 = dx * dx + dy * dy;
-        if (d2 > 640000) continue;
-        d2 = Math.max(d2, 64);
-        const charge = (p.hub || q.hub ? -900 : -420) * a / d2;
-        p.vx += dx * charge; p.vy += dy * charge; q.vx -= dx * charge; q.vy -= dy * charge;
+        const dx = q.x - p.x || 1e-3, dy = q.y - p.y || 1e-3, dz = q.z - p.z || 1e-3;
+        let d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 > 900000) continue;
+        d2 = Math.max(d2, 100);
+        const c = (p.hub || q.hub ? -1400 : -700) * a / d2;
+        p.vx += dx * c; p.vy += dy * c; p.vz += dz * c; q.vx -= dx * c; q.vy -= dy * c; q.vz -= dz * c;
       }
     }
-    // ressorts
     for (const s of ressorts) {
-      let dx = s.b.x + s.b.vx - s.a.x - s.a.vx || 1e-3, dy = s.b.y + s.b.vy - s.a.y - s.a.vy || 1e-3;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      const f = ((d - s.L) / d) * a * s.k;
-      dx *= f; dy *= f;
-      s.b.vx -= dx * s.biais; s.b.vy -= dy * s.biais;
-      s.a.vx += dx * (1 - s.biais); s.a.vy += dy * (1 - s.biais);
+      let dx = s.b.x - s.a.x || 1e-3, dy = s.b.y - s.a.y || 1e-3, dz = s.b.z - s.a.z || 1e-3;
+      const d = Math.sqrt(dx * dx + dy * dy + dz * dz), f = ((d - s.L) / d) * a * s.k;
+      dx *= f; dy *= f; dz *= f;
+      s.b.vx -= dx * s.biais; s.b.vy -= dy * s.biais; s.b.vz -= dz * s.biais;
+      s.a.vx += dx * (1 - s.biais); s.a.vy += dy * (1 - s.biais); s.a.vz += dz * (1 - s.biais);
     }
-    // chaque neurone est retenu dans son lobe
-    for (const n of noeuds) { const k = n.id === 'hub:cerveau' ? 0.2 : n.hub ? 0.08 : 0.035; n.vx += (n.ax - n.x) * k * a * 3; n.vy += (n.ay - n.y) * k * a * 3; }
-    // collisions
-    for (let i = 0; i < noeuds.length; i++) {
-      const p = noeuds[i], rp = rBase(p) + 10;
-      for (let j = i + 1; j < noeuds.length; j++) {
-        const q = noeuds[j], rq = rBase(q) + 10;
-        const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1e-3, min = rp + rq;
-        if (d < min) { const f = ((min - d) / d) * 0.5 * 0.7; p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f; }
-      }
-    }
-    // intégration
     for (const n of noeuds) {
-      if (n.fx !== null) { n.x = n.fx; n.y = n.fy; n.vx = n.vy = 0; continue; }
-      n.vx *= 1 - SIM.frein; n.vy *= 1 - SIM.frein;
-      n.x += n.vx; n.y += n.vy;
+      const k = (n.id === 'hub:cerveau' ? 0.6 : n.hub ? 0.24 : 0.1) * a;
+      n.vx += (n.ax - n.x) * k; n.vy += (n.ay - n.y) * k; n.vz += (n.az - n.z) * k;
+    }
+    for (const n of noeuds) {
+      if (n.fx !== null) { n.x = n.fx; n.y = n.fy; n.z = n.fz; n.vx = n.vy = n.vz = 0; continue; }
+      n.vx *= 1 - SIM.frein; n.vy *= 1 - SIM.frein; n.vz *= 1 - SIM.frein;
+      n.x += n.vx; n.y += n.vy; n.z += n.vz;
     }
     SIM.alpha += (SIM.alphaCible - SIM.alpha) * SIM.decroissance;
   }
+  if (neuf) for (let i = 0; i < 260; i++) tic();
 
-  // ----- caméra : zoom vers la souris, élan, animations -----
-  let W = 0, H = 0, dpr = 1;
-  const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+  // ----- surface du cerveau : nuage de points sur deux hémisphères plissés -----
+  const surface = [];
+  for (let i = 0; i < 2600; i++) {
+    const u = Math.random() * 2 - 1, th = Math.random() * 6.283, sq = Math.sqrt(1 - u * u);
+    let x = sq * Math.cos(th), y = u, z = sq * Math.sin(th);
+    if (Math.abs(x) < 0.05) continue; // scissure entre les deux hémisphères
+    const pli = 1 + 0.07 * Math.sin(9 * Math.atan2(z, x) + 6 * y) * Math.cos(7 * y + 3 * z);
+    const aplati = y > 0.55 ? 0.85 : 1; // base plus plate
+    surface.push({ x: x * AX.x * 1.18 * pli + Math.sign(x) * 18, y: y * AX.y * 1.05 * pli * aplati, z: z * AX.z * 1.2 * pli, s: Math.random() });
+  }
+  for (let i = 0; i < 260; i++) { const t = Math.random() * 6.283, h = Math.random(); surface.push({ x: Math.cos(t) * 60 * (1 - h * 0.3), y: AX.y * (0.9 + h * 0.55), z: -120 + Math.sin(t) * 60, s: Math.random() }); } // tronc cérébral
+
+  // ----- caméra -----
+  let W = 0, H = 0, dpr = 1, F = 800;
+  const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; F = Math.min(W, H) * 1.05; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
   taille();
   G.ro = new ResizeObserver(taille);
   G.ro.observe(box);
-  const cam = G.cam;
-  const cible = { x: cam.x, y: cam.y, k: cam.k, active: false };
-  const elan = { vx: 0, vy: 0 };
-  const ecran = (x, y) => [W / 2 + (x + cam.x) * cam.k, H / 2 + (y + cam.y) * cam.k];
-  const monde = (px, py) => [(px - W / 2) / cam.k - cam.x, (py - H / 2) / cam.k - cam.y];
-  function viserCam(x, y, k) { cible.x = x; cible.y = y; cible.k = k; cible.active = true; elan.vx = elan.vy = 0; }
-  function cadrage() {
-    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-    for (const n of noeuds) { x0 = Math.min(x0, n.x); x1 = Math.max(x1, n.x); y0 = Math.min(y0, n.y); y1 = Math.max(y1, n.y); }
-    x0 -= 150; x1 += 150; y0 -= 90; y1 += 90; // place pour les noms des lobes
-    const k = Math.max(0.3, Math.min(1.5, Math.min((W - 100) / Math.max(1, x1 - x0), (H - 170) / Math.max(1, y1 - y0))));
-    return { x: -(x0 + x1) / 2, y: -(y0 + y1) / 2 - 25 / k, k };
+  const VUE = { tx: 0, ty: 0, tz: 0, yaw: 0.12, pitch: -0.2, D: 1550 };
+  const cam = G.cam3 && !neuf ? G.cam3 : { ...VUE };
+  G.cam3 = cam;
+  const cible = { actif: false, ...cam };
+  const elan = { yaw: 0, pitch: 0 };
+  let derniereAction = performance.now();
+  const touches = new Set();
+  const base3 = () => {
+    const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw), cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+    return { cy, sy, cp, sp, droite: [cy, 0, -sy], haut: [-sp * sy, cp, -sp * cy], avant: [cp * sy, sp, cp * cy] };
+  };
+  let B = base3();
+  function projeter(x, y, z) {
+    const qx = x - cam.tx, qy = y - cam.ty, qz = z - cam.tz;
+    const x1 = qx * B.cy - qz * B.sy, z1 = qx * B.sy + qz * B.cy;
+    const y2 = qy * B.cp - z1 * B.sp, z2 = qy * B.sp + z1 * B.cp;
+    const zc = z2 + cam.D;
+    if (zc < 30) return null;
+    const e = F / zc;
+    return [W / 2 + x1 * e, H / 2 + y2 * e, zc, e];
   }
-  function zoomVers(px, py, k) {
-    k = Math.max(0.25, Math.min(4, k));
-    const [wx, wy] = monde(px, py);
-    // garder le point sous la souris immobile
-    const nx = (px - W / 2) / k - wx, ny = (py - H / 2) / k - wy;
-    viserCam(nx, ny, k);
+  function deprojeter(px, py, zc) {
+    const cx = ((px - W / 2) * zc) / F, cy = ((py - H / 2) * zc) / F, cz = zc - cam.D;
+    return [cam.tx + cx * B.droite[0] + cy * B.haut[0] + cz * B.avant[0], cam.ty + cx * B.droite[1] + cy * B.haut[1] + cz * B.avant[1], cam.tz + cx * B.droite[2] + cy * B.haut[2] + cz * B.avant[2]];
   }
-  if (neuf) {
-    for (let i = 0; i < 300; i++) tic();
-    Object.assign(cam, cadrage());
-    SIM.alpha = 0.08;
-  }
+  const viser = (o) => { Object.assign(cible, cam, o, { actif: true }); };
 
-  // ----- dessin -----
+  // ----- décor et neurones -----
+  const hash = (t) => [...t].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7);
+  const rgba = (hex, a) => { const v = parseInt(hex.slice(1), 16); return `rgba(${v >> 16 & 255},${v >> 8 & 255},${v & 255},${a})`; };
   const css = getComputedStyle(document.documentElement);
-  const tok = (n) => css.getPropertyValue(n).trim();
-  const T = { ink: tok('--ink'), ink2: tok('--ink2'), muted: tok('--muted'), line: tok('--line2'), panel: tok('--panel'), accent: tok('--accent'), sans: tok('--sans') };
-  const couleur = (n) => (n.g === 'cerveau' ? T.ink : GROUPES[n.g][1]);
-  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SANS = css.getPropertyValue('--sans').trim();
   const ICO = {};
   for (const n of noeuds) if (n.icone && !ICO[n.icone]) {
     const img = new Image();
@@ -817,227 +823,237 @@ function demarrerGraphe() {
   for (const n of noeuds) {
     let h = [...n.id].reduce((a, c) => (a * 33 + c.charCodeAt(0)) >>> 0, 5381);
     const alea = () => ((h = (h * 1664525 + 1013904223) >>> 0) / 4294967296);
-    const nb = n.hub ? 9 : 4 + ((h >>> 5) % 3);
-    const depart = alea() * 6.283;
+    const nb = n.hub ? 9 : 4 + ((h >>> 5) % 3), depart = alea() * 6.283;
     n.dend = Array.from({ length: nb }, (_, k) => ({ a: depart + (k / nb) * 6.283 + (alea() - 0.5) * 0.5, l: (n.hub ? 0.55 : 1.1) + alea() * (n.hub ? 0.45 : 1.1), c: (alea() - 0.5) * 0.7, b: alea() < 0.55 ? (alea() < 0.5 ? -1 : 1) * (0.35 + alea() * 0.35) : 0, ph: alea() * 6.283 }));
   }
-  // ----- décor : poussière neuronale en profondeur (parallaxe) -----
-  const hash = (t) => [...t].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7);
-  const poussiere = Array.from({ length: 260 }, (_, i) => ({ x: (Math.random() - 0.5) * 3200, y: (Math.random() - 0.5) * 2400, z: 0.15 + Math.random() * 0.55, r: Math.random() * 1.3 + 0.3, ph: Math.random() * 6.28 }));
-  const courbe = new Map(aretes.map(([a, b]) => [a.id + '>' + b.id, ((hash(a.id + b.id) & 1) ? 1 : -1) * (0.12 + ((hash(b.id) >>> 3) % 10) / 100)]));
+  // une synapse suit la courbure du cerveau : son milieu est poussé vers l'extérieur
+  const milieu = (p, q) => { const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2, mz = (p.z + q.z) / 2, l = Math.hypot(mx, my, mz) || 1, d = Math.hypot(q.x - p.x, q.y - p.y, q.z - p.z) * 0.18; return [mx + (mx / l) * d, my + (my / l) * d, mz + (mz / l) * d]; };
+  const surCourbe = (p, m, q, t) => { const u = 1 - t; return [u * u * p.x + 2 * u * t * m[0] + t * t * q.x, u * u * p.y + 2 * u * t * m[1] + t * t * q.y, u * u * p.z + 2 * u * t * m[2] + t * t * q.z]; };
   const impulsions = [];
   let prochaine = 0;
-  const pointCourbe = (p, q, c, t) => {
-    const mx = (p.x + q.x) / 2 - (q.y - p.y) * c, my = (p.y + q.y) / 2 + (q.x - p.x) * c;
-    const u = 1 - t;
-    return [u * u * p.x + 2 * u * t * mx + t * t * q.x, u * u * p.y + 2 * u * t * my + t * t * q.y];
-  };
-  const rgba = (hex, a) => { const v = parseInt(hex.slice(1), 16); return `rgba(${v >> 16 & 255},${v >> 8 & 255},${v & 255},${a})`; };
 
   function dessiner(t) {
+    B = base3();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // fond : profondeur sombre légèrement bleutée
-    const fond = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.75);
-    fond.addColorStop(0, '#0d1020'); fond.addColorStop(1, '#05060b');
+    const fond = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.8);
+    fond.addColorStop(0, '#0e1124'); fond.addColorStop(1, '#04050a');
     ctx.fillStyle = fond; ctx.fillRect(0, 0, W, H);
-    for (const d of poussiere) {
-      const x = W / 2 + (d.x + cam.x * d.z * 3) * cam.k * d.z, y = H / 2 + (d.y + cam.y * d.z * 3) * cam.k * d.z;
-      if (x < -5 || y < -5 || x > W + 5 || y > H + 5) continue;
-      ctx.globalAlpha = (0.18 + 0.22 * Math.sin(t / 1400 + d.ph) ** 2) * d.z * 1.6;
-      ctx.fillStyle = '#9fb0ff';
-      ctx.beginPath(); ctx.arc(x, y, d.r * Math.max(0.6, cam.k * d.z * 1.6), 0, 6.283); ctx.fill();
+    const brouillard = (zc) => Math.max(0.12, Math.min(1, 1.55 - zc / (cam.D * 1.25)));
+
+    // surface du cerveau
+    ctx.fillStyle = '#8fa2ff';
+    for (const p of surface) {
+      const pr = projeter(p.x, p.y, p.z);
+      if (!pr) continue;
+      const [x, y, zc, e] = pr;
+      if (x < -4 || y < -4 || x > W + 4 || y > H + 4) continue;
+      ctx.globalAlpha = (0.16 + 0.34 * Math.sin(t / 1600 + p.s * 30) ** 2) * brouillard(zc);
+      const r = Math.max(0.7, 2.1 * e);
+      ctx.fillRect(x - r / 2, y - r / 2, r, r);
     }
     ctx.globalAlpha = 1;
 
+    // projections des neurones
+    const P = new Map();
+    for (const n of noeuds) { const pr = projeter(n.x, n.y, n.z); if (pr) P.set(n, pr); }
     const foyer = G.survol?.id || (S.note !== 'hub:cerveau' ? S.note : null);
     const voisins = new Set();
     if (foyer) for (const [p, q] of aretes) { if (p.id === foyer) voisins.add(q.id); if (q.id === foyer) voisins.add(p.id); }
-    for (const n of noeuds) { const but = !foyer || n.id === foyer || voisins.has(n.id) || n.hub ? 1 : 0.3; n.vis += (but - n.vis) * 0.15; n.flash = (n.flash || 0) * 0.94; }
+    for (const n of noeuds) { const but = !foyer || n.id === foyer || voisins.has(n.id) || n.hub ? 1 : 0.3; n.vis += (but - n.vis) * 0.15; n.flash *= 0.94; }
 
-    // lobes : une zone lumineuse par base, avec son nom
+    // lobes : halo de zone + nom
     for (const h of noeuds.filter((n) => n.hub && n.region)) {
-      const membres = noeuds.filter((n) => n.region === h.region);
-      let cx = 0, cy = 0;
-      for (const m of membres) { cx += m.x; cy += m.y; }
-      cx /= membres.length; cy /= membres.length;
-      let rr = 60;
-      for (const m of membres) rr = Math.max(rr, Math.hypot(m.x - cx, m.y - cy) + 55);
-      const [sx, sy] = ecran(cx, cy), sr = rr * cam.k;
-      const zone = ctx.createRadialGradient(sx, sy, sr * 0.1, sx, sy, sr);
-      zone.addColorStop(0, rgba(NEURONE[h.g], 0.09 * h.vis)); zone.addColorStop(0.7, rgba(NEURONE[h.g], 0.04 * h.vis)); zone.addColorStop(1, rgba(NEURONE[h.g], 0));
-      ctx.fillStyle = zone; ctx.beginPath(); ctx.arc(sx, sy, sr, 0, 6.283); ctx.fill();
-      const t = Math.atan2(cy, cx), lx = cx + Math.cos(t) * (rr + 6), ly = cy + Math.sin(t) * (rr + 6) + 4;
-      const [tx, ty] = ecran(lx, ly);
-      const nb = membres.length - 1;
-      ctx.font = `600 ${Math.max(10, Math.min(13, 12 * cam.k))}px ${T.sans}`;
-      ctx.textAlign = Math.cos(t) > 0.3 ? 'left' : Math.cos(t) < -0.3 ? 'right' : 'center';
-      ctx.fillStyle = rgba(NEURONE[h.g], 0.55 * h.vis);
-      ctx.fillText(`${h.titre.toUpperCase()}  ${nb}`, tx, ty);
+      const pr = projeter(h.ax * 1.55, h.ay * 1.55, h.az * 1.55);
+      const membres = noeuds.filter((n) => n.region === h.region).length - 1;
+      if (!pr) continue;
+      const [x, y, zc, e] = pr;
+      const R = 330 * e;
+      const z = ctx.createRadialGradient(x, y, 0, x, y, R);
+      z.addColorStop(0, rgba(NEURONE[h.g], 0.1 * brouillard(zc))); z.addColorStop(1, rgba(NEURONE[h.g], 0));
+      ctx.fillStyle = z; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.283); ctx.fill();
+      const [lx, ly] = projeter(h.ax * 2.25, h.ay * 2.25, h.az * 2.25) || [x, y];
+      ctx.font = `600 ${Math.max(10, Math.min(14, 13 * e * 2))}px ${SANS}`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = rgba(NEURONE[h.g], 0.6 * brouillard(zc));
+      ctx.fillText(`${h.titre.toUpperCase()}  ${membres}`, lx, ly);
     }
+
     ctx.globalCompositeOperation = 'lighter';
-    // synapses : liaisons courbes comme des dendrites
+    // synapses
     for (const [p, q, hub] of aretes) {
-      const c = courbe.get(p.id + '>' + q.id) || 0.1;
-      const [x1, y1] = ecran(p.x, p.y), [x2, y2] = ecran(q.x, q.y);
-      const mx = (p.x + q.x) / 2 - (q.y - p.y) * c, my = (p.y + q.y) / 2 + (q.x - p.x) * c;
-      const [cx, cy] = ecran(mx, my);
+      const a = P.get(p), b = P.get(q);
+      if (!a || !b) continue;
+      const m = milieu(p, q), pm = projeter(m[0], m[1], m[2]);
+      if (!pm) continue;
       const fort = foyer && (p.id === foyer || q.id === foyer);
       const col = NEURONE[(fort ? (p.id === foyer ? q : p) : p.hub ? q : p).g];
-      ctx.strokeStyle = rgba(col, fort ? 0.75 : Math.min(p.vis, q.vis) * (hub ? 0.32 : 0.2));
-      ctx.lineWidth = (fort ? 1.6 : hub ? 1.1 : 0.8) * Math.max(0.7, Math.min(1.6, cam.k));
-      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.quadraticCurveTo(cx, cy, x2, y2); ctx.stroke();
+      ctx.strokeStyle = rgba(col, (fort ? 0.8 : Math.min(p.vis, q.vis) * (hub ? 0.34 : 0.22)) * brouillard((a[2] + b[2]) / 2));
+      ctx.lineWidth = Math.max(0.6, (fort ? 2.2 : hub ? 1.5 : 1.1) * ((a[3] + b[3]) / 2) * 1.6);
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(2 * pm[0] - (a[0] + b[0]) / 2, 2 * pm[1] - (a[1] + b[1]) / 2, b[0], b[1]); ctx.stroke();
     }
-    // impulsions électriques qui voyagent d'un neurone à l'autre
+    // impulsions
     if (!reduit && t > prochaine && aretes.length) {
       const [p, q] = aretes[(Math.random() * aretes.length) | 0];
       const sens = Math.random() < 0.5;
-      impulsions.push({ a: sens ? p : q, b: sens ? q : p, c: (courbe.get(p.id + '>' + q.id) || 0.1) * (sens ? 1 : -1), t0: t, d: 700 + Math.random() * 700 });
-      prochaine = t + 90 + Math.random() * 260;
+      impulsions.push({ a: sens ? p : q, b: sens ? q : p, t0: t, d: 800 + Math.random() * 800 });
+      prochaine = t + 70 + Math.random() * 220;
     }
     for (let k = impulsions.length - 1; k >= 0; k--) {
       const im = impulsions[k], u = (t - im.t0) / im.d;
       if (u >= 1) { im.b.flash = 1; impulsions.splice(k, 1); continue; }
-      const col = NEURONE[im.a.g];
-      for (let s = 0; s < 6; s++) {
-        const uu = Math.max(0, u - s * 0.025);
-        const [wx, wy] = pointCourbe(im.a, im.b, im.c, uu);
-        const [x, y] = ecran(wx, wy);
-        ctx.fillStyle = rgba(col, (0.9 - s * 0.14) * Math.min(im.a.vis, im.b.vis));
-        ctx.beginPath(); ctx.arc(x, y, (2.2 - s * 0.25) * Math.max(0.7, Math.sqrt(cam.k)), 0, 6.283); ctx.fill();
+      const m = milieu(im.a, im.b), col = NEURONE[im.a.g];
+      for (let s2 = 0; s2 < 7; s2++) {
+        const pt = surCourbe(im.a, m, im.b, Math.max(0, u - s2 * 0.022));
+        const pr = projeter(pt[0], pt[1], pt[2]);
+        if (!pr) continue;
+        ctx.fillStyle = rgba(col, (0.95 - s2 * 0.13) * Math.min(im.a.vis, im.b.vis) * brouillard(pr[2]));
+        ctx.beginPath(); ctx.arc(pr[0], pr[1], Math.max(0.8, (3.2 - s2 * 0.38) * pr[3] * 1.6), 0, 6.283); ctx.fill();
       }
     }
-    // neurones : corps cellulaire, dendrites ramifiées, halo ; les lobes sont de grosses cellules avec leur icône
-    const ordre = noeuds.slice().sort((a, b) => (a.hub - b.hub) || (a.id === foyer) - (b.id === foyer));
+    // neurones, du plus loin au plus proche
+    const ordre = noeuds.filter((n) => P.has(n)).sort((a, b) => P.get(b)[2] - P.get(a)[2]);
     for (const n of ordre) {
-      const [x, y] = ecran(n.x, n.y);
-      if (x < -90 || y < -90 || x > W + 90 || y > H + 90) continue;
-      const col = NEURONE[n.g];
+      const [x, y, zc, e] = P.get(n);
+      if (x < -120 || y < -120 || x > W + 120 || y > H + 120) continue;
+      const col = NEURONE[n.g], br = brouillard(zc);
       const pulse = n.hub ? 1 + 0.05 * Math.sin(t / 900 + hash(n.id)) : 1;
-      const r = rBase(n) * Math.max(0.6, Math.sqrt(cam.k)) * pulse * (n === G.survol ? 1.15 : 1);
+      const r = Math.max(1.5, rBase(n) * e * 1.7 * pulse * (n === G.survol ? 1.15 : 1));
+      const v = n.vis * br;
       const eclat = 0.35 + n.flash * 0.65 + (n.id === foyer ? 0.35 : 0);
       const R = r * (n.hub ? 3.6 : 3.2);
       const halo = ctx.createRadialGradient(x, y, 0, x, y, R);
-      halo.addColorStop(0, rgba(col, 0.5 * eclat * n.vis)); halo.addColorStop(1, rgba(col, 0));
+      halo.addColorStop(0, rgba(col, 0.5 * eclat * v)); halo.addColorStop(1, rgba(col, 0));
       ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.283); ctx.fill();
-      // dendrites
       ctx.lineCap = 'round';
       for (const d of n.dend) {
-        const ondule = Math.sin(t / 1100 + d.ph) * 0.08;
-        const a0 = d.a + ondule, L = r * d.l;
+        const a0 = d.a + Math.sin(t / 1100 + d.ph) * 0.08 + cam.yaw * 0.3, L = r * d.l;
         const x0 = x + Math.cos(a0) * r * 0.85, y0 = y + Math.sin(a0) * r * 0.85;
         const x1 = x + Math.cos(a0 + d.c) * (r + L), y1 = y + Math.sin(a0 + d.c) * (r + L);
         const xm = x + Math.cos(a0 + d.c * 0.4) * (r + L * 0.55), ym = y + Math.sin(a0 + d.c * 0.4) * (r + L * 0.55);
-        ctx.strokeStyle = rgba(col, (0.35 + n.flash * 0.4) * n.vis);
-        ctx.lineWidth = Math.max(0.8, r * 0.28);
+        ctx.strokeStyle = rgba(col, (0.35 + n.flash * 0.4) * v);
+        ctx.lineWidth = Math.max(0.6, r * 0.28);
         ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(xm, ym, x1, y1); ctx.stroke();
-        if (d.b) {
-          const bx = x + Math.cos(a0 + d.c * 0.5 + d.b) * (r + L * 0.95), by = y + Math.sin(a0 + d.c * 0.5 + d.b) * (r + L * 0.95);
-          ctx.lineWidth = Math.max(0.6, r * 0.16);
-          ctx.beginPath(); ctx.moveTo(xm, ym); ctx.lineTo(bx, by); ctx.stroke();
-        }
+        if (d.b) { const bx = x + Math.cos(a0 + d.c * 0.5 + d.b) * (r + L * 0.95), by = y + Math.sin(a0 + d.c * 0.5 + d.b) * (r + L * 0.95); ctx.lineWidth = Math.max(0.5, r * 0.16); ctx.beginPath(); ctx.moveTo(xm, ym); ctx.lineTo(bx, by); ctx.stroke(); }
       }
       if (n.hub) {
-        // membrane + noyau sombre + icône
-        ctx.fillStyle = rgba('#0a0d1a', 0.92 * Math.max(0.6, n.vis));
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
-        ctx.strokeStyle = rgba(col, 0.95 * n.vis); ctx.lineWidth = Math.max(1.5, r * 0.13);
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.stroke();
-        ctx.strokeStyle = rgba(col, 0.3 * n.vis); ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(x, y, r * 1.28, 0, 6.283); ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = rgba('#0a0d1a', 0.92 * Math.max(0.5, v)); ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.strokeStyle = rgba(col, 0.95 * v); ctx.lineWidth = Math.max(1.2, r * 0.13); ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.stroke();
+        ctx.strokeStyle = rgba(col, 0.3 * v); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r * 1.28, 0, 6.283); ctx.stroke();
         const img = ICO[n.icone];
-        if (img?.complete && img.naturalWidth) { const s2 = r * 1.05; ctx.globalAlpha = n.vis; ctx.drawImage(img, x - s2 / 2, y - s2 / 2, s2, s2); ctx.globalAlpha = 1; }
+        if (img?.complete && img.naturalWidth) { const s2 = r * 1.05; ctx.globalAlpha = v; ctx.drawImage(img, x - s2 / 2, y - s2 / 2, s2, s2); ctx.globalAlpha = 1; }
       } else {
         const noyau = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
-        noyau.addColorStop(0, rgba('#ffffff', 0.95 * n.vis)); noyau.addColorStop(0.4, rgba(col, n.vis)); noyau.addColorStop(1, rgba(col, 0.7 * n.vis));
+        noyau.addColorStop(0, rgba('#ffffff', 0.95 * v)); noyau.addColorStop(0.4, rgba(col, v)); noyau.addColorStop(1, rgba(col, 0.7 * v));
         ctx.fillStyle = noyau; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
       }
+      n.ecran = [x, y, r];
     }
     ctx.globalCompositeOperation = 'source-over';
-    // anneau du neurone choisi + noms
+    // noms
     for (const n of ordre) {
-      const [x, y] = ecran(n.x, n.y);
-      if (x < -80 || y < -80 || x > W + 80 || y > H + 80) continue;
-      const r = rBase(n) * Math.max(0.6, Math.sqrt(cam.k));
+      if (!n.ecran) continue;
+      const [x, y, r] = n.ecran, [, , zc] = P.get(n);
+      if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue;
       if (n.id === S.note) { ctx.strokeStyle = rgba('#ffffff', 0.5 + 0.3 * Math.sin(t / 300)); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r + 6 + 2 * Math.sin(t / 300), 0, 6.283); ctx.stroke(); }
-      const montrer = n.hub || n.id === foyer || voisins.has(n.id) || cam.k > 1.05 || (noeuds.length < 70 && cam.k > 0.34);
+      const montrer = n.hub || n.id === foyer || voisins.has(n.id) || r > 5.5;
       if (!montrer) continue;
-      ctx.font = `${n.hub ? 600 : 500} ${n.id === 'hub:cerveau' ? 14 : n.hub ? 13 : 11.5}px ${T.sans}`;
+      const fs = n.id === 'hub:cerveau' ? 15 : n.hub ? 13 : Math.max(10, Math.min(13, r * 1.6));
+      ctx.font = `${n.hub ? 600 : 500} ${fs}px ${SANS}`;
       ctx.textAlign = 'center';
       const lab = n.titre.length > 30 ? n.titre.slice(0, 29) + '…' : n.titre;
-      const ly = y + r * (n.hub ? 1.5 : 1) + (n.hub ? 18 : 16);
-      ctx.globalAlpha = Math.max(0.35, n.vis);
-      ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = 'rgba(6,7,12,.85)'; ctx.strokeText(lab, x, ly);
+      const ly = y + r * (n.hub ? 1.5 : 1) + fs + 4;
+      ctx.globalAlpha = Math.max(0.3, n.vis * brouillard(zc));
+      ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = 'rgba(5,6,12,.85)'; ctx.strokeText(lab, x, ly);
       ctx.fillStyle = n.hub || n.id === foyer ? '#f1f3ff' : '#b9c0dc'; ctx.fillText(lab, x, ly);
       ctx.globalAlpha = 1;
     }
+    for (const n of noeuds) if (!P.has(n)) n.ecran = null;
   }
 
+  // ----- boucle -----
   const boucle = () => {
-    if (!reduit) { SIM.alpha = Math.max(SIM.alpha, 0.012); for (const n of noeuds) if (n.fx === null) { n.vx += (Math.random() - 0.5) * 0.06; n.vy += (Math.random() - 0.5) * 0.06; } }
-    if (SIM.alpha > SIM.alphaMin || SIM.alphaCible > 0) tic();
-    if (cible.active) {
-      const t = reduit ? 1 : 0.16;
-      cam.x += (cible.x - cam.x) * t; cam.y += (cible.y - cam.y) * t; cam.k += (cible.k - cam.k) * t;
-      if (Math.abs(cible.k - cam.k) < 1e-3 && Math.abs(cible.x - cam.x) < 0.05 && Math.abs(cible.y - cam.y) < 0.05) cible.active = false;
-    } else if (!G.enGeste && Math.abs(elan.vx) + Math.abs(elan.vy) > 0.02) {
-      cam.x += elan.vx / cam.k; cam.y += elan.vy / cam.k; elan.vx *= 0.92; elan.vy *= 0.92;
+    const now = performance.now();
+    if (!reduit) { SIM.alpha = Math.max(SIM.alpha, 0.01); for (const n of noeuds) if (n.fx === null) { n.vx += (Math.random() - 0.5) * 0.08; n.vy += (Math.random() - 0.5) * 0.08; n.vz += (Math.random() - 0.5) * 0.08; } }
+    tic();
+    // vol au clavier
+    if (touches.size) {
+      const v = cam.D * 0.012 + 4;
+      const av = (touches.has('avant') ? 1 : 0) - (touches.has('arriere') ? 1 : 0), dr = (touches.has('droite') ? 1 : 0) - (touches.has('gauche') ? 1 : 0), ht = (touches.has('bas') ? 1 : 0) - (touches.has('haut') ? 1 : 0);
+      cam.tx += (B.avant[0] * av + B.droite[0] * dr + B.haut[0] * ht) * v;
+      cam.ty += (B.avant[1] * av + B.droite[1] * dr + B.haut[1] * ht) * v;
+      cam.tz += (B.avant[2] * av + B.droite[2] * dr + B.haut[2] * ht) * v;
+      cible.actif = false; derniereAction = now;
     }
-    dessiner(performance.now());
+    if (cible.actif) {
+      const k = reduit ? 1 : 0.07;
+      for (const c of ['tx', 'ty', 'tz', 'yaw', 'pitch', 'D']) cam[c] += (cible[c] - cam[c]) * k;
+      if (Math.abs(cible.D - cam.D) < 0.5 && Math.abs(cible.tx - cam.tx) < 0.5 && Math.abs(cible.yaw - cam.yaw) < 1e-3) cible.actif = false;
+    } else if (!G.enGeste) {
+      cam.yaw += elan.yaw; cam.pitch = Math.max(-1.45, Math.min(1.45, cam.pitch + elan.pitch));
+      elan.yaw *= 0.93; elan.pitch *= 0.93;
+      // visite automatique : le cerveau tourne lentement quand on ne touche à rien
+      if (!reduit && G.auto !== false && now - derniereAction > 5000) cam.yaw += 0.0012;
+    }
+    dessiner(now);
     G.raf = requestAnimationFrame(boucle);
   };
   boucle();
 
-  // ----- interactions : souris, doigt, pincement -----
+  // ----- interactions -----
   const pointeurs = new Map();
   let geste = null;
   const pos = (ev) => { const r = cv.getBoundingClientRect(); return [ev.clientX - r.left, ev.clientY - r.top]; };
   const trouver = (px, py) => {
     let best = null, bd = 1e9;
-    for (const n of noeuds) { const [x, y] = ecran(n.x, n.y); const d = Math.hypot(x - px, y - py); const r = rBase(n) * Math.max(0.6, Math.sqrt(cam.k)) + 8; if (d < r && d < bd) { best = n; bd = d; } }
+    for (const n of noeuds) { if (!n.ecran) continue; const [x, y, r] = n.ecran; const d = Math.hypot(x - px, y - py); if (d < r + 9 && d < bd) { best = n; bd = d; } }
     return best;
   };
+  const pan = (dx, dy) => {
+    const e = cam.D / F;
+    cam.tx -= (B.droite[0] * dx + B.haut[0] * dy) * e; cam.ty -= (B.droite[1] * dx + B.haut[1] * dy) * e; cam.tz -= (B.droite[2] * dx + B.haut[2] * dy) * e;
+  };
+  const dolly = (f) => { cam.D = Math.max(120, Math.min(4200, cam.D * f)); };
+  cv.addEventListener('contextmenu', (ev) => ev.preventDefault());
   cv.addEventListener('pointerdown', (ev) => {
-    cv.setPointerCapture(ev.pointerId);
-    cv.focus({ preventScroll: true });
+    cv.setPointerCapture(ev.pointerId); cv.focus({ preventScroll: true });
     const [px, py] = pos(ev);
     pointeurs.set(ev.pointerId, [px, py]);
-    cible.active = false;
+    cible.actif = false; derniereAction = performance.now(); G.enGeste = true; elan.yaw = elan.pitch = 0;
     if (pointeurs.size === 2) {
       const [[ax, ay], [bx, by]] = [...pointeurs.values()];
-      if (geste?.n) { geste.n.fx = geste.n.fy = null; SIM.alphaCible = 0; }
-      geste = { pince: true, d: Math.hypot(bx - ax, by - ay), k: cam.k, cx: (ax + bx) / 2, cy: (ay + by) / 2 };
+      if (geste?.n) { geste.n.fx = null; SIM.alphaCible = 0; }
+      geste = { pince: true, d: Math.hypot(bx - ax, by - ay), D: cam.D, cx: (ax + bx) / 2, cy: (ay + by) / 2 };
       return;
     }
-    const n = trouver(px, py);
-    geste = { n, px, py, lx: px, ly: py, t: performance.now(), bouge: false };
-    G.enGeste = true;
-    elan.vx = elan.vy = 0;
-    if (n) { const [wx, wy] = monde(px, py); geste.ox = n.x - wx; geste.oy = n.y - wy; }
+    const n = ev.button === 0 && !ev.shiftKey ? trouver(px, py) : null;
+    geste = { n, px, py, lx: px, ly: py, bouge: false, mode: n ? 'neurone' : ev.button === 2 || ev.shiftKey ? 'pan' : 'tourner' };
     cv.classList.add('drag');
   });
   cv.addEventListener('pointermove', (ev) => {
     const [px, py] = pos(ev);
     if (pointeurs.has(ev.pointerId)) pointeurs.set(ev.pointerId, [px, py]);
-    if (!geste) { const n = trouver(px, py); if (n !== G.survol) G.survol = n; cv.style.cursor = n ? 'pointer' : 'grab'; return; }
+    if (!geste) { const n = trouver(px, py); G.survol = n; cv.style.cursor = n ? 'pointer' : 'grab'; return; }
+    derniereAction = performance.now();
     if (geste.pince && pointeurs.size === 2) {
       const [[ax, ay], [bx, by]] = [...pointeurs.values()];
-      const k = Math.max(0.25, Math.min(4, geste.k * Math.hypot(bx - ax, by - ay) / geste.d));
-      const [wx, wy] = monde(geste.cx, geste.cy);
-      cam.x = (geste.cx - W / 2) / k - wx; cam.y = (geste.cy - H / 2) / k - wy; cam.k = k;
+      const cx = (ax + bx) / 2, cy = (ay + by) / 2;
+      cam.D = Math.max(120, Math.min(4200, geste.D * geste.d / Math.max(10, Math.hypot(bx - ax, by - ay))));
+      pan(cx - geste.cx, cy - geste.cy); geste.cx = cx; geste.cy = cy;
       return;
     }
     if (Math.hypot(px - geste.px, py - geste.py) > 4) geste.bouge = true;
     if (!geste.bouge) return;
-    if (geste.n) {
-      const [wx, wy] = monde(px, py);
-      geste.n.fx = wx + geste.ox; geste.n.fy = wy + geste.oy;
-      SIM.alphaCible = 0.3; SIM.alpha = Math.max(SIM.alpha, 0.3);
-      G.survol = geste.n;
-    } else {
-      const dx = px - geste.lx, dy = py - geste.ly;
-      cam.x += dx / cam.k; cam.y += dy / cam.k;
-      elan.vx = dx * 0.6; elan.vy = dy * 0.6;
-    }
+    const dx = px - geste.lx, dy = py - geste.ly;
+    if (geste.mode === 'neurone') {
+      const pr = projeter(geste.n.x, geste.n.y, geste.n.z);
+      const zc = pr ? pr[2] : cam.D;
+      const [wx, wy, wz] = deprojeter(px, py, zc);
+      geste.n.fx = wx; geste.n.fy = wy; geste.n.fz = wz;
+      SIM.alphaCible = 0.3; SIM.alpha = Math.max(SIM.alpha, 0.3); G.survol = geste.n;
+    } else if (geste.mode === 'pan') pan(dx, dy);
+    else { cam.yaw -= dx * 0.005; cam.pitch = Math.max(-1.45, Math.min(1.45, cam.pitch + dy * 0.005)); elan.yaw = -dx * 0.005 * 0.6; elan.pitch = dy * 0.005 * 0.6; }
     geste.lx = px; geste.ly = py;
   });
   const lacher = (ev) => {
@@ -1045,57 +1061,48 @@ function demarrerGraphe() {
     cv.classList.remove('drag');
     G.enGeste = pointeurs.size > 0;
     const g = geste;
-    if (g?.pince) { geste = pointeurs.size ? null : null; return; }
+    if (g?.pince) { geste = null; return; }
     geste = null;
     if (!g) return;
-    if (g.n) { g.n.fx = g.n.fy = null; SIM.alphaCible = 0; }
-    if (!g.bouge) {
-      elan.vx = elan.vy = 0;
-      if (g.n) G.focus(g.n.id);
-    }
+    if (g.n) { g.n.fx = null; SIM.alphaCible = 0; }
+    if (!g.bouge) { elan.yaw = elan.pitch = 0; if (g.n) G.focus(g.n.id); }
   };
-  // Sélectionner un point : panneau à jour et caméra qui glisse jusqu'à lui, sans reconstruire le graphe.
+  cv.addEventListener('pointerup', lacher);
+  cv.addEventListener('pointercancel', lacher);
+  cv.addEventListener('pointerleave', () => { if (!geste) G.survol = null; });
+  cv.addEventListener('wheel', (ev) => {
+    ev.preventDefault(); derniereAction = performance.now(); cible.actif = false;
+    const pave = !ev.ctrlKey && !ev.metaKey && ev.deltaMode === 0 && (Math.abs(ev.deltaX) > 0 || Math.abs(ev.deltaY) < 40 || !Number.isInteger(ev.deltaY));
+    if (pave) { pan(-ev.deltaX, -ev.deltaY); return; } // deux doigts : se déplacer
+    dolly(Math.exp(ev.deltaY * (ev.deltaMode === 1 ? 0.05 : ev.ctrlKey ? 0.012 : 0.0015))); // pincer / molette : avancer ou reculer
+  }, { passive: false });
+  cv.addEventListener('dblclick', (ev) => { const [px, py] = pos(ev); const n = trouver(px, py); if (n) G.focus(n.id); else viser({ D: Math.max(160, cam.D * 0.55) }); });
+  const CARTE = { z: 'avant', w: 'avant', arrowup: 'avant', s: 'arriere', arrowdown: 'arriere', q: 'gauche', a: 'gauche', arrowleft: 'gauche', d: 'droite', arrowright: 'droite', e: 'haut', ' ': 'haut', c: 'bas', x: 'bas' };
+  cv.addEventListener('keydown', (ev) => {
+    const k = CARTE[ev.key.toLowerCase()];
+    if (k) { ev.preventDefault(); touches.add(k); return; }
+    if (ev.key === '+' || ev.key === '=') { ev.preventDefault(); viser({ D: Math.max(120, cam.D / 1.35) }); }
+    if (ev.key === '-' || ev.key === '_') { ev.preventDefault(); viser({ D: Math.min(4200, cam.D * 1.35) }); }
+  });
+  cv.addEventListener('keyup', (ev) => { const k = CARTE[ev.key.toLowerCase()]; if (k) touches.delete(k); });
+  cv.addEventListener('blur', () => touches.clear());
+  $('#g-zoomin').onclick = () => viser({ D: Math.max(120, cam.D / 1.4) });
+  $('#g-zoomout').onclick = () => viser({ D: Math.min(4200, cam.D * 1.4) });
+  $('#g-reset').onclick = () => viser({ tx: 0, ty: 0, tz: 0, D: VUE.D, pitch: VUE.pitch });
+  const auto = $('#g-auto');
+  if (auto) { const maj = () => { auto.setAttribute('aria-pressed', String(G.auto !== false)); }; maj(); auto.onclick = () => { G.auto = G.auto === false; maj(); }; }
+
+  // Aller jusqu'à un neurone : la caméra vole vers lui et le panneau s'ouvre.
   G.focus = (id) => {
     const n = noeuds.find((x) => x.id === id);
     if (!n) return false;
-    S.note = id;
-    if (id === 'hub:cerveau') { const c = cadrage(); viserCam(c.x, c.y, c.k); }
-    else viserCam(-n.x, -n.y, Math.max(cam.k, n.hub ? 0.95 : 1.15));
+    S.note = id; derniereAction = performance.now();
+    if (id === 'hub:cerveau') viser({ tx: 0, ty: 0, tz: 0, D: VUE.D });
+    else viser({ tx: n.x, ty: n.y, tz: n.z, D: n.hub ? 820 : 420 });
     const panel = $('.note-panel');
     if (panel) { panel.innerHTML = panneauNoeud(G.cur.noeuds.find((x) => x.id === id) || n); panel.scrollTop = 0; icons(); }
     return true;
   };
-  cv.addEventListener('pointerup', lacher);
-  cv.addEventListener('pointercancel', lacher);
-  cv.addEventListener('wheel', (ev) => {
-    ev.preventDefault();
-    const [px, py] = pos(ev);
-    const pave = !ev.ctrlKey && !ev.metaKey && ev.deltaMode === 0 && (Math.abs(ev.deltaX) > 0 || Math.abs(ev.deltaY) < 40 || !Number.isInteger(ev.deltaY));
-    if (pave) {
-      // deux doigts sur le pavé tactile (ou Maj + molette) : se déplacer dans le cerveau
-      cible.active = false;
-      const dx = ev.shiftKey && !ev.deltaX ? ev.deltaY : ev.deltaX, dy = ev.shiftKey && !ev.deltaX ? 0 : ev.deltaY;
-      cam.x -= dx / cam.k; cam.y -= dy / cam.k;
-      elan.vx = -dx * 0.08; elan.vy = -dy * 0.08;
-      return;
-    }
-    const base = cible.active ? cible.k : cam.k;
-    const facteur = Math.exp(-ev.deltaY * (ev.deltaMode === 1 ? 0.05 : ev.ctrlKey ? 0.012 : 0.0018));
-    zoomVers(px, py, base * facteur);
-  }, { passive: false });
-  // clavier : flèches pour se déplacer, + et − pour zoomer
-  cv.addEventListener('keydown', (ev) => {
-    const pas = 70 / cam.k;
-    const m = { ArrowLeft: [pas, 0], ArrowRight: [-pas, 0], ArrowUp: [0, pas], ArrowDown: [0, -pas] }[ev.key];
-    if (m) { ev.preventDefault(); viserCam(cam.x + m[0], cam.y + m[1], cam.k); return; }
-    if (ev.key === '+' || ev.key === '=') { ev.preventDefault(); zoomVers(W / 2, H / 2, cam.k * 1.3); }
-    if (ev.key === '-' || ev.key === '_') { ev.preventDefault(); zoomVers(W / 2, H / 2, cam.k / 1.3); }
-  });
-  cv.addEventListener('dblclick', (ev) => { const [px, py] = pos(ev); zoomVers(px, py, cam.k * 1.8); });
-  cv.addEventListener('pointerleave', () => { if (!geste) G.survol = null; });
-  $('#g-zoomin').onclick = () => zoomVers(W / 2, H / 2, cam.k * 1.35);
-  $('#g-zoomout').onclick = () => zoomVers(W / 2, H / 2, cam.k / 1.35);
-  $('#g-reset').onclick = () => { const c = cadrage(); viserCam(c.x, c.y, c.k); };
 }
 
 // ---------- journal ----------
