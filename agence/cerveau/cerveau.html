@@ -647,7 +647,7 @@ function panneauNoeud(n) {
       const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length }[g];
       return `<li class="click" data-noeud="hub:${g}"><i data-lucide="${icone}" style="color:${GROUPES[g][1]}"></i><div class="info"><b>${titre}</b></div><span class="mono">${nb}</span></li>`;
     }).join('');
-    return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un point pour l'ouvrir. Glissez pour déplacer, molette pour zoomer.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
+    return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un neurone pour y aller. Glissez, deux doigts ou flèches pour faire le tour du cerveau à 360°, pincez ou Z / S pour avancer dedans.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
   }
   if (n.quoi === 'hub') {
     const enfants = G.cur.aretes.filter(([a, b]) => a === n && !b.hub).map(([, b]) => b);
@@ -674,7 +674,7 @@ function vueCerveau() {
   const sel = data.noeuds.find((n) => n.id === S.note) || data.noeuds[0];
   return `<div class="graph-wrap">
     <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau en 3D : toutes les bases de l'agence reliées. Glissez pour tourner, deux doigts pour vous déplacer, pincez pour avancer, touches ZQSD ou flèches pour voler, cliquez sur un neurone pour y aller et l'ouvrir."></canvas>
-      <div class="aide">Glisser : tourner · 2 doigts ou clic droit : se déplacer · Pincer ou molette : avancer · ZQSD / flèches : voler (E monter, C descendre) · Clic : aller au neurone</div>
+      <div class="aide">Glisser, 2 doigts ou flèches : faire le tour du cerveau à 360° · Pincer, molette ou Z / S : avancer, reculer · Clic droit : décaler la vue · Clic : aller au neurone</div>
       <div class="tools"><button class="icon" type="button" id="g-auto" aria-label="Rotation automatique" title="Rotation automatique"><i data-lucide="rotate-3d"></i></button><button class="icon" type="button" id="g-zoomin" aria-label="Avancer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
       <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${NEURONE[k]};color:${NEURONE[k]}"></i>${l}</span>`).join('')}</div>
     </div>
@@ -979,11 +979,11 @@ function demarrerGraphe() {
     tic();
     // vol au clavier
     if (touches.size) {
-      const v = cam.D * 0.012 + 4;
-      const av = (touches.has('avant') ? 1 : 0) - (touches.has('arriere') ? 1 : 0), dr = (touches.has('droite') ? 1 : 0) - (touches.has('gauche') ? 1 : 0), ht = (touches.has('bas') ? 1 : 0) - (touches.has('haut') ? 1 : 0);
-      cam.tx += (B.avant[0] * av + B.droite[0] * dr + B.haut[0] * ht) * v;
-      cam.ty += (B.avant[1] * av + B.droite[1] * dr + B.haut[1] * ht) * v;
-      cam.tz += (B.avant[2] * av + B.droite[2] * dr + B.haut[2] * ht) * v;
+      // gauche / droite et haut / bas : tour complet du cerveau ; Z / S : avancer dedans ou reculer
+      const av = (touches.has('avant') ? 1 : 0) - (touches.has('arriere') ? 1 : 0), dr = (touches.has('droite') ? 1 : 0) - (touches.has('gauche') ? 1 : 0), ht = (touches.has('haut') ? 1 : 0) - (touches.has('bas') ? 1 : 0);
+      cam.yaw -= dr * 0.03; cam.pitch += ht * 0.025;
+      if (av) dolly(1 - av * 0.025);
+      elan.yaw = elan.pitch = 0;
       cible.actif = false; derniereAction = now;
     }
     if (cible.actif) {
@@ -991,7 +991,7 @@ function demarrerGraphe() {
       for (const c of ['tx', 'ty', 'tz', 'yaw', 'pitch', 'D']) cam[c] += (cible[c] - cam[c]) * k;
       if (Math.abs(cible.D - cam.D) < 0.5 && Math.abs(cible.tx - cam.tx) < 0.5 && Math.abs(cible.yaw - cam.yaw) < 1e-3) cible.actif = false;
     } else if (!G.enGeste) {
-      cam.yaw += elan.yaw; cam.pitch = Math.max(-1.45, Math.min(1.45, cam.pitch + elan.pitch));
+      cam.yaw += elan.yaw; cam.pitch += elan.pitch;
       elan.yaw *= 0.93; elan.pitch *= 0.93;
       // visite automatique : le cerveau tourne lentement quand on ne touche à rien
       if (!reduit && G.auto !== false && now - derniereAction > 5000) cam.yaw += 0.0012;
@@ -1015,6 +1015,12 @@ function demarrerGraphe() {
     cam.tx -= (B.droite[0] * dx + B.haut[0] * dy) * e; cam.ty -= (B.droite[1] * dx + B.haut[1] * dy) * e; cam.tz -= (B.droite[2] * dx + B.haut[2] * dy) * e;
   };
   const dolly = (f) => { cam.D = Math.max(120, Math.min(4200, cam.D * f)); };
+  // Tourner autour du cerveau sans limite : à droite / à gauche et en haut / en bas, sur 360°.
+  const orbiter = (dyaw, dpitch) => {
+    cam.yaw += dyaw; cam.pitch += dpitch;
+    elan.yaw = dyaw * 0.7; elan.pitch = dpitch * 0.7;
+    cible.actif = false; derniereAction = performance.now();
+  };
   cv.addEventListener('contextmenu', (ev) => ev.preventDefault());
   cv.addEventListener('pointerdown', (ev) => {
     cv.setPointerCapture(ev.pointerId); cv.focus({ preventScroll: true });
@@ -1040,7 +1046,7 @@ function demarrerGraphe() {
       const [[ax, ay], [bx, by]] = [...pointeurs.values()];
       const cx = (ax + bx) / 2, cy = (ay + by) / 2;
       cam.D = Math.max(120, Math.min(4200, geste.D * geste.d / Math.max(10, Math.hypot(bx - ax, by - ay))));
-      pan(cx - geste.cx, cy - geste.cy); geste.cx = cx; geste.cy = cy;
+      orbiter(-(cx - geste.cx) * 0.006, (cy - geste.cy) * 0.006); geste.cx = cx; geste.cy = cy;
       return;
     }
     if (Math.hypot(px - geste.px, py - geste.py) > 4) geste.bouge = true;
@@ -1053,7 +1059,7 @@ function demarrerGraphe() {
       geste.n.fx = wx; geste.n.fy = wy; geste.n.fz = wz;
       SIM.alphaCible = 0.3; SIM.alpha = Math.max(SIM.alpha, 0.3); G.survol = geste.n;
     } else if (geste.mode === 'pan') pan(dx, dy);
-    else { cam.yaw -= dx * 0.005; cam.pitch = Math.max(-1.45, Math.min(1.45, cam.pitch + dy * 0.005)); elan.yaw = -dx * 0.005 * 0.6; elan.pitch = dy * 0.005 * 0.6; }
+    else orbiter(-dx * 0.006, dy * 0.006);
     geste.lx = px; geste.ly = py;
   });
   const lacher = (ev) => {
@@ -1073,11 +1079,11 @@ function demarrerGraphe() {
   cv.addEventListener('wheel', (ev) => {
     ev.preventDefault(); derniereAction = performance.now(); cible.actif = false;
     const pave = !ev.ctrlKey && !ev.metaKey && ev.deltaMode === 0 && (Math.abs(ev.deltaX) > 0 || Math.abs(ev.deltaY) < 40 || !Number.isInteger(ev.deltaY));
-    if (pave) { pan(-ev.deltaX, -ev.deltaY); return; } // deux doigts : se déplacer
+    if (pave) { orbiter(-ev.deltaX * 0.006, -ev.deltaY * 0.006); return; } // deux doigts : faire le tour du cerveau (360°)
     dolly(Math.exp(ev.deltaY * (ev.deltaMode === 1 ? 0.05 : ev.ctrlKey ? 0.012 : 0.0015))); // pincer / molette : avancer ou reculer
   }, { passive: false });
   cv.addEventListener('dblclick', (ev) => { const [px, py] = pos(ev); const n = trouver(px, py); if (n) G.focus(n.id); else viser({ D: Math.max(160, cam.D * 0.55) }); });
-  const CARTE = { z: 'avant', w: 'avant', arrowup: 'avant', s: 'arriere', arrowdown: 'arriere', q: 'gauche', a: 'gauche', arrowleft: 'gauche', d: 'droite', arrowright: 'droite', e: 'haut', ' ': 'haut', c: 'bas', x: 'bas' };
+  const CARTE = { z: 'avant', w: 'avant', s: 'arriere', q: 'gauche', a: 'gauche', arrowleft: 'gauche', d: 'droite', arrowright: 'droite', arrowup: 'haut', e: 'haut', arrowdown: 'bas', c: 'bas' };
   cv.addEventListener('keydown', (ev) => {
     const k = CARTE[ev.key.toLowerCase()];
     if (k) { ev.preventDefault(); touches.add(k); return; }
