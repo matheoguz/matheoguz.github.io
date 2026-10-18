@@ -4,5 +4,5 @@
 2. **Jamais d'avis inventés.** Seuls les vrais avis donnés par le client. Sinon, pas de section avis.
 3. **Jamais d'infos inventées** sur l'entreprise (dates, labels, prix, SIRET). Ce qui manque est demandé au client : on prépare la question pour Matheo.
 4. **Rien n'est mis en ligne en version finale sans validation de Matheo.** Tant que le statut n'est pas `livre`, le site affiche le bandeau « Aperçu » et n'est pas indexé par Google.
-5. **Données des clients** : le dépôt est public. On n'y met que ce qui finira sur le site (nom, adresse, téléphone pro, horaires…). Pas de données privées (adresse perso, mot de passe, infos bancaires).
+5. **Données des clients** : le dépôt GitHub est public. On n'y met que ce qui finira sur le site (nom de l'entreprise, adresse, téléphone pro, horaires…). Les **personnes** (noms, pseudos, coordonnées perso), les **réponses** et messages des clients et les **messages à envoyer** vont uniquement dans **le Cerveau**, la page privée de l'agence sur claude.ai. Jamais de mot de passe ni d'infos bancaires nulle part.
 6. **Toujours passer par le vérificateur** avant de proposer un aperçu au client.

@@ -21,7 +21,8 @@ Matheo vend des sites vitrines sur ComeUp / Fiverr (annonce : `sites/ANNONCE.md`
 | FORGE — pôle Build | agent `pole-build` | génère le site, sur-mesure |
 | ARGUS — vérificateur | agent `verificateur` | contrôle qualité, verdict OK / À CORRIGER |
 | Mémoire | `agence/memoire/` | règles, tarifs, style, leçons apprises |
-| Cockpit | `agence/workspace/` | vue d'ensemble visuelle, lit `clients/index.json` |
+| **Le Cerveau** | https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (source : `agence/cerveau/cerveau.html`) | LE point central, privé : cockpit, entreprises, personnes, réponses, messages à envoyer, mémoire |
+| Cockpit public (ancien) | `agence/workspace/` | vue publique simple, sans données personnelles |
 
 ### Outil
 `node agence/agence.mjs <commande>` — `nouveau <slug>`, `build <slug>`, `verifier <slug>`, `statut <slug> <etape> [note]`, `index`.
@@ -36,3 +37,18 @@ Matheo vend des sites vitrines sur ComeUp / Fiverr (annonce : `sites/ANNONCE.md`
 - Questionnaire client : `sites/brief/` → le client colle le bloc « BRIEF SITE » dans la conversation de la plateforme.
 
 `clients/exemple-boulangerie-dupont/` est un client fictif (`test: true`) qui sert d'exemple.
+
+### Le Cerveau (page privée, tenue par les agents)
+Tout ce que Matheo consulte est dans le Cerveau : https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (outil `ArtifactData` avec cette URL).
+Collections :
+- `entreprises/<slug>` : copie de la fiche du client (générée, ne pas écrire à la main).
+- `personnes/<id>` : `{nom, role, entreprise: <slug>, plateforme, pseudo, telephone, email, notes}`. **Uniquement ici**, jamais dans le dépôt.
+- `reponses/<id>` : chaque message reçu d'un client, texte complet : `{entreprise, date, type: brief|retour|message|paiement, resume, contenu}`. **Uniquement ici.**
+- `messages/<id>` : chaque message à envoyer par Matheo : `{entreprise, date, objet, texte, statut: a_envoyer|envoye}`. Matheo coche « Je l'ai envoyé » dans la page ; relire ce statut avant d'avancer un client.
+- `memoire/<regles|tarifs|style|lecons>` : copie de `agence/memoire/*.md`.
+
+**Synchroniser** (à la fin de chaque skill de l'agence) :
+1. `node agence/agence.mjs cerveau <scratchpad>/cerveau` (fichiers JSON des entreprises et de la mémoire).
+2. `ArtifactData list` sur `entreprises` et `memoire` pour lire les `version`.
+3. Un seul `ArtifactData batch` : `set` avec `file_path` pour chaque fichier, `if_version` pour les documents qui existent déjà, plus les personnes / réponses / messages nouveaux ou modifiés.
+Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec tirets. Le client `exemple-*` est fictif (`test: true`).

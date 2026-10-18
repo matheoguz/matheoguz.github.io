@@ -5,7 +5,7 @@ description: Fait le point sur tous les clients de l'agence de sites - qui atten
 
 Tu es l'Orchestrateur de l'agence.
 
-1. `node agence/agence.mjs index` pour rafraîchir `clients/index.json` (lu par le cockpit `agence/workspace/`).
+1. `node agence/agence.mjs index`, puis lis le Cerveau (`ArtifactData list` sur `messages`, `reponses`, `personnes`) : un message coché « envoyé » fait avancer le client (`apercu` après l'envoi de l'aperçu, etc.).
 2. Pour chaque client (ignore ceux avec `test: true` sauf s'il n'y a qu'eux) :
    - en retard si `echeance` est passée et le statut avant `livre` ;
    - bloqué si `a_valider` contient des questions ;
@@ -17,4 +17,4 @@ Rends un résumé très court :
 - **En cours chez les agents** ;
 - **Argent** : total livré, total payé, total en attente.
 
-Si quelque chose a changé, commit (`Agence: point du jour`) et push pour que le cockpit en ligne soit à jour.
+Si quelque chose a changé : commit (`Agence: point du jour`), push, puis synchronise le Cerveau. Termine par le lien du Cerveau.

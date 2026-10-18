@@ -7,6 +7,7 @@
 //   node agence/agence.mjs statut <slug> <etape> [note]   avance le client dans le pipeline
 //   node agence/agence.mjs index                     met à jour clients/index.json (cockpit)
 //   node agence/agence.mjs apercu <dossier> [slug]   copies autonomes à ouvrir dans un aperçu
+//   node agence/agence.mjs cerveau <dossier>         documents à envoyer dans le Cerveau (ArtifactData)
 //
 // Aucune dépendance : Node 18+ suffit. Playwright est utilisé s'il est installé.
 
@@ -239,10 +240,38 @@ function cmdApercu(out, slug) {
   files.forEach(([name]) => console.log(path.join(out, name)));
 }
 
+// Le Cerveau (page privée claude.ai) reçoit une copie des fiches et de la mémoire.
+// Les personnes, réponses et messages n'existent QUE dans le Cerveau : jamais dans ce dépôt public.
+const SITE_PUBLIC = (slug) => `https://matheoguz.github.io/clients/${slug}/`;
+function cmdCerveau(out) {
+  if (!out) fail('usage : cerveau <dossier>');
+  cmdIndex();
+  const idx = readJSON(path.join(CLIENTS, 'index.json'));
+  const ecrire = (col, id, data) => {
+    fs.mkdirSync(path.join(out, col), { recursive: true });
+    writeJSON(path.join(out, col, id + '.json'), data);
+    console.log(`${col}/${id} -> ${path.join(out, col, id + '.json')}`);
+  };
+  for (const c of idx.clients) {
+    const b = readJSON(path.join(dir(c.slug), 'brief.json'));
+    ecrire('entreprises', c.slug, {
+      nom: c.nom, activite: c.activite, metier: b.metier || '', theme: c.theme, ville: b.ville || '', code_postal: b.code_postal || '',
+      adresse: b.adresse || '', telephone: b.telephone || '', email: b.email || '', formule: c.formule, prix: c.prix,
+      plateforme: c.plateforme, statut: c.statut, echeance: c.echeance, cree_le: c.cree_le, test: c.test,
+      a_valider: c.a_valider, historique: c.historique, site: process.env.CERVEAU_SITE_BASE ? `${process.env.CERVEAU_SITE_BASE}/clients/${c.slug}/index.html` : SITE_PUBLIC(c.slug),
+    });
+  }
+  const titres = { regles: 'Règles', tarifs: 'Tarifs', style: 'Style', lecons: 'Leçons apprises' };
+  for (const [id, titre] of Object.entries(titres)) {
+    const f = path.join(ROOT, 'agence', 'memoire', id + '.md');
+    if (fs.existsSync(f)) ecrire('memoire', id, { titre, contenu: fs.readFileSync(f, 'utf8'), maj: today() });
+  }
+}
+
 const [cmd, ...args] = process.argv.slice(2);
-const cmds = { nouveau: cmdNouveau, build: cmdBuild, verifier: cmdVerifier, statut: cmdStatut, index: cmdIndex, apercu: cmdApercu };
+const cmds = { nouveau: cmdNouveau, build: cmdBuild, verifier: cmdVerifier, statut: cmdStatut, index: cmdIndex, apercu: cmdApercu, cerveau: cmdCerveau };
 if (!cmds[cmd]) {
-  console.log('Commandes : nouveau <slug> | build <slug> | verifier <slug> | statut <slug> <etape> [note] | index | apercu <dossier> [slug]');
+  console.log('Commandes : nouveau <slug> | build <slug> | verifier <slug> | statut <slug> <etape> [note] | index | apercu <dossier> [slug] | cerveau <dossier>');
   console.log('Étapes : ' + Object.keys(ETAPES).join(' → '));
   process.exit(cmd ? 1 : 0);
 }

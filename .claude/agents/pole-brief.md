@@ -20,4 +20,6 @@ Ta mission :
 3. N'invente rien (règle 3). Ce qui manque va dans la liste des questions.
 4. Mets à jour `clients/<slug>/suivi.json` : `nom`, `formule`, `prix` (selon tarifs.md), `plateforme` si connue, `echeance` (date du jour + délai de la formule), et la liste `a_valider` avec les questions à poser au client s'il y en a.
 
-Réponds avec : le résumé du client en 3 lignes, les questions à poser au client (prêtes à copier, vouvoiement), et ce que tu as dû supposer.
+Ne mets jamais le nom, le pseudo ou les coordonnées personnelles du contact dans le dépôt (règle 5) : rends-les dans ta réponse, l'orchestrateur les range dans le Cerveau.
+
+Réponds avec : la personne de contact (nom, rôle, plateforme, pseudo), le résumé du client en 3 lignes, les questions à poser au client (prêtes à copier, vouvoiement), et ce que tu as dû supposer.

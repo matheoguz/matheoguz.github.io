@@ -12,6 +12,7 @@ Tu es l'Orchestrateur de l'agence. Client : $ARGUMENTS.
 4. Agent `verificateur` : il doit répondre `OK`.
 5. Commit (`Agence: livraison <nom>`) et push. Rappelle à Matheo que le site est en ligne quand la branche est fusionnée dans `main` (GitHub Pages publie `main`).
 6. Nom de domaine (Premium ou option) : explique à Matheo les étapes (acheter le domaine chez OVH ou Gandi au nom du client, ajouter un fichier `CNAME` ou passer le site sur Netlify), sans rien acheter toi-même.
-7. Ajoute une ligne dans `agence/memoire/lecons.md` : ce qui a bien marché et ce qui a coincé avec ce client.
+7. **Cerveau** : ajoute le message de livraison (`messages`, `a_envoyer`), synchronise l'entreprise. Quand Matheo dit « payé », range le paiement dans `reponses` (type `paiement`).
+8. Ajoute une ligne dans `agence/memoire/lecons.md` : ce qui a bien marché et ce qui a coincé avec ce client.
 
 Rends à Matheo le message de livraison à copier-coller (modèle « Réponse quand tu livres » de `sites/ANNONCE.md`, avec le vrai lien), en lui rappelant de demander un avis. Quand le paiement est reçu, il te dit « payé » : passe le statut à `paye`.

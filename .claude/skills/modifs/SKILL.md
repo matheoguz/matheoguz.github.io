@@ -14,6 +14,7 @@ Entrée : $ARGUMENTS. Le premier mot est le slug du client (voir `clients/index.
 4. Lance l'agent `verificateur`. Corrige jusqu'à `OK`.
 5. `node agence/agence.mjs statut <slug> apercu "Modifications envoyées"` seulement quand Matheo confirme l'envoi ; avant ça, laisse `modifs`.
 6. Commit (`Agence: modifications <nom>`) et push.
-7. Ajoute une ligne dans `agence/memoire/lecons.md` si le retour révèle quelque chose à faire autrement la prochaine fois.
+7. **Cerveau** : range le retour du client (`reponses`, type `retour`), ajoute le message de réponse (`messages`, `a_envoyer`), synchronise. Avant de passer le statut à `apercu`, vérifie dans `messages` que Matheo a coché « envoyé ».
+8. Ajoute une ligne dans `agence/memoire/lecons.md` si le retour révèle quelque chose à faire autrement la prochaine fois.
 
 Rends à Matheo : la liste des changements faits, et le message à copier-coller au client.
