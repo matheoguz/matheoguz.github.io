@@ -7,7 +7,7 @@
 //   node agence/agence.mjs statut <slug> <etape> [note]   avance le client dans le pipeline
 //   node agence/agence.mjs index                     met à jour clients/index.json (cockpit)
 //   node agence/agence.mjs apercu <dossier> [slug]   copies autonomes à ouvrir dans un aperçu
-//   node agence/agence.mjs cerveau <dossier>         documents à envoyer dans le Cerveau (ArtifactData)
+//   node agence/agence.mjs cerveau <dossier>         fiches entreprises à envoyer dans le Cerveau (ArtifactData)
 //
 // Aucune dépendance : Node 18+ suffit. Playwright est utilisé s'il est installé.
 
@@ -217,21 +217,11 @@ function cmdIndex() {
   console.log(`✓ clients/index.json : ${clients.length} client(s)`);
 }
 
-// Copies autonomes (sans fichiers à côté) pour les tester dans un panneau d'aperçu.
+// Copies autonomes (sans fichiers à côté) du questionnaire et du site d'un client.
 function cmdApercu(out, slug) {
   if (!out) fail('usage : apercu <dossier> [slug]');
   fs.mkdirSync(out, { recursive: true });
-  cmdIndex();
-  const data = fs.readFileSync(path.join(CLIENTS, 'index.json'), 'utf8').replace(/</g, '\\u003c');
-  const sites = {};
-  for (const c of JSON.parse(fs.readFileSync(path.join(CLIENTS, 'index.json'), 'utf8')).clients) {
-    const f = path.join(dir(c.slug), 'index.html');
-    if (fs.existsSync(f)) sites[c.slug] = fs.readFileSync(f, 'utf8');
-  }
-  const inline = `window.WORKSPACE_DATA = ${data};\nwindow.WORKSPACE_SITES = ${JSON.stringify(sites).replace(/</g, '\\u003c')};`;
-  const ws = fs.readFileSync(path.join(ROOT, 'agence', 'workspace', 'index.html'), 'utf8')
-    .replace('<script>', () => `<script>${inline}</script>\n<script>`);
-  const files = [['workspace.html', ws], ['questionnaire.html', fs.readFileSync(path.join(ROOT, 'sites', 'brief', 'index.html'), 'utf8')]];
+  const files = [['questionnaire.html', fs.readFileSync(path.join(ROOT, 'sites', 'brief', 'index.html'), 'utf8')]];
   if (slug) {
     needClient(slug);
     files.push([`site-${slug}.html`, fs.readFileSync(path.join(dir(slug), 'index.html'), 'utf8')]);
@@ -261,11 +251,8 @@ function cmdCerveau(out) {
       a_valider: c.a_valider, historique: c.historique, site: process.env.CERVEAU_SITE_BASE ? `${process.env.CERVEAU_SITE_BASE}/clients/${c.slug}/index.html` : SITE_PUBLIC(c.slug),
     });
   }
-  const titres = { regles: 'Règles', tarifs: 'Tarifs', style: 'Style', lecons: 'Leçons apprises' };
-  for (const [id, titre] of Object.entries(titres)) {
-    const f = path.join(ROOT, 'agence', 'memoire', id + '.md');
-    if (fs.existsSync(f)) ecrire('memoire', id, { titre, contenu: fs.readFileSync(f, 'utf8'), maj: today() });
-  }
+  // La mémoire (règles, tarifs, style, leçons) vit dans le coffre Repos-/cerveau et part dans le Cerveau
+  // avec les autres notes : node ../Repos-/cerveau/.outils/vers-cerveau.mjs <dossier>
 }
 
 const [cmd, ...args] = process.argv.slice(2);

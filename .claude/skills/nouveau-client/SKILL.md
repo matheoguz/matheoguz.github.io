@@ -25,4 +25,4 @@ Termine par un rapport court pour Matheo :
 - **le message à copier-coller sur la plateforme** pour envoyer l'aperçu (vouvoiement, court, inspiré des modèles de `sites/ANNONCE.md`) ; il est aussi dans le Cerveau, rubrique « Messages à envoyer » ;
 - le lien du Cerveau.
 
-Rappel : tu n'envoies jamais rien au client toi-même (voir `agence/memoire/regles.md`). Quand Matheo a envoyé l'aperçu, il lance `/livrer` plus tard ou te dit « envoyé » : passe alors le statut à `apercu`.
+Rappel : tu n'envoies jamais rien au client toi-même (voir `../Repos-/cerveau/Agence/Règles de l'agence.md`). Quand Matheo a envoyé l'aperçu, il lance `/livrer` plus tard ou te dit « envoyé » : passe alors le statut à `apercu`.

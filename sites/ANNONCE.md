@@ -73,7 +73,7 @@ Si le client préfère répondre directement par message :
 
 ## Comment ça marche entre nous
 
-**Nouveau (automatisé)** : tu colles le message du client dans Claude Code avec `/nouveau-client`, les agents font tout jusqu'à l'aperçu vérifié. Ensuite `/modifs <client>` pour les retouches, `/livrer <client>` quand il valide, `/point-du-jour` le matin. Cockpit : https://matheoguz.github.io/agence/workspace/
+**Nouveau (automatisé)** : tu colles le message du client dans Claude Code avec `/nouveau-client`, les agents font tout jusqu'à l'aperçu vérifié. Ensuite `/modifs <client>` pour les retouches, `/livrer <client>` quand il valide, `/point-du-jour` le matin. Tout se suit dans le Cerveau (page privée sur claude.ai).
 
 À la main (ancienne méthode) :
 1. Un client commande → tu m'envoies ici **tout ce qu'il t'a donné** (textes, photos, infos).

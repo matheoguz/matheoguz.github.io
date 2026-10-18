@@ -350,7 +350,6 @@ const AGENTS = [
   { id: 'ARGUS', role: 'Vérificateur', etapes: ['verification'], c: '#17803d', fait: 'Contrôle chaque site avant envoi : textes, prix, mobile, photos, mentions légales. Rend OK ou À CORRIGER.' },
 ];
 const PAL = ['#3a55d4', '#c2410c', '#17803d', '#7c3aed', '#be185d', '#0e7490'];
-const MEMO_ORDRE = ['regles', 'tarifs', 'style', 'lecons'];
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -376,7 +375,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cockpit', q: '', memo: 'regles', ouvert: null, note: 'memoire', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cockpit', q: '', memo: 'memoire', ouvert: null, note: 'memoire', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -385,7 +384,8 @@ const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
 function icons() { if (window.lucide) lucide.createIcons({ attrs: { 'aria-hidden': 'true' } }); }
 
 function render() {
-  for (const k of ['entreprises', 'personnes', 'reponses', 'memoire', 'notes']) $('#n-' + k).textContent = S[k].length;
+  for (const k of ['entreprises', 'personnes', 'reponses', 'notes']) $('#n-' + k).textContent = S[k].length;
+  $('#n-memoire').textContent = S.notes.filter((n) => n.dossier !== 'Journal').length;
   $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
   $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === S.vue ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
@@ -556,12 +556,23 @@ function mdToHtml(md) {
   fermer();
   return out;
 }
+// Toute la mémoire (le coffre du cerveau) : une seule source, les notes.
+const ORDRE_DOSSIERS = ['', 'Agence', 'Projets', 'Agents', 'Personnes'];
 function memoire() {
-  if (!S.memoire.length) return vide('Mémoire vide', 'Les règles, les tarifs, le style et les leçons apprises de l\'agence apparaîtront ici. Les agents les lisent avant chaque client.');
-  const docs = S.memoire.slice().sort((a, b) => (MEMO_ORDRE.indexOf(a.id) + 99) % 99 - (MEMO_ORDRE.indexOf(b.id) + 99) % 99);
-  const cur = docs.find((d) => d.id === S.memo) || docs[0];
-  return `<section class="card memo"><nav aria-label="Documents de la mémoire">${docs.map((d) => `<button type="button" data-memo="${esc(d.id)}" aria-pressed="${d.id === cur.id}">${esc(d.titre || d.id)}</button>`).join('')}</nav>
-    <div class="md">${mdToHtml(cur.contenu)}<p class="muted" style="font-size:12px;margin-top:24px">Mis à jour ${quand(cur.maj)}</p></div></section>`;
+  const docs = S.notes.filter((n) => n.dossier !== 'Journal' && match([n.titre, n.contenu].join(' ')));
+  if (!S.notes.length) return vide('Mémoire vide', 'Les notes du cerveau (mémoire, règles, tarifs, projets, décisions) apparaissent ici une fois synchronisées par les agents.');
+  if (!docs.length) return vide('Aucun résultat', 'Aucune note ne correspond à cette recherche.');
+  const rang = (d) => { const i = ORDRE_DOSSIERS.indexOf(d.dossier || ''); return i < 0 ? 99 : i; };
+  docs.sort((a, b) => rang(a) - rang(b) || (a.titre === 'MEMOIRE' ? -1 : b.titre === 'MEMOIRE' ? 1 : a.titre.localeCompare(b.titre, 'fr')));
+  const cur = docs.find((d) => cle(d.titre) === S.memo) || docs[0];
+  let dossier = null;
+  const nav = docs.map((d) => {
+    const h = d.dossier !== dossier ? `<div class="h" style="padding:10px 10px 4px;font-size:11px;color:var(--faint)">${esc(d.dossier || 'Essentiel')}</div>` : '';
+    dossier = d.dossier;
+    return h + `<button type="button" data-memo="${esc(cle(d.titre))}" aria-pressed="${d === cur}">${esc(d.titre)}</button>`;
+  }).join('');
+  return `<section class="card memo"><nav aria-label="Notes du cerveau">${nav}</nav>
+    <div class="md"><h1>${esc(cur.titre)}</h1>${mdToHtml(cur.contenu || cur.extrait || '')}</div></section>`;
 }
 
 // ---------- graphe ----------
@@ -741,7 +752,7 @@ function promptMission() {
   return `Mission lancée depuis le Cerveau de Matheo (${new Date().toLocaleString('fr-FR')}).
 Avant tout : ajoute le dépôt privé matheoguz/Repos- à cette session (outil add_repo) et clone-le dans /home/user/Repos-, pour charger le cerveau (Repos-/cerveau : MEMOIRE.md et le journal), puis lis MEMOIRE.md.
 Ensuite fais : ${m.cmd(S.missionTexte.trim())}
-Respecte CLAUDE.md et agence/memoire/regles.md. Mets le Cerveau à jour à la fin et termine par un résumé court en français.`;
+Respecte CLAUDE.md et ../Repos-/cerveau/Agence/Règles de l'agence.md. Mets le Cerveau à jour à la fin et termine par un résumé court en français.`;
 }
 function missions() {
   const m = MISSIONS[S.mission];
@@ -921,7 +932,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'memoire', 'notes', 'journal'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -929,7 +940,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['memoire', 'notes', 'journal'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal'].includes(col)) ouvrir(S.ouvert, true);
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
 }

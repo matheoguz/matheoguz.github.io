@@ -1,5 +1,5 @@
 // Rendu HTML des sites clients (page d'accueil + mentions légales).
-// Design : voir agence/memoire/style.md et Repos-/taste-skill (règles anti « site fait par une IA »).
+// Design : voir ../Repos-/cerveau/Agence/Style de l'agence.md et Repos-/taste-skill (règles anti « site fait par une IA »).
 
 import { THEMES } from './themes.mjs';
 import { banquePour, unsplash } from './photos.mjs';

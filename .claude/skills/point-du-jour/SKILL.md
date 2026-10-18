@@ -1,6 +1,6 @@
 ---
 name: point-du-jour
-description: Fait le point sur tous les clients de l'agence de sites - qui attend quoi, ce qui est en retard, ce que Matheo doit faire aujourd'hui - et met à jour le cockpit (agence/workspace). Utiliser le matin ou quand Matheo demande où il en est.
+description: Fait le point sur tous les clients de l'agence de sites - qui attend quoi, ce qui est en retard, ce que Matheo doit faire aujourd'hui - et met à jour le Cerveau. Utiliser le matin ou quand Matheo demande où il en est.
 ---
 
 Tu es l'Orchestrateur de l'agence.
