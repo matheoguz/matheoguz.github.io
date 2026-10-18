@@ -230,7 +230,7 @@ body.open .drawer{transform:none;visibility:visible}
 /* graphe */
 .graph-wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
 .graph{position:relative;height:min(760px,calc(100dvh - 140px));min-height:440px;border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);touch-action:none}
-.graph canvas{display:block;width:100%;height:100%;cursor:grab}
+.graph canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none;user-select:none}
 .graph canvas.drag{cursor:grabbing}
 .graph .legend{position:absolute;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
 .graph .tools{position:absolute;right:12px;top:12px;display:flex;gap:6px}
@@ -626,7 +626,7 @@ function construireGraphe() {
   return { noeuds, aretes };
 }
 const G = { raf: 0, ro: null, cam: { x: 0, y: 0, k: 1 }, data: null, alpha: 1, survol: null, ajuste: false };
-function arreterGraphe() { cancelAnimationFrame(G.raf); G.raf = 0; G.ro?.disconnect(); G.ro = null; }
+function arreterGraphe() { cancelAnimationFrame(G.raf); G.raf = 0; G.ro?.disconnect(); G.ro = null; G.focus = null; }
 
 function panneauNoeud(n) {
   if (!n) return '';
@@ -670,6 +670,9 @@ function vueCerveau() {
   </div>`;
 }
 
+// Moteur physique du graphe (même principe que d3-force / Obsidian) :
+// forces de répulsion, ressorts sur les liens, collisions, gravité douce, vitesse amortie.
+// Pendant qu'on tire un point, la simulation reste « chaude » et tout le réseau suit.
 function demarrerGraphe() {
   arreterGraphe();
   const cv = $('#cv');
@@ -682,116 +685,253 @@ function demarrerGraphe() {
   const neuf = !anc.size;
   noeuds.forEach((n, i) => {
     const o = anc.get(n.id);
-    if (o) { n.x = o.x; n.y = o.y; }
-    else if (n.id === 'hub:cerveau') { n.x = 0; n.y = 0; }
-    else { const a = (i / noeuds.length) * Math.PI * 2; const r = n.hub ? 140 : 260; n.x = Math.cos(a) * r; n.y = Math.sin(a) * r; }
-    n.vx = 0; n.vy = 0;
+    if (o) { n.x = o.x; n.y = o.y; n.vx = o.vx || 0; n.vy = o.vy || 0; }
+    else {
+      const parent = aretes.find(([a, b]) => b === n && a.hub)?.[0] || aretes.find(([a, b]) => a === n || b === n)?.[0];
+      const base = parent && anc.get(parent.id) ? anc.get(parent.id) : { x: 0, y: 0 };
+      const a = i * 2.399963; const r = n.id === 'hub:cerveau' ? 0 : n.hub ? 150 : 260 + (i % 5) * 18;
+      n.x = (neuf ? 0 : base.x) + Math.cos(a) * r; n.y = (neuf ? 0 : base.y) + Math.sin(a) * r; n.vx = n.vy = 0;
+    }
+    n.fx = null; n.fy = null; n.vis = 1;
   });
-  let W = 0, H = 0, dpr = 1;
-  const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; };
-  taille();
-  G.ro = new ResizeObserver(() => { taille(); dessiner(); });
-  G.ro.observe(box);
-  const css = getComputedStyle(document.documentElement);
-  const tok = (n) => css.getPropertyValue(n).trim();
-  const couleur = (n) => (n.g === 'cerveau' ? tok('--ink') : GROUPES[n.g][1]);
-  const ecran = (n) => [W / 2 + (n.x + G.cam.x) * G.cam.k, H / 2 + (n.y + G.cam.y) * G.cam.k];
-  const monde = (px, py) => [(px - W / 2) / G.cam.k - G.cam.x, (py - H / 2) / G.cam.k - G.cam.y];
-  const rayon = (n) => (n.r || 4 + Math.min(6, n.deg)) * Math.sqrt(G.cam.k);
-  function pas(a) {
+  // Ressorts : force plus douce pour les points très reliés (comme d3).
+  const degre = new Map(noeuds.map((n) => [n, 0]));
+  for (const [a, b] of aretes) { degre.set(a, degre.get(a) + 1); degre.set(b, degre.get(b) + 1); }
+  const ressorts = aretes.map(([a, b, hub]) => ({
+    a, b, hub,
+    L: a.id === 'hub:cerveau' ? 190 : hub ? 95 : 140,
+    k: (hub ? 0.9 : 0.35) / Math.min(degre.get(a), degre.get(b)),
+    biais: degre.get(a) / (degre.get(a) + degre.get(b)),
+  }));
+  const SIM = { alpha: neuf ? 1 : 0.35, alphaCible: 0, alphaMin: 0.002, decroissance: 1 - Math.pow(0.002, 1 / 320), frein: 0.42 };
+  G.sim = SIM;
+  const rBase = (n) => n.r || 4.5 + Math.min(5, (degre.get(n) || 0) * 0.8);
+
+  function tic() {
+    const a = SIM.alpha;
+    // répulsion entre tous les points (charge négative)
     for (let i = 0; i < noeuds.length; i++) {
       const p = noeuds[i];
       for (let j = i + 1; j < noeuds.length; j++) {
         const q = noeuds[j];
-        let dx = q.x - p.x, dy = q.y - p.y, d2 = dx * dx + dy * dy + 0.01;
-        const f = (9000 / d2) * a, d = Math.sqrt(d2);
-        dx /= d; dy /= d;
-        p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f;
+        let dx = q.x - p.x || (Math.random() - 0.5) * 1e-3, dy = q.y - p.y || (Math.random() - 0.5) * 1e-3;
+        let d2 = dx * dx + dy * dy;
+        if (d2 > 640000) continue;
+        d2 = Math.max(d2, 64);
+        const charge = (p.hub || q.hub ? -900 : -420) * a / d2;
+        p.vx += dx * charge; p.vy += dy * charge; q.vx -= dx * charge; q.vy -= dy * charge;
       }
     }
-    for (const [p, q, hub] of aretes) {
-      const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-      const L = p.id === 'hub:cerveau' ? 170 : hub ? 85 : 120;
-      const f = (d - L) * (hub ? 0.05 : 0.015) * a;
-      p.vx += (dx / d) * f; p.vy += (dy / d) * f; q.vx -= (dx / d) * f; q.vy -= (dy / d) * f;
+    // ressorts
+    for (const s of ressorts) {
+      let dx = s.b.x + s.b.vx - s.a.x - s.a.vx || 1e-3, dy = s.b.y + s.b.vy - s.a.y - s.a.vy || 1e-3;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      const f = ((d - s.L) / d) * a * s.k;
+      dx *= f; dy *= f;
+      s.b.vx -= dx * s.biais; s.b.vy -= dy * s.biais;
+      s.a.vx += dx * (1 - s.biais); s.a.vy += dy * (1 - s.biais);
     }
+    // gravité douce vers le centre
+    for (const n of noeuds) { n.vx -= n.x * 0.012 * a; n.vy -= n.y * 0.012 * a; }
+    // collisions
+    for (let i = 0; i < noeuds.length; i++) {
+      const p = noeuds[i], rp = rBase(p) + 10;
+      for (let j = i + 1; j < noeuds.length; j++) {
+        const q = noeuds[j], rq = rBase(q) + 10;
+        const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1e-3, min = rp + rq;
+        if (d < min) { const f = ((min - d) / d) * 0.5 * 0.7; p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f; }
+      }
+    }
+    // intégration
     for (const n of noeuds) {
-      if (n === G.tenu || n.id === 'hub:cerveau') { n.vx = n.vy = 0; if (n.id === 'hub:cerveau' && n !== G.tenu) { n.x *= 0.9; n.y *= 0.9; } continue; }
-      n.vx *= 0.8; n.vy *= 0.8; n.x += n.vx; n.y += n.vy;
+      if (n.fx !== null) { n.x = n.fx; n.y = n.fy; n.vx = n.vy = 0; continue; }
+      n.vx *= 1 - SIM.frein; n.vy *= 1 - SIM.frein;
+      n.x += n.vx; n.y += n.vy;
     }
+    SIM.alpha += (SIM.alphaCible - SIM.alpha) * SIM.decroissance;
   }
-  function ajuster() {
+
+  // ----- caméra : zoom vers la souris, élan, animations -----
+  let W = 0, H = 0, dpr = 1;
+  const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); };
+  taille();
+  G.ro = new ResizeObserver(taille);
+  G.ro.observe(box);
+  const cam = G.cam;
+  const cible = { x: cam.x, y: cam.y, k: cam.k, active: false };
+  const elan = { vx: 0, vy: 0 };
+  const ecran = (x, y) => [W / 2 + (x + cam.x) * cam.k, H / 2 + (y + cam.y) * cam.k];
+  const monde = (px, py) => [(px - W / 2) / cam.k - cam.x, (py - H / 2) / cam.k - cam.y];
+  function viserCam(x, y, k) { cible.x = x; cible.y = y; cible.k = k; cible.active = true; elan.vx = elan.vy = 0; }
+  function cadrage() {
     let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
     for (const n of noeuds) { x0 = Math.min(x0, n.x); x1 = Math.max(x1, n.x); y0 = Math.min(y0, n.y); y1 = Math.max(y1, n.y); }
-    const k = Math.max(0.35, Math.min(1.6, Math.min((W - 100) / Math.max(1, x1 - x0), (H - 170) / Math.max(1, y1 - y0))));
-    G.cam = { x: -(x0 + x1) / 2, y: -(y0 + y1) / 2 - 25 / k, k };
+    const k = Math.max(0.3, Math.min(1.5, Math.min((W - 100) / Math.max(1, x1 - x0), (H - 170) / Math.max(1, y1 - y0))));
+    return { x: -(x0 + x1) / 2, y: -(y0 + y1) / 2 - 25 / k, k };
   }
-  if (neuf) { for (let i = 0; i < 350; i++) pas(1 - i / 400); ajuster(); G.alpha = 0.05; }
-  else G.alpha = 0.15;
+  function zoomVers(px, py, k) {
+    k = Math.max(0.25, Math.min(4, k));
+    const [wx, wy] = monde(px, py);
+    // garder le point sous la souris immobile
+    const nx = (px - W / 2) / k - wx, ny = (py - H / 2) / k - wy;
+    viserCam(nx, ny, k);
+  }
+  if (neuf) {
+    for (let i = 0; i < 300; i++) tic();
+    Object.assign(cam, cadrage());
+    SIM.alpha = 0.08;
+  }
+
+  // ----- dessin -----
+  const css = getComputedStyle(document.documentElement);
+  const tok = (n) => css.getPropertyValue(n).trim();
+  const T = { ink: tok('--ink'), ink2: tok('--ink2'), muted: tok('--muted'), line: tok('--line2'), panel: tok('--panel'), accent: tok('--accent'), sans: tok('--sans') };
+  const couleur = (n) => (n.g === 'cerveau' ? T.ink : GROUPES[n.g][1]);
   function dessiner() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    const sel = S.note;
+    const foyer = G.survol?.id || (S.note !== 'hub:cerveau' ? S.note : null);
     const voisins = new Set();
-    for (const [p, q] of aretes) { if (p.id === sel) voisins.add(q.id); if (q.id === sel) voisins.add(p.id); }
+    if (foyer) for (const [p, q] of aretes) { if (p.id === foyer) voisins.add(q.id); if (q.id === foyer) voisins.add(p.id); }
+    for (const n of noeuds) { const but = !foyer || n.id === foyer || voisins.has(n.id) || n.hub ? 1 : 0.28; n.vis += (but - n.vis) * 0.18; }
     for (const [p, q, hub] of aretes) {
-      const [x1, y1] = ecran(p), [x2, y2] = ecran(q);
-      const fort = p.id === sel || q.id === sel || p === G.survol || q === G.survol;
-      ctx.lineWidth = fort ? 1.5 : 1;
-      ctx.strokeStyle = fort ? tok('--accent') : hub ? tok('--line2') : tok('--line2');
-      ctx.globalAlpha = fort ? 0.95 : hub ? 0.9 : 0.55;
+      const [x1, y1] = ecran(p.x, p.y), [x2, y2] = ecran(q.x, q.y);
+      const fort = foyer && (p.id === foyer || q.id === foyer);
+      ctx.globalAlpha = fort ? 0.95 : Math.min(p.vis, q.vis) * (hub ? 0.85 : 0.6);
+      ctx.strokeStyle = fort ? T.accent : T.line;
+      ctx.lineWidth = (fort ? 1.6 : hub ? 1.2 : 0.9) * Math.max(0.7, Math.min(1.4, cam.k));
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     }
-    ctx.globalAlpha = 1;
-    const ordre = noeuds.slice().sort((a, b) => (a.hub ? 1 : 0) - (b.hub ? 1 : 0));
+    const ordre = noeuds.slice().sort((a, b) => (a.hub - b.hub) || (a.id === foyer) - (b.id === foyer));
     for (const n of ordre) {
-      const [x, y] = ecran(n), r = rayon(n);
-      const attenue = sel && sel !== 'hub:cerveau' && n.id !== sel && !voisins.has(n.id) && !n.hub;
-      ctx.globalAlpha = attenue ? 0.45 : 1;
+      const [x, y] = ecran(n.x, n.y);
+      if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue;
+      const r = rBase(n) * Math.max(0.6, Math.sqrt(cam.k)) * (n === G.survol ? 1.15 : 1);
+      ctx.globalAlpha = n.vis;
+      if (n.hub) { ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.fillStyle = couleur(n); ctx.globalAlpha = n.vis * 0.14; ctx.fill(); ctx.globalAlpha = n.vis; }
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fillStyle = couleur(n); ctx.fill();
-      if (n.hub) { ctx.lineWidth = 3; ctx.strokeStyle = tok('--panel'); ctx.stroke(); }
-      if (n.id === sel || n === G.survol) { ctx.lineWidth = 2; ctx.strokeStyle = tok('--ink'); ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke(); }
-      ctx.globalAlpha = 1;
-      if (n.hub || G.cam.k > 1.15 || n.id === sel || n === G.survol || voisins.has(n.id) || n.deg >= 4) {
-        ctx.font = `${n.hub ? 600 : 500} ${n.id === 'hub:cerveau' ? 14 : n.hub ? 13 : 11.5}px ${tok('--sans')}`;
+      if (n.id === S.note) { ctx.lineWidth = 2; ctx.strokeStyle = T.ink; ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke(); }
+      const montrer = n.hub || n.id === foyer || voisins.has(n.id) || cam.k > 1.05 || (degre.get(n) >= 4 && cam.k > 0.7);
+      if (montrer) {
+        const taillePolice = n.id === 'hub:cerveau' ? 14 : n.hub ? 13 : 11.5;
+        ctx.font = `${n.hub ? 600 : 500} ${taillePolice}px ${T.sans}`;
         ctx.textAlign = 'center';
-        const lab = n.titre.length > 28 ? n.titre.slice(0, 27) + '…' : n.titre;
-        ctx.lineWidth = 4; ctx.strokeStyle = tok('--panel'); ctx.strokeText(lab, x, y + r + 15);
-        ctx.fillStyle = n.hub ? tok('--ink') : tok('--ink2'); ctx.fillText(lab, x, y + r + 15);
+        const lab = n.titre.length > 30 ? n.titre.slice(0, 29) + '…' : n.titre;
+        const ly = y + r + 14;
+        ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = T.panel; ctx.strokeText(lab, x, ly);
+        ctx.fillStyle = n.hub || n.id === foyer ? T.ink : T.ink2; ctx.fillText(lab, x, ly);
       }
     }
+    ctx.globalAlpha = 1;
   }
-  const boucle = () => { if (G.alpha > 0.003) { pas(G.alpha); G.alpha *= 0.97; } dessiner(); G.raf = requestAnimationFrame(boucle); };
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) G.alpha = 0;
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const boucle = () => {
+    if (SIM.alpha > SIM.alphaMin || SIM.alphaCible > 0) tic();
+    if (cible.active) {
+      const t = reduit ? 1 : 0.16;
+      cam.x += (cible.x - cam.x) * t; cam.y += (cible.y - cam.y) * t; cam.k += (cible.k - cam.k) * t;
+      if (Math.abs(cible.k - cam.k) < 1e-3 && Math.abs(cible.x - cam.x) < 0.05 && Math.abs(cible.y - cam.y) < 0.05) cible.active = false;
+    } else if (!G.enGeste && Math.abs(elan.vx) + Math.abs(elan.vy) > 0.02) {
+      cam.x += elan.vx / cam.k; cam.y += elan.vy / cam.k; elan.vx *= 0.92; elan.vy *= 0.92;
+    }
+    dessiner();
+    G.raf = requestAnimationFrame(boucle);
+  };
   boucle();
-  const trouver = (px, py) => { let best = null, bd = 1e9; for (const n of noeuds) { const [x, y] = ecran(n); const d = Math.hypot(x - px, y - py); if (d < rayon(n) + 6 && d < bd) { best = n; bd = d; } } return best; };
-  let glisse = null;
+
+  // ----- interactions : souris, doigt, pincement -----
+  const pointeurs = new Map();
+  let geste = null;
+  const pos = (ev) => { const r = cv.getBoundingClientRect(); return [ev.clientX - r.left, ev.clientY - r.top]; };
+  const trouver = (px, py) => {
+    let best = null, bd = 1e9;
+    for (const n of noeuds) { const [x, y] = ecran(n.x, n.y); const d = Math.hypot(x - px, y - py); const r = rBase(n) * Math.max(0.6, Math.sqrt(cam.k)) + 8; if (d < r && d < bd) { best = n; bd = d; } }
+    return best;
+  };
   cv.addEventListener('pointerdown', (ev) => {
-    const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+    cv.setPointerCapture(ev.pointerId);
+    const [px, py] = pos(ev);
+    pointeurs.set(ev.pointerId, [px, py]);
+    cible.active = false;
+    if (pointeurs.size === 2) {
+      const [[ax, ay], [bx, by]] = [...pointeurs.values()];
+      if (geste?.n) { geste.n.fx = geste.n.fy = null; SIM.alphaCible = 0; }
+      geste = { pince: true, d: Math.hypot(bx - ax, by - ay), k: cam.k, cx: (ax + bx) / 2, cy: (ay + by) / 2 };
+      return;
+    }
     const n = trouver(px, py);
-    glisse = { n, px, py, cx: G.cam.x, cy: G.cam.y, bouge: false };
-    if (n) G.tenu = n;
-    cv.setPointerCapture(ev.pointerId); cv.classList.add('drag');
+    geste = { n, px, py, lx: px, ly: py, t: performance.now(), bouge: false };
+    G.enGeste = true;
+    elan.vx = elan.vy = 0;
+    if (n) { const [wx, wy] = monde(px, py); geste.ox = n.x - wx; geste.oy = n.y - wy; }
+    cv.classList.add('drag');
   });
   cv.addEventListener('pointermove', (ev) => {
-    const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
-    if (!glisse) { G.survol = trouver(px, py); cv.style.cursor = G.survol ? 'pointer' : 'grab'; return; }
-    if (Math.hypot(px - glisse.px, py - glisse.py) > 3) glisse.bouge = true;
-    if (glisse.n && glisse.bouge) { const [wx, wy] = monde(px, py); glisse.n.x = wx; glisse.n.y = wy; G.alpha = Math.max(G.alpha, 0.12); }
-    else if (!glisse.n) { G.cam.x = glisse.cx + (px - glisse.px) / G.cam.k; G.cam.y = glisse.cy + (py - glisse.py) / G.cam.k; }
+    const [px, py] = pos(ev);
+    if (pointeurs.has(ev.pointerId)) pointeurs.set(ev.pointerId, [px, py]);
+    if (!geste) { const n = trouver(px, py); if (n !== G.survol) G.survol = n; cv.style.cursor = n ? 'pointer' : 'grab'; return; }
+    if (geste.pince && pointeurs.size === 2) {
+      const [[ax, ay], [bx, by]] = [...pointeurs.values()];
+      const k = Math.max(0.25, Math.min(4, geste.k * Math.hypot(bx - ax, by - ay) / geste.d));
+      const [wx, wy] = monde(geste.cx, geste.cy);
+      cam.x = (geste.cx - W / 2) / k - wx; cam.y = (geste.cy - H / 2) / k - wy; cam.k = k;
+      return;
+    }
+    if (Math.hypot(px - geste.px, py - geste.py) > 4) geste.bouge = true;
+    if (!geste.bouge) return;
+    if (geste.n) {
+      const [wx, wy] = monde(px, py);
+      geste.n.fx = wx + geste.ox; geste.n.fy = wy + geste.oy;
+      SIM.alphaCible = 0.3; SIM.alpha = Math.max(SIM.alpha, 0.3);
+      G.survol = geste.n;
+    } else {
+      const dx = px - geste.lx, dy = py - geste.ly;
+      cam.x += dx / cam.k; cam.y += dy / cam.k;
+      elan.vx = dx * 0.6; elan.vy = dy * 0.6;
+    }
+    geste.lx = px; geste.ly = py;
   });
-  const fin = () => {
-    const g = glisse;
-    glisse = null; G.tenu = null; cv.classList.remove('drag');
-    if (g?.n && !g.bouge) { S.note = g.n.id; render(); }
+  const lacher = (ev) => {
+    pointeurs.delete(ev.pointerId);
+    cv.classList.remove('drag');
+    G.enGeste = pointeurs.size > 0;
+    const g = geste;
+    if (g?.pince) { geste = pointeurs.size ? null : null; return; }
+    geste = null;
+    if (!g) return;
+    if (g.n) { g.n.fx = g.n.fy = null; SIM.alphaCible = 0; }
+    if (!g.bouge) {
+      elan.vx = elan.vy = 0;
+      if (g.n) G.focus(g.n.id);
+    }
   };
-  cv.addEventListener('pointerup', fin);
-  cv.addEventListener('pointercancel', () => { glisse = null; G.tenu = null; cv.classList.remove('drag'); });
-  cv.addEventListener('wheel', (ev) => { ev.preventDefault(); G.cam.k = Math.min(4, Math.max(0.3, G.cam.k * (ev.deltaY < 0 ? 1.12 : 0.89))); }, { passive: false });
-  $('#g-zoomin').onclick = () => { G.cam.k = Math.min(4, G.cam.k * 1.25); };
-  $('#g-zoomout').onclick = () => { G.cam.k = Math.max(0.3, G.cam.k / 1.25); };
-  $('#g-reset').onclick = () => { ajuster(); };
+  // Sélectionner un point : panneau à jour et caméra qui glisse jusqu'à lui, sans reconstruire le graphe.
+  G.focus = (id) => {
+    const n = noeuds.find((x) => x.id === id);
+    if (!n) return false;
+    S.note = id;
+    if (id === 'hub:cerveau') { const c = cadrage(); viserCam(c.x, c.y, c.k); }
+    else viserCam(-n.x, -n.y, Math.max(cam.k, n.hub ? 0.95 : 1.15));
+    const panel = $('.note-panel');
+    if (panel) { panel.innerHTML = panneauNoeud(G.cur.noeuds.find((x) => x.id === id) || n); panel.scrollTop = 0; icons(); }
+    return true;
+  };
+  cv.addEventListener('pointerup', lacher);
+  cv.addEventListener('pointercancel', lacher);
+  cv.addEventListener('wheel', (ev) => {
+    ev.preventDefault();
+    const [px, py] = pos(ev);
+    const base = cible.active ? cible.k : cam.k;
+    const facteur = Math.exp(-ev.deltaY * (ev.deltaMode === 1 ? 0.05 : 0.0018));
+    zoomVers(px, py, base * facteur);
+  }, { passive: false });
+  cv.addEventListener('dblclick', (ev) => { const [px, py] = pos(ev); zoomVers(px, py, cam.k * 1.8); });
+  cv.addEventListener('pointerleave', () => { if (!geste) G.survol = null; });
+  $('#g-zoomin').onclick = () => zoomVers(W / 2, H / 2, cam.k * 1.35);
+  $('#g-zoomout').onclick = () => zoomVers(W / 2, H / 2, cam.k / 1.35);
+  $('#g-reset').onclick = () => { const c = cadrage(); viserCam(c.x, c.y, c.k); };
 }
 
 // ---------- journal ----------
@@ -949,9 +1089,9 @@ document.addEventListener('click', (ev) => {
   const me = t.closest('[data-memo]');
   if (me) { S.memo = me.dataset.memo; return render(); }
   const wl = t.closest('[data-note-titre]');
-  if (wl) { S.note = 'n:' + cle(wl.dataset.noteTitre); if (S.vue !== 'cerveau') location.hash = 'cerveau'; else render(); return; }
+  if (wl) { const id = 'n:' + cle(wl.dataset.noteTitre); if (S.vue === 'cerveau' && G.focus?.(id)) return; S.note = id; if (S.vue !== 'cerveau') location.hash = 'cerveau'; else render(); return; }
   const gn = t.closest('[data-noeud]');
-  if (gn) { S.note = gn.dataset.noeud; return render(); }
+  if (gn) { if (S.vue === 'cerveau' && G.focus?.(gn.dataset.noeud)) return; S.note = gn.dataset.noeud; return render(); }
   const jr = t.closest('[data-jour]');
   if (jr) { S.jour = jr.dataset.jour; if (S.vue !== 'journal') location.hash = 'journal'; else render(); return; }
   const mi = t.closest('[data-mission]');
