@@ -229,14 +229,14 @@ body.open .drawer{transform:none;visibility:visible}
 
 /* graphe */
 .graph-wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
-.graph{position:relative;height:min(640px,72vh);min-height:420px;border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);touch-action:none}
+.graph{position:relative;height:min(760px,calc(100dvh - 140px));min-height:440px;border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);touch-action:none}
 .graph canvas{display:block;width:100%;height:100%;cursor:grab}
 .graph canvas.drag{cursor:grabbing}
 .graph .legend{position:absolute;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
 .graph .tools{position:absolute;right:12px;top:12px;display:flex;gap:6px}
 .lg{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink2);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
 .lg i{width:8px;height:8px;border-radius:50%;display:inline-block}
-.note-panel{max-height:min(640px,72vh);overflow:auto}
+.note-panel{max-height:min(760px,calc(100dvh - 140px));overflow:auto}
 .md button.wl{color:var(--accent);font-weight:500;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
 .md details{border:1px solid var(--line);border-radius:8px;margin:8px 0;background:var(--sunken)}
 .md details summary{cursor:pointer;padding:6px 10px;font-size:12.5px;color:var(--muted)}
@@ -298,6 +298,7 @@ body.open .drawer{transform:none;visibility:visible}
   <aside class="side">
     <div class="brand"><div class="mk"><i data-lucide="brain"></i></div><div><b>Le Cerveau</b><small>Agence de Matheo</small></div></div>
     <nav class="nav" aria-label="Rubriques">
+      <a href="#cerveau" data-v="cerveau"><i data-lucide="brain"></i>Le Cerveau<span class="n" id="n-tout">0</span></a>
       <a href="#cockpit" data-v="cockpit"><i data-lucide="layout-dashboard"></i>Cockpit</a>
       <div class="h">Base</div>
       <a href="#entreprises" data-v="entreprises"><i data-lucide="store"></i>Entreprises<span class="n" id="n-entreprises">0</span></a>
@@ -305,7 +306,6 @@ body.open .drawer{transform:none;visibility:visible}
       <a href="#reponses" data-v="reponses"><i data-lucide="inbox"></i>Réponses<span class="n" id="n-reponses">0</span></a>
       <a href="#messages" data-v="messages"><i data-lucide="send"></i>Messages à envoyer<span class="n" id="n-messages">0</span></a>
       <div class="h">Cerveau</div>
-      <a href="#graphe" data-v="graphe"><i data-lucide="network"></i>Graphe<span class="n" id="n-notes">0</span></a>
       <a href="#journal" data-v="journal"><i data-lucide="notebook-pen"></i>Journal<span class="n" id="n-journal">0</span></a>
       <a href="#missions" data-v="missions"><i data-lucide="rocket"></i>Missions</a>
       <div class="h">Agence</div>
@@ -336,7 +336,6 @@ body.open .drawer{transform:none;visibility:visible}
 </aside>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
 <script>
 const ETAPES = ['brief', 'build', 'verification', 'apercu', 'modifs', 'livre', 'paye'];
 const COL = {
@@ -375,28 +374,36 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cockpit', q: '', memo: 'memoire', ouvert: null, note: 'memoire', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
 
 // ---------- rendu ----------
-function icons() { if (window.lucide) lucide.createIcons({ attrs: { 'aria-hidden': 'true' } }); }
+// Icônes Lucide (licence ISC), recopiées dans la page : rien à charger depuis Internet.
+const ICONES = {"bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","calendar":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","circle-dashed":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","flask-conical":"<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\"/><path d=\"M8.5 2h7\"/><path d=\"M7 16h10\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","library":"<path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/>","message-square":"<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/>","minus":"<path d=\"M5 12h14\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\"/><path d=\"M12 12V8\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","scan":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","store":"<path d=\"m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7\"/><path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><path d=\"M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4\"/><path d=\"M2 7h20\"/><path d=\"M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","clipboard-list":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","loader":"<path d=\"M12 2v4\"/><path d=\"m16.2 7.8 2.9-2.9\"/><path d=\"M18 12h4\"/><path d=\"m16.2 16.2 2.9 2.9\"/><path d=\"M12 18v4\"/><path d=\"m4.9 19.1 2.9-2.9\"/><path d=\"M2 12h4\"/><path d=\"m4.9 4.9 2.9 2.9\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","pencil-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/><path d=\"m15 5 3 3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>","file-text":"<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","layers-3":"<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/><path d=\"m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/>","arrow-right":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>"};
+function icons() {
+  document.querySelectorAll('i[data-lucide]').forEach((el) => {
+    const corps = ICONES[el.dataset.lucide] || ICONES.circle;
+    el.outerHTML = `<svg class="lucide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${el.getAttribute('style') ? ` style="${el.getAttribute('style')}"` : ''}>${corps}</svg>`;
+  });
+}
 
 function render() {
-  for (const k of ['entreprises', 'personnes', 'reponses', 'notes']) $('#n-' + k).textContent = S[k].length;
+  for (const k of ['entreprises', 'personnes', 'reponses']) $('#n-' + k).textContent = S[k].length;
+  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length;
   $('#n-memoire').textContent = S.notes.filter((n) => n.dossier !== 'Journal').length;
   $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
   $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === S.vue ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  const titres = { cockpit: 'Cockpit', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Mémoire', graphe: 'Graphe du cerveau', journal: 'Journal', missions: 'Missions' };
+  const titres = { cockpit: 'Cockpit', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Mémoire', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
   $('#v-title').textContent = titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
-  if (S.vue !== 'graphe') arreterGraphe();
-  v.innerHTML = ({ cockpit, entreprises, personnes, reponses, messages, agents, memoire, graphe, journal, missions })[S.vue]();
+  if (S.vue !== 'cerveau') arreterGraphe();
+  v.innerHTML = ({ cerveau: vueCerveau, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
   icons();
-  if (S.vue === 'graphe') demarrerGraphe();
+  if (S.vue === 'cerveau') demarrerGraphe();
 }
 
 function vide(titre, texte) {
@@ -575,41 +582,94 @@ function memoire() {
     <div class="md"><h1>${esc(cur.titre)}</h1>${mdToHtml(cur.contenu || cur.extrait || '')}</div></section>`;
 }
 
-// ---------- graphe ----------
+// ---------- le cerveau : toutes les bases dans un seul graphe ----------
 const GROUPES = {
-  memoire: ['Mémoire', '#3a55d4'], projet: ['Projets', '#c2410c'], agent: ['Agents', '#7c3aed'], personne: ['Personnes', '#be185d'],
-  journal: ['Journal', '#0e7490'], entreprise: ['Entreprises', '#17803d'], autre: ['Notes', '#8a8a82'],
+  cerveau: ['Le Cerveau', '#1f1f1c'], entreprise: ['Entreprises', '#17803d'], personne: ['Personnes', '#be185d'],
+  reponse: ['Réponses', '#b45309'], message: ['Messages', '#2563eb'], memoire: ['Mémoire', '#4f46e5'],
+  projet: ['Projets', '#c2410c'], journal: ['Journal', '#0e7490'], agent: ['Agents', '#7c3aed'],
 };
-function groupeDe(n) {
-  const t = n.tags || [];
-  if (n.entreprise) return 'entreprise';
-  if (t.includes('memoire') || t.includes('accueil')) return 'memoire';
-  for (const g of ['projet', 'agent', 'personne', 'journal']) if (t.includes(g)) return g;
-  return 'autre';
-}
+const HUBS = [
+  ['entreprise', 'Entreprises', 'store', 'entreprises'], ['personne', 'Personnes', 'users', 'personnes'], ['reponse', 'Réponses', 'inbox', 'reponses'],
+  ['message', 'Messages à envoyer', 'send', 'messages'], ['memoire', 'Mémoire', 'library', 'memoire'], ['journal', 'Journal', 'notebook-pen', 'journal'], ['agent', 'Agents', 'bot', 'agents'],
+];
 const cle = (t) => String(t || '').trim().toLowerCase();
-function construireGraphe() {
-  const noeuds = new Map();
-  for (const n of S.notes) noeuds.set(cle(n.titre), { id: cle(n.titre), titre: n.titre, note: n, g: groupeDe(n), liens: n.liens || [] });
-  for (const e of S.entreprises) noeuds.set('ent:' + e.id, { id: 'ent:' + e.id, titre: e.nom, ent: e, g: 'entreprise', liens: ['Agence sites vitrines'] });
-  const aretes = [];
-  for (const a of noeuds.values()) for (const l of a.liens) { const b = noeuds.get(cle(l)); if (b && b !== a) aretes.push([a, b]); }
-  for (const n of noeuds.values()) n.deg = aretes.filter(([a, b]) => a === n || b === n).length;
-  return { noeuds: [...noeuds.values()], aretes };
+function groupeNote(n) {
+  const t = n.tags || [];
+  if (t.includes('projet')) return 'projet';
+  if (t.includes('agent')) return 'agent';
+  if (t.includes('personne')) return 'personne';
+  return 'memoire';
 }
-const G = { raf: 0, ro: null, cam: { x: 0, y: 0, k: 1 }, data: null, alpha: 1, survol: null };
+function construireGraphe() {
+  const N = new Map();
+  const aretes = [];
+  const lier = (a, b, hub = false) => { if (N.has(a) && N.has(b) && a !== b) aretes.push([N.get(a), N.get(b), hub]); };
+  const ajouter = (id, titre, g, quoi, x = {}) => N.set(id, { id, titre, g, quoi, ...x });
+  ajouter('hub:cerveau', 'Le Cerveau', 'cerveau', 'centre', { hub: true, r: 15 });
+  for (const [g, titre, , vue] of HUBS) { ajouter('hub:' + g, titre, g, 'hub', { hub: true, r: 11, vue }); lier('hub:cerveau', 'hub:' + g, true); }
+  for (const e of S.entreprises) { ajouter('e:' + e.id, e.nom, 'entreprise', 'entreprise', { data: e }); lier('hub:entreprise', 'e:' + e.id, true); }
+  for (const p of S.personnes) { ajouter('p:' + p.id, p.nom, 'personne', 'personne', { data: p }); lier('hub:personne', 'p:' + p.id, true); lier('p:' + p.id, 'e:' + p.entreprise); }
+  for (const r of S.reponses) { ajouter('r:' + r.id, r.resume || 'Réponse', 'reponse', 'reponse', { data: r }); lier('hub:reponse', 'r:' + r.id, true); lier('r:' + r.id, 'e:' + r.entreprise); }
+  for (const m of S.messages) { ajouter('m:' + m.id, m.objet || 'Message', 'message', 'message', { data: m }); lier('hub:message', 'm:' + m.id, true); lier('m:' + m.id, 'e:' + m.entreprise); }
+  for (const n of S.notes.filter((n) => n.dossier !== 'Journal')) ajouter('n:' + cle(n.titre), n.titre, groupeNote(n), 'note', { data: n });
+  for (const n of S.notes.filter((n) => n.dossier !== 'Journal')) {
+    const id = 'n:' + cle(n.titre);
+    lier(groupeNote(n) === 'agent' ? 'hub:agent' : 'hub:memoire', id, true);
+    for (const l of n.liens || []) lier(id, 'n:' + cle(l));
+  }
+  for (const d of [...new Set(S.journal.map((j) => j.date))]) { ajouter('j:' + d, 'Journal ' + dateFr(d), 'journal', 'jour', { date: d }); lier('hub:journal', 'j:' + d, true); }
+  for (const a of AGENTS) { const id = 'n:' + cle(a.id); if (!N.has(id)) { ajouter(id, a.id, 'agent', 'agent', { agent: a }); lier('hub:agent', id, true); } else N.get(id).agent = a;
+    for (const e of S.entreprises.filter((e) => a.etapes.includes(e.statut))) lier(id, 'e:' + e.id); }
+  lier('n:agence sites vitrines', 'hub:entreprise');
+  const noeuds = [...N.values()];
+  for (const n of noeuds) n.deg = aretes.filter(([a, b]) => a === n || b === n).length;
+  return { noeuds, aretes };
+}
+const G = { raf: 0, ro: null, cam: { x: 0, y: 0, k: 1 }, data: null, alpha: 1, survol: null, ajuste: false };
 function arreterGraphe() { cancelAnimationFrame(G.raf); G.raf = 0; G.ro?.disconnect(); G.ro = null; }
-function graphe() {
-  if (!S.notes.length) return vide('Graphe vide', 'Les notes du coffre <code>Repos-/cerveau</code> apparaissent ici une fois synchronisées par les agents.');
-  const sel = S.notes.find((n) => cle(n.titre) === S.note) || S.notes.find((n) => cle(n.titre) === 'memoire') || S.notes[0];
+
+function panneauNoeud(n) {
+  if (!n) return '';
+  const tete = (lab) => `<header><span class="lg"><i style="background:${GROUPES[n.g][1]}"></i>${lab}</span></header>`;
+  if (n.quoi === 'centre') {
+    const lignes = HUBS.map(([g, titre, icone, vue]) => {
+      const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length }[g];
+      return `<li class="click" data-noeud="hub:${g}"><i data-lucide="${icone}" style="color:${GROUPES[g][1]}"></i><div class="info"><b>${titre}</b></div><span class="mono">${nb}</span></li>`;
+    }).join('');
+    return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un point pour l'ouvrir. Glissez pour déplacer, molette pour zoomer.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
+  }
+  if (n.quoi === 'hub') {
+    const enfants = G.cur.aretes.filter(([a, b]) => a === n && !b.hub).map(([, b]) => b);
+    return `${tete(n.titre)}<ul class="rows">${enfants.map((c) => `<li class="click" data-noeud="${esc(c.id)}"><span class="lg" style="border:0;padding:0;background:none"><i style="background:${GROUPES[c.g][1]}"></i></span><div class="info"><b>${esc(c.titre)}</b>${c.data?.activite ? `<small>${esc(c.data.activite)}</small>` : ''}</div></li>`).join('') || '<li><div class="info muted">Rien pour l\'instant. Les agents la remplissent automatiquement.</div></li>'}</ul><div class="pad"><a class="btn" href="#${n.vue}"><i data-lucide="arrow-right"></i>Ouvrir la rubrique ${esc(n.titre)}</a></div>`;
+  }
+  if (n.quoi === 'entreprise') {
+    const e = n.data;
+    return `${tete('Entreprise')}<div class="pad" style="display:grid;gap:12px"><div class="who">${av(e.id, e.nom)}<div><b>${esc(e.nom)}</b><small>${esc([e.activite, e.ville].filter(Boolean).join(', '))}</small></div>${testTag(e)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${etapeTag(e.statut)}${echeance(e)}<span class="tag">${esc(e.formule)} · ${euro(e.prix)}</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-ent="${esc(e.id)}"><i data-lucide="store"></i>Ouvrir la fiche</button>${e.site ? `<a class="btn" href="${esc(e.site)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>Voir le site</a>` : ''}</div></div>`;
+  }
+  if (n.quoi === 'personne') { const p = n.data; return `${tete('Personne')}<div class="pad" style="display:grid;gap:8px"><div class="who">${av(p.id, p.nom)}<div><b>${esc(p.nom)}</b><small>${esc([p.role, nomEnt(p.entreprise)].filter(Boolean).join(', '))}</small></div></div><p class="muted">${esc([p.plateforme && `${p.plateforme} ${p.pseudo || ''}`, p.telephone, p.email].filter(Boolean).join(' · '))}</p>${p.notes ? `<p>${esc(p.notes)}</p>` : ''}</div>`; }
+  if (n.quoi === 'reponse') return `${tete('Réponse')}<div class="pad">${blocReponse(n.data).replace('<details class="card reponse">', '<details class="card reponse" open>')}</div>`;
+  if (n.quoi === 'message') return `${tete('Message à envoyer')}<div class="pad">${blocMessage(n.data)}</div>`;
+  if (n.quoi === 'jour') return `${tete('Journal')}<div class="pad" style="display:grid;gap:10px"><b>${esc(n.titre)}</b><p class="muted">Tout ce qui a été dit et fait ce jour-là.</p><div><button class="btn primary" type="button" data-jour="${esc(n.date)}"><i data-lucide="notebook-pen"></i>Lire le journal</button></div></div>`;
+  if (n.agent && !n.data) return `${tete('Agent')}<div class="pad"><b>${n.agent.id}, ${n.agent.role}</b><p class="muted" style="margin-top:6px">${n.agent.fait}</p></div>`;
+  const d = n.data;
+  return `${tete(GROUPES[n.g][0])}<div class="md"><h1>${esc(d.titre)}</h1>${mdToHtml(d.contenu || d.extrait || '')}</div>`;
+}
+
+function vueCerveau() {
+  const data = construireGraphe();
+  G.cur = data;
+  const sel = data.noeuds.find((n) => n.id === S.note) || data.noeuds[0];
   return `<div class="graph-wrap">
-    <div class="graph" id="graph"><canvas id="cv" aria-label="Graphe des notes du cerveau : glissez pour déplacer, molette pour zoomer, cliquez sur un point pour ouvrir la note" role="img"></canvas>
+    <div class="graph" id="graph"><canvas id="cv" role="img" aria-label="Le cerveau : toutes les bases de l'agence reliées. Glissez pour déplacer, molette pour zoomer, cliquez sur un point pour l'ouvrir."></canvas>
       <div class="tools"><button class="icon" type="button" id="g-zoomin" aria-label="Zoomer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
-      <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${c}"></i>${l}</span>`).join('')}</div>
+      <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${k === 'cerveau' ? 'var(--ink)' : c}"></i>${l}</span>`).join('')}</div>
     </div>
-    <section class="card note-panel" aria-live="polite">${sel ? `<header><span class="lg"><i style="background:${GROUPES[groupeDe(sel)][1]}"></i>${GROUPES[groupeDe(sel)][0]}</span><div class="grow"></div><span class="c">${esc(sel.dossier || 'racine')}</span></header><div class="md"><h1>${esc(sel.titre)}</h1>${sel.contenu ? mdToHtml(sel.contenu) : `<p>${esc(sel.extrait || '')}</p><p><button type="button" class="wl" data-jour="${esc(sel.titre)}">Ouvrir ce jour dans le Journal</button></p>`}</div>` : ''}</section>
+    <section class="card note-panel" aria-live="polite">${panneauNoeud(sel)}</section>
   </div>`;
 }
+
 function demarrerGraphe() {
   arreterGraphe();
   const cv = $('#cv');
@@ -619,12 +679,14 @@ function demarrerGraphe() {
   const anc = G.data ? new Map(G.data.noeuds.map((n) => [n.id, n])) : new Map();
   G.data = construireGraphe();
   const { noeuds, aretes } = G.data;
+  const neuf = !anc.size;
   noeuds.forEach((n, i) => {
     const o = anc.get(n.id);
-    if (o) { n.x = o.x; n.y = o.y; n.vx = 0; n.vy = 0; }
-    else { const a = (i / noeuds.length) * Math.PI * 2; n.x = Math.cos(a) * 160 + Math.random() * 20; n.y = Math.sin(a) * 160 + Math.random() * 20; n.vx = n.vy = 0; }
+    if (o) { n.x = o.x; n.y = o.y; }
+    else if (n.id === 'hub:cerveau') { n.x = 0; n.y = 0; }
+    else { const a = (i / noeuds.length) * Math.PI * 2; const r = n.hub ? 140 : 260; n.x = Math.cos(a) * r; n.y = Math.sin(a) * r; }
+    n.vx = 0; n.vy = 0;
   });
-  G.alpha = anc.size ? 0.3 : 1;
   let W = 0, H = 0, dpr = 1;
   const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; };
   taille();
@@ -632,99 +694,104 @@ function demarrerGraphe() {
   G.ro.observe(box);
   const css = getComputedStyle(document.documentElement);
   const tok = (n) => css.getPropertyValue(n).trim();
+  const couleur = (n) => (n.g === 'cerveau' ? tok('--ink') : GROUPES[n.g][1]);
   const ecran = (n) => [W / 2 + (n.x + G.cam.x) * G.cam.k, H / 2 + (n.y + G.cam.y) * G.cam.k];
   const monde = (px, py) => [(px - W / 2) / G.cam.k - G.cam.x, (py - H / 2) / G.cam.k - G.cam.y];
-  const rayon = (n) => 4 + Math.min(10, n.deg * 1.4);
-  function pas() {
-    const a = G.alpha;
+  const rayon = (n) => (n.r || 4 + Math.min(6, n.deg)) * Math.sqrt(G.cam.k);
+  function pas(a) {
     for (let i = 0; i < noeuds.length; i++) {
       const p = noeuds[i];
       for (let j = i + 1; j < noeuds.length; j++) {
         const q = noeuds[j];
         let dx = q.x - p.x, dy = q.y - p.y, d2 = dx * dx + dy * dy + 0.01;
-        const f = (7000 / d2) * a, d = Math.sqrt(d2);
+        const f = (9000 / d2) * a, d = Math.sqrt(d2);
         dx /= d; dy /= d;
         p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f;
       }
     }
-    for (const [p, q] of aretes) {
+    for (const [p, q, hub] of aretes) {
       const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-      const f = (d - 120) * 0.02 * a;
+      const L = p.id === 'hub:cerveau' ? 170 : hub ? 85 : 120;
+      const f = (d - L) * (hub ? 0.05 : 0.015) * a;
       p.vx += (dx / d) * f; p.vy += (dy / d) * f; q.vx -= (dx / d) * f; q.vy -= (dy / d) * f;
     }
     for (const n of noeuds) {
-      if (n === G.tenu) { n.vx = n.vy = 0; continue; }
-      n.vx -= n.x * 0.003 * a; n.vy -= n.y * 0.003 * a;
-      n.vx *= 0.82; n.vy *= 0.82;
-      n.x += n.vx; n.y += n.vy;
+      if (n === G.tenu || n.id === 'hub:cerveau') { n.vx = n.vy = 0; if (n.id === 'hub:cerveau' && n !== G.tenu) { n.x *= 0.9; n.y *= 0.9; } continue; }
+      n.vx *= 0.8; n.vy *= 0.8; n.x += n.vx; n.y += n.vy;
     }
-    G.alpha = Math.max(0, G.alpha * 0.985 - 0.0008);
   }
+  function ajuster() {
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const n of noeuds) { x0 = Math.min(x0, n.x); x1 = Math.max(x1, n.x); y0 = Math.min(y0, n.y); y1 = Math.max(y1, n.y); }
+    const k = Math.max(0.35, Math.min(1.6, Math.min((W - 100) / Math.max(1, x1 - x0), (H - 170) / Math.max(1, y1 - y0))));
+    G.cam = { x: -(x0 + x1) / 2, y: -(y0 + y1) / 2 - 25 / k, k };
+  }
+  if (neuf) { for (let i = 0; i < 350; i++) pas(1 - i / 400); ajuster(); G.alpha = 0.05; }
+  else G.alpha = 0.15;
   function dessiner() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const sel = S.note;
     const voisins = new Set();
     for (const [p, q] of aretes) { if (p.id === sel) voisins.add(q.id); if (q.id === sel) voisins.add(p.id); }
-    ctx.lineWidth = 1;
-    for (const [p, q] of aretes) {
+    for (const [p, q, hub] of aretes) {
       const [x1, y1] = ecran(p), [x2, y2] = ecran(q);
       const fort = p.id === sel || q.id === sel || p === G.survol || q === G.survol;
-      ctx.strokeStyle = fort ? tok('--accent') : tok('--line2');
-      ctx.globalAlpha = fort ? 0.9 : 0.7;
+      ctx.lineWidth = fort ? 1.5 : 1;
+      ctx.strokeStyle = fort ? tok('--accent') : hub ? tok('--line2') : tok('--line2');
+      ctx.globalAlpha = fort ? 0.95 : hub ? 0.9 : 0.55;
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     }
     ctx.globalAlpha = 1;
-    for (const n of noeuds) {
-      const [x, y] = ecran(n), r = rayon(n) * Math.sqrt(G.cam.k);
+    const ordre = noeuds.slice().sort((a, b) => (a.hub ? 1 : 0) - (b.hub ? 1 : 0));
+    for (const n of ordre) {
+      const [x, y] = ecran(n), r = rayon(n);
+      const attenue = sel && sel !== 'hub:cerveau' && n.id !== sel && !voisins.has(n.id) && !n.hub;
+      ctx.globalAlpha = attenue ? 0.45 : 1;
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = GROUPES[n.g][1];
-      ctx.globalAlpha = sel && n.id !== sel && !voisins.has(n.id) ? 0.55 : 1;
-      ctx.fill();
-      if (n.id === sel || n === G.survol) { ctx.lineWidth = 2; ctx.strokeStyle = tok('--panel'); ctx.stroke(); ctx.lineWidth = 2; ctx.strokeStyle = tok('--ink'); ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.fillStyle = couleur(n); ctx.fill();
+      if (n.hub) { ctx.lineWidth = 3; ctx.strokeStyle = tok('--panel'); ctx.stroke(); }
+      if (n.id === sel || n === G.survol) { ctx.lineWidth = 2; ctx.strokeStyle = tok('--ink'); ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke(); }
       ctx.globalAlpha = 1;
-      if (n.deg >= 3 || G.cam.k > 1.3 || n.id === sel || n === G.survol || voisins.has(n.id)) {
-        ctx.font = `${n.id === sel ? 600 : 500} 12px ${tok('--sans')}`;
-        ctx.fillStyle = n.id === sel ? tok('--ink') : tok('--ink2');
+      if (n.hub || G.cam.k > 1.15 || n.id === sel || n === G.survol || voisins.has(n.id) || n.deg >= 4) {
+        ctx.font = `${n.hub ? 600 : 500} ${n.id === 'hub:cerveau' ? 14 : n.hub ? 13 : 11.5}px ${tok('--sans')}`;
         ctx.textAlign = 'center';
-        ctx.fillText(n.titre, x, y + r + 14);
+        const lab = n.titre.length > 28 ? n.titre.slice(0, 27) + '…' : n.titre;
+        ctx.lineWidth = 4; ctx.strokeStyle = tok('--panel'); ctx.strokeText(lab, x, y + r + 15);
+        ctx.fillStyle = n.hub ? tok('--ink') : tok('--ink2'); ctx.fillText(lab, x, y + r + 15);
       }
     }
   }
-  const boucle = () => { if (G.alpha > 0.002) pas(); dessiner(); G.raf = requestAnimationFrame(boucle); };
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 400; i++) pas(); G.alpha = 0; }
-  cancelAnimationFrame(G.raf);
+  const boucle = () => { if (G.alpha > 0.003) { pas(G.alpha); G.alpha *= 0.97; } dessiner(); G.raf = requestAnimationFrame(boucle); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) G.alpha = 0;
   boucle();
-  const trouver = (px, py) => { let best = null, bd = 1e9; for (const n of noeuds) { const [x, y] = ecran(n); const d = Math.hypot(x - px, y - py); if (d < rayon(n) * Math.sqrt(G.cam.k) + 6 && d < bd) { best = n; bd = d; } } return best; };
+  const trouver = (px, py) => { let best = null, bd = 1e9; for (const n of noeuds) { const [x, y] = ecran(n); const d = Math.hypot(x - px, y - py); if (d < rayon(n) + 6 && d < bd) { best = n; bd = d; } } return best; };
   let glisse = null;
   cv.addEventListener('pointerdown', (ev) => {
     const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
     const n = trouver(px, py);
     glisse = { n, px, py, cx: G.cam.x, cy: G.cam.y, bouge: false };
-    if (n) { G.tenu = n; G.alpha = Math.max(G.alpha, 0.3); }
+    if (n) G.tenu = n;
     cv.setPointerCapture(ev.pointerId); cv.classList.add('drag');
   });
   cv.addEventListener('pointermove', (ev) => {
     const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
     if (!glisse) { G.survol = trouver(px, py); cv.style.cursor = G.survol ? 'pointer' : 'grab'; return; }
     if (Math.hypot(px - glisse.px, py - glisse.py) > 3) glisse.bouge = true;
-    if (glisse.n) { const [wx, wy] = monde(px, py); glisse.n.x = wx; glisse.n.y = wy; G.alpha = Math.max(G.alpha, 0.2); }
-    else { G.cam.x = glisse.cx + (px - glisse.px) / G.cam.k; G.cam.y = glisse.cy + (py - glisse.py) / G.cam.k; }
+    if (glisse.n && glisse.bouge) { const [wx, wy] = monde(px, py); glisse.n.x = wx; glisse.n.y = wy; G.alpha = Math.max(G.alpha, 0.12); }
+    else if (!glisse.n) { G.cam.x = glisse.cx + (px - glisse.px) / G.cam.k; G.cam.y = glisse.cy + (py - glisse.py) / G.cam.k; }
   });
   const fin = () => {
     const g = glisse;
     glisse = null; G.tenu = null; cv.classList.remove('drag');
-    if (g?.n && !g.bouge) {
-      if (g.n.ent) return ouvrir(g.n.ent.id);
-      S.note = g.n.id; render();
-    }
+    if (g?.n && !g.bouge) { S.note = g.n.id; render(); }
   };
   cv.addEventListener('pointerup', fin);
   cv.addEventListener('pointercancel', () => { glisse = null; G.tenu = null; cv.classList.remove('drag'); });
   cv.addEventListener('wheel', (ev) => { ev.preventDefault(); G.cam.k = Math.min(4, Math.max(0.3, G.cam.k * (ev.deltaY < 0 ? 1.12 : 0.89))); }, { passive: false });
   $('#g-zoomin').onclick = () => { G.cam.k = Math.min(4, G.cam.k * 1.25); };
   $('#g-zoomout').onclick = () => { G.cam.k = Math.max(0.3, G.cam.k / 1.25); };
-  $('#g-reset').onclick = () => { G.cam = { x: 0, y: 0, k: 1 }; G.alpha = 0.5; };
+  $('#g-reset').onclick = () => { ajuster(); };
 }
 
 // ---------- journal ----------
@@ -882,7 +949,9 @@ document.addEventListener('click', (ev) => {
   const me = t.closest('[data-memo]');
   if (me) { S.memo = me.dataset.memo; return render(); }
   const wl = t.closest('[data-note-titre]');
-  if (wl) { S.note = cle(wl.dataset.noteTitre); if (S.vue !== 'graphe') location.hash = 'graphe'; else render(); return; }
+  if (wl) { S.note = 'n:' + cle(wl.dataset.noteTitre); if (S.vue !== 'cerveau') location.hash = 'cerveau'; else render(); return; }
+  const gn = t.closest('[data-noeud]');
+  if (gn) { S.note = gn.dataset.noeud; return render(); }
   const jr = t.closest('[data-jour]');
   if (jr) { S.jour = jr.dataset.jour; if (S.vue !== 'journal') location.hash = 'journal'; else render(); return; }
   const mi = t.closest('[data-mission]');
@@ -906,8 +975,8 @@ document.addEventListener('input', (ev) => {
 });
 $('#q').addEventListener('input', (ev) => { S.q = ev.target.value.trim().toLowerCase(); render(); });
 
-const VUES = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'graphe', 'journal', 'missions'];
-function route() { const h = location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cockpit'; fermer(); render(); }
+const VUES = ['cerveau', 'cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'journal', 'missions'];
+function route() { const h = location.hash.slice(1) === 'graphe' ? 'cerveau' : location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cerveau'; fermer(); render(); }
 addEventListener('hashchange', route);
 
 // Thème : mémorisé sur cet appareil seulement
