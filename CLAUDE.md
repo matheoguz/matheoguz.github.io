@@ -52,3 +52,10 @@ Collections :
 2. `ArtifactData list` sur `entreprises` et `memoire` pour lire les `version`.
 3. Un seul `ArtifactData batch` : `set` avec `file_path` pour chaque fichier, `if_version` pour les documents qui existent déjà, plus les personnes / réponses / messages nouveaux ou modifiés.
 Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec tirets. Le client `exemple-*` est fictif (`test: true`).
+
+## Le cerveau de Matheo (mémoire, journal : ne rien oublier)
+- Coffre Obsidian privé : `Repos-/cerveau/` (dépôt privé `matheoguz/Repos-`). `MEMOIRE.md` = le résumé vivant de tout ; `Journal/AAAA-MM-JJ.md` = toute la conversation, écrite automatiquement.
+- Hooks (`.claude/settings.json` + `.claude/hooks/cerveau.sh`) : après chaque réponse, avant une compression et en fin de session, `journal.mjs` recopie la conversation et pousse sur GitHub ; au démarrage et après compression, `rappel.mjs` remet `MEMOIRE.md` et la fin du journal dans le contexte. Il faut que `Repos-` soit dans la session.
+- **À faire par Claude** : mettre à jour `MEMOIRE.md` (et `Décisions.md`, les notes de projet) dès qu'une décision, une préférence ou un état change. Ne pas éditer le journal à la main.
+- Synchro vers le Cerveau (rubriques Graphe et Journal) : `node ../Repos-/cerveau/.outils/vers-cerveau.mjs <scratchpad>/vault`, puis `ArtifactData batch` sur `notes` et `journal` (avec `if_version` pour les documents existants).
+- Rubrique Missions du Cerveau : Matheo peut lancer une session Claude Code depuis la page (connecteur Claude Code Remote, titre « Cerveau · … »).

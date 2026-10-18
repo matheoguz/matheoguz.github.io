@@ -227,6 +227,48 @@ body.open .drawer{transform:none;visibility:visible}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:13px;transition:.2s;z-index:30;pointer-events:none;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* graphe */
+.graph-wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+.graph{position:relative;height:min(640px,72vh);min-height:420px;border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);touch-action:none}
+.graph canvas{display:block;width:100%;height:100%;cursor:grab}
+.graph canvas.drag{cursor:grabbing}
+.graph .legend{position:absolute;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
+.graph .tools{position:absolute;right:12px;top:12px;display:flex;gap:6px}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink2);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.lg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.note-panel{max-height:min(640px,72vh);overflow:auto}
+.md button.wl{color:var(--accent);font-weight:500;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.md details{border:1px solid var(--line);border-radius:8px;margin:8px 0;background:var(--sunken)}
+.md details summary{cursor:pointer;padding:6px 10px;font-size:12.5px;color:var(--muted)}
+.md details ul{margin:0 0 8px}
+/* journal */
+.journal{display:grid;grid-template-columns:200px minmax(0,1fr);min-height:420px}
+.journal nav{border-right:1px solid var(--line);padding:8px;display:grid;gap:2px;align-content:start}
+.journal nav button{text-align:left;padding:8px 10px;border-radius:7px;color:var(--ink2);font-weight:500;display:flex;justify-content:space-between;gap:8px}
+.journal nav button[aria-pressed="true"]{background:var(--sunken);color:var(--ink)}
+.journal .md{max-width:80ch}
+.journal .md h3{font-size:14px;margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+/* missions */
+.mission-form{display:grid;gap:14px;padding:16px}
+.choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.choice{display:grid;gap:4px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel)}
+.choice b{font-weight:600}
+.choice small{color:var(--muted);font-size:12px}
+.choice[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.field{display:grid;gap:6px}
+.field label{font-weight:500;font-size:13px}
+.field small{color:var(--muted);font-size:12px}
+.field textarea,.field input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+.field textarea{min-height:120px;resize:vertical}
+.field textarea:focus,.field input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.confirm{border:1px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 14px;display:grid;gap:10px}
+.confirm pre{margin:0;white-space:pre-wrap;font-family:var(--mono);font-size:12px;color:var(--ink2);max-height:180px;overflow:auto}
+.result{border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.result.ok{background:var(--ok-soft);color:var(--ok)}
+.result.bad{background:var(--bad-soft);color:var(--bad)}
+.result p{color:var(--ink2)}
+@media (max-width:1180px){.graph-wrap{grid-template-columns:minmax(0,1fr)}.note-panel{max-height:none}}
+@media (max-width:860px){.journal{grid-template-columns:minmax(0,1fr)}.journal nav{border-right:0;border-bottom:1px solid var(--line);grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto}.choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:1180px){.split{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:860px){
   .app{grid-template-columns:minmax(0,1fr)}
@@ -262,6 +304,10 @@ body.open .drawer{transform:none;visibility:visible}
       <a href="#personnes" data-v="personnes"><i data-lucide="users"></i>Personnes<span class="n" id="n-personnes">0</span></a>
       <a href="#reponses" data-v="reponses"><i data-lucide="inbox"></i>Réponses<span class="n" id="n-reponses">0</span></a>
       <a href="#messages" data-v="messages"><i data-lucide="send"></i>Messages à envoyer<span class="n" id="n-messages">0</span></a>
+      <div class="h">Cerveau</div>
+      <a href="#graphe" data-v="graphe"><i data-lucide="network"></i>Graphe<span class="n" id="n-notes">0</span></a>
+      <a href="#journal" data-v="journal"><i data-lucide="notebook-pen"></i>Journal<span class="n" id="n-journal">0</span></a>
+      <a href="#missions" data-v="missions"><i data-lucide="rocket"></i>Missions</a>
       <div class="h">Agence</div>
       <a href="#agents" data-v="agents"><i data-lucide="bot"></i>Agents<span class="n">4</span></a>
       <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Mémoire<span class="n" id="n-memoire">0</span></a>
@@ -330,7 +376,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], ready: false, db: null, vue: 'cockpit', q: '', memo: 'regles', ouvert: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cockpit', q: '', memo: 'regles', ouvert: null, note: 'memoire', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -339,15 +385,18 @@ const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
 function icons() { if (window.lucide) lucide.createIcons({ attrs: { 'aria-hidden': 'true' } }); }
 
 function render() {
-  for (const k of ['entreprises', 'personnes', 'reponses', 'memoire']) $('#n-' + k).textContent = S[k].length;
+  for (const k of ['entreprises', 'personnes', 'reponses', 'memoire', 'notes']) $('#n-' + k).textContent = S[k].length;
+  $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
   $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === S.vue ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  const titres = { cockpit: 'Cockpit', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Mémoire' };
+  const titres = { cockpit: 'Cockpit', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Mémoire', graphe: 'Graphe du cerveau', journal: 'Journal', missions: 'Missions' };
   $('#v-title').textContent = titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
-  v.innerHTML = ({ cockpit, entreprises, personnes, reponses, messages, agents, memoire })[S.vue]();
+  if (S.vue !== 'graphe') arreterGraphe();
+  v.innerHTML = ({ cockpit, entreprises, personnes, reponses, messages, agents, memoire, graphe, journal, missions })[S.vue]();
   icons();
+  if (S.vue === 'graphe') demarrerGraphe();
 }
 
 function vide(titre, texte) {
@@ -473,7 +522,7 @@ function agents() {
 
 function mdToHtml(md) {
   const lignes = String(md || '').replace(/\r/g, '').split('\n');
-  const inline = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const inline = (s) => esc(s).replace(/\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g, (m, cible, alias) => `<button type="button" class="wl" data-note-titre="${cible.trim()}">${alias || cible}</button>`).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   let out = '', liste = null, i = 0;
   const fermer = () => { if (liste) { out += `</${liste}>`; liste = null; } };
   while (i < lignes.length) {
@@ -486,6 +535,16 @@ function mdToHtml(md) {
       continue;
     }
     let m;
+    if ((m = l.match(/^>\s*\[!\w+\]-?\s*(.*)/))) {
+      fermer();
+      const items = [];
+      i++;
+      while (i < lignes.length && /^>/.test(lignes[i])) { items.push(lignes[i].replace(/^>\s?-?\s?/, '')); i++; }
+      out += `<details><summary>${inline(m[1])}</summary><ul>${items.filter(Boolean).map((x) => `<li>${inline(x)}</li>`).join('')}</ul></details>`;
+      continue;
+    }
+    if (/^---\s*$/.test(l)) { fermer(); i++; continue; }
+    if (/^<!--/.test(l)) { i++; continue; }
     if ((m = l.match(/^(#{1,3})\s+(.*)/))) { fermer(); out += `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`; }
     else if ((m = l.match(/^\s*[-*]\s+(.*)/))) { if (liste !== 'ul') { fermer(); out += '<ul>'; liste = 'ul'; } out += `<li>${inline(m[1])}</li>`; }
     else if ((m = l.match(/^\s*\d+\.\s+(.*)/))) { if (liste !== 'ol') { fermer(); out += '<ol>'; liste = 'ol'; } out += `<li>${inline(m[1])}</li>`; }
@@ -503,6 +562,247 @@ function memoire() {
   const cur = docs.find((d) => d.id === S.memo) || docs[0];
   return `<section class="card memo"><nav aria-label="Documents de la mémoire">${docs.map((d) => `<button type="button" data-memo="${esc(d.id)}" aria-pressed="${d.id === cur.id}">${esc(d.titre || d.id)}</button>`).join('')}</nav>
     <div class="md">${mdToHtml(cur.contenu)}<p class="muted" style="font-size:12px;margin-top:24px">Mis à jour ${quand(cur.maj)}</p></div></section>`;
+}
+
+// ---------- graphe ----------
+const GROUPES = {
+  memoire: ['Mémoire', '#3a55d4'], projet: ['Projets', '#c2410c'], agent: ['Agents', '#7c3aed'], personne: ['Personnes', '#be185d'],
+  journal: ['Journal', '#0e7490'], entreprise: ['Entreprises', '#17803d'], autre: ['Notes', '#8a8a82'],
+};
+function groupeDe(n) {
+  const t = n.tags || [];
+  if (n.entreprise) return 'entreprise';
+  if (t.includes('memoire') || t.includes('accueil')) return 'memoire';
+  for (const g of ['projet', 'agent', 'personne', 'journal']) if (t.includes(g)) return g;
+  return 'autre';
+}
+const cle = (t) => String(t || '').trim().toLowerCase();
+function construireGraphe() {
+  const noeuds = new Map();
+  for (const n of S.notes) noeuds.set(cle(n.titre), { id: cle(n.titre), titre: n.titre, note: n, g: groupeDe(n), liens: n.liens || [] });
+  for (const e of S.entreprises) noeuds.set('ent:' + e.id, { id: 'ent:' + e.id, titre: e.nom, ent: e, g: 'entreprise', liens: ['Agence sites vitrines'] });
+  const aretes = [];
+  for (const a of noeuds.values()) for (const l of a.liens) { const b = noeuds.get(cle(l)); if (b && b !== a) aretes.push([a, b]); }
+  for (const n of noeuds.values()) n.deg = aretes.filter(([a, b]) => a === n || b === n).length;
+  return { noeuds: [...noeuds.values()], aretes };
+}
+const G = { raf: 0, ro: null, cam: { x: 0, y: 0, k: 1 }, data: null, alpha: 1, survol: null };
+function arreterGraphe() { cancelAnimationFrame(G.raf); G.raf = 0; G.ro?.disconnect(); G.ro = null; }
+function graphe() {
+  if (!S.notes.length) return vide('Graphe vide', 'Les notes du coffre <code>Repos-/cerveau</code> apparaissent ici une fois synchronisées par les agents.');
+  const sel = S.notes.find((n) => cle(n.titre) === S.note) || S.notes.find((n) => cle(n.titre) === 'memoire') || S.notes[0];
+  return `<div class="graph-wrap">
+    <div class="graph" id="graph"><canvas id="cv" aria-label="Graphe des notes du cerveau : glissez pour déplacer, molette pour zoomer, cliquez sur un point pour ouvrir la note" role="img"></canvas>
+      <div class="tools"><button class="icon" type="button" id="g-zoomin" aria-label="Zoomer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
+      <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${c}"></i>${l}</span>`).join('')}</div>
+    </div>
+    <section class="card note-panel" aria-live="polite">${sel ? `<header><span class="lg"><i style="background:${GROUPES[groupeDe(sel)][1]}"></i>${GROUPES[groupeDe(sel)][0]}</span><div class="grow"></div><span class="c">${esc(sel.dossier || 'racine')}</span></header><div class="md"><h1>${esc(sel.titre)}</h1>${sel.contenu ? mdToHtml(sel.contenu) : `<p>${esc(sel.extrait || '')}</p><p><button type="button" class="wl" data-jour="${esc(sel.titre)}">Ouvrir ce jour dans le Journal</button></p>`}</div>` : ''}</section>
+  </div>`;
+}
+function demarrerGraphe() {
+  arreterGraphe();
+  const cv = $('#cv');
+  if (!cv) return;
+  const box = $('#graph');
+  const ctx = cv.getContext('2d');
+  const anc = G.data ? new Map(G.data.noeuds.map((n) => [n.id, n])) : new Map();
+  G.data = construireGraphe();
+  const { noeuds, aretes } = G.data;
+  noeuds.forEach((n, i) => {
+    const o = anc.get(n.id);
+    if (o) { n.x = o.x; n.y = o.y; n.vx = 0; n.vy = 0; }
+    else { const a = (i / noeuds.length) * Math.PI * 2; n.x = Math.cos(a) * 160 + Math.random() * 20; n.y = Math.sin(a) * 160 + Math.random() * 20; n.vx = n.vy = 0; }
+  });
+  G.alpha = anc.size ? 0.3 : 1;
+  let W = 0, H = 0, dpr = 1;
+  const taille = () => { const r = box.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; };
+  taille();
+  G.ro = new ResizeObserver(() => { taille(); dessiner(); });
+  G.ro.observe(box);
+  const css = getComputedStyle(document.documentElement);
+  const tok = (n) => css.getPropertyValue(n).trim();
+  const ecran = (n) => [W / 2 + (n.x + G.cam.x) * G.cam.k, H / 2 + (n.y + G.cam.y) * G.cam.k];
+  const monde = (px, py) => [(px - W / 2) / G.cam.k - G.cam.x, (py - H / 2) / G.cam.k - G.cam.y];
+  const rayon = (n) => 4 + Math.min(10, n.deg * 1.4);
+  function pas() {
+    const a = G.alpha;
+    for (let i = 0; i < noeuds.length; i++) {
+      const p = noeuds[i];
+      for (let j = i + 1; j < noeuds.length; j++) {
+        const q = noeuds[j];
+        let dx = q.x - p.x, dy = q.y - p.y, d2 = dx * dx + dy * dy + 0.01;
+        const f = (7000 / d2) * a, d = Math.sqrt(d2);
+        dx /= d; dy /= d;
+        p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f;
+      }
+    }
+    for (const [p, q] of aretes) {
+      const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+      const f = (d - 120) * 0.02 * a;
+      p.vx += (dx / d) * f; p.vy += (dy / d) * f; q.vx -= (dx / d) * f; q.vy -= (dy / d) * f;
+    }
+    for (const n of noeuds) {
+      if (n === G.tenu) { n.vx = n.vy = 0; continue; }
+      n.vx -= n.x * 0.003 * a; n.vy -= n.y * 0.003 * a;
+      n.vx *= 0.82; n.vy *= 0.82;
+      n.x += n.vx; n.y += n.vy;
+    }
+    G.alpha = Math.max(0, G.alpha * 0.985 - 0.0008);
+  }
+  function dessiner() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const sel = S.note;
+    const voisins = new Set();
+    for (const [p, q] of aretes) { if (p.id === sel) voisins.add(q.id); if (q.id === sel) voisins.add(p.id); }
+    ctx.lineWidth = 1;
+    for (const [p, q] of aretes) {
+      const [x1, y1] = ecran(p), [x2, y2] = ecran(q);
+      const fort = p.id === sel || q.id === sel || p === G.survol || q === G.survol;
+      ctx.strokeStyle = fort ? tok('--accent') : tok('--line2');
+      ctx.globalAlpha = fort ? 0.9 : 0.7;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    for (const n of noeuds) {
+      const [x, y] = ecran(n), r = rayon(n) * Math.sqrt(G.cam.k);
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = GROUPES[n.g][1];
+      ctx.globalAlpha = sel && n.id !== sel && !voisins.has(n.id) ? 0.55 : 1;
+      ctx.fill();
+      if (n.id === sel || n === G.survol) { ctx.lineWidth = 2; ctx.strokeStyle = tok('--panel'); ctx.stroke(); ctx.lineWidth = 2; ctx.strokeStyle = tok('--ink'); ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+      if (n.deg >= 3 || G.cam.k > 1.3 || n.id === sel || n === G.survol || voisins.has(n.id)) {
+        ctx.font = `${n.id === sel ? 600 : 500} 12px ${tok('--sans')}`;
+        ctx.fillStyle = n.id === sel ? tok('--ink') : tok('--ink2');
+        ctx.textAlign = 'center';
+        ctx.fillText(n.titre, x, y + r + 14);
+      }
+    }
+  }
+  const boucle = () => { if (G.alpha > 0.002) pas(); dessiner(); G.raf = requestAnimationFrame(boucle); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 400; i++) pas(); G.alpha = 0; }
+  cancelAnimationFrame(G.raf);
+  boucle();
+  const trouver = (px, py) => { let best = null, bd = 1e9; for (const n of noeuds) { const [x, y] = ecran(n); const d = Math.hypot(x - px, y - py); if (d < rayon(n) * Math.sqrt(G.cam.k) + 6 && d < bd) { best = n; bd = d; } } return best; };
+  let glisse = null;
+  cv.addEventListener('pointerdown', (ev) => {
+    const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+    const n = trouver(px, py);
+    glisse = { n, px, py, cx: G.cam.x, cy: G.cam.y, bouge: false };
+    if (n) { G.tenu = n; G.alpha = Math.max(G.alpha, 0.3); }
+    cv.setPointerCapture(ev.pointerId); cv.classList.add('drag');
+  });
+  cv.addEventListener('pointermove', (ev) => {
+    const r = cv.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+    if (!glisse) { G.survol = trouver(px, py); cv.style.cursor = G.survol ? 'pointer' : 'grab'; return; }
+    if (Math.hypot(px - glisse.px, py - glisse.py) > 3) glisse.bouge = true;
+    if (glisse.n) { const [wx, wy] = monde(px, py); glisse.n.x = wx; glisse.n.y = wy; G.alpha = Math.max(G.alpha, 0.2); }
+    else { G.cam.x = glisse.cx + (px - glisse.px) / G.cam.k; G.cam.y = glisse.cy + (py - glisse.py) / G.cam.k; }
+  });
+  const fin = () => {
+    const g = glisse;
+    glisse = null; G.tenu = null; cv.classList.remove('drag');
+    if (g?.n && !g.bouge) {
+      if (g.n.ent) return ouvrir(g.n.ent.id);
+      S.note = g.n.id; render();
+    }
+  };
+  cv.addEventListener('pointerup', fin);
+  cv.addEventListener('pointercancel', () => { glisse = null; G.tenu = null; cv.classList.remove('drag'); });
+  cv.addEventListener('wheel', (ev) => { ev.preventDefault(); G.cam.k = Math.min(4, Math.max(0.3, G.cam.k * (ev.deltaY < 0 ? 1.12 : 0.89))); }, { passive: false });
+  $('#g-zoomin').onclick = () => { G.cam.k = Math.min(4, G.cam.k * 1.25); };
+  $('#g-zoomout').onclick = () => { G.cam.k = Math.max(0.3, G.cam.k / 1.25); };
+  $('#g-reset').onclick = () => { G.cam = { x: 0, y: 0, k: 1 }; G.alpha = 0.5; };
+}
+
+// ---------- journal ----------
+function journal() {
+  if (!S.journal.length) return vide('Journal vide', 'Chaque conversation avec Claude est recopiée automatiquement dans le coffre, puis apparaît ici jour par jour.');
+  const jours = [...new Set(S.journal.map((j) => j.date))].sort().reverse();
+  const jour = jours.includes(S.jour) ? S.jour : jours[0];
+  const contenu = S.journal.filter((j) => j.date === jour).sort((a, b) => (a.partie || 1) - (b.partie || 1)).map((j) => j.contenu).join('');
+  const filtre = S.q ? contenu.split(/\n(?=### )/).filter((b) => b.toLowerCase().includes(S.q)).join('\n') : contenu;
+  return `<section class="card journal"><nav aria-label="Jours">${jours.map((d) => `<button type="button" data-jour="${esc(d)}" aria-pressed="${d === jour}"><span>${dateFr(d)}</span><span class="mono muted">${(S.journal.filter((j) => j.date === d).map((j) => j.contenu).join('').match(/### Matheo/g) || []).length}</span></button>`).join('')}</nav>
+    <div class="md">${S.q && !filtre ? '<p class="muted">Rien ce jour-là pour cette recherche.</p>' : mdToHtml(filtre.replace(/^---\n[\s\S]*?\n---\n/, ''))}</div></section>`;
+}
+
+// ---------- missions ----------
+const ENV = 'env_01LarP6P25LHfTvoBvWyps6H';
+const DEPOT = 'https://github.com/matheoguz/matheoguz.github.io';
+const MISSIONS = {
+  point: { t: 'Point du jour', s: 'Où en est chaque client, quoi faire', champ: null, cmd: () => '/point-du-jour' },
+  client: { t: 'Nouveau client', s: 'Coller le message du client', champ: 'Message ou réponses du client', cmd: (x) => `/nouveau-client ${x}` },
+  modifs: { t: 'Retouches', s: 'Slug + retour du client', champ: 'Slug du client puis son retour (ex. boulangerie-dupont Changer les horaires du dimanche)', cmd: (x) => `/modifs ${x}` },
+  libre: { t: 'Mission libre', s: 'Demander autre chose aux agents', champ: 'Ce que les agents doivent faire', cmd: (x) => x },
+};
+function promptMission() {
+  const m = MISSIONS[S.mission];
+  return `Mission lancée depuis le Cerveau de Matheo (${new Date().toLocaleString('fr-FR')}).
+Avant tout : ajoute le dépôt privé matheoguz/Repos- à cette session (outil add_repo) et clone-le dans /home/user/Repos-, pour charger le cerveau (Repos-/cerveau : MEMOIRE.md et le journal), puis lis MEMOIRE.md.
+Ensuite fais : ${m.cmd(S.missionTexte.trim())}
+Respecte CLAUDE.md et agence/memoire/regles.md. Mets le Cerveau à jour à la fin et termine par un résumé court en français.`;
+}
+function missions() {
+  const m = MISSIONS[S.mission];
+  const pret = !m.champ || S.missionTexte.trim().length > 2;
+  const sessions = S.sessions;
+  return `<div class="split"><div class="stack">
+    <section class="card"><header><h2>Lancer une mission</h2><div class="grow"></div><span class="c">nouvelle session Claude Code</span></header>
+      <div class="mission-form">
+        <div class="choices" role="group" aria-label="Type de mission">${Object.entries(MISSIONS).map(([k, v]) => `<button type="button" class="choice" data-mission="${k}" aria-pressed="${k === S.mission}"><b>${v.t}</b><small>${v.s}</small></button>`).join('')}</div>
+        ${m.champ ? `<div class="field"><label for="m-texte">${m.champ}</label><textarea id="m-texte" placeholder="Collez ici…">${esc(S.missionTexte)}</textarea><small>Ne mettez ni mot de passe ni coordonnées bancaires.</small></div>` : '<p class="muted">Les agents font le point sur tous les clients, mettent le Cerveau à jour et vous disent quoi faire aujourd\'hui.</p>'}
+        ${S.confirmer ? `<div class="confirm"><b>Lancer cette mission ?</b><span class="muted">Une nouvelle session Claude Code démarre sur matheoguz.github.io avec ces instructions. Elle utilise votre forfait Claude.</span><pre>${esc(promptMission())}</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="m-go"${S.envoi === 'en_cours' ? ' disabled' : ''}><i data-lucide="rocket"></i>${S.envoi === 'en_cours' ? 'Lancement…' : 'Oui, lancer'}</button><button class="btn" type="button" id="m-annuler">Annuler</button></div></div>`
+          : `<div><button class="btn primary" type="button" id="m-prep"${pret ? '' : ' disabled'}><i data-lucide="send"></i>Préparer la mission</button></div>`}
+        ${S.envoi && S.envoi !== 'en_cours' ? `<div class="result ${S.envoi.ok ? 'ok' : 'bad'}"><i data-lucide="${S.envoi.ok ? 'circle-check' : 'triangle-alert'}"></i><div><b>${esc(S.envoi.titre)}</b><p>${S.envoi.html}</p></div></div>` : ''}
+      </div></section>
+  </div><div class="stack">
+    <section class="card"><header><h2>Missions récentes</h2></header>
+      ${!S.mcp ? '<div class="pad muted">Le lancement de missions n\'est pas disponible dans cette vue. Ouvrez le Cerveau sur claude.ai.</div>'
+        : S.sessionsErr ? `<div class="pad muted">${esc(S.sessionsErr)}</div>`
+        : sessions === null ? '<div class="pad"><div class="skel"></div></div>'
+        : sessions.length ? `<ul class="rows">${sessions.map((x) => `<li><i data-lucide="${x.status_bucket?.includes('WORKING') ? 'loader' : x.status_bucket?.includes('FAILED') ? 'triangle-alert' : 'circle-check'}"></i><div class="info"><b><a href="https://claude.ai/code/${esc(x.id)}" target="_blank" rel="noopener">${esc(x.title || 'Mission')}</a></b><small>${esc((x.post_turn_summary?.recent_action || x.external_metadata?.post_turn_summary?.recent_action || x.task_summary || '').slice(0, 140))}</small><small>${quand(x.updated_at)}</small></div></li>`).join('')}</ul>`
+        : '<div class="pad muted">Aucune mission lancée depuis le Cerveau pour l\'instant.</div>'}
+    </section>
+  </div></div>`;
+}
+async function lancerMission() {
+  if (!S.mcp || S.envoi === 'en_cours') return;
+  S.envoi = 'en_cours'; render();
+  const titre = `Cerveau · ${MISSIONS[S.mission].t}`;
+  try {
+    const r = await S.mcp.callTool('Claude Code Remote', 'create_session', { prompt: promptMission(), environment_id: ENV, source_url: DEPOT, title: titre }, { cache: false });
+    const p = r?.payload || {};
+    const id = p.session_id || p.id || p.session?.id || p.ccr?.id || '';
+    S.envoi = { ok: true, titre: 'Mission lancée', html: id ? `Suivez-la ici : <a href="https://claude.ai/code/${esc(id)}" target="_blank" rel="noopener">ouvrir la session</a>.` : 'Elle apparaît dans « Missions récentes » d\'ici une minute.' };
+    S.confirmer = false; S.missionTexte = '';
+    S.mcp.invalidate?.('Claude Code Remote', 'list_sessions').catch(() => {});
+  } catch (e) {
+    const c = e?.code;
+    const txt = c === 'server_not_connected' ? 'Le connecteur « Claude Code Remote » n\'est pas branché sur votre compte. Ajoutez-le dans claude.ai, Réglages, Connecteurs.'
+      : c === 'needs_reauth' ? 'Reconnectez « Claude Code Remote » dans claude.ai, Réglages, Connecteurs.'
+      : c === 'approval_required' ? 'Il faut autoriser le Cerveau à lancer des sessions : acceptez la demande qui s\'affiche, puis relancez.'
+      : c === 'not_in_manifest' || c === 'blocked_by_policy' ? 'Le lancement de sessions est refusé pour cette page sur votre compte.'
+      : c === 'tool_error' ? 'Claude Code a refusé la mission : ' + esc(e.message || '')
+      : 'La réponse n\'est pas arrivée. La mission a peut-être été créée : vérifiez « Missions récentes » avant de relancer.';
+    S.envoi = { ok: false, titre: 'Mission non lancée', html: txt };
+  }
+  render();
+}
+function suivreSessions() {
+  if (!S.mcp) return;
+  S.mcp.watchTool('Claude Code Remote', 'list_sessions', { limit: 30 }, (ev) => {
+    if (ev.type === 'data') {
+      const data = ev.result?.payload?.ccr?.data || ev.result?.payload?.data || [];
+      S.sessions = data.filter((x) => String(x.title || '').startsWith('Cerveau')).slice(0, 8);
+      S.sessionsErr = null;
+    } else {
+      const c = ev.error?.code;
+      if (['needs_reauth', 'server_not_connected', 'not_in_manifest', 'blocked_by_policy', 'approval_required'].includes(c)) { S.sessions = []; S.sessionsErr = c === 'server_not_connected' ? 'Ajoutez le connecteur « Claude Code Remote » dans claude.ai pour voir les missions.' : 'Autorisez le Cerveau à lire vos sessions pour voir les missions.'; }
+      else if (S.sessions === null) S.sessionsErr = 'Liste des missions momentanément indisponible.';
+    }
+    if (S.vue === 'missions') render();
+  }, { refetchInterval: 60000 });
 }
 
 // ---------- fiche entreprise ----------
@@ -570,6 +870,15 @@ document.addEventListener('click', (ev) => {
   if (se) return marquerEnvoye(se.dataset.sent, se);
   const me = t.closest('[data-memo]');
   if (me) { S.memo = me.dataset.memo; return render(); }
+  const wl = t.closest('[data-note-titre]');
+  if (wl) { S.note = cle(wl.dataset.noteTitre); if (S.vue !== 'graphe') location.hash = 'graphe'; else render(); return; }
+  const jr = t.closest('[data-jour]');
+  if (jr) { S.jour = jr.dataset.jour; if (S.vue !== 'journal') location.hash = 'journal'; else render(); return; }
+  const mi = t.closest('[data-mission]');
+  if (mi) { S.mission = mi.dataset.mission; S.confirmer = false; S.envoi = null; return render(); }
+  if (t.closest('#m-prep')) { S.confirmer = true; S.envoi = null; return render(); }
+  if (t.closest('#m-annuler')) { S.confirmer = false; return render(); }
+  if (t.closest('#m-go')) return lancerMission();
   const en = t.closest('[data-ent]');
   if (en && !t.closest('.drawer')) return ouvrir(en.dataset.ent);
 });
@@ -579,9 +888,14 @@ document.addEventListener('keydown', (ev) => {
 });
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
+document.addEventListener('input', (ev) => {
+  if (ev.target.id !== 'm-texte') return;
+  S.missionTexte = ev.target.value;
+  const b = $('#m-prep'); if (b) b.disabled = MISSIONS[S.mission].champ && S.missionTexte.trim().length <= 2;
+});
 $('#q').addEventListener('input', (ev) => { S.q = ev.target.value.trim().toLowerCase(); render(); });
 
-const VUES = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire'];
+const VUES = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'graphe', 'journal', 'missions'];
 function route() { const h = location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cockpit'; fermer(); render(); }
 addEventListener('hashchange', route);
 
@@ -607,14 +921,15 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'memoire'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'memoire', 'notes', 'journal'];
+  claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
       S[col] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && col !== 'memoire') ouvrir(S.ouvert, true);
+      if (S.ouvert && !['memoire', 'notes', 'journal'].includes(col)) ouvrir(S.ouvert, true);
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
 }
