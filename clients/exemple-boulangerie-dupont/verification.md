@@ -8,14 +8,17 @@
 - ✅ Description Google : 125 caractères (idéal 50-160)
 - ✅ Aucun texte cassé (undefined, {{ }}…)
 - ✅ Pas de faux texte (lorem ipsum)
-- ✅ Toutes les images ont un texte alternatif (0)
-- ✅ Liens d'appel valides (3)
+- ✅ Aucun tiret long (signature des textes écrits par une IA)
+- ✅ Vraie photo dans le haut de page
+- ✅ Au moins 3 vraies photos sur la page (6)
+- ✅ Toutes les images ont un texte alternatif (6)
+- ✅ Liens d'appel valides (4)
 - ✅ E-mail au bon format
 - ✅ Liens internes OK
 - ✅ Lien vers les mentions légales
 - ✅ Mentions légales complètes (responsable, SIRET)
 - ✅ Fiche Google (données structurées LocalBusiness)
-- ✅ Poids de la page : 13 Ko
+- ✅ Poids de la page : 17 Ko
 - ✅ Formulaire de contact (formule standard)
 - ✅ Aucun avis inventé
 - ✅ Pas de débordement sur mobile

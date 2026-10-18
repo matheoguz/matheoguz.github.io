@@ -13,6 +13,7 @@ Ta mission :
    - Le questionnaire donne `histoire` en texte libre : coupe-le en 1 à 3 paragraphes dans le tableau `histoire`.
    - `services` du questionnaire est déjà une liste de groupes : mets-la dans `services.groupes`.
    - `couleur` du questionnaire : mets-la dans `couleurs.accent` seulement si elle est assez foncée pour du texte blanc dessus, sinon laisse la couleur du thème et note-le.
+   - `metier` : le métier précis en un mot (`boulangerie`, `restaurant`, `coiffeur`, `plombier`…). Il choisit les photos de la banque `agence/photos.mjs`. Si le métier n'y est pas, signale-le : il faudra ajouter des photos à la banque (voir `agence/memoire/style.md`).
    - `legal` : sépare le nom du responsable et le SIRET.
    - Photos envoyées en pièce jointe : Matheo les dépose dans `clients/<slug>/photos/`. Si elles existent, référence-les dans `photos` (`hero`, `about`, `band`, `galerie`) avec un `alt` qui décrit l'image.
 2. Ne remplis PAS `slogan`, `accroche`, `titre_seo`, `description_seo` : c'est le travail du pôle Contenu. Laisse-les vides.
