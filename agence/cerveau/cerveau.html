@@ -239,8 +239,35 @@ body.open .drawer{transform:none;visibility:visible}
 .graph .lg i{box-shadow:0 0 6px currentColor}
 .graph .icon[aria-pressed="false"]{opacity:.55}
 .graph .icon{background:rgba(14,16,26,.72);border-color:rgba(255,255,255,.1);color:#c9cee3;backdrop-filter:blur(6px)}
-.graph .aide{position:absolute;left:12px;top:12px;font-size:11.5px;line-height:1.45;color:#8b91ab;background:rgba(14,16,26,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:4px 8px;max-width:min(520px,calc(100% - 210px))}
+.graph .aide{position:absolute;left:12px;top:12px;font-size:11.5px;line-height:1.45;color:#8b91ab;background:rgba(14,16,26,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:4px 8px;max-width:calc(100% - 400px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1100px){.graph .aide{display:none}.graph .temps{top:60px}}
 .graph canvas:focus-visible{outline:2px solid #8ea2ff;outline-offset:-2px}
+.graph:fullscreen,.graph.immersion{height:100vh;max-height:none;border-radius:0;border:0}
+.graph.immersion{position:fixed;inset:0;z-index:40}
+.graph .legend{position:absolute;left:12px;top:108px;bottom:auto;flex-direction:column;align-items:flex-start;max-width:none}
+.graph .temps{position:absolute;left:12px;top:64px;display:flex;align-items:center;gap:8px;color:#c9cee3;font-size:12px;background:rgba(14,16,26,.72);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 10px;backdrop-filter:blur(6px)}
+.graph .temps input{accent-color:#8ea2ff;width:160px}
+.chat{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;width:min(640px,calc(100% - 24px));display:grid;gap:8px}
+.bulle{background:rgba(12,14,24,.86);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;color:#dfe3f5;max-height:min(260px,34vh);overflow:auto;backdrop-filter:blur(10px);font-size:13.5px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.bulle .md{padding:0;max-width:none}
+.bulle .md p,.bulle .md li{color:#dfe3f5}
+.bulle .md code{background:rgba(255,255,255,.08)}
+.bulle{position:relative}
+.bulle .q{color:#8b91ab;font-size:12px;margin-bottom:6px;padding-right:24px}
+.x-bulle{position:absolute;right:8px;top:6px;color:#8b91ab;font-size:18px;line-height:1;width:24px;height:24px;border-radius:6px}
+.x-bulle:hover{background:rgba(255,255,255,.08);color:#fff}
+.bulle .attente{display:flex;gap:8px;align-items:center;color:#8b91ab}
+.bulle .attente i{width:8px;height:8px;border-radius:50%;background:#8ea2ff;display:inline-block;animation:respire 1s ease-in-out infinite}
+@keyframes respire{50%{opacity:.25;transform:scale(.7)}}
+.barre{display:flex;align-items:center;gap:6px;background:rgba(12,14,24,.86);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:6px;backdrop-filter:blur(10px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.barre input{flex:1;min-width:0;background:none;border:0;outline:0;color:#f1f3ff;font:inherit;font-size:14px;padding:6px 4px}
+.barre input::placeholder{color:#7d84a2}
+.barre .modes{display:flex;gap:2px;background:rgba(255,255,255,.05);border-radius:9px;padding:2px;flex:none}
+.barre .modes button{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:7px;color:#9aa1bf;font-size:12px;white-space:nowrap}
+.barre .modes button[aria-pressed="true"]{background:rgba(142,162,255,.18);color:#e6e9ff}
+.barre .go{width:32px;height:32px;border-radius:9px;background:#e9ecff;color:#0b0e1a;display:grid;place-items:center;flex:none}
+.barre .go[disabled]{opacity:.4}
+@media (max-width:860px){.barre .modes button{font-size:0;gap:0;padding:6px}.barre .modes button svg{width:16px;height:16px}.graph .aide,.graph .legend{display:none}.graph .tools{flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 24px)}}
 .lg i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .note-panel{max-height:min(760px,calc(100dvh - 140px));overflow:auto}
 .md button.wl{color:var(--accent);font-weight:500;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
@@ -380,14 +407,14 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
 
 // ---------- rendu ----------
 // Icônes Lucide (licence ISC), recopiées dans la page : rien à charger depuis Internet.
-const ICONES = {"rotate-3d":"<path d=\"M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2\"/><path d=\"m15.194 13.707 3.814 1.86-1.86 3.814\"/><path d=\"M19 15.57c-1.804.885-4.274 1.43-7 1.43-5.523 0-10-2.239-10-5s4.477-5 10-5c4.838 0 8.873 1.718 9.8 4\"/>","bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","calendar":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","circle-dashed":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","flask-conical":"<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\"/><path d=\"M8.5 2h7\"/><path d=\"M7 16h10\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","library":"<path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/>","message-square":"<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/>","minus":"<path d=\"M5 12h14\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\"/><path d=\"M12 12V8\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","scan":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","store":"<path d=\"m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7\"/><path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><path d=\"M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4\"/><path d=\"M2 7h20\"/><path d=\"M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","clipboard-list":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","loader":"<path d=\"M12 2v4\"/><path d=\"m16.2 7.8 2.9-2.9\"/><path d=\"M18 12h4\"/><path d=\"m16.2 16.2 2.9 2.9\"/><path d=\"M12 18v4\"/><path d=\"m4.9 19.1 2.9-2.9\"/><path d=\"M2 12h4\"/><path d=\"m4.9 4.9 2.9 2.9\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","pencil-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/><path d=\"m15 5 3 3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>","file-text":"<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","layers-3":"<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/><path d=\"m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/>","arrow-right":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>"};
+const ICONES = {"folder-kanban":"<path d=\"M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z\"/><path d=\"M8 10v4\"/><path d=\"M12 10v2\"/><path d=\"M16 10v6\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","maximize":"<path d=\"M8 3H5a2 2 0 0 0-2 2v3\"/><path d=\"M21 8V5a2 2 0 0 0-2-2h-3\"/><path d=\"M3 16v3a2 2 0 0 0 2 2h3\"/><path d=\"M16 21h3a2 2 0 0 0 2-2v-3\"/>","minimize":"<path d=\"M8 3v3a2 2 0 0 1-2 2H3\"/><path d=\"M21 8h-3a2 2 0 0 1-2-2V3\"/><path d=\"M3 16h3a2 2 0 0 1 2 2v3\"/><path d=\"M16 21v-3a2 2 0 0 1 2-2h3\"/>","volume-2":"<path d=\"M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z\"/><path d=\"M16 9a5 5 0 0 1 0 6\"/><path d=\"M19.364 18.364a9 9 0 0 0 0-12.728\"/>","volume-x":"<path d=\"M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z\"/><line x1=\"22\" x2=\"16\" y1=\"9\" y2=\"15\"/><line x1=\"16\" x2=\"22\" y1=\"9\" y2=\"15\"/>","play":"<polygon points=\"6 3 20 12 6 21 6 3\"/>","pause":"<rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/><rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/>","message-circle":"<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/>","arrow-up":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","clock-3":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16.5 12\"/>","moon-star":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/>","rotate-3d":"<path d=\"M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2\"/><path d=\"m15.194 13.707 3.814 1.86-1.86 3.814\"/><path d=\"M19 15.57c-1.804.885-4.274 1.43-7 1.43-5.523 0-10-2.239-10-5s4.477-5 10-5c4.838 0 8.873 1.718 9.8 4\"/>","bot":"<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>","brain":"<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\"/><path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\"/><path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\"/><path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\"/><path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\"/><path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\"/><path d=\"M19.938 10.5a4 4 0 0 1 .585.396\"/><path d=\"M6 18a4 4 0 0 1-1.967-.516\"/><path d=\"M19.967 17.484A4 4 0 0 1 18 18\"/>","calendar":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","circle-check":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>","circle-dashed":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","external-link":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","flask-conical":"<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\"/><path d=\"M8.5 2h7\"/><path d=\"M7 16h10\"/>","hammer":"<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"/><path d=\"m18 15 4-4\"/><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","layout-dashboard":"<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>","library":"<path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/>","message-square":"<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/>","minus":"<path d=\"M5 12h14\"/>","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\"/><path d=\"M12 12V8\"/>","notebook-pen":"<path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\"/><path d=\"M2 6h4\"/><path d=\"M2 10h4\"/><path d=\"M2 14h4\"/><path d=\"M2 18h4\"/><path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","rocket":"<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>","scan":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/>","search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/><path d=\"m21.854 2.147-10.94 10.939\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","store":"<path d=\"m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7\"/><path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><path d=\"M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4\"/><path d=\"M2 7h20\"/><path d=\"M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","clipboard-list":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>","hourglass":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","loader":"<path d=\"M12 2v4\"/><path d=\"m16.2 7.8 2.9-2.9\"/><path d=\"M18 12h4\"/><path d=\"m16.2 16.2 2.9 2.9\"/><path d=\"M12 18v4\"/><path d=\"m4.9 19.1 2.9-2.9\"/><path d=\"M2 12h4\"/><path d=\"m4.9 4.9 2.9 2.9\"/>","mail":"<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>","pencil-line":"<path d=\"M12 20h9\"/><path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\"/><path d=\"m15 5 3 3\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>","file-text":"<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","sparkles":"<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>","layers-3":"<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/><path d=\"m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59\"/>","arrow-right":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>"};
 function icons() {
   document.querySelectorAll('i[data-lucide]').forEach((el) => {
     const corps = ICONES[el.dataset.lucide] || ICONES.circle;
@@ -397,7 +424,7 @@ function icons() {
 
 function render() {
   for (const k of ['entreprises', 'personnes', 'reponses']) $('#n-' + k).textContent = S[k].length;
-  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length;
+  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length + S.idees.length;
   $('#n-memoire').textContent = S.notes.filter((n) => n.dossier !== 'Journal').length;
   $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
   $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
@@ -406,10 +433,15 @@ function render() {
   $('#v-title').textContent = titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
+  const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value;
   if (S.vue !== 'cerveau') arreterGraphe();
   v.innerHTML = ({ cerveau: vueCerveau, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
   icons();
-  if (S.vue === 'cerveau') demarrerGraphe();
+  if (S.vue === 'cerveau') {
+    demarrerGraphe();
+    if (bulleVue && $('#bulle')) { $('#bulle').innerHTML = bulleAvant; $('#bulle').hidden = false; }
+    if (saisie && $('#chat-q')) $('#chat-q').value = saisie;
+  }
 }
 
 function vide(titre, texte) {
@@ -592,16 +624,17 @@ function memoire() {
 const GROUPES = {
   cerveau: ['Le Cerveau', '#1f1f1c'], entreprise: ['Entreprises', '#17803d'], personne: ['Personnes', '#be185d'],
   reponse: ['Réponses', '#b45309'], message: ['Messages', '#2563eb'], memoire: ['Mémoire', '#4f46e5'],
-  projet: ['Projets', '#c2410c'], journal: ['Journal', '#0e7490'], agent: ['Agents', '#7c3aed'],
+  projet: ['Projets', '#c2410c'], journal: ['Journal', '#0e7490'], agent: ['Agents', '#7c3aed'], idee: ['Idées', '#ca8a04'],
 };
 // Couleurs des neurones sur le fond sombre du cerveau.
 const NEURONE = {
   cerveau: '#eef1ff', entreprise: '#4ade80', personne: '#f472b6', reponse: '#fbbf24', message: '#60a5fa',
-  memoire: '#8b9cff', projet: '#fb923c', journal: '#22d3ee', agent: '#c084fc',
+  memoire: '#8b9cff', projet: '#fb923c', journal: '#22d3ee', agent: '#c084fc', idee: '#fde047',
 };
 const HUBS = [
   ['entreprise', 'Entreprises', 'store', 'entreprises'], ['personne', 'Personnes', 'users', 'personnes'], ['reponse', 'Réponses', 'inbox', 'reponses'],
   ['message', 'Messages à envoyer', 'send', 'messages'], ['memoire', 'Mémoire', 'library', 'memoire'], ['journal', 'Journal', 'notebook-pen', 'journal'], ['agent', 'Agents', 'bot', 'agents'],
+  ['projet', 'Projets', 'folder-kanban', 'memoire'],
 ];
 const cle = (t) => String(t || '').trim().toLowerCase();
 function groupeNote(n) {
@@ -625,13 +658,31 @@ function construireGraphe() {
   for (const n of S.notes.filter((n) => n.dossier !== 'Journal')) ajouter('n:' + cle(n.titre), n.titre, groupeNote(n), 'note', { data: n });
   for (const n of S.notes.filter((n) => n.dossier !== 'Journal')) {
     const id = 'n:' + cle(n.titre);
-    lier(groupeNote(n) === 'agent' ? 'hub:agent' : 'hub:memoire', id, true);
+    const g = groupeNote(n);
+    lier(g === 'agent' ? 'hub:agent' : g === 'projet' ? 'hub:projet' : 'hub:memoire', id, true);
     for (const l of n.liens || []) lier(id, 'n:' + cle(l));
   }
   for (const d of [...new Set(S.journal.map((j) => j.date))]) { ajouter('j:' + d, 'Journal ' + dateFr(d), 'journal', 'jour', { date: d }); lier('hub:journal', 'j:' + d, true); }
   for (const a of AGENTS) { const id = 'n:' + cle(a.id); if (!N.has(id)) { ajouter(id, a.id, 'agent', 'agent', { agent: a }); lier('hub:agent', id, true); } else N.get(id).agent = a;
     for (const e of S.entreprises.filter((e) => a.etapes.includes(e.statut))) lier(id, 'e:' + e.id); }
   lier('n:agence sites vitrines', 'hub:entreprise');
+  // idées jetées dans le cerveau depuis la barre « Demander au cerveau »
+  const LOBES = ['entreprise', 'personne', 'reponse', 'message', 'memoire', 'journal', 'agent', 'projet'];
+  for (const i of S.idees) {
+    const region = LOBES.includes(i.region) ? i.region : 'memoire';
+    ajouter('i:' + i.id, i.titre || 'Idée', 'idee', 'idee', { data: i, regionIdee: region });
+    lier('hub:' + region, 'i:' + i.id, true);
+    for (const l of i.liens || []) lier('i:' + i.id, l);
+  }
+  // dates : pour remonter le temps
+  const jourDe = (n) => {
+    const d = n.data || {};
+    if (n.quoi === 'jour') return n.date;
+    if (n.quoi === 'entreprise') return d.cree_le;
+    if (n.quoi === 'personne') return S.entreprises.find((e) => e.id === d.entreprise)?.cree_le;
+    return d.date || d.maj || null;
+  };
+  for (const n of N.values()) n.jour = n.hub ? null : (jourDe(n) || '').slice(0, 10) || null;
   const noeuds = [...N.values()];
   for (const n of noeuds) n.deg = aretes.filter(([a, b]) => a === n || b === n).length;
   return { noeuds, aretes };
@@ -644,7 +695,7 @@ function panneauNoeud(n) {
   const tete = (lab) => `<header><span class="lg"><i style="background:${GROUPES[n.g][1]}"></i>${lab}</span></header>`;
   if (n.quoi === 'centre') {
     const lignes = HUBS.map(([g, titre, icone, vue]) => {
-      const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length }[g];
+      const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length, projet: S.notes.filter((x) => (x.tags || []).includes('projet')).length }[g];
       return `<li class="click" data-noeud="hub:${g}"><i data-lucide="${icone}" style="color:${GROUPES[g][1]}"></i><div class="info"><b>${titre}</b></div><span class="mono">${nb}</span></li>`;
     }).join('');
     return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un neurone pour y aller. Glissez, deux doigts ou flèches pour faire le tour du cerveau à 360°, pincez ou Z / S pour avancer dedans.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
@@ -663,6 +714,7 @@ function panneauNoeud(n) {
   if (n.quoi === 'reponse') return `${tete('Réponse')}<div class="pad">${blocReponse(n.data).replace('<details class="card reponse">', '<details class="card reponse" open>')}</div>`;
   if (n.quoi === 'message') return `${tete('Message à envoyer')}<div class="pad">${blocMessage(n.data)}</div>`;
   if (n.quoi === 'jour') return `${tete('Journal')}<div class="pad" style="display:grid;gap:10px"><b>${esc(n.titre)}</b><p class="muted">Tout ce qui a été dit et fait ce jour-là.</p><div><button class="btn primary" type="button" data-jour="${esc(n.date)}"><i data-lucide="notebook-pen"></i>Lire le journal</button></div></div>`;
+  if (n.quoi === 'idee') { const d = n.data; return `${tete('Idée')}<div class="md"><h1>${esc(d.titre)}</h1>${mdToHtml(d.texte || '')}<p class="muted" style="font-size:12px">Jetée dans le cerveau ${quand(d.date)}, rangée dans « ${esc((HUBS.find((h) => h[0] === n.regionIdee) || [])[1] || 'Mémoire')} ». Les agents la recopient dans le coffre à la prochaine session.</p></div>`; }
   if (n.agent && !n.data) return `${tete('Agent')}<div class="pad"><b>${n.agent.id}, ${n.agent.role}</b><p class="muted" style="margin-top:6px">${n.agent.fait}</p></div>`;
   const d = n.data;
   return `${tete(GROUPES[n.g][0])}<div class="md"><h1>${esc(d.titre)}</h1>${mdToHtml(d.contenu || d.extrait || '')}</div>`;
@@ -674,9 +726,18 @@ function vueCerveau() {
   const sel = data.noeuds.find((n) => n.id === S.note) || data.noeuds[0];
   return `<div class="graph-wrap">
     <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau en 3D : toutes les bases de l'agence reliées. Glissez pour tourner, deux doigts pour vous déplacer, pincez pour avancer, touches ZQSD ou flèches pour voler, cliquez sur un neurone pour y aller et l'ouvrir."></canvas>
-      <div class="aide">Glisser, 2 doigts ou flèches : faire le tour du cerveau à 360° · Pincer, molette ou Z / S : avancer, reculer · Clic droit : décaler la vue · Clic : aller au neurone</div>
-      <div class="tools"><button class="icon" type="button" id="g-auto" aria-label="Rotation automatique" title="Rotation automatique"><i data-lucide="rotate-3d"></i></button><button class="icon" type="button" id="g-zoomin" aria-label="Avancer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button></div>
-      <div class="legend">${Object.entries(GROUPES).map(([k, [l, c]]) => `<span class="lg"><i style="background:${NEURONE[k]};color:${NEURONE[k]}"></i>${l}</span>`).join('')}</div>
+      <div class="aide" title="Clic droit + glisser : décaler la vue">Glisser ou flèches : tour à 360° · Pincer ou Z / S : avancer · Clic : aller au neurone</div>
+      <div class="tools"><button class="icon" type="button" id="g-visite" aria-label="Visite guidée" title="Visite guidée" aria-pressed="false"><i data-lucide="play"></i></button><button class="icon" type="button" id="g-son" aria-label="Son des synapses" title="Son des synapses" aria-pressed="false"><i data-lucide="volume-x"></i></button><button class="icon" type="button" id="g-auto" aria-label="Rotation automatique" title="Rotation automatique"><i data-lucide="rotate-3d"></i></button><button class="icon" type="button" id="g-zoomin" aria-label="Avancer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button><button class="icon" type="button" id="g-plein" aria-label="Plein écran" title="Plein écran"><i data-lucide="maximize"></i></button></div>
+      <div class="temps" id="g-temps-zone" hidden><i data-lucide="clock-3"></i><input type="range" id="g-temps" min="0" max="0" step="1" aria-label="Remonter le temps"><span id="g-temps-txt"></span></div>
+      <div class="chat" id="chat">
+        <div class="bulle" id="bulle" hidden></div>
+        <form class="barre" id="barre">
+          <div class="modes" role="group" aria-label="Que faire"><button type="button" data-mode="question" aria-pressed="${S.chatMode !== 'idee'}"><i data-lucide="message-circle"></i>Demander</button><button type="button" data-mode="idee" aria-pressed="${S.chatMode === 'idee'}"><i data-lucide="lightbulb"></i>Ajouter une idée</button></div>
+          <input id="chat-q" autocomplete="off" placeholder="${S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? montre-moi la boulangerie…'}" aria-label="Message au cerveau">
+          <button class="go" type="submit" aria-label="Envoyer"><i data-lucide="arrow-up"></i></button>
+        </form>
+      </div>
+      
     </div>
     <section class="card note-panel" aria-live="polite">${panneauNoeud(sel)}</section>
   </div>`;
@@ -701,10 +762,10 @@ function demarrerGraphe() {
   const AX = { x: 560, y: 400, z: 470 };
   const DIR = {
     entreprise: [0.86, -0.12, 0.48], personne: [0.66, 0.5, 0.22], reponse: [0.5, 0.22, -0.8], message: [0.62, -0.58, -0.3],
-    agent: [-0.66, 0.42, 0.44], memoire: [-0.82, -0.28, -0.24], journal: [-0.28, -0.72, 0.56],
+    agent: [-0.66, 0.42, 0.44], memoire: [-0.82, -0.28, -0.24], journal: [-0.28, -0.72, 0.56], projet: [0.04, -0.9, -0.36],
   };
   const SOUS = { '': [0, 0, 0], Agence: [0, -0.22, 0.2], Projets: [0, 0.22, 0.12], Personnes: [0, 0.05, -0.28] };
-  const regionDe = (n) => (n.id === 'hub:cerveau' ? null : n.hub ? n.g : n.quoi === 'note' ? (n.g === 'agent' ? 'agent' : 'memoire') : n.quoi === 'agent' ? 'agent' : n.quoi === 'jour' ? 'journal' : n.g);
+  const regionDe = (n) => (n.id === 'hub:cerveau' ? null : n.hub ? n.g : n.quoi === 'idee' ? n.regionIdee : n.quoi === 'note' ? (n.g === 'agent' ? 'agent' : n.g === 'projet' ? 'projet' : 'memoire') : n.quoi === 'agent' ? 'agent' : n.quoi === 'jour' ? 'journal' : n.g);
   for (const n of noeuds) {
     n.region = regionDe(n);
     if (!n.region) { n.ax = n.ay = n.az = 0; continue; }
@@ -715,9 +776,10 @@ function demarrerGraphe() {
   }
   noeuds.forEach((n, i) => {
     const o = anc.get(n.id);
-    if (o && o.z !== undefined) { n.x = o.x; n.y = o.y; n.z = o.z; }
+    if (o && o.z !== undefined) { n.x = o.x; n.y = o.y; n.z = o.z; n.ne = o.ne; }
+    else if (!neuf) { n.x = n.ax * 0.2; n.y = n.ay * 0.2; n.z = n.az * 0.2; n.ne = performance.now(); }
     else { const a = i * 2.399963, b = i * 1.3; n.x = n.ax + Math.cos(a) * 40; n.y = n.ay + Math.sin(a) * 40; n.z = n.az + Math.sin(b) * 40; }
-    n.vx = n.vy = n.vz = 0; n.fx = null; n.vis = 1; n.flash = 0;
+    n.vx = n.vy = n.vz = 0; n.fx = null; n.vis = 1; n.flash = n.ne ? 1 : 0;
   });
   const degre = new Map(noeuds.map((n) => [n, 0]));
   for (const [a, b] of aretes) { degre.set(a, degre.get(a) + 1); degre.set(b, degre.get(b) + 1); }
@@ -831,12 +893,26 @@ function demarrerGraphe() {
   const surCourbe = (p, m, q, t) => { const u = 1 - t; return [u * u * p.x + 2 * u * t * m[0] + t * t * q.x, u * u * p.y + 2 * u * t * m[1] + t * t * q.y, u * u * p.z + 2 * u * t * m[2] + t * t * q.z]; };
   const impulsions = [];
   let prochaine = 0;
+  // la nuit, le cerveau se repose : impulsions plus lentes et plus rares
+  const heure = new Date().getHours();
+  const NUIT = heure >= 23 || heure < 6;
+  // neurones en activité : clients sur lesquels un agent travaille, messages qui attendent d'être envoyés
+  for (const n of noeuds) n.actif = (n.quoi === 'entreprise' && ['brief', 'build', 'verification', 'modifs'].includes(n.data.statut)) || (n.quoi === 'message' && n.data.statut !== 'envoye') || (n.quoi === 'agent' || n.g === 'agent' && !n.hub ? S.entreprises.some((e) => (n.agent?.etapes || AGENTS.find((a) => a.id === n.titre)?.etapes || []).includes(e.statut)) : false) || (n.quoi === 'idee' && Date.now() - new Date(n.data.date || 0) < 86400000);
+  // son des synapses (désactivé par défaut)
+  const son = (n) => {
+    if (!G.audio || !G.son) return;
+    const ac = G.audio, o = ac.createOscillator(), g = ac.createGain();
+    const notes = { entreprise: 660, personne: 784, reponse: 587, message: 880, memoire: 523, journal: 698, agent: 440, projet: 494, idee: 988, cerveau: 330 };
+    o.type = 'sine'; o.frequency.value = (notes[n.g] || 600) * (0.98 + Math.random() * 0.04);
+    g.gain.setValueAtTime(0.0001, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.018, ac.currentTime + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.35);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.4);
+  };
 
   function dessiner(t) {
     B = base3();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const fond = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.8);
-    fond.addColorStop(0, '#0e1124'); fond.addColorStop(1, '#04050a');
+    fond.addColorStop(0, NUIT ? '#0a0b1a' : '#0e1124'); fond.addColorStop(1, '#04050a');
     ctx.fillStyle = fond; ctx.fillRect(0, 0, W, H);
     const brouillard = (zc) => Math.max(0.12, Math.min(1, 1.55 - zc / (cam.D * 1.25)));
 
@@ -855,11 +931,18 @@ function demarrerGraphe() {
 
     // projections des neurones
     const P = new Map();
-    for (const n of noeuds) { const pr = projeter(n.x, n.y, n.z); if (pr) P.set(n, pr); }
+    for (const n of noeuds) { if (n.vis < 0.02 && n.cache) continue; const pr = projeter(n.x, n.y, n.z); if (pr) P.set(n, pr); }
     const foyer = G.survol?.id || (S.note !== 'hub:cerveau' ? S.note : null);
     const voisins = new Set();
     if (foyer) for (const [p, q] of aretes) { if (p.id === foyer) voisins.add(q.id); if (q.id === foyer) voisins.add(p.id); }
-    for (const n of noeuds) { const but = !foyer || n.id === foyer || voisins.has(n.id) || n.hub ? 1 : 0.3; n.vis += (but - n.vis) * 0.15; n.flash *= 0.94; }
+    const lumiere = G.lumiere?.size ? G.lumiere : null;
+    for (const n of noeuds) {
+      n.cache = !!(G.temps && n.jour && n.jour > G.temps);
+      let but = n.cache ? 0 : lumiere ? (lumiere.has(n.id) || n.hub ? 1 : 0.18) : !foyer || n.id === foyer || voisins.has(n.id) || n.hub ? 1 : 0.3;
+      n.vis += (but - n.vis) * 0.15;
+      n.flash *= 0.94;
+      if (lumiere?.has(n.id)) n.flash = Math.max(n.flash, 0.55 + 0.35 * Math.sin(t / 260));
+    }
 
     // lobes : halo de zone + nom
     for (const h of noeuds.filter((n) => n.hub && n.region)) {
@@ -888,19 +971,23 @@ function demarrerGraphe() {
       const fort = foyer && (p.id === foyer || q.id === foyer);
       const col = NEURONE[(fort ? (p.id === foyer ? q : p) : p.hub ? q : p).g];
       ctx.strokeStyle = rgba(col, (fort ? 0.8 : Math.min(p.vis, q.vis) * (hub ? 0.34 : 0.22)) * brouillard((a[2] + b[2]) / 2));
-      ctx.lineWidth = Math.max(0.6, (fort ? 2.2 : hub ? 1.5 : 1.1) * ((a[3] + b[3]) / 2) * 1.6);
+      ctx.lineWidth = Math.min(fort ? 3.2 : 2.4, Math.max(0.6, (fort ? 2.2 : hub ? 1.5 : 1.1) * ((a[3] + b[3]) / 2) * 1.6));
       ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(2 * pm[0] - (a[0] + b[0]) / 2, 2 * pm[1] - (a[1] + b[1]) / 2, b[0], b[1]); ctx.stroke();
     }
     // impulsions
     if (!reduit && t > prochaine && aretes.length) {
-      const [p, q] = aretes[(Math.random() * aretes.length) | 0];
+      // le cerveau est vivant : les liens où il se passe vraiment quelque chose s'activent plus souvent
+      const actifs = aretes.filter(([p, q]) => [p, q].some((n) => n.actif));
+      const vivants = aretes.filter(([p, q]) => !p.cache && !q.cache);
+      const choix = actifs.length && Math.random() < 0.45 ? actifs : vivants.length ? vivants : aretes;
+      const [p, q] = choix[(Math.random() * choix.length) | 0];
       const sens = Math.random() < 0.5;
-      impulsions.push({ a: sens ? p : q, b: sens ? q : p, t0: t, d: 800 + Math.random() * 800 });
-      prochaine = t + 70 + Math.random() * 220;
+      impulsions.push({ a: sens ? p : q, b: sens ? q : p, t0: t, d: (NUIT ? 1700 : 800) + Math.random() * 800 });
+      prochaine = t + (NUIT ? 380 : 70) + Math.random() * (NUIT ? 600 : 220);
     }
     for (let k = impulsions.length - 1; k >= 0; k--) {
       const im = impulsions[k], u = (t - im.t0) / im.d;
-      if (u >= 1) { im.b.flash = 1; impulsions.splice(k, 1); continue; }
+      if (u >= 1) { im.b.flash = 1; impulsions.splice(k, 1); son(im.b); continue; }
       const m = milieu(im.a, im.b), col = NEURONE[im.a.g];
       for (let s2 = 0; s2 < 7; s2++) {
         const pt = surCourbe(im.a, m, im.b, Math.max(0, u - s2 * 0.022));
@@ -917,7 +1004,10 @@ function demarrerGraphe() {
       if (x < -120 || y < -120 || x > W + 120 || y > H + 120) continue;
       const col = NEURONE[n.g], br = brouillard(zc);
       const pulse = n.hub ? 1 + 0.05 * Math.sin(t / 900 + hash(n.id)) : 1;
-      const r = Math.max(1.5, rBase(n) * e * 1.7 * pulse * (n === G.survol ? 1.15 : 1));
+      const naissance = n.ne ? Math.min(1, (t - n.ne) / 1400) : 1;
+      const actif = n.actif ? 1 + 0.12 * Math.sin(t / 220 + hash(n.id)) : 1;
+      const r = Math.max(1.5, rBase(n) * e * 1.7 * pulse * actif * (0.15 + 0.85 * (1 - (1 - naissance) ** 3)) * (n === G.survol ? 1.15 : 1));
+      if (n.ne && naissance < 1 && Math.random() < 0.25) for (const [a2, b2] of aretes) if (a2 === n || b2 === n) impulsions.push({ a: n, b: a2 === n ? b2 : a2, t0: t, d: 600 });
       const v = n.vis * br;
       const eclat = 0.35 + n.flash * 0.65 + (n.id === foyer ? 0.35 : 0);
       const R = r * (n.hub ? 3.6 : 3.2);
@@ -931,7 +1021,7 @@ function demarrerGraphe() {
         const x1 = x + Math.cos(a0 + d.c) * (r + L), y1 = y + Math.sin(a0 + d.c) * (r + L);
         const xm = x + Math.cos(a0 + d.c * 0.4) * (r + L * 0.55), ym = y + Math.sin(a0 + d.c * 0.4) * (r + L * 0.55);
         ctx.strokeStyle = rgba(col, (0.35 + n.flash * 0.4) * v);
-        ctx.lineWidth = Math.max(0.6, r * 0.28);
+        ctx.lineWidth = Math.min(7, Math.max(0.6, r * 0.28));
         ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(xm, ym, x1, y1); ctx.stroke();
         if (d.b) { const bx = x + Math.cos(a0 + d.c * 0.5 + d.b) * (r + L * 0.95), by = y + Math.sin(a0 + d.c * 0.5 + d.b) * (r + L * 0.95); ctx.lineWidth = Math.max(0.5, r * 0.16); ctx.beginPath(); ctx.moveTo(xm, ym); ctx.lineTo(bx, by); ctx.stroke(); }
       }
@@ -957,7 +1047,7 @@ function demarrerGraphe() {
       const [x, y, r] = n.ecran, [, , zc] = P.get(n);
       if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue;
       if (n.id === S.note) { ctx.strokeStyle = rgba('#ffffff', 0.5 + 0.3 * Math.sin(t / 300)); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r + 6 + 2 * Math.sin(t / 300), 0, 6.283); ctx.stroke(); }
-      const montrer = n.hub || n.id === foyer || voisins.has(n.id) || r > 5.5;
+      const montrer = n.hub || n.id === foyer || voisins.has(n.id) || r > 5.5 || G.lumiere?.has(n.id);
       if (!montrer) continue;
       const fs = n.id === 'hub:cerveau' ? 15 : n.hub ? 13 : Math.max(10, Math.min(13, r * 1.6));
       ctx.font = `${n.hub ? 600 : 500} ${fs}px ${SANS}`;
@@ -994,7 +1084,12 @@ function demarrerGraphe() {
       cam.yaw += elan.yaw; cam.pitch += elan.pitch;
       elan.yaw *= 0.93; elan.pitch *= 0.93;
       // visite automatique : le cerveau tourne lentement quand on ne touche à rien
-      if (!reduit && G.auto !== false && now - derniereAction > 5000) cam.yaw += 0.0012;
+      if (!reduit && G.auto !== false && now - derniereAction > 5000 && !G.visite) cam.yaw += 0.0012;
+      if (G.visite && now > G.visite.prochain) {
+        const h = G.visite.liste[G.visite.i++ % G.visite.liste.length];
+        G.focus(h, true);
+        G.visite.prochain = now + 4200;
+      }
     }
     dessiner(now);
     G.raf = requestAnimationFrame(boucle);
@@ -1026,7 +1121,7 @@ function demarrerGraphe() {
     cv.setPointerCapture(ev.pointerId); cv.focus({ preventScroll: true });
     const [px, py] = pos(ev);
     pointeurs.set(ev.pointerId, [px, py]);
-    cible.actif = false; derniereAction = performance.now(); G.enGeste = true; elan.yaw = elan.pitch = 0;
+    cible.actif = false; derniereAction = performance.now(); G.enGeste = true; elan.yaw = elan.pitch = 0; arreterVisite();
     if (pointeurs.size === 2) {
       const [[ax, ay], [bx, by]] = [...pointeurs.values()];
       if (geste?.n) { geste.n.fx = null; SIM.alphaCible = 0; }
@@ -1071,7 +1166,7 @@ function demarrerGraphe() {
     geste = null;
     if (!g) return;
     if (g.n) { g.n.fx = null; SIM.alphaCible = 0; }
-    if (!g.bouge) { elan.yaw = elan.pitch = 0; if (g.n) G.focus(g.n.id); }
+    if (!g.bouge) { elan.yaw = elan.pitch = 0; if (g.n) G.focus(g.n.id); else G.lumiere = null; }
   };
   cv.addEventListener('pointerup', lacher);
   cv.addEventListener('pointercancel', lacher);
@@ -1098,8 +1193,41 @@ function demarrerGraphe() {
   const auto = $('#g-auto');
   if (auto) { const maj = () => { auto.setAttribute('aria-pressed', String(G.auto !== false)); }; maj(); auto.onclick = () => { G.auto = G.auto === false; maj(); }; }
 
+  // Visite guidée : la caméra passe de lobe en lobe toute seule.
+  function arreterVisite() { if (G.visite) { G.visite = null; const b = $('#g-visite'); if (b) { b.setAttribute('aria-pressed', 'false'); b.innerHTML = '<i data-lucide="play"></i>'; icons(); } } }
+  const bVisite = $('#g-visite');
+  if (bVisite) bVisite.onclick = () => {
+    if (G.visite) return arreterVisite();
+    G.visite = { liste: ['hub:cerveau', ...HUBS.map((h) => 'hub:' + h[0]), 'hub:cerveau'], i: 0, prochain: 0 };
+    bVisite.setAttribute('aria-pressed', 'true'); bVisite.innerHTML = '<i data-lucide="pause"></i>'; icons();
+  };
+  const bSon = $('#g-son');
+  if (bSon) bSon.onclick = () => {
+    G.son = !G.son;
+    if (G.son && !G.audio) { try { G.audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { G.son = false; } }
+    G.audio?.resume?.();
+    bSon.setAttribute('aria-pressed', String(!!G.son)); bSon.innerHTML = `<i data-lucide="${G.son ? 'volume-2' : 'volume-x'}"></i>`; icons();
+  };
+  const bPlein = $('#g-plein');
+  if (bPlein) bPlein.onclick = async () => {
+    try { if (document.fullscreenElement) await document.exitFullscreen(); else await box.requestFullscreen(); }
+    catch (e) { box.classList.toggle('immersion'); }
+  };
+  const temps = $('#g-temps');
+  if (temps) {
+    const jours = [...new Set(noeuds.map((n) => n.jour).filter(Boolean))].sort();
+    const zone = $('#g-temps-zone');
+    if (jours.length > 1) {
+      zone.hidden = false;
+      temps.max = String(jours.length - 1); temps.value = String(G.tempsIndex ?? jours.length - 1);
+      const maj = () => { const i = Number(temps.value); G.tempsIndex = i; G.temps = i >= jours.length - 1 ? null : jours[i]; $('#g-temps-txt').textContent = i >= jours.length - 1 ? "Aujourd'hui" : dateFr(jours[i]); };
+      temps.oninput = maj; maj();
+    } else zone.hidden = true;
+  }
+
   // Aller jusqu'à un neurone : la caméra vole vers lui et le panneau s'ouvre.
-  G.focus = (id) => {
+  G.focus = (id, depuisVisite) => {
+    if (!depuisVisite) arreterVisite();
     const n = noeuds.find((x) => x.id === id);
     if (!n) return false;
     S.note = id; derniereAction = performance.now();
@@ -1109,6 +1237,82 @@ function demarrerGraphe() {
     if (panel) { panel.innerHTML = panneauNoeud(G.cur.noeuds.find((x) => x.id === id) || n); panel.scrollTop = 0; icons(); }
     return true;
   };
+}
+
+// ---------- parler au cerveau ----------
+function contexteCerveau() {
+  const c = G.cur || construireGraphe();
+  const ids = c.noeuds.filter((n) => !n.hub).map((n) => `${n.id} | ${n.titre} | ${GROUPES[n.g][0]}`).join('\n');
+  const memoire = S.notes.find((n) => cle(n.titre) === 'memoire')?.contenu || '';
+  const notes = S.notes.filter((n) => n.dossier !== 'Journal' && cle(n.titre) !== 'memoire').map((n) => `## ${n.titre} (${n.dossier || 'racine'})\n${String(n.contenu || '').slice(0, 900)}`).join('\n\n');
+  const entreprises = S.entreprises.map((e) => `- ${e.nom} (${e.activite}, ${e.ville}) : étape ${e.statut}, ${e.formule} ${e.prix} €, échéance ${e.echeance}${e.test ? ', EXEMPLE FICTIF' : ''}`).join('\n');
+  const personnes = S.personnes.map((p) => `- ${p.nom}, ${p.role || ''}, ${nomEnt(p.entreprise)}`).join('\n');
+  const reponses = S.reponses.map((r) => `- ${dateFr(r.date)}, ${nomEnt(r.entreprise)} : ${r.resume || r.type}`).join('\n');
+  const messages = S.messages.map((m) => `- ${nomEnt(m.entreprise)} : ${m.objet} (${m.statut === 'envoye' ? 'envoyé' : 'à envoyer'})`).join('\n');
+  const idees = S.idees.map((i) => `- ${dateFr(i.date)} : ${i.titre}`).join('\n');
+  const dernierJour = [...S.journal].sort((a, b) => String(b.date).localeCompare(String(a.date)) || (b.partie || 1) - (a.partie || 1))[0];
+  const journal = dernierJour ? String(dernierJour.contenu).slice(-9000) : '';
+  return `MÉMOIRE\n${memoire.slice(0, 7000)}\n\nNOTES\n${notes.slice(0, 12000)}\n\nENTREPRISES\n${entreprises || '(aucune)'}\n\nPERSONNES\n${personnes || '(aucune)'}\n\nRÉPONSES DES CLIENTS\n${reponses || '(aucune)'}\n\nMESSAGES\n${messages || '(aucun)'}\n\nIDÉES\n${idees || '(aucune)'}\n\nFIN DU DERNIER JOURNAL (${dernierJour?.date || '-'})\n${journal}\n\nNEURONES DISPONIBLES (id | titre | type)\n${ids}`;
+}
+S.chat = [];
+S.chatMode = 'question';
+async function envoyerAuCerveau(texte) {
+  const bulle = $('#bulle');
+  const go = $('#barre .go');
+  if (!texte.trim() || !bulle) return;
+  bulle.hidden = false;
+  const fermerBtn = '<button type="button" class="x-bulle" data-fermer-bulle aria-label="Fermer la réponse">×</button>';
+  bulle.innerHTML = `<div class="q">${esc(texte)}</div><div class="attente"><i></i>Le cerveau réfléchit…</div>`;
+  go.disabled = true;
+  const mode = S.chatMode;
+  const sample = window.claude?.use ? await window.claude.use('sample').catch(() => null) : null;
+  try {
+    if (!sample) {
+      if (mode !== 'idee') throw { code: 'indisponible' };
+      await ajouterIdee({ titre: texte.slice(0, 70), texte, region: 'memoire', liens: [] });
+      bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><p>Idée ajoutée dans la Mémoire.</p>`;
+      return;
+    }
+    const regles = mode === 'idee'
+      ? `Matheo jette une idée dans son cerveau. Range-la. Réponds UNIQUEMENT en JSON : {"titre": "titre court (max 60 caractères)", "texte": "l'idée reformulée clairement, en français, sans rien inventer", "region": une de "entreprise" | "personne" | "reponse" | "message" | "memoire" | "journal" | "agent" | "projet", "liens": [ids de 0 à 4 neurones existants vraiment liés, pris dans la liste NEURONES DISPONIBLES], "reponse": "une phrase pour dire où tu l'as rangée et pourquoi"}`
+      : `Matheo pose une question à son cerveau. Réponds en français simple, court (maximum 8 lignes), en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Pas de tiret long. Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse, en Markdown léger", "neurones": [ids des neurones concernés, pris dans la liste NEURONES DISPONIBLES, 0 à 8]}`;
+    const entree = [
+      { role: 'user', content: `Tu es le cerveau de Matheo (son deuxième cerveau). Voici tout ce qu'il contient.\n\n${contexteCerveau()}\n\n${regles}` },
+      { role: 'assistant', content: '{"ok": true}' },
+      ...S.chat.slice(-6),
+      { role: 'user', content: texte },
+    ];
+    const r = await sample.json(entree, { cache: false, modelTier: 'default' });
+    const ids = new Set((G.cur?.noeuds || []).map((n) => n.id));
+    if (mode === 'idee') {
+      const liens = (r.liens || []).filter((x) => ids.has(x));
+      const id = await ajouterIdee({ titre: String(r.titre || texte).slice(0, 80), texte: String(r.texte || texte), region: r.region, liens });
+      bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><div class="md">${mdToHtml(r.reponse || 'Idée rangée.')}</div>`;
+      G.attendre = 'i:' + id;
+    } else {
+      const neurones = (r.neurones || []).filter((x) => ids.has(x));
+      bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><div class="md">${mdToHtml(r.reponse || '')}</div>${neurones.length ? `<p class="muted" style="font-size:12px;margin-top:8px;color:#8b91ab">${neurones.length} neurone(s) allumé(s). Cliquez dans le cerveau pour les éteindre.</p>` : ''}`;
+      G.lumiere = new Set(neurones);
+      if (neurones[0]) G.focus?.(neurones[0], true);
+    }
+    S.chat.push({ role: 'user', content: texte }, { role: 'assistant', content: JSON.stringify(r) });
+  } catch (e) {
+    const txt = e?.code === 'not_granted' || e?.code === 'approval_required' ? 'Il faut autoriser le Cerveau à utiliser Claude : acceptez la demande qui s\'affiche, puis renvoyez.'
+      : e?.code === 'rate_limited' ? 'Trop de questions d\'un coup. Attendez un instant.'
+      : e?.code === 'indisponible' ? 'Les questions au cerveau ne marchent que dans claude.ai, avec votre compte.'
+      : e?.code === 'quota_exceeded' ? 'La base du cerveau est pleine.'
+      : 'Le cerveau n\'a pas pu répondre. Réessayez.';
+    bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><p style="color:#f1a3a3">${txt}</p>`;
+  } finally {
+    go.disabled = false;
+    icons();
+  }
+}
+async function ajouterIdee(i) {
+  if (!S.db) throw { code: 'indisponible' };
+  const ref = S.db.collection('idees').doc();
+  await ref.set({ titre: i.titre, texte: i.texte, region: i.region || 'memoire', liens: i.liens || [], date: new Date().toISOString(), source: 'Matheo' });
+  return ref.id;
 }
 
 // ---------- journal ----------
@@ -1271,6 +1475,9 @@ document.addEventListener('click', (ev) => {
   if (gn) { if (S.vue === 'cerveau' && G.focus?.(gn.dataset.noeud)) return; S.note = gn.dataset.noeud; return render(); }
   const jr = t.closest('[data-jour]');
   if (jr) { S.jour = jr.dataset.jour; if (S.vue !== 'journal') location.hash = 'journal'; else render(); return; }
+  if (t.closest('[data-fermer-bulle]')) { $('#bulle').hidden = true; G.lumiere = null; return; }
+  const md = t.closest('[data-mode]');
+  if (md) { S.chatMode = md.dataset.mode; document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b === md))); $('#chat-q').placeholder = S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? montre-moi la boulangerie…'; $('#chat-q').focus(); return; }
   const mi = t.closest('[data-mission]');
   if (mi) { S.mission = mi.dataset.mission; S.confirmer = false; S.envoi = null; return render(); }
   if (t.closest('#m-prep')) { S.confirmer = true; S.envoi = null; return render(); }
@@ -1280,17 +1487,31 @@ document.addEventListener('click', (ev) => {
   if (en && !t.closest('.drawer')) return ouvrir(en.dataset.ent);
 });
 document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape') fermer();
+  if (ev.key === 'Escape') { fermer(); $('#graph')?.classList.remove('immersion'); }
   if (ev.key === 'Enter' && ev.target.matches('tr[data-ent]')) ouvrir(ev.target.dataset.ent);
 });
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
+document.addEventListener('submit', (ev) => {
+  if (ev.target.id !== 'barre') return;
+  ev.preventDefault();
+  const q = $('#chat-q'); const v = q.value; q.value = '';
+  envoyerAuCerveau(v);
+});
 document.addEventListener('input', (ev) => {
   if (ev.target.id !== 'm-texte') return;
   S.missionTexte = ev.target.value;
   const b = $('#m-prep'); if (b) b.disabled = MISSIONS[S.mission].champ && S.missionTexte.trim().length <= 2;
 });
-$('#q').addEventListener('input', (ev) => { S.q = ev.target.value.trim().toLowerCase(); render(); });
+$('#q').addEventListener('input', (ev) => {
+  S.q = ev.target.value.trim().toLowerCase();
+  if (S.vue === 'cerveau' && G.cur) {
+    G.lumiere = S.q ? new Set(G.cur.noeuds.filter((n) => !n.hub && (n.titre + ' ' + (n.data?.contenu || n.data?.texte || n.data?.activite || '')).toLowerCase().includes(S.q)).map((n) => n.id)) : null;
+    return;
+  }
+  render();
+});
+$('#q').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && S.vue === 'cerveau' && G.lumiere?.size) G.focus?.([...G.lumiere][0], true); });
 
 const VUES = ['cerveau', 'cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'journal', 'missions'];
 function route() { const h = location.hash.slice(1) === 'graphe' ? 'cerveau' : location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cerveau'; fermer(); render(); }
@@ -1318,7 +1539,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -1326,7 +1547,8 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees'].includes(col)) ouvrir(S.ouvert, true);
+      if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
 }

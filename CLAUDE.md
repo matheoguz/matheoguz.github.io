@@ -44,6 +44,7 @@ Collections :
 - `personnes/<id>` : `{nom, role, entreprise: <slug>, plateforme, pseudo, telephone, email, notes}`. **Uniquement ici**, jamais dans le dépôt.
 - `reponses/<id>` : chaque message reçu d'un client, texte complet : `{entreprise, date, type: brief|retour|message|paiement, resume, contenu}`. **Uniquement ici.**
 - `messages/<id>` : chaque message à envoyer par Matheo : `{entreprise, date, objet, texte, statut: a_envoyer|envoye}`. Matheo coche « Je l'ai envoyé » dans la page ; relire ce statut avant d'avancer un client.
+- `idees/<id>` : idées que Matheo jette depuis la barre « Demander au cerveau » `{titre, texte, region, liens, date}`. **Au début de chaque session**, les lire et les recopier dans le coffre (`Repos-/cerveau/Idées/AAAA-MM-JJ titre.md`, avec `tags: [idee]` et les liens en `[[...]]`), puis mettre `importee: true` sur le document.
 - `notes/<id>` et `journal/<date>` : copie du coffre `Repos-/cerveau` (toutes les notes, dont la mémoire de l'agence ; le journal jour par jour). C'est la rubrique Mémoire, Graphe et Journal.
 
 **Synchroniser** (à la fin de chaque skill de l'agence) :
