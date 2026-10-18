@@ -4,6 +4,8 @@ Site GitHub Pages de Matheo Guzzi (publié depuis `main`). Chaque dossier est un
 
 Écrire en français pour tout ce qui est visible par Matheo ou ses clients.
 
+**Aperçu obligatoire :** dès qu'une page est créée ou modifiée visuellement, envoyer à Matheo le rendu à tester dans le panneau d'aperçu (SendUserFile, `display: "render"`), sans attendre qu'il le demande. Les pages qui lisent d'autres fichiers (le cockpit) doivent être envoyées en version autonome : `node agence/agence.mjs apercu <dossier> [slug]` produit `workspace.html`, `questionnaire.html` et `site-<slug>.html`.
+
 ## Agence de sites vitrines
 
 Matheo vend des sites vitrines sur ComeUp / Fiverr (annonce : `sites/ANNONCE.md`, portfolio : `sites/`). Le travail est fait par des agents, Matheo valide et parle aux clients.

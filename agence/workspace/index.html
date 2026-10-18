@@ -278,13 +278,15 @@ function render(data) {
         <td>${esc(c.formule)} · ${euro(c.prix || 0)}</td>
         <td class="${late(c) ? 'late' : ''}">${esc(c.echeance || '—')}</td>
         <td>${esc(c.derniere_action)}<br><span style="color:var(--muted);font-size:.78rem">${esc(c.maj)}</span></td>
-        <td><a href="../../clients/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener">voir →</a></td>
+        <td><a href="${window.WORKSPACE_DATA ? 'https://matheoguz.github.io/' : '../../'}clients/${encodeURIComponent(c.slug)}/" target="_blank" rel="noopener">voir →</a></td>
       </tr>`).join('')
     : '<tr><td colspan="6">Aucun client pour l’instant. Lance <b>/nouveau-client</b> avec le message d’un client.</td></tr>';
   if (!real.length) document.getElementById('msg').innerHTML = 'Seul le client fictif <code>exemple-boulangerie-dupont</code> est présent : les compteurs ne comptent que les vrais clients.';
 }
 
-fetch('../../clients/index.json', { cache: 'no-store' })
+// Aperçu autonome (node agence/agence.mjs apercu) : les données sont incluses dans la page.
+if (window.WORKSPACE_DATA) render(window.WORKSPACE_DATA);
+else fetch('../../clients/index.json', { cache: 'no-store' })
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then(render)
   .catch(() => {

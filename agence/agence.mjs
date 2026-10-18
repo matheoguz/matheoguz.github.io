@@ -6,6 +6,7 @@
 //   node agence/agence.mjs verifier <slug>           contrôle qualité (+ captures si Playwright)
 //   node agence/agence.mjs statut <slug> <etape> [note]   avance le client dans le pipeline
 //   node agence/agence.mjs index                     met à jour clients/index.json (cockpit)
+//   node agence/agence.mjs apercu <dossier> [slug]   copies autonomes à ouvrir dans un aperçu
 //
 // Aucune dépendance : Node 18+ suffit. Playwright est utilisé s'il est installé.
 
@@ -465,10 +466,27 @@ function cmdIndex() {
   console.log(`✓ clients/index.json : ${clients.length} client(s)`);
 }
 
+// Copies autonomes (sans fichiers à côté) pour les tester dans un panneau d'aperçu.
+function cmdApercu(out, slug) {
+  if (!out) fail('usage : apercu <dossier> [slug]');
+  fs.mkdirSync(out, { recursive: true });
+  cmdIndex();
+  const data = fs.readFileSync(path.join(CLIENTS, 'index.json'), 'utf8').replace(/</g, '\\u003c');
+  const ws = fs.readFileSync(path.join(ROOT, 'agence', 'workspace', 'index.html'), 'utf8')
+    .replace('<script>', `<script>window.WORKSPACE_DATA = ${data};</script>\n<script>`);
+  const files = [['workspace.html', ws], ['questionnaire.html', fs.readFileSync(path.join(ROOT, 'sites', 'brief', 'index.html'), 'utf8')]];
+  if (slug) {
+    needClient(slug);
+    files.push([`site-${slug}.html`, fs.readFileSync(path.join(dir(slug), 'index.html'), 'utf8')]);
+  }
+  for (const [name, html] of files) fs.writeFileSync(path.join(out, name), html);
+  files.forEach(([name]) => console.log(path.join(out, name)));
+}
+
 const [cmd, ...args] = process.argv.slice(2);
-const cmds = { nouveau: cmdNouveau, build: cmdBuild, verifier: cmdVerifier, statut: cmdStatut, index: cmdIndex };
+const cmds = { nouveau: cmdNouveau, build: cmdBuild, verifier: cmdVerifier, statut: cmdStatut, index: cmdIndex, apercu: cmdApercu };
 if (!cmds[cmd]) {
-  console.log('Commandes : nouveau <slug> | build <slug> | verifier <slug> | statut <slug> <etape> [note] | index');
+  console.log('Commandes : nouveau <slug> | build <slug> | verifier <slug> | statut <slug> <etape> [note] | index | apercu <dossier> [slug]');
   console.log('Étapes : ' + Object.keys(ETAPES).join(' → '));
   process.exit(cmd ? 1 : 0);
 }
