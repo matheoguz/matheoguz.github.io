@@ -325,6 +325,12 @@ body.open .drawer{transform:none;visibility:visible}
   .kv dt{margin-top:6px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.rapport header h2{display:flex;align-items:center;gap:8px}
+.rapport header h2 svg{color:var(--accent)}
+.rap-titre{margin:0 0 10px;font-weight:600}
+.rap-faire{margin:0 0 10px;padding-left:1.3em;display:grid;gap:6px}
+.rapport details summary{cursor:pointer;color:var(--accent);font-weight:500}
+.rapport details .md{margin-top:8px;padding:0}
 </style>
 
 <div class="app">
@@ -407,7 +413,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], rapports: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -469,7 +475,17 @@ function cockpit() {
   const ev = all.flatMap((e) => (e.historique || []).map((h, i) => ({ ...h, e, i })))
     .sort((a, b) => (b.date + String(b.i).padStart(3, '0')).localeCompare(a.date + String(a.i).padStart(3, '0'))).slice(0, 8);
 
+  const rap = [...S.rapports].sort((a, b) => String(b.date || b.id).localeCompare(String(a.date || a.id)))[0];
+  const rapport = rap ? `<section class="card rapport" aria-label="Rapport du matin">
+    <header><h2><i data-lucide="sun"></i>Rapport du matin</h2><span class="c">${esc(dateFr(rap.date || rap.id))}</span></header>
+    <div class="pad">${rap.titre ? `<p class="rap-titre">${esc(rap.titre)}</p>` : ''}
+      ${(rap.a_faire || []).length ? `<ol class="rap-faire">${rap.a_faire.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+      ${rap.texte ? `<details><summary>Lire le rapport complet</summary><div class="md">${mdToHtml(String(rap.texte))}</div></details>` : ''}
+    </div></section>`
+    : `<section class="card rapport" aria-label="Rapport du matin"><header><h2><i data-lucide="sun"></i>Rapport du matin</h2></header><div class="pad muted">Chaque matin à 6h52, le Night run fait le point et écrit ici ce qu'il faut faire dans la journée.</div></section>`;
+
   return `
+  ${rapport}
   ${all.length && !reels.length ? '<div class="card pad" style="display:flex;gap:10px;align-items:center;background:var(--accent-soft);border-color:transparent;box-shadow:none"><i data-lucide="flask-conical" style="color:var(--accent)"></i><span>Il n\'y a pour l\'instant que l\'exemple <b>Boulangerie Dupont</b>. Les chiffres ne comptent que les vrais clients.</span></div>' : ''}
   <section class="card kpis" aria-label="Chiffres clés">
     ${kpi('Encaissé', 'wallet', euro(payes.reduce((s, e) => s + (e.prix || 0), 0)), `${payes.length} site(s) payé(s)`)}
@@ -1252,7 +1268,9 @@ function contexteCerveau() {
   const idees = S.idees.map((i) => `- ${dateFr(i.date)} : ${i.titre}`).join('\n');
   const dernierJour = [...S.journal].sort((a, b) => String(b.date).localeCompare(String(a.date)) || (b.partie || 1) - (a.partie || 1))[0];
   const journal = dernierJour ? String(dernierJour.contenu).slice(-9000) : '';
-  return `MÉMOIRE\n${memoire.slice(0, 7000)}\n\nNOTES\n${notes.slice(0, 12000)}\n\nENTREPRISES\n${entreprises || '(aucune)'}\n\nPERSONNES\n${personnes || '(aucune)'}\n\nRÉPONSES DES CLIENTS\n${reponses || '(aucune)'}\n\nMESSAGES\n${messages || '(aucun)'}\n\nIDÉES\n${idees || '(aucune)'}\n\nFIN DU DERNIER JOURNAL (${dernierJour?.date || '-'})\n${journal}\n\nNEURONES DISPONIBLES (id | titre | type)\n${ids}`;
+  const rap = [...S.rapports].sort((x, y) => String(y.date || y.id).localeCompare(String(x.date || x.id)))[0];
+  const rapport = rap ? `${rap.date || rap.id} : ${rap.titre || ''}\n${(rap.a_faire || []).map((x) => '- ' + x).join('\n')}\n${String(rap.texte || '').slice(0, 3000)}` : '(aucun)';
+  return `MÉMOIRE\n${memoire.slice(0, 7000)}\n\nNOTES\n${notes.slice(0, 12000)}\n\nENTREPRISES\n${entreprises || '(aucune)'}\n\nPERSONNES\n${personnes || '(aucune)'}\n\nRÉPONSES DES CLIENTS\n${reponses || '(aucune)'}\n\nMESSAGES\n${messages || '(aucun)'}\n\nIDÉES\n${idees || '(aucune)'}\n\nDERNIER RAPPORT DU MATIN\n${rapport}\n\nFIN DU DERNIER JOURNAL (${dernierJour?.date || '-'})\n${journal}\n\nNEURONES DISPONIBLES (id | titre | type)\n${ids}`;
 }
 S.chat = [];
 S.chatMode = 'question';
@@ -1539,7 +1557,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -1547,7 +1565,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
