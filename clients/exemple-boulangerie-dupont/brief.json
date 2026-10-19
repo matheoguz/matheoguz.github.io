@@ -1,0 +1,127 @@
+{
+  "nom": "Boulangerie Dupont",
+  "activite": "Boulangerie artisanale",
+  "theme": "commerce",
+  "formule": "standard",
+  "ville": "Metz",
+  "code_postal": "57000",
+  "adresse": "8 rue des Jardins",
+  "telephone": "03 87 00 00 00",
+  "email": "contact@boulangerie-dupont.fr",
+  "slogan": "Le bon pain, cuit chaque matin à deux pas de chez vous.",
+  "accroche": "Pains au levain, viennoiseries pur beurre et pâtisseries maison, préparés sur place depuis trois générations dans le quartier des Jardins.",
+  "points_forts": [
+    "Farines locales et levain naturel",
+    "Cuisson sur place toute la journée",
+    "Commandes pour vos fêtes et événements"
+  ],
+  "histoire_titre": "Trois générations de boulangers",
+  "histoire": [
+    "Depuis 1978, la famille Dupont pétrit, façonne et cuit son pain rue des Jardins. Chaque nuit, Pierre et son équipe préparent les fournées avec des farines de meuniers lorrains et un levain entretenu depuis plus de quarante ans.",
+    "Le matin, Claire vous accueille en boutique avec les baguettes encore tièdes, les croissants pur beurre et les gâteaux du jour."
+  ],
+  "services": {
+    "titre": "Nos produits",
+    "groupes": [
+      {
+        "nom": "Pains",
+        "items": [
+          {
+            "nom": "Baguette tradition",
+            "detail": "Farine Label Rouge, longue fermentation",
+            "prix": "1,30 €"
+          },
+          {
+            "nom": "Pain de campagne au levain",
+            "detail": "Le kilo, à la coupe",
+            "prix": "6,80 €"
+          },
+          {
+            "nom": "Pain aux céréales",
+            "detail": "Lin, tournesol, sésame",
+            "prix": "3,20 €"
+          }
+        ]
+      },
+      {
+        "nom": "Viennoiseries",
+        "items": [
+          {
+            "nom": "Croissant pur beurre",
+            "detail": "Beurre AOP Charentes-Poitou",
+            "prix": "1,20 €"
+          },
+          {
+            "nom": "Pain au chocolat",
+            "prix": "1,30 €"
+          },
+          {
+            "nom": "Brioche tressée",
+            "detail": "Le samedi et le dimanche",
+            "prix": "5,50 €"
+          }
+        ]
+      },
+      {
+        "nom": "Pâtisseries",
+        "items": [
+          {
+            "nom": "Tarte aux mirabelles",
+            "detail": "En saison, 6 parts",
+            "prix": "18 €"
+          },
+          {
+            "nom": "Éclair au chocolat",
+            "prix": "3,40 €"
+          },
+          {
+            "nom": "Gâteau sur commande",
+            "detail": "Anniversaires, baptêmes, mariages",
+            "prix": "sur devis"
+          }
+        ]
+      }
+    ],
+    "note": "Commandes possibles 48 h à l'avance par téléphone ou en boutique."
+  },
+  "horaires": [
+    "Mardi au samedi : 6h30 - 19h30",
+    "Dimanche : 7h - 13h",
+    "Fermé le lundi"
+  ],
+  "avis": [
+    {
+      "texte": "La meilleure baguette du quartier, et toujours un grand sourire en boutique.",
+      "auteur": "Julie M.",
+      "note": 5,
+      "source": "avis Google"
+    },
+    {
+      "texte": "Leur tarte aux mirabelles est une institution. On commande pour chaque anniversaire.",
+      "auteur": "Marc T.",
+      "note": 5,
+      "source": "avis Google"
+    },
+    {
+      "texte": "Croissants vraiment pur beurre, ça se sent. Je fais le détour tous les dimanches.",
+      "auteur": "Nadia B.",
+      "note": 5,
+      "source": "avis Google"
+    }
+  ],
+  "note_google": "4,9",
+  "reseaux": {
+    "instagram": "https://instagram.com/"
+  },
+  "couleurs": {},
+  "photos": {},
+  "cta": {},
+  "legal": {
+    "responsable": "Pierre Dupont",
+    "siret": "000 000 000 00000 (exemple)",
+    "forme": "Entreprise individuelle"
+  },
+  "titre_seo": "Boulangerie Dupont | Boulangerie artisanale à Metz",
+  "description_seo": "Boulangerie artisanale à Metz : pains au levain, viennoiseries pur beurre et pâtisseries maison. Ouvert du mardi au dimanche.",
+  "metier": "boulangerie"
+}

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/cerveau.sh\" rappel", "timeout": 20 }] }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/cerveau.sh\" journal", "timeout": 30 }] }
+    ],
+    "PreCompact": [
+      { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/cerveau.sh\" journal", "timeout": 30 }] }
+    ],
+    "SessionEnd": [
+      { "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/cerveau.sh\" journal", "timeout": 30 }] }
+    ]
+  }
+}

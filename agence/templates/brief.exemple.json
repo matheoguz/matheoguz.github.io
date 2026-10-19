@@ -1,0 +1,34 @@
+{
+  "_aide": "Brief d'un client. Les champs vides obligatoires bloquent le build. theme : restaurant | beaute | artisan | commerce | sante. formule : essentiel | standard | premium. Supprime les sections inutiles (avis, galerie…) plutôt que de les inventer.",
+  "nom": "",
+  "activite": "",
+  "theme": "",
+  "formule": "",
+  "ville": "",
+  "code_postal": "",
+  "adresse": "",
+  "telephone": "",
+  "email": "",
+  "slogan": "",
+  "accroche": "",
+  "points_forts": [],
+  "histoire_titre": "",
+  "histoire": [],
+  "services": {
+    "titre": "",
+    "groupes": [
+      { "nom": "", "items": [{ "nom": "", "detail": "", "prix": "" }] }
+    ],
+    "note": ""
+  },
+  "horaires": [],
+  "avis": [],
+  "note_google": "",
+  "reseaux": {},
+  "couleurs": {},
+  "photos": {},
+  "cta": {},
+  "legal": { "responsable": "", "siret": "", "forme": "" },
+  "titre_seo": "",
+  "description_seo": ""
+}

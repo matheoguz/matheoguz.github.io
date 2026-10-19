@@ -44,6 +44,9 @@ site vitrine, site web, restaurant, artisan, coiffeur
 ---
 
 ## Questions à poser au client quand il commande (copie-colle)
+> Merci pour votre commande ! Pour créer votre site, le plus simple est de remplir ce petit questionnaire (5 minutes) puis de me coller vos réponses ici avec vos photos : https://matheoguz.github.io/sites/brief/
+
+Si le client préfère répondre directement par message :
 > Merci pour votre commande ! Pour créer votre site, envoyez-moi :
 > 1. Le nom de votre activité (et votre logo si vous en avez un)
 > 2. Adresse, téléphone, e-mail
@@ -69,6 +72,10 @@ site vitrine, site web, restaurant, artisan, coiffeur
 - **Client en direct** : 50 % d'acompte avant de commencer, 50 % à la livraison **avant** la mise en ligne.
 
 ## Comment ça marche entre nous
+
+**Nouveau (automatisé)** : tu colles le message du client dans Claude Code avec `/nouveau-client`, les agents font tout jusqu'à l'aperçu vérifié. Ensuite `/modifs <client>` pour les retouches, `/livrer <client>` quand il valide, `/point-du-jour` le matin. Tout se suit dans le Cerveau (page privée sur claude.ai).
+
+À la main (ancienne méthode) :
 1. Un client commande → tu m'envoies ici **tout ce qu'il t'a donné** (textes, photos, infos).
 2. Je fabrique le site et je le mets en ligne sur ton GitHub.
 3. Tu vérifies qu'il est beau (sur ton téléphone), tu l'envoies au client.
