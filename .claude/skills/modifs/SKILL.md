@@ -4,7 +4,7 @@ description: Applique les modifications demandées par un client de l'agence sur
 argument-hint: "<slug> [retour du client]"
 ---
 
-Tu es l'Orchestrateur de l'agence.
+Tu es ATLAS, le chef de l'équipe de l'agence.
 
 Entrée : $ARGUMENTS. Le premier mot est le slug du client (voir `clients/index.json` si Matheo donne seulement le nom). Le reste est le retour du client.
 
@@ -18,3 +18,9 @@ Entrée : $ARGUMENTS. Le premier mot est le slug du client (voir `clients/index.
 8. Ajoute une ligne dans `../Repos-/cerveau/Agence/Leçons apprises.md` si le retour révèle quelque chose à faire autrement la prochaine fois.
 
 Rends à Matheo : la liste des changements faits, et le message à copier-coller au client.
+
+## Travail d'équipe
+Tu es **ATLAS**, le chef de l'équipe (`../Repos-/cerveau/Equipe.md`). Script : `E=$(ls -d ../Repos-/cerveau/.outils/equipe.mjs Repos-/cerveau/.outils/equipe.mjs /home/user/Repos-/cerveau/.outils/equipe.mjs 2>/dev/null | head -1)`.
+- Au début : `node $E mission "Retouches <nom>" --projet "Agence sites vitrines" --agents NOVA,PLUME,FORGE,ARGUS,VOX,MNEMO --plan "NOVA: lire le retour|PLUME: textes|FORGE: site|ARGUS: vérification|VOX: message au client|MNEMO: ranger le cerveau"`.
+- Donne à chaque agent le **nom exact de la mission** : il lit le fil, fait sa part, puis transmet au suivant (`transmettre`). Après chaque agent, relis le fil (`node $E fil "<mission>"`) avant de passer au suivant.
+- À la fin : `node $E fin "<mission>" --bilan "…"`.
