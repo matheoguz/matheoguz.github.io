@@ -35,8 +35,9 @@ function photosPour(b) {
 function tokens(t, b) {
   const light = { ...t.light, ...(b.couleurs?.accent ? { accent: b.couleurs.accent, onAccent: b.couleurs.onAccent || '#ffffff' } : {}) };
   const decl = (c) => Object.entries(c).map(([k, v]) => `--${k}:${v}`).join(';');
+  const dark = { ...t.dark, ...(b.couleurs?.accentSombre ? { accent: b.couleurs.accentSombre, onAccent: b.couleurs.onAccentSombre || '#111111' } : {}) };
   return `:root{${decl(light)};--head:${t.head};--body:${t.body};color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{${decl(t.dark)}}}`;
+@media(prefers-color-scheme:dark){:root{${decl(dark)}}}`;
 }
 
 const CSS = `*{margin:0;padding:0;box-sizing:border-box}
@@ -56,14 +57,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .btn i{font-size:1.15em}
 header.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 header.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px}
-.logo{font-family:var(--head);font-weight:700;font-size:1.2rem;text-decoration:none;letter-spacing:-.02em}
+.logo{font-family:var(--head);font-weight:700;font-size:1.2rem;text-decoration:none;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 header.nav nav{display:flex;gap:28px;font-size:.92rem;color:var(--muted)}
 header.nav nav a{text-decoration:none}
 header.nav nav a:hover{color:var(--ink)}
 .hero{padding:48px 0 56px}
 .hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
 .eyebrow{font-size:.85rem;font-weight:600;color:var(--accent);margin-bottom:18px}
-.hero h1{font-size:clamp(2.2rem,3.6vw,3.2rem)}
+.hero h1{font-size:clamp(2rem,3.2vw,2.9rem)}
 .hero p.sub{font-size:1.15rem;color:var(--muted);margin:22px 0 32px;max-width:46ch}
 .actions{display:flex;gap:12px;flex-wrap:wrap}
 .hero figure{aspect-ratio:4/5;max-height:640px;border-radius:16px;overflow:hidden;background:var(--surface)}
@@ -145,7 +146,7 @@ footer.pied a{color:var(--muted)}
   .row{grid-template-columns:1fr}
   form{padding:22px}
 }
-@media(max-width:420px){header.nav .btn{padding:10px 16px;font-size:.88rem}}
+@media(max-width:420px){header.nav .btn{padding:10px 16px;font-size:.88rem}.logo{font-size:1rem}header.nav .wrap{gap:12px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}`;
 
 function head(b, t, { title, description, noindex, jsonld, image }) {
@@ -170,9 +171,10 @@ ${CSS}
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>\n` : ''}</head>`;
 }
 
+const formulaire = (b) => b.formule !== 'essentiel' && Boolean(b.email);
 const estApercu = (suivi) => !['livre', 'paye'].includes(suivi?.statut);
 const bandeau = '<div class="preview">Aperçu de votre futur site, en attente de votre validation</div>\n';
-const figure = (p, extra = '') => (p ? `<figure${extra}><img src="${esc(p.src)}" alt="${esc(p.alt || '')}" loading="lazy" decoding="async"></figure>` : '');
+const figure = (p, extra = '', eager = false) => (p ? `<figure${extra}><img src="${esc(p.src)}" alt="${esc(p.alt || '')}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"></figure>` : '');
 const reseauIcone = { instagram: 'ph-instagram-logo', facebook: 'ph-facebook-logo', tiktok: 'ph-tiktok-logo', linkedin: 'ph-linkedin-logo' };
 
 export function renderIndex(b, suivi) {
@@ -186,14 +188,14 @@ export function renderIndex(b, suivi) {
     .map((g) => ({ ...g, items: (g.items || []).filter((i) => i.nom) }))
     .filter((g) => g.nom && g.items.length);
   const avis = (b.avis || []).filter((a) => a.texte);
-  const galerie = ph.galerie.slice(0, 6);
-  const contactForm = b.formule !== 'essentiel' && b.email;
+  const galerie = ph.galerie.length >= 2 ? ph.galerie.slice(0, 6) : [];
+  const contactForm = formulaire(b);
   const servicesTitre = b.services?.titre || L.services;
   const ville = [b.code_postal, b.ville].filter(Boolean).join(' ');
 
   const liens = [
     b.histoire?.length && ['#apropos', L.about],
-    groupes.length && ['#services', servicesTitre],
+    groupes.length && ['#services', b.services?.menu || servicesTitre.split(/\s+(?:et|&)\s+/)[0]],
     galerie.length && ['#photos', 'Photos'],
     avis.length && ['#avis', 'Avis'],
     ['#contact', 'Contact'],
@@ -234,11 +236,11 @@ ${estApercu(suivi) ? bandeau : ''}<header class="nav"><div class="wrap">
     <p class="sub">${esc(b.accroche)}</p>
     <div class="actions"><a href="${esc(ctaHref)}" class="btn"><i class="ph ph-phone" aria-hidden="true"></i>${esc(cta)}</a>${groupes.length ? `<a href="#services" class="btn line">${esc(servicesTitre)}</a>` : ''}</div>
   </div>
-  ${figure(ph.hero)}
+  ${figure(ph.hero, '', true)}
 </div></section>
 
 <div class="faits"><div class="wrap">
-${b.adresse ? `  <div><i class="ph ph-map-pin" aria-hidden="true"></i><p><b>${esc(b.adresse)}</b><a href="${esc(mapsHref(b))}" target="_blank" rel="noopener">${esc(ville)}, voir l'itinéraire</a></p></div>\n` : ''}${b.horaires?.length ? `  <div><i class="ph ph-clock" aria-hidden="true"></i><p><b>Horaires</b><span>${esc(b.horaires[0])}</span></p></div>\n` : ''}${b.telephone ? `  <div><i class="ph ph-phone" aria-hidden="true"></i><p><b>${esc(b.telephone)}</b><a href="tel:${tel}">Appeler maintenant</a></p></div>\n` : b.email ? `  <div><i class="ph ph-envelope-simple" aria-hidden="true"></i><p><b>E-mail</b><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></p></div>\n` : ''}</div></div>
+${b.adresse ? `  <div><i class="ph ph-map-pin" aria-hidden="true"></i><p><b>${esc(b.adresse)}</b><a href="${esc(mapsHref(b))}" target="_blank" rel="noopener">${esc(ville)}, voir l'itinéraire</a></p></div>\n` : ''}${b.horaires?.length ? `  <div><i class="ph ph-clock" aria-hidden="true"></i><p><b>Horaires</b><span>${b.horaires.filter((h) => !/ferm/i.test(h)).map(esc).join('<br>')}</span></p></div>\n` : ''}${b.telephone ? `  <div><i class="ph ph-phone" aria-hidden="true"></i><p><b>${esc(b.telephone)}</b><a href="tel:${tel}">Appeler maintenant</a></p></div>\n` : b.email ? `  <div><i class="ph ph-envelope-simple" aria-hidden="true"></i><p><b>E-mail</b><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></p></div>\n` : ''}</div></div>
 ${b.histoire?.length ? `
 <section id="apropos" class="apropos"><div class="wrap">
   ${figure(ph.about)}
@@ -277,7 +279,10 @@ ${autres.length ? `  <div class="autres">${autres.slice(0, 3).map((a) => `<block
 ${b.adresse ? `      <div><dt><i class="ph ph-map-pin" aria-hidden="true"></i>Adresse</dt><dd>${esc(b.adresse)}, ${esc(ville)}<br><a href="${esc(mapsHref(b))}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></dd></div>\n` : ''}${b.horaires?.length ? `      <div><dt><i class="ph ph-clock" aria-hidden="true"></i>Horaires</dt><dd>${b.horaires.map(esc).join('<br>')}</dd></div>\n` : ''}      <div><dt><i class="ph ph-phone" aria-hidden="true"></i>Contact</dt><dd>${[b.telephone && `<a href="tel:${tel}">${esc(b.telephone)}</a>`, b.email && `<a href="mailto:${esc(b.email)}">${esc(b.email)}</a>`].filter(Boolean).join('<br>')}</dd></div>
 ${b.reseaux && Object.keys(b.reseaux).length ? `      <div><dt><i class="ph ph-share-network" aria-hidden="true"></i>Réseaux</dt><dd>${Object.entries(b.reseaux).map(([k, v]) => `<a href="${esc(v)}" target="_blank" rel="noopener"><i class="ph ${reseauIcone[k] || 'ph-link'}" aria-hidden="true"></i> ${esc(k[0].toUpperCase() + k.slice(1))}</a>`).join('<br>')}</dd></div>\n` : ''}    </dl>
   </div>
-${contactForm ? `  <form action="mailto:${esc(b.email)}" method="post" enctype="text/plain">
+${contactForm ? `  <form action="https://formsubmit.co/${esc(b.email)}" method="post">
+    <input type="hidden" name="_subject" value="Nouveau message depuis le site ${esc(b.nom)}">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <h3>Écrivez-nous</h3>
     <div class="row"><label>Nom<input name="nom" required autocomplete="name"></label><label>Téléphone<input name="telephone" type="tel" autocomplete="tel"></label></div>
     <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
@@ -299,6 +304,7 @@ export function renderLegal(b, suivi) {
   const t = THEMES[b.theme];
   const l = b.legal || {};
   const ville = [b.code_postal, b.ville].filter(Boolean).join(' ');
+  const photosUnsplash = JSON.stringify(photosPour(b)).includes('images.unsplash.com');
   return `${head(b, t, { title: `Mentions légales | ${b.nom}`, description: `Mentions légales du site de ${b.nom}.`, noindex: true })}
 <body>
 ${estApercu(suivi) ? bandeau : ''}<header class="nav"><div class="wrap"><a href="index.html" class="logo">${esc(b.nom)}</a><a href="index.html" class="btn line">Retour au site</a></div></header>
@@ -317,7 +323,7 @@ ${estApercu(suivi) ? bandeau : ''}<header class="nav"><div class="wrap"><a href=
   <h2>Propriété intellectuelle</h2>
   <p>Les textes, logos et photographies de ce site appartiennent à ${esc(b.nom)} ou sont utilisés avec autorisation. Certaines photos proviennent d'Unsplash (licence libre, usage commercial autorisé). Toute reproduction sans accord est interdite.</p>
   <h2>Données personnelles</h2>
-  <p>Ce site ne dépose aucun cookie publicitaire et ne collecte aucune donnée automatiquement. Les informations envoyées par le formulaire ou par e-mail servent uniquement à répondre à votre demande et ne sont jamais transmises à des tiers. Vous pouvez demander leur suppression à tout moment${b.email ? ' à ' + esc(b.email) : ''}.</p>
+  <p>Ce site ne dépose aucun cookie et n'utilise aucun outil de mesure d'audience. Pour afficher les polices et les icônes, votre navigateur contacte Google Fonts et unpkg.com${photosUnsplash ? ', et images.unsplash.com pour les photos' : ''}, qui reçoivent alors votre adresse IP.${formulaire(b) ? " Le formulaire de contact est transmis par e-mail via le service FormSubmit (formsubmit.co)." : ''} Les informations que vous envoyez servent uniquement à répondre à votre demande et ne sont ni vendues ni utilisées à d'autres fins. Vous pouvez demander leur suppression à tout moment${b.email ? ' à ' + esc(b.email) : ''}.</p>
 </div></main>
 <footer class="pied"><div class="wrap"><span>© ${new Date().getFullYear()} ${esc(b.nom)}</span></div></footer>
 </body>

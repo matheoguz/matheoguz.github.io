@@ -1,0 +1,41 @@
+{
+  "slug": "exemple-salon-lumiere",
+  "nom": "Salon Lumière (exemple)",
+  "statut": "verification",
+  "formule": "standard",
+  "prix": 150,
+  "plateforme": "fiverr",
+  "cree_le": "2026-10-19",
+  "echeance": "2026-10-24",
+  "test": true,
+  "a_valider": [
+    "Photos : pouvez-vous nous envoyer quelques photos du salon (devanture, intérieur, équipe, réalisations) ? En attendant, le site utilise des photos d'illustration.",
+    "Mentions légales (obligatoires) : nom du responsable légal, forme juridique (EI, SARL, SAS…) et numéro SIRET.",
+    "Prise de rendez-vous en ligne : non incluse dans la formule Standard. Avez-vous déjà un outil (Planity, Treatwell…) ? On peut y relier le bouton « Prendre rendez-vous » sans surcoût. Sinon, un module de réservation intégré fera l'objet d'un devis.",
+    "Avis clients : avez-vous des avis Google (note et quelques avis à citer, avec l'accord des clients) ? Sans avis réels, la section ne sera pas affichée.",
+    "Couleurs : beige, doré et noir notés. Avez-vous un logo ou des codes couleur précis ? Le doré et le beige étant clairs, on les gardera pour les fonds et touches décoratives, le texte des boutons restant lisible.",
+    "Prestations : les prix de la couleur et du balayage dépendent-ils de la longueur des cheveux ? Y a-t-il d'autres prestations (barbe, chignon, mariage, lissage…) à ajouter ?"
+  ],
+  "historique": [
+    {
+      "date": "2026-10-19",
+      "etape": "brief",
+      "note": "Dossier créé"
+    },
+    {
+      "date": "2026-10-19",
+      "etape": "brief",
+      "note": "Brief rempli par NOVA depuis le questionnaire (client fictif de test)"
+    },
+    {
+      "date": "2026-10-19",
+      "etape": "build",
+      "note": "Brief et textes prêts"
+    },
+    {
+      "date": "2026-10-19",
+      "etape": "verification",
+      "note": "En vérification"
+    }
+  ]
+}

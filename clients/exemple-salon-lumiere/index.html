@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salon Lumière (exemple) | Coiffeur à Lyon 7e</title>
+<meta name="description" content="Salon de coiffure à Lyon 7e pour femmes, hommes et enfants : 3 coiffeuses, colorations sans ammoniaque et conseil personnalisé.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Salon Lumière (exemple) | Coiffeur à Lyon 7e">
+<meta property="og:description" content="Salon de coiffure à Lyon 7e pour femmes, hommes et enfants : 3 coiffeuses, colorations sans ammoniaque et conseil personnalisé.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&amp;fit=crop&amp;w=1600&amp;q=80">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
+<style>
+:root{--bg:#f6f6f7;--surface:#ffffff;--ink:#17171a;--muted:#5d5d66;--line:rgba(23,23,26,.12);--accent:#1a1a1a;--onAccent:#ffffff;--head:'Unbounded',system-ui,sans-serif;--body:'Manrope',system-ui,sans-serif;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#121214;--surface:#1b1b1f;--ink:#f0eff3;--muted:#a4a3ad;--line:rgba(240,239,243,.12);--accent:#d4b26a;--onAccent:#1a1408}}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;font-size:1rem}
+h1,h2,h3{font-family:var(--head);font-weight:700;line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+p{text-wrap:pretty}
+a{color:inherit}
+img{display:block;width:100%;height:100%;object-fit:cover}
+.wrap{width:min(1180px,100% - 40px);margin:0 auto}
+.preview{background:var(--ink);color:var(--bg);text-align:center;font-size:.8rem;padding:8px 16px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--onAccent);text-decoration:none;padding:13px 22px;border-radius:999px;font-weight:600;font-size:.95rem;border:0;cursor:pointer;font-family:var(--body);white-space:nowrap;transition:transform .15s,opacity .15s}
+.btn:hover{opacity:.92}
+.btn:active{transform:scale(.98)}
+.btn.line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.line:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn i{font-size:1.15em}
+header.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px}
+.logo{font-family:var(--head);font-weight:700;font-size:1.2rem;text-decoration:none;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+header.nav nav{display:flex;gap:28px;font-size:.92rem;color:var(--muted)}
+header.nav nav a{text-decoration:none}
+header.nav nav a:hover{color:var(--ink)}
+.hero{padding:48px 0 56px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.eyebrow{font-size:.85rem;font-weight:600;color:var(--accent);margin-bottom:18px}
+.hero h1{font-size:clamp(2rem,3.2vw,2.9rem)}
+.hero p.sub{font-size:1.15rem;color:var(--muted);margin:22px 0 32px;max-width:46ch}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero figure{aspect-ratio:4/5;max-height:640px;border-radius:16px;overflow:hidden;background:var(--surface)}
+.faits{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.faits .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
+.faits div{display:flex;gap:14px;align-items:flex-start;padding:24px 24px 24px 0}
+.faits div+div{border-left:1px solid var(--line);padding-left:24px}
+.faits i{font-size:1.4rem;color:var(--accent);margin-top:2px}
+.faits b{display:block;font-size:.95rem}
+.faits span,.faits a{font-size:.92rem;color:var(--muted);text-decoration:none}
+section{padding:96px 0}
+h2{font-size:clamp(1.9rem,3.4vw,2.7rem);margin-bottom:20px}
+.lead{color:var(--muted);max-width:60ch;font-size:1.05rem}
+.apropos .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:72px;align-items:center}
+.apropos figure{aspect-ratio:1;border-radius:16px;overflow:hidden;background:var(--surface)}
+.apropos p{color:var(--muted);margin-bottom:16px;max-width:60ch}
+.forts{list-style:none;display:grid;gap:12px;margin-top:28px}
+.forts li{display:flex;gap:12px;align-items:center;font-weight:500}
+.forts i{color:var(--accent);font-size:1.25rem}
+.services{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.groupes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px 64px;margin-top:48px}
+.groupes h3{font-size:1.2rem;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.item{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:9px 0}
+.item b{font-weight:600}
+.item span{display:block;font-size:.88rem;color:var(--muted)}
+.item .prix{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{margin-top:40px;font-size:.92rem;color:var(--muted)}
+.galerie{display:grid;gap:14px;margin-top:40px;grid-auto-rows:260px}
+.galerie figure{border-radius:16px;overflow:hidden;background:var(--surface)}
+.galerie.n1{grid-template-columns:1fr;grid-auto-rows:460px}
+.galerie.n2{grid-template-columns:1fr 1fr;grid-auto-rows:420px}
+.galerie.n3{grid-template-columns:2fr 1fr}.galerie.n3 figure:first-child{grid-row:span 2}
+.galerie.n4{grid-template-columns:2fr 1fr 1fr}.galerie.n4 figure:first-child{grid-row:span 2}.galerie.n4 figure:nth-child(4){grid-column:span 2}
+.galerie.n5,.galerie.n6{grid-template-columns:repeat(3,1fr)}.galerie.n5 figure:first-child{grid-row:span 2}
+.avis .wrap{display:grid;grid-template-columns:1.3fr 1fr;gap:64px;align-items:start}
+.note-google{display:flex;align-items:baseline;gap:10px;margin-bottom:28px;color:var(--muted)}
+.note-google b{font-family:var(--head);font-size:3rem;color:var(--ink);line-height:1}
+blockquote.une p{font-family:var(--head);font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.25;letter-spacing:-.01em;font-weight:500}
+blockquote footer,.autres footer{margin-top:16px;font-size:.92rem;color:var(--muted)}
+blockquote footer b,.autres footer b{color:var(--ink);font-weight:600}
+.autres{display:grid;gap:32px;padding-top:12px}
+.autres blockquote{padding-left:20px;border-left:2px solid var(--accent)}
+.autres p{color:var(--ink)}
+.stars{color:var(--accent);letter-spacing:2px;font-size:.9rem;margin-bottom:10px}
+.contact{border-top:1px solid var(--line)}
+.contact .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:72px}
+.contact dl{display:grid;gap:28px;margin-top:32px}
+.contact dt{display:flex;gap:10px;align-items:center;font-weight:600}
+.contact dt i{color:var(--accent);font-size:1.2rem}
+.contact dd{color:var(--muted);margin-top:6px;padding-left:30px}
+.contact dd a{color:var(--ink)}
+form{display:grid;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px}
+form h3{font-size:1.3rem}
+label{display:grid;gap:8px;font-size:.92rem;font-weight:500}
+input,textarea{font:inherit;font-size:1rem;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+textarea{min-height:130px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+footer.pied{border-top:1px solid var(--line);padding:32px 0;font-size:.88rem;color:var(--muted)}
+footer.pied .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer.pied a{color:var(--muted)}
+.legal{padding:64px 0 96px}
+.legal h1{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:40px}
+.legal h2{font-size:1.15rem;margin:36px 0 10px}
+.legal p{color:var(--muted);max-width:68ch}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:900px){
+  header.nav nav{display:none}
+  .hero{padding:28px 0 40px}
+  .hero .wrap,.apropos .wrap,.avis .wrap,.contact .wrap{grid-template-columns:1fr;gap:36px}
+  .hero figure{aspect-ratio:4/3}
+  .faits .wrap{grid-template-columns:1fr}
+  .faits div{padding:18px 0}.faits div+div{border-left:0;border-top:1px solid var(--line);padding-left:0}
+  section{padding:72px 0}
+  .apropos figure{aspect-ratio:4/3}
+  .galerie,.galerie.n1,.galerie.n2,.galerie.n3,.galerie.n4,.galerie.n5,.galerie.n6{grid-template-columns:1fr 1fr;grid-auto-rows:180px}
+  .galerie figure:first-child{grid-column:span 2;grid-row:span 1}
+  .galerie.n4 figure:nth-child(4){grid-column:span 1}
+  .row{grid-template-columns:1fr}
+  form{padding:22px}
+}
+@media(max-width:420px){header.nav .btn{padding:10px 16px;font-size:.88rem}.logo{font-size:1rem}header.nav .wrap{gap:12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"HairSalon","name":"Salon Lumière (exemple)","description":"Salon de coiffure à Lyon 7e pour femmes, hommes et enfants : 3 coiffeuses, colorations sans ammoniaque et conseil personnalisé.","telephone":"+33199001234","email":"contact@example.com","address":{"@type":"PostalAddress","streetAddress":"12 rue Exemple","addressLocality":"Lyon","postalCode":"69007","addressCountry":"FR"},"openingHours":["Tu-Fr 09:30-19:00","Sa 09:00-17:00"],"image":"https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=1600&q=80"}</script>
+</head>
+<body>
+<div class="preview">Aperçu de votre futur site, en attente de votre validation</div>
+<header class="nav"><div class="wrap">
+  <a href="#" class="logo">Salon Lumière (exemple)</a>
+  <nav aria-label="Sections"><a href="#apropos">Le salon</a><a href="#services">Nos prestations</a><a href="#photos">Photos</a><a href="#contact">Contact</a></nav>
+  <a href="tel:+33199001234" class="btn">Prendre rendez-vous</a>
+</div></header>
+
+<main>
+<section class="hero" aria-label="Présentation"><div class="wrap">
+  <div>
+    <p class="eyebrow">Salon de coiffure femmes, hommes et enfants à Lyon</p>
+    <h1>Colorations sans ammoniaque à Lyon 7e.</h1>
+    <p class="sub">Trois coiffeuses pour femmes, hommes et enfants, qui prennent le temps de vous conseiller. Colorations sans ammoniaque, du mardi au samedi.</p>
+    <div class="actions"><a href="tel:+33199001234" class="btn"><i class="ph ph-phone" aria-hidden="true"></i>Prendre rendez-vous</a><a href="#services" class="btn line">Nos prestations et nos prix</a></div>
+  </div>
+  <figure><img src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&amp;fit=crop&amp;w=1600&amp;q=80" alt="Salon de coiffure" fetchpriority="high" decoding="async"></figure>
+</div></section>
+
+<div class="faits"><div class="wrap">
+  <div><i class="ph ph-map-pin" aria-hidden="true"></i><p><b>12 rue Exemple</b><a href="https://www.google.com/maps/search/?api=1&amp;query=Salon%20Lumi%C3%A8re%20(exemple)%2012%20rue%20Exemple%2069007%20Lyon" target="_blank" rel="noopener">69007 Lyon, voir l'itinéraire</a></p></div>
+  <div><i class="ph ph-clock" aria-hidden="true"></i><p><b>Horaires</b><span>Mardi au vendredi : 9h30 - 19h<br>Samedi : 9h - 17h</span></p></div>
+  <div><i class="ph ph-phone" aria-hidden="true"></i><p><b>01 99 00 12 34</b><a href="tel:+33199001234">Appeler maintenant</a></p></div>
+</div></div>
+
+<section id="apropos" class="apropos"><div class="wrap">
+  <figure><img src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Coiffeuse en pleine coupe" loading="lazy" decoding="async"></figure>
+  <div>
+    <h2>Un salon ouvert en 2016, après 10 ans de métier</h2>
+    <p>Le Salon Lumière a ouvert ses portes en 2016, après 10 ans d&#39;expérience dans de grandes enseignes de coiffure.</p>
+    <p>Aujourd&#39;hui, nous sommes 3 coiffeuses. Nous travaillons avec des colorations sans ammoniaque et nous prenons le temps de conseiller chaque client, qu&#39;il vienne pour une coupe ou pour une couleur.</p>
+    <ul class="forts"><li><i class="ph ph-check-circle" aria-hidden="true"></i>Une équipe de 3 coiffeuses</li><li><i class="ph ph-check-circle" aria-hidden="true"></i>Colorations sans ammoniaque</li><li><i class="ph ph-check-circle" aria-hidden="true"></i>Un conseil personnalisé pour chaque client</li></ul>
+  </div>
+</div></section>
+
+<section id="services" class="services"><div class="wrap">
+  <h2>Nos prestations et nos prix</h2>
+  <div class="groupes">
+    <div>
+      <h3>Coupes</h3>
+      <div class="item"><div><b>Coupe femme</b></div><div class="prix">38 €</div></div>
+      <div class="item"><div><b>Coupe homme</b></div><div class="prix">22 €</div></div>
+      <div class="item"><div><b>Coupe enfant</b></div><div class="prix">15 €</div></div>
+    </div>
+    <div>
+      <h3>Couleur</h3>
+      <div class="item"><div><b>Couleur</b></div><div class="prix">à partir de 55 €</div></div>
+      <div class="item"><div><b>Balayage</b></div><div class="prix">à partir de 75 €</div></div>
+    </div>
+    <div>
+      <h3>Coiffage et soins</h3>
+      <div class="item"><div><b>Brushing</b></div><div class="prix">25 €</div></div>
+      <div class="item"><div><b>Soin profond</b></div><div class="prix">18 €</div></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="photos"><div class="wrap">
+  <h2>En images</h2>
+  <div class="galerie n4"><figure><img src="https://images.unsplash.com/photo-1695527081848-1e46c06e6458?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Coloration en cours" loading="lazy" decoding="async"></figure><figure><img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Brushing au sèche-cheveux et à la brosse ronde" loading="lazy" decoding="async"></figure><figure><img src="https://images.unsplash.com/photo-1774660810725-fb04e002003d?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Coiffure attachée réalisée sur une cliente" loading="lazy" decoding="async"></figure><figure><img src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Postes de coiffage avec fauteuils et miroirs" loading="lazy" decoding="async"></figure></div>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap">
+  <div>
+    <h2>Nous rendre visite</h2>
+    <dl>
+      <div><dt><i class="ph ph-map-pin" aria-hidden="true"></i>Adresse</dt><dd>12 rue Exemple, 69007 Lyon<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Salon%20Lumi%C3%A8re%20(exemple)%2012%20rue%20Exemple%2069007%20Lyon" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></dd></div>
+      <div><dt><i class="ph ph-clock" aria-hidden="true"></i>Horaires</dt><dd>Mardi au vendredi : 9h30 - 19h<br>Samedi : 9h - 17h<br>Fermé le dimanche et le lundi</dd></div>
+      <div><dt><i class="ph ph-phone" aria-hidden="true"></i>Contact</dt><dd><a href="tel:+33199001234">01 99 00 12 34</a><br><a href="mailto:contact@example.com">contact@example.com</a></dd></div>
+      <div><dt><i class="ph ph-share-network" aria-hidden="true"></i>Réseaux</dt><dd><a href="https://instagram.com/salonlumiere.exemple" target="_blank" rel="noopener"><i class="ph ph-instagram-logo" aria-hidden="true"></i> Instagram</a></dd></div>
+    </dl>
+  </div>
+  <form action="https://formsubmit.co/contact@example.com" method="post">
+    <input type="hidden" name="_subject" value="Nouveau message depuis le site Salon Lumière (exemple)">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <h3>Écrivez-nous</h3>
+    <div class="row"><label>Nom<input name="nom" required autocomplete="name"></label><label>Téléphone<input name="telephone" type="tel" autocomplete="tel"></label></div>
+    <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+    <label>Message<textarea name="message" required></textarea></label>
+    <button class="btn" type="submit">Envoyer le message</button>
+  </form>
+</div></section>
+</main>
+
+<footer class="pied"><div class="wrap">
+  <span>© 2026 Salon Lumière (exemple)</span>
+  <span><a href="mentions-legales.html">Mentions légales</a> · Site réalisé par <a href="https://matheoguz.github.io/sites/" target="_blank" rel="noopener">Matheo Guzzi</a></span>
+</div></footer>
+</body>
+</html>

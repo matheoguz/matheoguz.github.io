@@ -1,0 +1,104 @@
+{
+  "_aide": "Brief d'un client. Les champs vides obligatoires bloquent le build. theme : restaurant | beaute | artisan | commerce | sante. formule : essentiel | standard | premium. Supprime les sections inutiles (avis, galerie…) plutôt que de les inventer.",
+  "nom": "Salon Lumière (exemple)",
+  "activite": "Salon de coiffure femmes, hommes et enfants",
+  "theme": "beaute",
+  "metier": "coiffeur",
+  "schema_type": "HairSalon",
+  "formule": "standard",
+  "ville": "Lyon",
+  "code_postal": "69007",
+  "adresse": "12 rue Exemple",
+  "telephone": "01 99 00 12 34",
+  "email": "contact@example.com",
+  "slogan": "Colorations sans ammoniaque à Lyon 7e.",
+  "accroche": "Trois coiffeuses pour femmes, hommes et enfants, qui prennent le temps de vous conseiller. Colorations sans ammoniaque, du mardi au samedi.",
+  "points_forts": [
+    "Une équipe de 3 coiffeuses",
+    "Colorations sans ammoniaque",
+    "Un conseil personnalisé pour chaque client"
+  ],
+  "histoire_titre": "Un salon ouvert en 2016, après 10 ans de métier",
+  "histoire": [
+    "Le Salon Lumière a ouvert ses portes en 2016, après 10 ans d'expérience dans de grandes enseignes de coiffure.",
+    "Aujourd'hui, nous sommes 3 coiffeuses. Nous travaillons avec des colorations sans ammoniaque et nous prenons le temps de conseiller chaque client, qu'il vienne pour une coupe ou pour une couleur."
+  ],
+  "services": {
+    "titre": "Nos prestations et nos prix",
+    "groupes": [
+      {
+        "nom": "Coupes",
+        "items": [
+          {
+            "nom": "Coupe femme",
+            "prix": "38 €"
+          },
+          {
+            "nom": "Coupe homme",
+            "prix": "22 €"
+          },
+          {
+            "nom": "Coupe enfant",
+            "prix": "15 €"
+          }
+        ]
+      },
+      {
+        "nom": "Couleur",
+        "items": [
+          {
+            "nom": "Couleur",
+            "prix": "à partir de 55 €"
+          },
+          {
+            "nom": "Balayage",
+            "prix": "à partir de 75 €"
+          }
+        ]
+      },
+      {
+        "nom": "Coiffage et soins",
+        "items": [
+          {
+            "nom": "Brushing",
+            "prix": "25 €"
+          },
+          {
+            "nom": "Soin profond",
+            "prix": "18 €"
+          }
+        ]
+      }
+    ],
+    "note": ""
+  },
+  "horaires": [
+    "Mardi au vendredi : 9h30 - 19h",
+    "Samedi : 9h - 17h",
+    "Fermé le dimanche et le lundi"
+  ],
+  "horaires_schema": [
+    "Tu-Fr 09:30-19:00",
+    "Sa 09:00-17:00"
+  ],
+  "avis": [],
+  "note_google": "",
+  "reseaux": {
+    "instagram": "https://instagram.com/salonlumiere.exemple"
+  },
+  "couleurs": {
+    "accent": "#1a1a1a",
+    "onAccent": "#ffffff",
+    "accentSombre": "#d4b26a",
+    "onAccentSombre": "#1a1408"
+  },
+  "photos": {},
+  "cta": {},
+  "legal": {
+    "responsable": "",
+    "siret": "",
+    "forme": ""
+  },
+  "titre_seo": "Salon Lumière (exemple) | Coiffeur à Lyon 7e",
+  "description_seo": "Salon de coiffure à Lyon 7e pour femmes, hommes et enfants : 3 coiffeuses, colorations sans ammoniaque et conseil personnalisé."
+}
