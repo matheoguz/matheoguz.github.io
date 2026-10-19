@@ -355,6 +355,26 @@ body.open .drawer{transform:none;visibility:visible}
 .lien{all:unset;color:var(--accent);cursor:pointer;font-size:13px}
 .lien:hover{text-decoration:underline}
 a.lien{font-weight:500}
+.nav .h{display:flex;align-items:center;justify-content:space-between}
+.nav .h-lien{color:inherit;text-decoration:none;padding:0;margin:0;display:inline;font:inherit}
+.nav .h-lien:hover{color:var(--ink)}
+.nav .h .n{font-family:var(--mono);font-size:11px;text-transform:none;letter-spacing:0}
+.nav-projet .pt{width:8px;height:8px;border-radius:50%;flex:none;margin:0 4px 0 4px}
+.nav-projet{min-width:0}
+.dash-tete .ligne{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dash-tete h2{font-size:22px;margin:0;letter-spacing:-.01em}
+.dash-tete p{margin:0}
+.dash-tete .suite{display:flex;gap:8px;align-items:flex-start}
+.dash-tete .suite svg{width:16px;height:16px;flex:none;margin-top:3px;color:var(--accent)}
+.dash-tete .actions{display:flex;gap:8px;flex-wrap:wrap}
+.onglets{display:flex;gap:4px;padding:0 12px;border-top:1px solid var(--line);overflow-x:auto}
+.onglets button{all:unset;cursor:pointer;padding:11px 10px;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.onglets button[aria-pressed=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.onglets button:focus-visible{outline:2px solid var(--accent)}
+.onglets .n{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.fiche summary{cursor:pointer;list-style:none}
+.mission-projet{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:10px;background:var(--accent-soft);font-size:13.5px}
+.mission-projet svg{width:16px;height:16px;flex:none;margin-top:2px;color:var(--accent)}
 </style>
 
 <div class="app">
@@ -363,16 +383,10 @@ a.lien{font-weight:500}
     <nav class="nav" aria-label="Rubriques">
       <a href="#cerveau" data-v="cerveau"><i data-lucide="brain"></i>Le Cerveau<span class="n" id="n-tout">0</span></a>
       <a href="#aujourdhui" data-v="aujourdhui"><i data-lucide="sun"></i>Aujourd'hui</a>
-      <a href="#projets" data-v="projets"><i data-lucide="folder-kanban"></i>Projets<span class="n" id="n-projets">0</span></a>
+      <div class="h"><a class="h-lien" href="#projets">Projets</a><span class="n" id="n-projets">0</span></div>
+      <div id="nav-projets"></div>
+      <div class="h">Partout</div>
       <a href="#taches" data-v="taches"><i data-lucide="circle-check"></i>Tâches<span class="n" id="n-taches">0</span></a>
-      <div class="h">Agence de sites</div>
-      <a href="#cockpit" data-v="cockpit"><i data-lucide="layout-dashboard"></i>Tableau de bord</a>
-      <a href="#entreprises" data-v="entreprises"><i data-lucide="store"></i>Entreprises<span class="n" id="n-entreprises">0</span></a>
-      <a href="#personnes" data-v="personnes"><i data-lucide="users"></i>Personnes<span class="n" id="n-personnes">0</span></a>
-      <a href="#reponses" data-v="reponses"><i data-lucide="inbox"></i>Réponses<span class="n" id="n-reponses">0</span></a>
-      <a href="#messages" data-v="messages"><i data-lucide="send"></i>Messages à envoyer<span class="n" id="n-messages">0</span></a>
-      <a href="#agents" data-v="agents"><i data-lucide="bot"></i>Agents<span class="n">4</span></a>
-      <div class="h">Mémoire</div>
       <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Notes<span class="n" id="n-memoire">0</span></a>
       <a href="#journal" data-v="journal"><i data-lucide="notebook-pen"></i>Journal<span class="n" id="n-journal">0</span></a>
       <a href="#missions" data-v="missions"><i data-lucide="rocket"></i>Missions</a>
@@ -439,7 +453,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], rapports: [], taches: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -455,21 +469,21 @@ function icons() {
 }
 
 function render() {
-  for (const k of ['entreprises', 'personnes', 'reponses']) $('#n-' + k).textContent = S[k].length;
-  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length + S.idees.length + S.taches.length;
-  $('#n-projets').textContent = projetsDe().length;
-  $('#n-taches').textContent = S.taches.filter((t) => t.statut !== 'fait').length;
-  $('#n-memoire').textContent = S.notes.filter((n) => n.dossier !== 'Journal').length;
-  $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
-  $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
-  document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === S.vue ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
+  const n = (id, v) => { const el = $('#n-' + id); if (el) el.textContent = v; };
+  n('tout', S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length + S.idees.length + S.taches.length);
+  n('projets', projetsDe().length);
+  n('taches', ouvertes().length);
+  n('memoire', S.notes.filter((x) => x.dossier !== 'Journal').length);
+  n('journal', new Set(S.journal.map((j) => j.date)).size);
+  navProjets();
+  document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === (S.vue === 'projet' ? 'projet-' + S.projet : S.vue) ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
   const titres = { aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', cockpit: 'Agence de sites', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
-  $('#v-title').textContent = titres[S.vue];
+  $('#v-title').textContent = S.vue === 'projet' ? (projetParId(S.projet)?.titre || 'Projet') : titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
   const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value;
   if (S.vue !== 'cerveau') arreterGraphe();
-  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projets, taches, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
+  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projet: vueProjet, projets, taches, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
   icons();
   if (S.vue === 'cerveau') {
     demarrerGraphe();
@@ -651,6 +665,75 @@ async function basculerTache(id, bouton) {
     await S.db.doc('taches/' + id).update(fait ? { statut: 'fait', fait_le: new Date().toISOString().slice(0, 10) } : { statut: 'a_faire' });
     if (fait) toast('Bien joué');
   } catch (err) { bouton.disabled = false; toast('Enregistrement impossible, réessayez dans un instant.'); }
+}
+
+
+// ---------- un tableau de bord par projet ----------
+const projetParId = (id) => projetsDe().find((p) => p.id === id);
+const projetParTitre = (t) => projetsDe().find((p) => cle(p.titre) === cle(t));
+const lienProjet = (p) => '#projet-' + p.id;
+const POINT = { actif: 'var(--accent)', 'en ligne': 'var(--ok)', 'en pause': 'var(--faint)', 'idée': 'var(--warn)', 'terminé': 'var(--faint)' };
+function navProjets() {
+  const el = $('#nav-projets');
+  if (!el) return;
+  const rang = (p) => { const i = STATUTS.indexOf(p.statut); return i < 0 ? 99 : i; };
+  const liste = [...projetsDe()].sort((a, b) => rang(a) - rang(b) || String(b.activite || '').localeCompare(String(a.activite || '')) || a.titre.localeCompare(b.titre, 'fr'));
+  const html = liste.map((p) => { const nb = tachesDe(p.titre).length; return `<a href="${lienProjet(p)}" data-v="projet-${esc(p.id)}" class="nav-projet"><span class="pt" style="background:${POINT[p.statut] || 'var(--faint)'}"></span>${esc(p.titre)}${nb ? `<span class="n">${nb}</span>` : ''}</a>`; }).join('') || '<p class="muted" style="padding:4px 12px;font-size:12px">Aucun projet</p>';
+  if (el.dataset.html !== html) { el.innerHTML = html; el.dataset.html = html; }
+}
+function ideesDe(p) {
+  const n = 'n:' + cle(p.titre);
+  return S.idees.filter((i) => (i.liens || []).includes(n) || String(i.texte + ' ' + i.titre).toLowerCase().includes(cle(p.titre)));
+}
+function vueProjet() {
+  const p = projetParId(S.projet);
+  if (!p) return S.notes.length ? vide('Projet introuvable', 'Ce projet n\'existe pas (ou plus) dans le cerveau. Choisissez-en un à gauche.') : vide('Chargement…', '');
+  const d = S.dashboards.find((x) => x.id === p.id) || {};
+  const tt = tachesDe(p.titre).sort(triTaches);
+  const faites = S.taches.filter((t) => t.statut === 'fait' && cle(t.projet) === cle(p.titre));
+  const idees = ideesDe(p);
+  const agence = p.id === AGENCE;
+  const onglets = agence ? [['apercu', 'Vue d\'ensemble'], ['entreprises', 'Entreprises'], ['personnes', 'Personnes'], ['reponses', 'Réponses'], ['messages', 'Messages à envoyer'], ['agents', 'Agents']] : [];
+  const tete = `<section class="card dash-tete">
+    <div class="pad" style="display:grid;gap:10px">
+      <div class="ligne"><h2>${esc(p.titre)}</h2><span class="tag ${STATUT_TAG[p.statut] || ''}">${esc(p.statut || 'à classer')}</span>${p.type ? `<span class="tag">${esc(p.type)}</span>` : ''}<span class="grow"></span><small class="muted">${p.activite ? 'Dernière activité ' + quand(p.activite) : 'Pas encore touché avec Claude'}</small></div>
+      ${p.resume ? `<p class="muted">${esc(p.resume)}</p>` : ''}
+      <div class="suite"><i data-lucide="arrow-right"></i><span><b>Prochaine étape :</b> ${p.prochaine ? esc(p.prochaine) : '<span class="muted">à définir (dites-la à Claude)</span>'}</span></div>
+      <div class="actions"><button class="btn primary" type="button" data-mission-projet="${esc(p.id)}"><i data-lucide="rocket"></i>Demander à Claude sur ce projet</button><button class="btn" type="button" data-voir-neurone="n:${esc(cle(p.titre))}"><i data-lucide="brain"></i>Voir dans le cerveau</button>${(d.liens || []).map((l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>${esc(l.label)}</a>`).join('')}</div>
+    </div>
+    ${onglets.length ? `<nav class="onglets" aria-label="Rubriques du projet">${onglets.map(([k, l]) => `<button type="button" data-onglet="${k}" aria-pressed="${S.onglet === k}">${l}${k === 'messages' && S.messages.some((m) => m.statut !== 'envoye') ? ` <span class="n">${S.messages.filter((m) => m.statut !== 'envoye').length}</span>` : ''}</button>`).join('')}</nav>` : ''}
+  </section>`;
+  if (agence && S.onglet !== 'apercu') return tete + ({ entreprises, personnes, reponses, messages, agents })[S.onglet]();
+  const kpi = (l, i, v, sv) => `<div class="kpi"><div class="l"><i data-lucide="${i}"></i>${esc(l)}</div><div class="v">${esc(String(v))}</div><div class="s">${esc(sv || '')}</div></div>`;
+  const kpis = (d.kpis || []).length ? d.kpis.map((k) => kpi(k.label, k.icone || 'sparkles', k.valeur, k.detail)) : [
+    kpi('Tâches à faire', 'circle-check', tt.length, tt.filter((t) => t.echeance && new Date(t.echeance) < aujourdhui).length ? 'dont en retard : ' + tt.filter((t) => t.echeance && new Date(t.echeance) < aujourdhui).length : 'aucune en retard'),
+    kpi('Tâches faites', 'check', faites.length, faites[0]?.fait_le ? 'dernière ' + quand(faites[0].fait_le) : ''),
+    kpi('Jours de travail', 'calendar', p.jours_actifs || 0, p.activite ? 'dernier : ' + dateFr(p.activite) : 'avec Claude'),
+    kpi('Idées liées', 'lightbulb', idees.length, ''),
+  ];
+  const jours = (p.jours || []).slice(0, 8);
+  return `${tete}
+  ${agence ? cockpit() : `<section class="card kpis" aria-label="Chiffres du projet">${kpis.join('')}</section>`}
+  ${agence && (d.kpis || []).length ? `<section class="card kpis">${kpis.join('')}</section>` : ''}
+  <div class="split">
+    <div class="stack">
+      <section class="card" aria-label="Tâches du projet"><header><h2>Tâches</h2><span class="c">${tt.length || ''}</span></header>
+        <div class="pad" style="padding-bottom:0">${formTache(p.titre)}</div>
+        <ul class="rows taches">${tt.map((t) => ligneTache(t, false)).join('') || '<li><i data-lucide="circle-check" style="color:var(--ok)"></i><div class="info"><b>Rien à faire pour l\'instant</b><small>Ajoutez une tâche ci-dessus.</small></div></li>'}</ul>
+      </section>
+      ${(d.sections || []).map((x) => `<section class="card"><header><h2>${esc(x.titre)}</h2></header><div class="md">${mdToHtml(String(x.contenu || ''))}</div></section>`).join('')}
+      <details class="card fiche"><summary class="pad"><b>Fiche du projet</b><span class="muted"> · tout ce que le cerveau sait</span></summary><div class="md">${mdToHtml(p.contenu || '')}</div></details>
+    </div>
+    <div class="stack">
+      <section class="card" aria-label="Activité"><header><h2>Activité</h2><span class="c">${p.jours_actifs || ''}</span></header>
+        <ul class="rows">${jours.map((j) => `<li class="click" data-jour="${esc(j)}"><i data-lucide="notebook-pen"></i><div class="info"><b>${esc(dateFr(j))}</b><small>Voir ce qui a été fait ce jour-là</small></div></li>`).join('') || '<li><div class="info"><small>Le journal notera ici chaque jour où on travaille sur ce projet.</small></div></li>'}</ul>
+      </section>
+      <section class="card" aria-label="Idées"><header><h2>Idées</h2><span class="c">${idees.length || ''}</span></header>
+        <ul class="rows">${idees.map((i) => `<li class="click" data-voir-neurone="i:${esc(i.id)}"><i data-lucide="lightbulb" style="color:#ca8a04"></i><div class="info"><b>${esc(i.titre)}</b><small>${quand(i.date)}</small></div></li>`).join('') || '<li><div class="info"><small>Les idées que vous jetez dans le cerveau à propos de ce projet arrivent ici.</small></div></li>'}</ul>
+      </section>
+      ${d.maj ? `<p class="muted" style="font-size:12px;padding:0 4px">Tableau de bord mis à jour par Claude ${quand(d.maj)}.</p>` : ''}
+    </div>
+  </div>`;
 }
 
 function entreprises() {
@@ -860,7 +943,7 @@ function panneauNoeud(n) {
   if (n.quoi === 'reponse') return `${tete('Réponse')}<div class="pad">${blocReponse(n.data).replace('<details class="card reponse">', '<details class="card reponse" open>')}</div>`;
   if (n.quoi === 'message') return `${tete('Message à envoyer')}<div class="pad">${blocMessage(n.data)}</div>`;
   if (n.quoi === 'tache') { const t = n.data; return `${tete('Tâche')}<div class="pad" style="display:grid;gap:10px"><b style="font-size:16px">${esc(t.titre)}</b><div style="display:flex;gap:8px;flex-wrap:wrap">${t.projet ? `<span class="tag">${esc(t.projet)}</span>` : ''}${echeanceTache(t)}</div><div><button class="btn primary" type="button" data-tache="${esc(t.id)}"><i data-lucide="check"></i>C'est fait</button></div></div>`; }
-  if (n.quoi === 'note' && n.g === 'projet') { const d = n.data; const tt = tachesDe(d.titre); return `${tete('Projet')}<div class="pad" style="display:grid;gap:10px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b style="font-size:16px">${esc(d.titre)}</b><span class="tag ${STATUT_TAG[d.statut] || ''}">${esc(d.statut || 'à classer')}</span></div>${d.resume ? `<p class="muted">${esc(d.resume)}</p>` : ''}${d.prochaine ? `<p><b>Prochaine étape :</b> ${esc(d.prochaine)}</p>` : ''}${tt.length ? `<ul class="rows taches">${tt.map((x) => ligneTache(x, false)).join('')}</ul>` : ''}<div><button class="btn" type="button" data-projet="${esc(d.titre)}"><i data-lucide="file-text"></i>Lire la fiche</button></div></div>`; }
+  if (n.quoi === 'note' && n.g === 'projet') { const d = n.data; const tt = tachesDe(d.titre); return `${tete('Projet')}<div class="pad" style="display:grid;gap:10px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b style="font-size:16px">${esc(d.titre)}</b><span class="tag ${STATUT_TAG[d.statut] || ''}">${esc(d.statut || 'à classer')}</span></div>${d.resume ? `<p class="muted">${esc(d.resume)}</p>` : ''}${d.prochaine ? `<p><b>Prochaine étape :</b> ${esc(d.prochaine)}</p>` : ''}${tt.length ? `<ul class="rows taches">${tt.map((x) => ligneTache(x, false)).join('')}</ul>` : ''}<div><button class="btn primary" type="button" data-ouvrir-projet="${esc(d.id)}"><i data-lucide="layout-dashboard"></i>Ouvrir le tableau de bord</button></div></div>`; }
   if (n.quoi === 'jour') return `${tete('Journal')}<div class="pad" style="display:grid;gap:10px"><b>${esc(n.titre)}</b><p class="muted">Tout ce qui a été dit et fait ce jour-là.</p><div><button class="btn primary" type="button" data-jour="${esc(n.date)}"><i data-lucide="notebook-pen"></i>Lire le journal</button></div></div>`;
   if (n.quoi === 'idee') { const d = n.data; return `${tete('Idée')}<div class="md"><h1>${esc(d.titre)}</h1>${mdToHtml(d.texte || '')}<p class="muted" style="font-size:12px">Jetée dans le cerveau ${quand(d.date)}, rangée dans « ${esc((HUBS.find((h) => h[0] === n.regionIdee) || [])[1] || 'Mémoire')} ». Les agents la recopient dans le coffre à la prochaine session.</p></div>`; }
   if (n.agent && !n.data) return `${tete('Agent')}<div class="pad"><b>${n.agent.id}, ${n.agent.role}</b><p class="muted" style="margin-top:6px">${n.agent.fait}</p></div>`;
@@ -1489,18 +1572,23 @@ function journal() {
 // ---------- missions ----------
 const ENV = 'env_01LarP6P25LHfTvoBvWyps6H';
 const DEPOT = 'https://github.com/matheoguz/matheoguz.github.io';
+const DEPOTS_CONNUS = ['matheoguz.github.io', 'Repos-', 'Devoir-TC-'];
+function depotMission() {
+  const d = String(projetParId(S.missionProjet)?.depot || '').split(',')[0].trim();
+  return DEPOTS_CONNUS.includes(d) ? 'https://github.com/matheoguz/' + d : DEPOT;
+}
 const MISSIONS = {
   point: { t: 'Point du jour', s: 'Où en est chaque client, quoi faire', champ: null, cmd: () => '/point-du-jour' },
   client: { t: 'Nouveau client', s: 'Coller le message du client', champ: 'Message ou réponses du client', cmd: (x) => `/nouveau-client ${x}` },
   modifs: { t: 'Retouches', s: 'Slug + retour du client', champ: 'Slug du client puis son retour (ex. boulangerie-dupont Changer les horaires du dimanche)', cmd: (x) => `/modifs ${x}` },
-  libre: { t: 'Mission libre', s: 'Demander autre chose aux agents', champ: 'Ce que les agents doivent faire', cmd: (x) => x },
+  libre: { t: 'Mission libre', s: 'Demander autre chose à Claude', champ: 'Ce que Claude doit faire', cmd: (x) => x },
 };
 function promptMission() {
   const m = MISSIONS[S.mission];
   return `Mission lancée depuis le Cerveau de Matheo (${new Date().toLocaleString('fr-FR')}).
 Avant tout : ajoute le dépôt privé matheoguz/Repos- à cette session (outil add_repo) et clone-le dans /home/user/Repos-, pour charger le cerveau (Repos-/cerveau : MEMOIRE.md et le journal), puis lis MEMOIRE.md.
-Ensuite fais : ${m.cmd(S.missionTexte.trim())}
-Respecte CLAUDE.md et ../Repos-/cerveau/Agence/Règles de l'agence.md. Mets le Cerveau à jour à la fin et termine par un résumé court en français.`;
+${S.missionProjet && projetParId(S.missionProjet) ? `Projet concerné : « ${projetParId(S.missionProjet).titre} » (fiche : Repos-/cerveau/Projets/${projetParId(S.missionProjet).titre}.md). Lis sa fiche et ses tâches (collection taches de la page) avant de commencer.\n` : ''}Ensuite fais : ${m.cmd(S.missionTexte.trim())}
+Respecte CLAUDE.md et ../Repos-/cerveau/Agence/Règles de l'agence.md. À la fin, mets le Cerveau à jour : fiche du projet, tâches (cocher, créer), tableau de bord du projet (collection dashboards), puis synchronise la page. Termine par un résumé court en français.`;
 }
 function missions() {
   const m = MISSIONS[S.mission];
@@ -1509,9 +1597,10 @@ function missions() {
   return `<div class="split"><div class="stack">
     <section class="card"><header><h2>Lancer une mission</h2><div class="grow"></div><span class="c">nouvelle session Claude Code</span></header>
       <div class="mission-form">
-        <div class="choices" role="group" aria-label="Type de mission">${Object.entries(MISSIONS).map(([k, v]) => `<button type="button" class="choice" data-mission="${k}" aria-pressed="${k === S.mission}"><b>${v.t}</b><small>${v.s}</small></button>`).join('')}</div>
+        ${S.missionProjet && projetParId(S.missionProjet) ? `<div class="mission-projet"><i data-lucide="folder-kanban"></i><span>Mission sur le projet <b>${esc(projetParId(S.missionProjet).titre)}</b>. Claude lit sa fiche et ses tâches, puis met son tableau de bord à jour.</span></div>` : ''}
+        <div class="choices" role="group" aria-label="Type de mission">${Object.entries(MISSIONS).filter(([k]) => !S.missionProjet || S.missionProjet === AGENCE || k === 'libre').map(([k, v]) => `<button type="button" class="choice" data-mission="${k}" aria-pressed="${k === S.mission}"><b>${v.t}</b><small>${v.s}</small></button>`).join('')}</div>
         ${m.champ ? `<div class="field"><label for="m-texte">${m.champ}</label><textarea id="m-texte" placeholder="Collez ici…">${esc(S.missionTexte)}</textarea><small>Ne mettez ni mot de passe ni coordonnées bancaires.</small></div>` : '<p class="muted">Les agents font le point sur tous les clients, mettent le Cerveau à jour et vous disent quoi faire aujourd\'hui.</p>'}
-        ${S.confirmer ? `<div class="confirm"><b>Lancer cette mission ?</b><span class="muted">Une nouvelle session Claude Code démarre sur matheoguz.github.io avec ces instructions. Elle utilise votre forfait Claude.</span><pre>${esc(promptMission())}</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="m-go"${S.envoi === 'en_cours' ? ' disabled' : ''}><i data-lucide="rocket"></i>${S.envoi === 'en_cours' ? 'Lancement…' : 'Oui, lancer'}</button><button class="btn" type="button" id="m-annuler">Annuler</button></div></div>`
+        ${S.confirmer ? `<div class="confirm"><b>Lancer cette mission ?</b><span class="muted">Une nouvelle session Claude Code démarre sur ${esc(depotMission().split('/').pop())} avec ces instructions. Elle utilise votre forfait Claude.</span><pre>${esc(promptMission())}</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="m-go"${S.envoi === 'en_cours' ? ' disabled' : ''}><i data-lucide="rocket"></i>${S.envoi === 'en_cours' ? 'Lancement…' : 'Oui, lancer'}</button><button class="btn" type="button" id="m-annuler">Annuler</button></div></div>`
           : `<div><button class="btn primary" type="button" id="m-prep"${pret ? '' : ' disabled'}><i data-lucide="send"></i>Préparer la mission</button></div>`}
         ${S.envoi && S.envoi !== 'en_cours' ? `<div class="result ${S.envoi.ok ? 'ok' : 'bad'}"><i data-lucide="${S.envoi.ok ? 'circle-check' : 'triangle-alert'}"></i><div><b>${esc(S.envoi.titre)}</b><p>${S.envoi.html}</p></div></div>` : ''}
       </div></section>
@@ -1530,7 +1619,7 @@ async function lancerMission() {
   S.envoi = 'en_cours'; render();
   const titre = `Cerveau · ${MISSIONS[S.mission].t}`;
   try {
-    const r = await S.mcp.callTool('Claude Code Remote', 'create_session', { prompt: promptMission(), environment_id: ENV, source_url: DEPOT, title: titre }, { cache: false });
+    const r = await S.mcp.callTool('Claude Code Remote', 'create_session', { prompt: promptMission(), environment_id: ENV, source_url: depotMission(), title: S.missionProjet && projetParId(S.missionProjet) ? `Cerveau · ${projetParId(S.missionProjet).titre}` : titre }, { cache: false });
     const p = r?.payload || {};
     const id = p.session_id || p.id || p.session?.id || p.ccr?.id || '';
     S.envoi = { ok: true, titre: 'Mission lancée', html: id ? `Suivez-la ici : <a href="https://claude.ai/code/${esc(id)}" target="_blank" rel="noopener">ouvrir la session</a>.` : 'Elle apparaît dans « Missions récentes » d\'ici une minute.' };
@@ -1628,7 +1717,15 @@ document.addEventListener('click', (ev) => {
   const ta = t.closest('[data-tache]');
   if (ta) return basculerTache(ta.dataset.tache, ta);
   const pj = t.closest('[data-projet]');
-  if (pj) { S.memo = cle(pj.dataset.projet); location.hash = 'memoire'; if (S.vue === 'memoire') render(); return; }
+  if (pj) { const pr = projetParTitre(pj.dataset.projet); if (pr) { S.onglet = 'apercu'; location.hash = 'projet-' + pr.id; } return; }
+  const og = t.closest('[data-onglet]');
+  if (og) { S.onglet = og.dataset.onglet; return render(); }
+  const op = t.closest('[data-ouvrir-projet]');
+  if (op) { S.onglet = 'apercu'; location.hash = 'projet-' + op.dataset.ouvrirProjet; return; }
+  const vn = t.closest('[data-voir-neurone]');
+  if (vn) { S.note = vn.dataset.voirNeurone; if (S.vue !== 'cerveau') location.hash = 'cerveau'; else G.focus?.(S.note, true); return; }
+  const mp = t.closest('[data-mission-projet]');
+  if (mp) { const pr = projetParId(mp.dataset.missionProjet); S.mission = 'libre'; S.missionProjet = pr?.id || null; S.missionTexte = ''; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
   const se = t.closest('[data-sent]');
   if (se) return marquerEnvoye(se.dataset.sent, se);
   const me = t.closest('[data-memo]');
@@ -1643,7 +1740,7 @@ document.addEventListener('click', (ev) => {
   const md = t.closest('[data-mode]');
   if (md) { S.chatMode = md.dataset.mode; document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b === md))); $('#chat-q').placeholder = (S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : S.chatMode === 'tache' ? 'Une chose à faire : le cerveau la range dans le bon projet' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? quoi faire aujourd\'hui ?'); $('#chat-q').focus(); return; }
   const mi = t.closest('[data-mission]');
-  if (mi) { S.mission = mi.dataset.mission; S.confirmer = false; S.envoi = null; return render(); }
+  if (mi) { S.mission = mi.dataset.mission; S.missionProjet = null; S.confirmer = false; S.envoi = null; return render(); }
   if (t.closest('#m-prep')) { S.confirmer = true; S.envoi = null; return render(); }
   if (t.closest('#m-annuler')) { S.confirmer = false; return render(); }
   if (t.closest('#m-go')) return lancerMission();
@@ -1687,7 +1784,16 @@ $('#q').addEventListener('input', (ev) => {
 $('#q').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && S.vue === 'cerveau' && G.lumiere?.size) G.focus?.([...G.lumiere][0], true); });
 
 const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'journal', 'missions'];
-function route() { const h = location.hash.slice(1) === 'graphe' ? 'cerveau' : location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cerveau'; fermer(); render(); }
+const AGENCE = 'agence-sites-vitrines';
+const ONGLETS_AGENCE = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents'];
+function route() {
+  let h = location.hash.slice(1) === 'graphe' ? 'cerveau' : location.hash.slice(1);
+  let onglet = null;
+  if (ONGLETS_AGENCE.includes(h)) { onglet = h === 'cockpit' ? 'apercu' : h; h = 'projet-' + AGENCE; }
+  if (h.startsWith('projet-')) { const id = h.slice(7); if (onglet) S.onglet = onglet; else if (S.projet !== id) S.onglet = 'apercu'; S.projet = id; S.vue = 'projet'; }
+  else S.vue = VUES.includes(h) ? h : 'cerveau';
+  fermer(); render();
+}
 addEventListener('hashchange', route);
 
 // Thème : mémorisé sur cet appareil seulement
@@ -1712,7 +1818,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -1720,7 +1826,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
