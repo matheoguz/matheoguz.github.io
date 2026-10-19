@@ -4,7 +4,7 @@ Site GitHub Pages de Matheo Guzzi (publié depuis `main`). Chaque dossier est un
 
 Écrire en français pour tout ce qui est visible par Matheo ou ses clients.
 
-**Aperçu obligatoire :** dès qu'une page est créée ou modifiée visuellement, commit + push, puis donner à Matheo un **lien cliquable vers la page rendue**, sans attendre qu'il le demande. Ne pas lui envoyer le fichier `.html` (son appli affiche le code, pas le site). Tant que la branche n'est pas fusionnée dans `main`, le lien est `https://raw.githack.com/matheoguz/matheoguz.github.io/<sha-du-commit>/<chemin>` (une page d'avertissement s'affiche d'abord, il faut cliquer pour continuer) ; une fois fusionné, c'est `https://matheoguz.github.io/<chemin>`.
+**Aperçu obligatoire :** dès qu'une page est créée ou modifiée visuellement, commit + push, puis donner à Matheo un **lien cliquable vers la page rendue**, sans attendre qu'il le demande. Ne pas lui envoyer le fichier `.html` (son appli affiche le code, pas le site). Une fois sur `main`, le lien est `https://matheoguz.github.io/<chemin>` (GitHub Pages met une minute à publier). Pour un changement encore sur une branche, le lien est `https://raw.githack.com/matheoguz/matheoguz.github.io/<sha-du-commit>/<chemin>` (une page d'avertissement s'affiche d'abord).
 
 ## Agence de sites vitrines
 
@@ -58,4 +58,5 @@ Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec t
 - Hooks (`.claude/settings.json` + `.claude/hooks/cerveau.sh`) : après chaque réponse, avant une compression et en fin de session, `journal.mjs` recopie la conversation et pousse sur GitHub ; au démarrage et après compression, `rappel.mjs` remet `MEMOIRE.md` et la fin du journal dans le contexte. Il faut que `Repos-` soit dans la session.
 - **À faire par Claude** : mettre à jour `MEMOIRE.md` (et `Décisions.md`, les notes de projet) dès qu'une décision, une préférence ou un état change. Ne pas éditer le journal à la main.
 - Synchro vers le Cerveau (rubriques Graphe et Journal) : `node ../Repos-/cerveau/.outils/vers-cerveau.mjs <scratchpad>/vault`, puis `ArtifactData batch` sur `notes` et `journal` (avec `if_version` pour les documents existants).
+- **Night run** : tâche planifiée chaque matin (6h52, Paris) qui importe les idées, fait `/point-du-jour`, met à jour `MEMOIRE.md`, écrit le rapport du matin et synchronise le Cerveau.
 - Rubrique Missions du Cerveau : Matheo peut lancer une session Claude Code depuis la page (connecteur Claude Code Remote, titre « Cerveau · … »).
