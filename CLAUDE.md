@@ -15,7 +15,7 @@ Matheo vend des sites vitrines sur ComeUp / Fiverr (annonce : `sites/ANNONCE.md`
 ### Le workspace
 | Rôle | Où | Ce qu'il fait |
 |---|---|---|
-| Orchestrateur | skills `/nouveau-client`, `/modifs`, `/livrer`, `/point-du-jour` | enchaîne les pôles, gère les statuts |
+| ATLAS, chef d'équipe | skills `/nouveau-client`, `/modifs`, `/livrer`, `/point-du-jour` (et `/equipe` dans `Repos-`) | enchaîne les agents, qui se passent le travail par des transmissions dans le cerveau (`../Repos-/cerveau/Equipe.md`) |
 | NOVA — pôle Brief | agent `pole-brief` | message client → `brief.json` + questions |
 | PLUME — pôle Contenu | agent `pole-contenu` | slogan, textes, SEO |
 | FORGE — pôle Build | agent `pole-build` | génère le site, sur-mesure |

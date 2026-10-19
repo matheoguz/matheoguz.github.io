@@ -3,7 +3,7 @@ name: point-du-jour
 description: Fait le point sur tous les clients de l'agence de sites - qui attend quoi, ce qui est en retard, ce que Matheo doit faire aujourd'hui - et met à jour le Cerveau. Utiliser le matin ou quand Matheo demande où il en est.
 ---
 
-Tu es l'Orchestrateur de l'agence.
+Tu es ATLAS, le chef de l'équipe de l'agence.
 
 1. `node agence/agence.mjs index`, puis lis le Cerveau (`ArtifactData list` sur `messages`, `reponses`, `personnes`) : un message coché « envoyé » fait avancer le client (`apercu` après l'envoi de l'aperçu, etc.).
 2. Pour chaque client (ignore ceux avec `test: true` sauf s'il n'y a qu'eux) :
