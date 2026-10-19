@@ -404,6 +404,16 @@ a.lien{font-weight:500}
 @media (prefers-reduced-motion:reduce){.relais li.live .pt{animation:none}}
 .relais b{font-size:12.5px}
 .relais small{font-size:11.5px;line-height:1.35;overflow-wrap:anywhere}
+.outils-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;padding:14px}
+.outil{all:unset;box-sizing:border-box;display:grid;gap:6px;align-content:start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);cursor:pointer;min-width:0}
+.outil:hover,.outil:focus-visible{border-color:var(--accent)}
+.outil:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.outil.off{opacity:.7}
+.outil .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.outil .t svg{width:16px;height:16px;color:var(--accent)}
+.outil code{font-size:11.5px}
+.outil small{font-size:12.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+.outil .ags{display:flex;flex-wrap:wrap;gap:4px}
 .boite{display:inline-flex;align-items:center;gap:5px;color:var(--ink);font-weight:600;font-size:12px}
 .boite svg{width:14px;height:14px;color:var(--c)}
 .modeles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
@@ -802,6 +812,18 @@ const missionsEquipe = () => S.notes.filter((n) => (n.tags || []).includes('miss
 const transmissions = () => S.notes.filter((n) => (n.tags || []).includes('transmission')).sort((a, b) => String(b.date || b.titre).localeCompare(String(a.date || a.titre)));
 const couleurAgent = (nom) => equipiers().find((a) => a.titre === nom)?.couleur || 'var(--faint)';
 const enMission = (nom) => missionsEquipe().filter((m) => m.statut !== 'terminee' && (listeFm(m.agents).includes(nom) || m.chef === nom));
+const competencesEquipe = () => S.notes.filter((n) => (n.tags || []).includes('competence')).sort((a, b) => a.titre.localeCompare(b.titre, 'fr'));
+const connecteursEquipe = () => S.notes.filter((n) => (n.tags || []).includes('connecteur')).sort((a, b) => (/reconnecter/.test(a.statut || '') - /reconnecter/.test(b.statut || '')) || a.titre.localeCompare(b.titre, 'fr'));
+const usageDe = (n) => (String(n.contenu || '').match(/\*\*(?:À quoi ça sert|Commande) :\*\* ([^\n]*)/) || [])[1] || '';
+const phraseDe = (n) => String(n.contenu || '').replace(/^#.*\n+/, '').split('\n').filter((l) => l.trim() && !l.startsWith('**')).shift() || '';
+function carteOutil(n, quoi) {
+  const ag = listeFm(n.agents);
+  const off = /reconnecter/.test(n.statut || '');
+  return `<button type="button" class="outil${off ? ' off' : ''}" data-voir-neurone="n:${esc(cle(n.titre))}">
+    <div class="t"><i data-lucide="${quoi === 'competence' ? 'sparkles' : 'link-2'}"></i><b>${esc(n.titre)}</b>${quoi === 'competence' && n.commande ? `<code>${esc(n.commande)}</code>` : ''}${quoi === 'connecteur' ? `<span class="tag${off ? ' warn' : ' ok'}">${off ? 'À reconnecter' : 'Branché'}</span>` : ''}</div>
+    <small>${esc(quoi === 'competence' ? phraseDe(n) : usageDe(n))}</small>
+    <span class="ags">${ag.slice(0, 6).map(pastille).join('')}</span></button>`;
+}
 const pastille = (nom) => `<span class="pastille" style="--c:${esc(couleurAgent(nom))}">${esc(nom)}</span>`;
 // Le relais d'une mission : chaque étape du plan, dans l'ordre, avec la transmission qui l'a bouclée.
 function relais(m) {
@@ -834,7 +856,7 @@ function vueEquipe() {
       ${bo ? `<small class="boite"><i data-lucide="inbox"></i>${bo} transmission${bo > 1 ? 's' : ''} à traiter</small>` : ''}<small class="muted">${m.length ? esc(m[0].titre.replace(/^\d{4}-\d{2}-\d{2} /, '')) : der ? 'Dernière transmission ' + quand(der.date) : 'Pas encore de mission'}</small>
     </button>`;
   };
-  const poles = [['direction', 'Direction'], ['agence', 'Agence de sites'], ['general', 'Pour tous les projets']];
+  const poles = [['direction', 'Direction'], ['agence', 'Agence de sites'], ['production', 'Création et code'], ['business', 'Business et boutiques'], ['general', 'Pour tous les projets']];
   return `<section class="card dash-tete"><div class="pad" style="display:grid;gap:10px">
       <div class="ligne"><h2>L'équipe</h2><span class="tag">${ag.length} agents</span>${enCours.length ? `<span class="tag live">${enCours.length} mission(s) en cours</span>` : ''}</div>
       <p class="muted">Les agents travaillent ensemble : chacun lit ce que les autres lui ont transmis, fait sa part, puis transmet au suivant. Chaque transmission est un neurone du cerveau, relié aux deux agents, à la mission et au projet.</p>
@@ -844,6 +866,8 @@ function vueEquipe() {
         ${enCours.map((m) => `<details class="mission" open><summary class="pad"><b>${esc(m.titre.replace(/^\d{4}-\d{2}-\d{2} /, ''))}</b>${m.projet ? ` <span class="tag">${esc(m.projet)}</span>` : ''}</summary>${relais(m)}${(() => { const o = String(m.contenu || '').match(/\*\*Objectif :\*\* (.*)/); return o ? `<p class="pad muted" style="padding-top:0">${esc(o[1])}</p>` : ''; })()}</details>`).join('') || '<p class="pad muted">Aucune mission en cours.</p>'}
       </section>` : ''}
   ${poles.map(([k, l]) => { const x = ag.filter((a) => (a.pole || 'general') === k); return x.length ? `<section class="card"><header><h2>${l}</h2><span class="c">${x.length}</span></header><div class="agents-grille">${x.map(carte).join('')}</div></section>` : ''; }).join('')}
+  ${competencesEquipe().length ? `<section class="card"><header><h2>Compétences</h2><span class="c">${competencesEquipe().length}</span><div class="grow"></div><small class="muted">les commandes que l'équipe sait faire</small></header><div class="outils-grille">${competencesEquipe().map((n) => carteOutil(n, 'competence')).join('')}</div></section>` : ''}
+  ${connecteursEquipe().length ? `<section class="card"><header><h2>Connecteurs</h2><span class="c">${connecteursEquipe().length}</span><div class="grow"></div><small class="muted">les applis branchées à Claude</small></header><div class="outils-grille">${connecteursEquipe().map((n) => carteOutil(n, 'connecteur')).join('')}</div></section>` : ''}
   <div class="split">
     <div class="stack">
       <section class="card"><header><h2>Le fil de l'équipe</h2><span class="c">${tr.length || ''}</span></header>
@@ -980,7 +1004,7 @@ const cle = (t) => String(t || '').trim().toLowerCase();
 function groupeNote(n) {
   const t = n.tags || [];
   if (t.includes('projet')) return 'projet';
-  if (t.includes('agent') || t.includes('equipe')) return 'agent';
+  if (t.includes('agent') || t.includes('equipe') || t.includes('competence') || t.includes('connecteur')) return 'agent';
   if (t.includes('transmission') || t.includes('mission')) return 'equipe';
   if (t.includes('personne')) return 'personne';
   return 'memoire';
@@ -1056,7 +1080,7 @@ function panneauNoeud(n) {
   if (n.quoi === 'reponse') return `${tete('Réponse')}<div class="pad">${blocReponse(n.data).replace('<details class="card reponse">', '<details class="card reponse" open>')}</div>`;
   if (n.quoi === 'message') return `${tete('Message à envoyer')}<div class="pad">${blocMessage(n.data)}</div>`;
   if (n.quoi === 'note' && n.g === 'equipe' && (n.data.tags || []).includes('transmission')) return `${tete('Transmission')}<div class="pad">${blocTransmission(n.data, true)}</div>`;
-  if (n.quoi === 'note' && n.g === 'agent' && n.data.role) { const a = n.data; const tr = transmissions().filter((t) => t.de === a.titre || listeFm(t.vers).includes(a.titre)).slice(0, 4); return `${tete('Agent')}<div class="pad" style="display:grid;gap:10px"><div class="ligne" style="display:flex;gap:8px;align-items:center"><b style="font-size:16px">${esc(a.titre)}</b><span class="tag">${esc(a.role)}</span></div><div class="md" style="padding:0">${mdToHtml(String(a.contenu || '').replace(/^#.*\n+/, ''))}</div>${tr.length ? `<div class="fil">${tr.map((t) => blocTransmission(t)).join('')}</div>` : ''}<div class="actions"><button class="btn primary" type="button" data-mission-agent="${esc(a.titre)}"><i data-lucide="rocket"></i>Donner une mission à ${esc(a.titre)}</button><button class="btn" type="button" onclick="location.hash='equipe'"><i data-lucide="bot"></i>Voir toute l'équipe</button></div></div>`; }
+  if (n.quoi === 'note' && n.g === 'agent' && n.data.role) { const a = n.data; const tr = transmissions().filter((t) => t.de === a.titre || listeFm(t.vers).includes(a.titre)).slice(0, 4); return `${tete('Agent')}<div class="pad" style="display:grid;gap:10px"><div class="ligne" style="display:flex;gap:8px;align-items:center"><b style="font-size:16px">${esc(a.titre)}</b><span class="tag">${esc(a.role)}</span></div><div class="md" style="padding:0">${mdToHtml(String(a.contenu || '').replace(/^#.*\n+/, ''))}</div>${(() => { const c = competencesEquipe().filter((x) => listeFm(x.agents).includes(a.titre)); const k = connecteursEquipe().filter((x) => listeFm(x.agents).includes(a.titre)); return (c.length ? `<div><small class="muted">Compétences</small><div class="m">${c.map((x) => `<button type="button" class="tag" data-voir-neurone="n:${esc(cle(x.titre))}">${esc(x.commande || x.titre)}</button>`).join(' ')}</div></div>` : '') + (k.length ? `<div><small class="muted">Connecteurs</small><div class="m">${k.map((x) => `<button type="button" class="tag" data-voir-neurone="n:${esc(cle(x.titre))}">${esc(x.titre)}</button>`).join(' ')}</div></div>` : ''); })()}${tr.length ? `<div class="fil">${tr.map((t) => blocTransmission(t)).join('')}</div>` : ''}<div class="actions"><button class="btn primary" type="button" data-mission-agent="${esc(a.titre)}"><i data-lucide="rocket"></i>Donner une mission à ${esc(a.titre)}</button><button class="btn" type="button" onclick="location.hash='equipe'"><i data-lucide="bot"></i>Voir toute l'équipe</button></div></div>`; }
   if (n.quoi === 'tache') { const t = n.data; return `${tete('Tâche')}<div class="pad" style="display:grid;gap:10px"><b style="font-size:16px">${esc(t.titre)}</b><div style="display:flex;gap:8px;flex-wrap:wrap">${t.projet ? `<span class="tag">${esc(t.projet)}</span>` : ''}${echeanceTache(t)}</div><div><button class="btn primary" type="button" data-tache="${esc(t.id)}"><i data-lucide="check"></i>C'est fait</button></div></div>`; }
   if (n.quoi === 'note' && n.g === 'projet') { const d = n.data; const tt = tachesDe(d.titre); return `${tete('Projet')}<div class="pad" style="display:grid;gap:10px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b style="font-size:16px">${esc(d.titre)}</b><span class="tag ${STATUT_TAG[d.statut] || ''}">${esc(d.statut || 'à classer')}</span></div>${d.resume ? `<p class="muted">${esc(d.resume)}</p>` : ''}${d.prochaine ? `<p><b>Prochaine étape :</b> ${esc(d.prochaine)}</p>` : ''}${tt.length ? `<ul class="rows taches">${tt.map((x) => ligneTache(x, false)).join('')}</ul>` : ''}<div><button class="btn primary" type="button" data-ouvrir-projet="${esc(d.id)}"><i data-lucide="layout-dashboard"></i>Ouvrir le tableau de bord</button></div></div>`; }
   if (n.quoi === 'jour') return `${tete('Journal')}<div class="pad" style="display:grid;gap:10px"><b>${esc(n.titre)}</b><p class="muted">Tout ce qui a été dit et fait ce jour-là.</p><div><button class="btn primary" type="button" data-jour="${esc(n.date)}"><i data-lucide="notebook-pen"></i>Lire le journal</button></div></div>`;
@@ -1706,6 +1730,11 @@ const MODELES = {
   contenu: { t: 'Vidéos et posts', agents: ['ECHO', 'LUMEN', 'MNEMO'] },
   devoir: { t: 'Devoir', agents: ['ECHO', 'SAGE', 'MNEMO'] },
   recherche: { t: 'Recherche', agents: ['ECHO', 'MNEMO'] },
+  visuel: { t: 'Visuel', agents: ['PIXEL', 'MNEMO'] },
+  app: { t: 'App ou outil', agents: ['CODA', 'ARGUS', 'MNEMO'] },
+  argent: { t: 'Argent', agents: ['FINO', 'MNEMO'] },
+  semaine: { t: 'Planning', agents: ['TEMPO', 'MNEMO'] },
+  boutique: { t: 'Boutique', agents: ['ECHO', 'CARGO', 'PIXEL', 'LUMEN', 'FINO', 'MNEMO'] },
 };
 function promptMission() {
   const m = MISSIONS[S.mission];

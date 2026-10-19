@@ -61,7 +61,8 @@ Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec t
 Tout ce qu'on fait doit finir dans **le Cerveau** : coffre privé `matheoguz/Repos-` (dossier `cerveau/`) + page privée https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (outil `ArtifactData`).
 - **Au début** : lire `../Repos-/cerveau/MEMOIRE.md` (le hook `rappel` le fait si `Repos-` est dans la session), puis les collections `taches` et `idees` de la page.
 - **Pendant** : le projet en cours a sa fiche dans `../Repos-/cerveau/Projets/` (frontmatter `statut`, `prochaine`, `chemins`). Une décision → `Décisions.md` + `MEMOIRE.md`.
-- **À la fin de chaque tâche** :
+- **Commandes qui évitent d'oublier** : `/debut` en ouvrant une session, `/fin` avant de dire « c'est fait », `/idee` dès que Matheo lance une idée.
+- **À la fin de chaque tâche** (c'est ce que fait `/fin`) :
   1. mettre à jour la fiche du projet (statut, prochaine étape) ; nouveau projet = nouvelle fiche, avec ses `chemins` ;
   2. mettre à jour **le tableau de bord du projet** dans la page : `dashboards/<id-de-la-fiche>` = `{liens: [{label, url}], kpis: [{label, valeur, detail, icone}], sections: [{titre, contenu (markdown)}], maj}`. Nouveau projet (un site, un devoir, une app…) = nouvelle fiche **et** son tableau de bord, tout de suite. Ne mettre que des faits (pas de chiffres inventés) ;
   3. cocher les tâches faites (`taches/<id>` : `statut: "fait"`, `fait_le`) et créer celles qui restent (`{titre, projet, echeance, statut: "a_faire", date, source: "Claude"}`) ;
