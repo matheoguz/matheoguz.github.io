@@ -44,6 +44,7 @@ Collections :
 - `personnes/<id>` : `{nom, role, entreprise: <slug>, plateforme, pseudo, telephone, email, notes}`. **Uniquement ici**, jamais dans le dépôt.
 - `reponses/<id>` : chaque message reçu d'un client, texte complet : `{entreprise, date, type: brief|retour|message|paiement, resume, contenu}`. **Uniquement ici.**
 - `messages/<id>` : chaque message à envoyer par Matheo : `{entreprise, date, objet, texte, statut: a_envoyer|envoye}`. Matheo coche « Je l'ai envoyé » dans la page ; relire ce statut avant d'avancer un client.
+- `rapports/<AAAA-MM-JJ>` : rapport du matin écrit par le Night run `{date, titre, texte, a_faire}`, affiché en haut du cockpit.
 - `idees/<id>` : idées que Matheo jette depuis la barre « Demander au cerveau » `{titre, texte, region, liens, date}`. **Au début de chaque session**, les lire et les recopier dans le coffre (`Repos-/cerveau/Idées/AAAA-MM-JJ titre.md`, avec `tags: [idee]` et les liens en `[[...]]`), puis mettre `importee: true` sur le document.
 - `notes/<id>` et `journal/<date>` : copie du coffre `Repos-/cerveau` (toutes les notes, dont la mémoire de l'agence ; le journal jour par jour). C'est la rubrique Mémoire, Graphe et Journal.
 
@@ -58,5 +59,5 @@ Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec t
 - Hooks (`.claude/settings.json` + `.claude/hooks/cerveau.sh`) : après chaque réponse, avant une compression et en fin de session, `journal.mjs` recopie la conversation et pousse sur GitHub ; au démarrage et après compression, `rappel.mjs` remet `MEMOIRE.md` et la fin du journal dans le contexte. Il faut que `Repos-` soit dans la session.
 - **À faire par Claude** : mettre à jour `MEMOIRE.md` (et `Décisions.md`, les notes de projet) dès qu'une décision, une préférence ou un état change. Ne pas éditer le journal à la main.
 - Synchro vers le Cerveau (rubriques Graphe et Journal) : `node ../Repos-/cerveau/.outils/vers-cerveau.mjs <scratchpad>/vault`, puis `ArtifactData batch` sur `notes` et `journal` (avec `if_version` pour les documents existants).
-- **Night run** (pas encore activé, permission à donner par Matheo) : tâche planifiée chaque matin (6h52, Paris) qui importe les idées, fait `/point-du-jour`, met à jour `MEMOIRE.md`, écrit le rapport du matin et synchronise le Cerveau.
+- **Night run** (tâche planifiée « Night run du Cerveau », chaque matin 6h52, Paris ; les dépôts `Repos-` et `matheoguz.github.io` doivent lui être attachés) : importe les idées, fait `/point-du-jour`, met à jour `MEMOIRE.md`, écrit le rapport du matin (journal + collection `rapports` du Cerveau, carte en haut du cockpit) et synchronise le Cerveau.
 - Rubrique Missions du Cerveau : Matheo peut lancer une session Claude Code depuis la page (connecteur Claude Code Remote, titre « Cerveau · … »).
