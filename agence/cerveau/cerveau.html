@@ -621,16 +621,17 @@ const STATUT_TAG = { actif: 'live', 'en ligne': 'ok', 'en pause': '', 'idée': '
 const projetsDe = () => S.notes.filter((n) => (n.tags || []).includes('projet'));
 const ouvertes = () => S.taches.filter((t) => t.statut !== 'fait');
 const tachesDe = (titre) => ouvertes().filter((t) => cle(t.projet) === cle(titre));
-function dernierRapport() { return [...S.rapports].sort((a, b) => String(b.date || b.id).localeCompare(String(a.date || a.id)))[0]; }
+function dernierRapport() { return [...S.rapports].sort((a, b) => String(b.id || b.date).localeCompare(String(a.id || a.date)))[0]; }
+const estSoir = (r) => /-soir$/.test(r?.id || '') || r?.moment === 'soir';
 function carteRapport() {
   const rap = dernierRapport();
-  return rap ? `<section class="card rapport" aria-label="Rapport du matin">
-    <header><h2><i data-lucide="sun"></i>Rapport du matin</h2><span class="c">${esc(dateFr(rap.date || rap.id))}</span></header>
+  return rap ? `<section class="card rapport" aria-label="${estSoir(rap) ? 'Rapport du soir' : 'Rapport du matin'}">
+    <header><h2><i data-lucide="${estSoir(rap) ? 'moon' : 'sun'}"></i>${estSoir(rap) ? 'Rapport du soir' : 'Rapport du matin'}</h2><span class="c">${esc(dateFr(rap.date || rap.id))}</span></header>
     <div class="pad">${rap.titre ? `<p class="rap-titre">${esc(rap.titre)}</p>` : ''}
       ${(rap.a_faire || []).length ? `<ol class="rap-faire">${rap.a_faire.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
       ${rap.texte ? `<details><summary>Lire le rapport complet</summary><div class="md">${mdToHtml(String(rap.texte))}</div></details>` : ''}
     </div></section>`
-    : `<section class="card rapport" aria-label="Rapport du matin"><header><h2><i data-lucide="sun"></i>Rapport du matin</h2></header><div class="pad muted">Chaque matin à 6h52, le Night run fait le point sur tout et écrit ici ce qu'il faut faire dans la journée.</div></section>`;
+    : `<section class="card rapport" aria-label="Rapport du matin"><header><h2><i data-lucide="sun"></i>Rapport du matin</h2></header><div class="pad muted">Les agents travaillent à 6h52, 12h52 et 20h52 : le rapport du matin et celui du soir s'affichent ici, avec ce qu'ils ont fait et ce que tu dois décider.</div></section>`;
 }
 function echeanceTache(t) {
   if (t.statut === 'fait') return t.fait_le ? `<span class="tag ok"><i data-lucide="check"></i>Fait ${quand(t.fait_le)}</span>` : '';
