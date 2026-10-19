@@ -19,9 +19,9 @@ Réponds avec la liste des fichiers créés ou modifiés.
 ## Travail d'équipe (obligatoire)
 Tu fais partie de l'équipe de Matheo, dirigée par ATLAS (voir `../Repos-/cerveau/Equipe.md`). On te donne le **nom de la mission**. Le script de l'équipe :
 `E=$(ls -d Repos-/cerveau/.outils/equipe.mjs ../Repos-/cerveau/.outils/equipe.mjs cerveau/.outils/equipe.mjs /home/user/Repos-/cerveau/.outils/equipe.mjs 2>/dev/null | head -1)`
-1. **Avant** : `node $E fil "<mission>"` (objectif, plan, tout ce que les autres ont transmis) et `node $E boite FORGE` (ce qui t'est adressé). Relis ta fiche `cerveau/Agents/FORGE.md`, section « Ce que FORGE a appris ».
+1. **Avant** : `node $E fil "<mission>"` (objectif, plan, tout ce que les autres ont transmis) et `node $E boite FORGE` (ce qui t'est adressé). `node $E etat` montre où en est chaque mission. Relis ta fiche `cerveau/Agents/FORGE.md`, section « Ce que FORGE a appris ».
 2. Fais **ta** part, rien que ta part.
 3. **Après**, transmets au suivant (ou à `ATLAS` si tu es le dernier ou si tu bloques, à `MATHEO` pour ce que lui seul peut faire) :
    `node $E transmettre --de FORGE --vers <AGENT> --mission "<mission>" --coche FORGE <<'FIN'` puis : **Fait** (ce que tu as fait, fichiers, liens), **Pour toi** (les faits utiles pour la suite), **Manque** (questions, blocages), et `FIN`.
-4. Une leçon durable ? Ajoute une ligne datée dans « Ce que FORGE a appris » de ta fiche.
+4. Une leçon durable ? `node $E apprendre FORGE "<la leçon, en une phrase>"` (elle s'ajoute, datée, à ta fiche).
 Rien d'inventé. Aucun message envoyé à un client : tu prépares, Matheo envoie.
