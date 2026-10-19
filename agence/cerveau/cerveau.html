@@ -331,25 +331,51 @@ body.open .drawer{transform:none;visibility:visible}
 .rap-faire{margin:0 0 10px;padding-left:1.3em;display:grid;gap:6px}
 .rapport details summary{cursor:pointer;color:var(--accent);font-weight:500}
 .rapport details .md{margin-top:8px;padding:0}
+.projets-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:14px}
+.projet{all:unset;box-sizing:border-box;display:grid;gap:8px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);cursor:pointer;align-content:start;min-width:0}
+.projet:hover{border-color:var(--accent)}
+.projet:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.projet .t{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.projet .t b{font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.projet p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.projet .suite{display:flex;gap:6px;align-items:flex-start;font-size:13px}
+.projet .suite svg{width:14px;height:14px;flex:none;margin-top:3px;color:var(--accent)}
+.projet .m{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag.live{color:var(--accent);background:var(--accent-soft)}
+.ajout-tache{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.ajout-tache input[name=titre]{flex:1 1 220px;min-width:0}
+.ajout-tache input,.ajout-tache select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink)}
+.taches .tache{display:flex;gap:12px;align-items:center}
+.taches .tache .info{flex:1;min-width:0}
+.taches .faite b{text-decoration:line-through;color:var(--muted)}
+.coche{flex:none;width:22px;height:22px;border-radius:7px;border:1.5px solid var(--faint);background:transparent;display:grid;place-items:center;cursor:pointer;color:#fff;padding:0}
+.coche[aria-pressed=true]{background:var(--ok);border-color:var(--ok)}
+.coche svg{width:14px;height:14px}
+.coche:hover{border-color:var(--accent)}
+.lien{all:unset;color:var(--accent);cursor:pointer;font-size:13px}
+.lien:hover{text-decoration:underline}
+a.lien{font-weight:500}
 </style>
 
 <div class="app">
   <aside class="side">
-    <div class="brand"><div class="mk"><i data-lucide="brain"></i></div><div><b>Le Cerveau</b><small>Agence de Matheo</small></div></div>
+    <div class="brand"><div class="mk"><i data-lucide="brain"></i></div><div><b>Le Cerveau</b><small>Tout ce que fait Matheo</small></div></div>
     <nav class="nav" aria-label="Rubriques">
       <a href="#cerveau" data-v="cerveau"><i data-lucide="brain"></i>Le Cerveau<span class="n" id="n-tout">0</span></a>
-      <a href="#cockpit" data-v="cockpit"><i data-lucide="layout-dashboard"></i>Cockpit</a>
-      <div class="h">Base</div>
+      <a href="#aujourdhui" data-v="aujourdhui"><i data-lucide="sun"></i>Aujourd'hui</a>
+      <a href="#projets" data-v="projets"><i data-lucide="folder-kanban"></i>Projets<span class="n" id="n-projets">0</span></a>
+      <a href="#taches" data-v="taches"><i data-lucide="circle-check"></i>Tâches<span class="n" id="n-taches">0</span></a>
+      <div class="h">Agence de sites</div>
+      <a href="#cockpit" data-v="cockpit"><i data-lucide="layout-dashboard"></i>Tableau de bord</a>
       <a href="#entreprises" data-v="entreprises"><i data-lucide="store"></i>Entreprises<span class="n" id="n-entreprises">0</span></a>
       <a href="#personnes" data-v="personnes"><i data-lucide="users"></i>Personnes<span class="n" id="n-personnes">0</span></a>
       <a href="#reponses" data-v="reponses"><i data-lucide="inbox"></i>Réponses<span class="n" id="n-reponses">0</span></a>
       <a href="#messages" data-v="messages"><i data-lucide="send"></i>Messages à envoyer<span class="n" id="n-messages">0</span></a>
-      <div class="h">Cerveau</div>
+      <a href="#agents" data-v="agents"><i data-lucide="bot"></i>Agents<span class="n">4</span></a>
+      <div class="h">Mémoire</div>
+      <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Notes<span class="n" id="n-memoire">0</span></a>
       <a href="#journal" data-v="journal"><i data-lucide="notebook-pen"></i>Journal<span class="n" id="n-journal">0</span></a>
       <a href="#missions" data-v="missions"><i data-lucide="rocket"></i>Missions</a>
-      <div class="h">Agence</div>
-      <a href="#agents" data-v="agents"><i data-lucide="bot"></i>Agents<span class="n">4</span></a>
-      <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Mémoire<span class="n" id="n-memoire">0</span></a>
     </nav>
     <div class="foot">
       <div class="sync"><span class="dot" id="sync-dot"></span><span id="sync-txt">Connexion à la base…</span></div>
@@ -361,7 +387,7 @@ body.open .drawer{transform:none;visibility:visible}
     <div class="top">
       <h1 id="v-title">Cockpit</h1>
       <div class="grow"></div>
-      <label class="search"><i data-lucide="search"></i><input id="q" type="search" placeholder="Chercher une entreprise, une personne…" aria-label="Rechercher"></label>
+      <label class="search"><i data-lucide="search"></i><input id="q" type="search" placeholder="Chercher partout…" aria-label="Rechercher"></label>
       <button class="icon" id="theme" type="button" aria-label="Changer de thème"><i data-lucide="moon"></i></button>
     </div>
     <div class="view" id="view"><div class="card pad"><div class="skel"></div></div></div>
@@ -413,7 +439,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], rapports: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], memoire: [], notes: [], journal: [], idees: [], rapports: [], taches: [], ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -430,18 +456,20 @@ function icons() {
 
 function render() {
   for (const k of ['entreprises', 'personnes', 'reponses']) $('#n-' + k).textContent = S[k].length;
-  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length + S.idees.length;
+  $('#n-tout').textContent = S.entreprises.length + S.personnes.length + S.reponses.length + S.messages.length + S.notes.length + S.idees.length + S.taches.length;
+  $('#n-projets').textContent = projetsDe().length;
+  $('#n-taches').textContent = S.taches.filter((t) => t.statut !== 'fait').length;
   $('#n-memoire').textContent = S.notes.filter((n) => n.dossier !== 'Journal').length;
   $('#n-journal').textContent = new Set(S.journal.map((j) => j.date)).size;
   $('#n-messages').textContent = S.messages.filter((m) => m.statut !== 'envoye').length;
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === S.vue ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  const titres = { cockpit: 'Cockpit', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Mémoire', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
+  const titres = { aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', cockpit: 'Agence de sites', entreprises: 'Entreprises', personnes: 'Personnes', reponses: 'Réponses des clients', messages: 'Messages à envoyer', agents: 'Agents', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
   $('#v-title').textContent = titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
   const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value;
   if (S.vue !== 'cerveau') arreterGraphe();
-  v.innerHTML = ({ cerveau: vueCerveau, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
+  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projets, taches, cockpit, entreprises, personnes, reponses, messages, agents, memoire, journal, missions })[S.vue]();
   icons();
   if (S.vue === 'cerveau') {
     demarrerGraphe();
@@ -475,17 +503,7 @@ function cockpit() {
   const ev = all.flatMap((e) => (e.historique || []).map((h, i) => ({ ...h, e, i })))
     .sort((a, b) => (b.date + String(b.i).padStart(3, '0')).localeCompare(a.date + String(a.i).padStart(3, '0'))).slice(0, 8);
 
-  const rap = [...S.rapports].sort((a, b) => String(b.date || b.id).localeCompare(String(a.date || a.id)))[0];
-  const rapport = rap ? `<section class="card rapport" aria-label="Rapport du matin">
-    <header><h2><i data-lucide="sun"></i>Rapport du matin</h2><span class="c">${esc(dateFr(rap.date || rap.id))}</span></header>
-    <div class="pad">${rap.titre ? `<p class="rap-titre">${esc(rap.titre)}</p>` : ''}
-      ${(rap.a_faire || []).length ? `<ol class="rap-faire">${rap.a_faire.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
-      ${rap.texte ? `<details><summary>Lire le rapport complet</summary><div class="md">${mdToHtml(String(rap.texte))}</div></details>` : ''}
-    </div></section>`
-    : `<section class="card rapport" aria-label="Rapport du matin"><header><h2><i data-lucide="sun"></i>Rapport du matin</h2></header><div class="pad muted">Chaque matin à 6h52, le Night run fait le point et écrit ici ce qu'il faut faire dans la journée.</div></section>`;
-
   return `
-  ${rapport}
   ${all.length && !reels.length ? '<div class="card pad" style="display:flex;gap:10px;align-items:center;background:var(--accent-soft);border-color:transparent;box-shadow:none"><i data-lucide="flask-conical" style="color:var(--accent)"></i><span>Il n\'y a pour l\'instant que l\'exemple <b>Boulangerie Dupont</b>. Les chiffres ne comptent que les vrais clients.</span></div>' : ''}
   <section class="card kpis" aria-label="Chiffres clés">
     ${kpi('Encaissé', 'wallet', euro(payes.reduce((s, e) => s + (e.prix || 0), 0)), `${payes.length} site(s) payé(s)`)}
@@ -522,6 +540,117 @@ function cockpit() {
       </section>
     </div>
   </div>`;
+}
+
+
+// ---------- tout Matheo : aujourd'hui, projets, tâches ----------
+const STATUTS = ['actif', 'en ligne', 'en pause', 'idée', 'terminé'];
+const STATUT_TAG = { actif: 'live', 'en ligne': 'ok', 'en pause': '', 'idée': 'warn', 'terminé': '' };
+const projetsDe = () => S.notes.filter((n) => (n.tags || []).includes('projet'));
+const ouvertes = () => S.taches.filter((t) => t.statut !== 'fait');
+const tachesDe = (titre) => ouvertes().filter((t) => cle(t.projet) === cle(titre));
+function dernierRapport() { return [...S.rapports].sort((a, b) => String(b.date || b.id).localeCompare(String(a.date || a.id)))[0]; }
+function carteRapport() {
+  const rap = dernierRapport();
+  return rap ? `<section class="card rapport" aria-label="Rapport du matin">
+    <header><h2><i data-lucide="sun"></i>Rapport du matin</h2><span class="c">${esc(dateFr(rap.date || rap.id))}</span></header>
+    <div class="pad">${rap.titre ? `<p class="rap-titre">${esc(rap.titre)}</p>` : ''}
+      ${(rap.a_faire || []).length ? `<ol class="rap-faire">${rap.a_faire.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+      ${rap.texte ? `<details><summary>Lire le rapport complet</summary><div class="md">${mdToHtml(String(rap.texte))}</div></details>` : ''}
+    </div></section>`
+    : `<section class="card rapport" aria-label="Rapport du matin"><header><h2><i data-lucide="sun"></i>Rapport du matin</h2></header><div class="pad muted">Chaque matin à 6h52, le Night run fait le point sur tout et écrit ici ce qu'il faut faire dans la journée.</div></section>`;
+}
+function echeanceTache(t) {
+  if (t.statut === 'fait') return t.fait_le ? `<span class="tag ok"><i data-lucide="check"></i>Fait ${quand(t.fait_le)}</span>` : '';
+  if (!t.echeance) return '';
+  const d = Math.round((new Date(t.echeance) - aujourdhui) / JOUR);
+  if (d < 0) return `<span class="tag bad"><i data-lucide="triangle-alert"></i>${-d} j de retard</span>`;
+  if (d <= 1) return `<span class="tag warn"><i data-lucide="clock"></i>${d === 0 ? "Aujourd'hui" : 'Demain'}</span>`;
+  return `<span class="tag"><i data-lucide="calendar"></i>${esc(dateFr(t.echeance))}</span>`;
+}
+function ligneTache(t, avecProjet = true) {
+  const fait = t.statut === 'fait';
+  return `<li class="tache${fait ? ' faite' : ''}"><button type="button" class="coche" data-tache="${esc(t.id)}" aria-pressed="${fait}" aria-label="${fait ? 'Rouvrir' : 'Marquer comme faite'} : ${esc(t.titre)}">${fait ? '<i data-lucide="check"></i>' : ''}</button>
+    <div class="info"><b>${esc(t.titre)}</b>${avecProjet && t.projet ? `<small><button type="button" class="lien" data-projet="${esc(t.projet)}">${esc(t.projet)}</button></small>` : ''}</div>${echeanceTache(t)}</li>`;
+}
+const triTaches = (a, b) => String(a.echeance || '9999').localeCompare(String(b.echeance || '9999')) || String(b.date || '').localeCompare(String(a.date || ''));
+function formTache(projet = '') {
+  const opts = projetsDe().map((p) => `<option value="${esc(p.titre)}"${cle(p.titre) === cle(projet) ? ' selected' : ''}>${esc(p.titre)}</option>`).join('');
+  return `<form class="ajout-tache" id="f-tache"><input name="titre" required maxlength="140" placeholder="Nouvelle tâche…" aria-label="Nouvelle tâche">
+    <select name="projet" aria-label="Projet"><option value="">Sans projet</option>${opts}</select>
+    <input name="echeance" type="date" aria-label="Échéance"><button class="btn primary" type="submit"><i data-lucide="plus"></i>Ajouter</button></form>`;
+}
+function carteProjet(p) {
+  const t = tachesDe(p.titre);
+  return `<button type="button" class="projet" data-projet="${esc(p.titre)}">
+    <div class="t"><b>${esc(p.titre)}</b><span class="tag ${STATUT_TAG[p.statut] || ''}">${esc(p.statut || 'à classer')}</span></div>
+    ${p.resume ? `<p>${esc(p.resume)}</p>` : ''}
+    <div class="suite"><i data-lucide="arrow-right"></i><span>${p.prochaine ? esc(p.prochaine) : '<span class="muted">Prochaine étape à définir</span>'}</span></div>
+    <div class="m">${p.type ? `<span class="tag">${esc(p.type)}</span>` : ''}${t.length ? `<span class="tag"><i data-lucide="circle-check"></i>${t.length} tâche(s)</span>` : ''}<span class="grow"></span><small class="muted">${p.activite ? 'Touché ' + quand(p.activite) : 'Pas encore touché avec Claude'}</small></div>
+  </button>`;
+}
+function vueAujourdhui() {
+  const ouv = ouvertes().sort(triTaches);
+  const actifs = projetsDe().filter((p) => p.statut === 'actif').sort((a, b) => String(b.activite || '').localeCompare(String(a.activite || '')));
+  const idees = [...S.idees].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 5);
+  const aEnvoyer = S.messages.filter((m) => m.statut !== 'envoye');
+  const jours = [...new Set(S.journal.map((j) => j.date))].sort().reverse().slice(0, 4);
+  return `${carteRapport()}
+  <div class="split">
+    <div class="stack">
+      <section class="card" aria-label="Tâches"><header><h2>À faire</h2><span class="c">${ouv.length || ''}</span><div class="grow"></div><a class="lien" href="#taches">Toutes les tâches</a></header>
+        <div class="pad" style="padding-bottom:0">${formTache()}</div>
+        <ul class="rows taches">${ouv.slice(0, 8).map((t) => ligneTache(t)).join('') || '<li><i data-lucide="circle-check" style="color:var(--ok)"></i><div class="info"><b>Rien en attente</b><small>Ajoutez une tâche ci-dessus, ou dites-la au cerveau.</small></div></li>'}</ul>
+        ${aEnvoyer.length ? `<ul class="rows"><li class="click" onclick="location.hash='messages'"><i data-lucide="send"></i><div class="info"><b>${aEnvoyer.length} message(s) à envoyer aux clients</b><small>Agence de sites</small></div></li></ul>` : ''}
+      </section>
+      <section class="card" aria-label="Projets actifs"><header><h2>Projets en cours</h2><span class="c">${actifs.length}</span><div class="grow"></div><a class="lien" href="#projets">Tous les projets</a></header>
+        <div class="projets-grille">${actifs.map(carteProjet).join('') || '<div class="pad muted">Aucun projet actif.</div>'}</div>
+      </section>
+    </div>
+    <div class="stack">
+      <section class="card" aria-label="Idées récentes"><header><h2>Dernières idées</h2><span class="c">${S.idees.length || ''}</span></header>
+        <ul class="rows">${idees.map((i) => `<li class="click" data-noeud="i:${esc(i.id)}" onclick="location.hash='cerveau'"><i data-lucide="lightbulb" style="color:#ca8a04"></i><div class="info"><b>${esc(i.titre)}</b><small>${quand(i.date)}</small></div></li>`).join('') || '<li><i data-lucide="lightbulb"></i><div class="info"><b>Pas encore d\'idée</b><small>Dans Le Cerveau, mode « Ajouter une idée ».</small></div></li>'}</ul>
+      </section>
+      <section class="card" aria-label="Activité"><header><h2>Derniers jours</h2></header>
+        <ul class="rows">${jours.map((d) => { const pr = projetsDe().filter((p) => p.activite === d).map((p) => p.titre); return `<li class="click" data-jour="${esc(d)}"><i data-lucide="notebook-pen"></i><div class="info"><b>${esc(dateFr(d))}</b><small>${pr.length ? esc(pr.join(', ')) : 'Voir le journal'}</small></div></li>`; }).join('') || '<li><div class="info"><small>Le journal se remplit tout seul.</small></div></li>'}</ul>
+      </section>
+    </div>
+  </div>`;
+}
+function projets() {
+  const liste = projetsDe().filter((p) => match([p.titre, p.resume, p.type, p.prochaine, p.contenu].join(' ')));
+  if (!projetsDe().length) return vide('Aucun projet', 'Chaque projet est une note du coffre (dossier Projets/) avec son statut et sa prochaine étape. Ils apparaissent ici une fois synchronisés.');
+  const rang = (p) => { const i = STATUTS.indexOf(p.statut); return i < 0 ? 99 : i; };
+  liste.sort((a, b) => rang(a) - rang(b) || String(b.activite || '').localeCompare(String(a.activite || '')) || a.titre.localeCompare(b.titre, 'fr'));
+  const groupes = [...new Set(liste.map((p) => p.statut || 'à classer'))];
+  return groupes.map((g) => `<section class="card"><header><h2>${esc(g[0].toUpperCase() + g.slice(1))}</h2><span class="c">${liste.filter((p) => (p.statut || 'à classer') === g).length}</span></header>
+    <div class="projets-grille">${liste.filter((p) => (p.statut || 'à classer') === g).map(carteProjet).join('')}</div></section>`).join('') || vide('Aucun résultat', 'Aucun projet ne correspond à cette recherche.');
+}
+function taches() {
+  const toutes = S.taches.filter((t) => match([t.titre, t.projet].join(' ')));
+  const ouv = toutes.filter((t) => t.statut !== 'fait').sort(triTaches);
+  const faites = toutes.filter((t) => t.statut === 'fait').sort((a, b) => String(b.fait_le || '').localeCompare(String(a.fait_le || ''))).slice(0, 30);
+  const parProjet = [...new Set(ouv.map((t) => t.projet || ''))].sort((a, b) => (a ? 0 : 1) - (b ? 0 : 1) || a.localeCompare(b, 'fr'));
+  return `<section class="card"><header><h2>Nouvelle tâche</h2></header><div class="pad">${formTache()}</div></section>
+  ${parProjet.map((pr) => `<section class="card"><header><h2>${pr ? `<button type="button" class="lien" data-projet="${esc(pr)}">${esc(pr)}</button>` : 'Sans projet'}</h2><span class="c">${ouv.filter((t) => (t.projet || '') === pr).length}</span></header>
+    <ul class="rows taches">${ouv.filter((t) => (t.projet || '') === pr).map((t) => ligneTache(t, false)).join('')}</ul></section>`).join('') || '<section class="card pad muted">Aucune tâche en attente.</section>'}
+  ${faites.length ? `<details class="card"><summary class="pad" style="cursor:pointer;font-weight:600">Faites récemment (${faites.length})</summary><ul class="rows taches">${faites.map((t) => ligneTache(t)).join('')}</ul></details>` : ''}`;
+}
+async function ajouterTache(t) {
+  if (!S.db) throw { code: 'indisponible' };
+  const ref = S.db.collection('taches').doc();
+  await ref.set({ titre: t.titre, projet: t.projet || '', echeance: t.echeance || '', statut: 'a_faire', date: new Date().toISOString(), source: t.source || 'Matheo' });
+  return ref.id;
+}
+async function basculerTache(id, bouton) {
+  const t = S.taches.find((x) => x.id === id);
+  if (!t || !S.db) return toast('Base indisponible ici : impossible d\'enregistrer.');
+  bouton.disabled = true;
+  const fait = t.statut !== 'fait';
+  try {
+    await S.db.doc('taches/' + id).update(fait ? { statut: 'fait', fait_le: new Date().toISOString().slice(0, 10) } : { statut: 'a_faire' });
+    if (fait) toast('Bien joué');
+  } catch (err) { bouton.disabled = false; toast('Enregistrement impossible, réessayez dans un instant.'); }
 }
 
 function entreprises() {
@@ -640,17 +769,17 @@ function memoire() {
 const GROUPES = {
   cerveau: ['Le Cerveau', '#1f1f1c'], entreprise: ['Entreprises', '#17803d'], personne: ['Personnes', '#be185d'],
   reponse: ['Réponses', '#b45309'], message: ['Messages', '#2563eb'], memoire: ['Mémoire', '#4f46e5'],
-  projet: ['Projets', '#c2410c'], journal: ['Journal', '#0e7490'], agent: ['Agents', '#7c3aed'], idee: ['Idées', '#ca8a04'],
+  projet: ['Projets', '#c2410c'], journal: ['Journal', '#0e7490'], agent: ['Agents', '#7c3aed'], idee: ['Idées', '#ca8a04'], tache: ['Tâches', '#0f766e'],
 };
 // Couleurs des neurones sur le fond sombre du cerveau.
 const NEURONE = {
   cerveau: '#eef1ff', entreprise: '#4ade80', personne: '#f472b6', reponse: '#fbbf24', message: '#60a5fa',
-  memoire: '#8b9cff', projet: '#fb923c', journal: '#22d3ee', agent: '#c084fc', idee: '#fde047',
+  memoire: '#8b9cff', projet: '#fb923c', journal: '#22d3ee', agent: '#c084fc', idee: '#fde047', tache: '#5eead4',
 };
 const HUBS = [
   ['entreprise', 'Entreprises', 'store', 'entreprises'], ['personne', 'Personnes', 'users', 'personnes'], ['reponse', 'Réponses', 'inbox', 'reponses'],
   ['message', 'Messages à envoyer', 'send', 'messages'], ['memoire', 'Mémoire', 'library', 'memoire'], ['journal', 'Journal', 'notebook-pen', 'journal'], ['agent', 'Agents', 'bot', 'agents'],
-  ['projet', 'Projets', 'folder-kanban', 'memoire'],
+  ['projet', 'Projets', 'folder-kanban', 'projets'], ['tache', 'Tâches', 'circle-check', 'taches'],
 ];
 const cle = (t) => String(t || '').trim().toLowerCase();
 function groupeNote(n) {
@@ -682,8 +811,9 @@ function construireGraphe() {
   for (const a of AGENTS) { const id = 'n:' + cle(a.id); if (!N.has(id)) { ajouter(id, a.id, 'agent', 'agent', { agent: a }); lier('hub:agent', id, true); } else N.get(id).agent = a;
     for (const e of S.entreprises.filter((e) => a.etapes.includes(e.statut))) lier(id, 'e:' + e.id); }
   lier('n:agence sites vitrines', 'hub:entreprise');
+  for (const t of ouvertes()) { ajouter('t:' + t.id, t.titre, 'tache', 'tache', { data: t }); lier('hub:tache', 't:' + t.id, true); if (t.projet) lier('t:' + t.id, 'n:' + cle(t.projet)); }
   // idées jetées dans le cerveau depuis la barre « Demander au cerveau »
-  const LOBES = ['entreprise', 'personne', 'reponse', 'message', 'memoire', 'journal', 'agent', 'projet'];
+  const LOBES = ['entreprise', 'personne', 'reponse', 'message', 'memoire', 'journal', 'agent', 'projet', 'tache'];
   for (const i of S.idees) {
     const region = LOBES.includes(i.region) ? i.region : 'memoire';
     ajouter('i:' + i.id, i.titre || 'Idée', 'idee', 'idee', { data: i, regionIdee: region });
@@ -711,10 +841,10 @@ function panneauNoeud(n) {
   const tete = (lab) => `<header><span class="lg"><i style="background:${GROUPES[n.g][1]}"></i>${lab}</span></header>`;
   if (n.quoi === 'centre') {
     const lignes = HUBS.map(([g, titre, icone, vue]) => {
-      const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length, projet: S.notes.filter((x) => (x.tags || []).includes('projet')).length }[g];
+      const nb = { entreprise: S.entreprises.length, personne: S.personnes.length, reponse: S.reponses.length, message: S.messages.filter((m) => m.statut !== 'envoye').length, memoire: S.notes.filter((x) => x.dossier !== 'Journal').length, journal: new Set(S.journal.map((j) => j.date)).size, agent: AGENTS.length, projet: S.notes.filter((x) => (x.tags || []).includes('projet')).length, tache: ouvertes().length }[g];
       return `<li class="click" data-noeud="hub:${g}"><i data-lucide="${icone}" style="color:${GROUPES[g][1]}"></i><div class="info"><b>${titre}</b></div><span class="mono">${nb}</span></li>`;
     }).join('');
-    return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un neurone pour y aller. Glissez, deux doigts ou flèches pour faire le tour du cerveau à 360°, pincez ou Z / S pour avancer dedans.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
+    return `${tete('Le Cerveau')}<div class="pad" style="display:grid;gap:6px"><b style="font-size:16px">Tout au même endroit</b><p class="muted">Chaque point est une donnée de ta vie : projets, tâches, idées, notes, journal, clients de l'agence. Cliquez sur une base pour voir ce qu'elle contient, sur un neurone pour y aller. Glissez, deux doigts ou flèches pour faire le tour du cerveau à 360°, pincez ou Z / S pour avancer dedans.</p></div><ul class="rows" style="border-top:1px solid var(--line)">${lignes}</ul>`;
   }
   if (n.quoi === 'hub') {
     const enfants = G.cur.aretes.filter(([a, b]) => a === n && !b.hub).map(([, b]) => b);
@@ -729,6 +859,8 @@ function panneauNoeud(n) {
   if (n.quoi === 'personne') { const p = n.data; return `${tete('Personne')}<div class="pad" style="display:grid;gap:8px"><div class="who">${av(p.id, p.nom)}<div><b>${esc(p.nom)}</b><small>${esc([p.role, nomEnt(p.entreprise)].filter(Boolean).join(', '))}</small></div></div><p class="muted">${esc([p.plateforme && `${p.plateforme} ${p.pseudo || ''}`, p.telephone, p.email].filter(Boolean).join(' · '))}</p>${p.notes ? `<p>${esc(p.notes)}</p>` : ''}</div>`; }
   if (n.quoi === 'reponse') return `${tete('Réponse')}<div class="pad">${blocReponse(n.data).replace('<details class="card reponse">', '<details class="card reponse" open>')}</div>`;
   if (n.quoi === 'message') return `${tete('Message à envoyer')}<div class="pad">${blocMessage(n.data)}</div>`;
+  if (n.quoi === 'tache') { const t = n.data; return `${tete('Tâche')}<div class="pad" style="display:grid;gap:10px"><b style="font-size:16px">${esc(t.titre)}</b><div style="display:flex;gap:8px;flex-wrap:wrap">${t.projet ? `<span class="tag">${esc(t.projet)}</span>` : ''}${echeanceTache(t)}</div><div><button class="btn primary" type="button" data-tache="${esc(t.id)}"><i data-lucide="check"></i>C'est fait</button></div></div>`; }
+  if (n.quoi === 'note' && n.g === 'projet') { const d = n.data; const tt = tachesDe(d.titre); return `${tete('Projet')}<div class="pad" style="display:grid;gap:10px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b style="font-size:16px">${esc(d.titre)}</b><span class="tag ${STATUT_TAG[d.statut] || ''}">${esc(d.statut || 'à classer')}</span></div>${d.resume ? `<p class="muted">${esc(d.resume)}</p>` : ''}${d.prochaine ? `<p><b>Prochaine étape :</b> ${esc(d.prochaine)}</p>` : ''}${tt.length ? `<ul class="rows taches">${tt.map((x) => ligneTache(x, false)).join('')}</ul>` : ''}<div><button class="btn" type="button" data-projet="${esc(d.titre)}"><i data-lucide="file-text"></i>Lire la fiche</button></div></div>`; }
   if (n.quoi === 'jour') return `${tete('Journal')}<div class="pad" style="display:grid;gap:10px"><b>${esc(n.titre)}</b><p class="muted">Tout ce qui a été dit et fait ce jour-là.</p><div><button class="btn primary" type="button" data-jour="${esc(n.date)}"><i data-lucide="notebook-pen"></i>Lire le journal</button></div></div>`;
   if (n.quoi === 'idee') { const d = n.data; return `${tete('Idée')}<div class="md"><h1>${esc(d.titre)}</h1>${mdToHtml(d.texte || '')}<p class="muted" style="font-size:12px">Jetée dans le cerveau ${quand(d.date)}, rangée dans « ${esc((HUBS.find((h) => h[0] === n.regionIdee) || [])[1] || 'Mémoire')} ». Les agents la recopient dans le coffre à la prochaine session.</p></div>`; }
   if (n.agent && !n.data) return `${tete('Agent')}<div class="pad"><b>${n.agent.id}, ${n.agent.role}</b><p class="muted" style="margin-top:6px">${n.agent.fait}</p></div>`;
@@ -741,15 +873,15 @@ function vueCerveau() {
   G.cur = data;
   const sel = data.noeuds.find((n) => n.id === S.note) || data.noeuds[0];
   return `<div class="graph-wrap">
-    <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau en 3D : toutes les bases de l'agence reliées. Glissez pour tourner, deux doigts pour vous déplacer, pincez pour avancer, touches ZQSD ou flèches pour voler, cliquez sur un neurone pour y aller et l'ouvrir."></canvas>
+    <div class="graph" id="graph"><canvas id="cv" tabindex="0" role="img" aria-label="Le cerveau en 3D : tous les projets, tâches, idées et clients reliés. Glissez pour tourner, deux doigts pour vous déplacer, pincez pour avancer, touches ZQSD ou flèches pour voler, cliquez sur un neurone pour y aller et l'ouvrir."></canvas>
       <div class="aide" title="Clic droit + glisser : décaler la vue">Glisser ou flèches : tour à 360° · Pincer ou Z / S : avancer · Clic : aller au neurone</div>
       <div class="tools"><button class="icon" type="button" id="g-visite" aria-label="Visite guidée" title="Visite guidée" aria-pressed="false"><i data-lucide="play"></i></button><button class="icon" type="button" id="g-son" aria-label="Son des synapses" title="Son des synapses" aria-pressed="false"><i data-lucide="volume-x"></i></button><button class="icon" type="button" id="g-auto" aria-label="Rotation automatique" title="Rotation automatique"><i data-lucide="rotate-3d"></i></button><button class="icon" type="button" id="g-zoomin" aria-label="Avancer"><i data-lucide="plus"></i></button><button class="icon" type="button" id="g-zoomout" aria-label="Dézoomer"><i data-lucide="minus"></i></button><button class="icon" type="button" id="g-reset" aria-label="Recentrer"><i data-lucide="scan"></i></button><button class="icon" type="button" id="g-plein" aria-label="Plein écran" title="Plein écran"><i data-lucide="maximize"></i></button></div>
       <div class="temps" id="g-temps-zone" hidden><i data-lucide="clock-3"></i><input type="range" id="g-temps" min="0" max="0" step="1" aria-label="Remonter le temps"><span id="g-temps-txt"></span></div>
       <div class="chat" id="chat">
         <div class="bulle" id="bulle" hidden></div>
         <form class="barre" id="barre">
-          <div class="modes" role="group" aria-label="Que faire"><button type="button" data-mode="question" aria-pressed="${S.chatMode !== 'idee'}"><i data-lucide="message-circle"></i>Demander</button><button type="button" data-mode="idee" aria-pressed="${S.chatMode === 'idee'}"><i data-lucide="lightbulb"></i>Ajouter une idée</button></div>
-          <input id="chat-q" autocomplete="off" placeholder="${S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? montre-moi la boulangerie…'}" aria-label="Message au cerveau">
+          <div class="modes" role="group" aria-label="Que faire"><button type="button" data-mode="question" aria-pressed="${S.chatMode === 'question'}"><i data-lucide="message-circle"></i>Demander</button><button type="button" data-mode="idee" aria-pressed="${S.chatMode === 'idee'}"><i data-lucide="lightbulb"></i>Ajouter une idée</button><button type="button" data-mode="tache" aria-pressed="${S.chatMode === 'tache'}"><i data-lucide="circle-check"></i>Tâche</button></div>
+          <input id="chat-q" autocomplete="off" placeholder="${(S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : S.chatMode === 'tache' ? 'Une chose à faire : le cerveau la range dans le bon projet' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? quoi faire aujourd\'hui ?')}" aria-label="Message au cerveau">
           <button class="go" type="submit" aria-label="Envoyer"><i data-lucide="arrow-up"></i></button>
         </form>
       </div>
@@ -778,7 +910,7 @@ function demarrerGraphe() {
   const AX = { x: 560, y: 400, z: 470 };
   const DIR = {
     entreprise: [0.86, -0.12, 0.48], personne: [0.66, 0.5, 0.22], reponse: [0.5, 0.22, -0.8], message: [0.62, -0.58, -0.3],
-    agent: [-0.66, 0.42, 0.44], memoire: [-0.82, -0.28, -0.24], journal: [-0.28, -0.72, 0.56], projet: [0.04, -0.9, -0.36],
+    agent: [-0.66, 0.42, 0.44], memoire: [-0.82, -0.28, -0.24], journal: [-0.28, -0.72, 0.56], projet: [0.04, -0.9, -0.36], tache: [0.42, -0.8, 0.3],
   };
   const SOUS = { '': [0, 0, 0], Agence: [0, -0.22, 0.2], Projets: [0, 0.22, 0.12], Personnes: [0, 0.05, -0.28] };
   const regionDe = (n) => (n.id === 'hub:cerveau' ? null : n.hub ? n.g : n.quoi === 'idee' ? n.regionIdee : n.quoi === 'note' ? (n.g === 'agent' ? 'agent' : n.g === 'projet' ? 'projet' : 'memoire') : n.quoi === 'agent' ? 'agent' : n.quoi === 'jour' ? 'journal' : n.g);
@@ -913,7 +1045,7 @@ function demarrerGraphe() {
   const heure = new Date().getHours();
   const NUIT = heure >= 23 || heure < 6;
   // neurones en activité : clients sur lesquels un agent travaille, messages qui attendent d'être envoyés
-  for (const n of noeuds) n.actif = (n.quoi === 'entreprise' && ['brief', 'build', 'verification', 'modifs'].includes(n.data.statut)) || (n.quoi === 'message' && n.data.statut !== 'envoye') || (n.quoi === 'agent' || n.g === 'agent' && !n.hub ? S.entreprises.some((e) => (n.agent?.etapes || AGENTS.find((a) => a.id === n.titre)?.etapes || []).includes(e.statut)) : false) || (n.quoi === 'idee' && Date.now() - new Date(n.data.date || 0) < 86400000);
+  for (const n of noeuds) n.actif = (n.quoi === 'entreprise' && ['brief', 'build', 'verification', 'modifs'].includes(n.data.statut)) || (n.quoi === 'message' && n.data.statut !== 'envoye') || (n.quoi === 'agent' || n.g === 'agent' && !n.hub ? S.entreprises.some((e) => (n.agent?.etapes || AGENTS.find((a) => a.id === n.titre)?.etapes || []).includes(e.statut)) : false) || (n.quoi === 'idee' && Date.now() - new Date(n.data.date || 0) < 86400000) || (n.quoi === 'tache' && n.data.echeance && new Date(n.data.echeance) - aujourdhui <= JOUR) || (n.quoi === 'note' && n.g === 'projet' && n.data.activite && Date.now() - new Date(n.data.activite) < 2 * 86400000);
   // son des synapses (désactivé par défaut)
   const son = (n) => {
     if (!G.audio || !G.son) return;
@@ -1268,9 +1400,11 @@ function contexteCerveau() {
   const idees = S.idees.map((i) => `- ${dateFr(i.date)} : ${i.titre}`).join('\n');
   const dernierJour = [...S.journal].sort((a, b) => String(b.date).localeCompare(String(a.date)) || (b.partie || 1) - (a.partie || 1))[0];
   const journal = dernierJour ? String(dernierJour.contenu).slice(-9000) : '';
-  const rap = [...S.rapports].sort((x, y) => String(y.date || y.id).localeCompare(String(x.date || x.id)))[0];
+  const rap = dernierRapport();
+  const projetsTxt = projetsDe().map((p) => `- ${p.titre} (${p.statut || '?'}, ${p.type || ''}) : ${p.resume || ''}${p.prochaine ? ' Prochaine étape : ' + p.prochaine : ''}${p.activite ? ' Dernière activité : ' + p.activite : ''}`).join('\n');
+  const tachesTxt = ouvertes().map((t) => `- ${t.titre}${t.projet ? ' [' + t.projet + ']' : ''}${t.echeance ? ' pour le ' + t.echeance : ''}`).join('\n');
   const rapport = rap ? `${rap.date || rap.id} : ${rap.titre || ''}\n${(rap.a_faire || []).map((x) => '- ' + x).join('\n')}\n${String(rap.texte || '').slice(0, 3000)}` : '(aucun)';
-  return `MÉMOIRE\n${memoire.slice(0, 7000)}\n\nNOTES\n${notes.slice(0, 12000)}\n\nENTREPRISES\n${entreprises || '(aucune)'}\n\nPERSONNES\n${personnes || '(aucune)'}\n\nRÉPONSES DES CLIENTS\n${reponses || '(aucune)'}\n\nMESSAGES\n${messages || '(aucun)'}\n\nIDÉES\n${idees || '(aucune)'}\n\nDERNIER RAPPORT DU MATIN\n${rapport}\n\nFIN DU DERNIER JOURNAL (${dernierJour?.date || '-'})\n${journal}\n\nNEURONES DISPONIBLES (id | titre | type)\n${ids}`;
+  return `MÉMOIRE\n${memoire.slice(0, 7000)}\n\nNOTES\n${notes.slice(0, 12000)}\n\nENTREPRISES\n${entreprises || '(aucune)'}\n\nPERSONNES\n${personnes || '(aucune)'}\n\nRÉPONSES DES CLIENTS\n${reponses || '(aucune)'}\n\nMESSAGES\n${messages || '(aucun)'}\n\nIDÉES\n${idees || '(aucune)'}\n\nPROJETS\n${projetsTxt || '(aucun)'}\n\nTÂCHES À FAIRE\n${tachesTxt || '(aucune)'}\n\nDERNIER RAPPORT DU MATIN\n${rapport}\n\nFIN DU DERNIER JOURNAL (${dernierJour?.date || '-'})\n${journal}\n\nNEURONES DISPONIBLES (id | titre | type)\n${ids}`;
 }
 S.chat = [];
 S.chatMode = 'question';
@@ -1286,12 +1420,15 @@ async function envoyerAuCerveau(texte) {
   const sample = window.claude?.use ? await window.claude.use('sample').catch(() => null) : null;
   try {
     if (!sample) {
+      if (mode === 'tache') { await ajouterTache({ titre: texte.slice(0, 140) }); bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><p>Tâche ajoutée.</p>`; return; }
       if (mode !== 'idee') throw { code: 'indisponible' };
       await ajouterIdee({ titre: texte.slice(0, 70), texte, region: 'memoire', liens: [] });
       bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><p>Idée ajoutée dans la Mémoire.</p>`;
       return;
     }
-    const regles = mode === 'idee'
+    const regles = mode === 'tache'
+      ? `Matheo dicte une tâche à faire. Range-la. Réponds UNIQUEMENT en JSON : {"titre": "la tâche, courte et à l'infinitif (max 100 caractères)", "projet": le titre exact d'un projet de la liste PROJETS ou "" si aucun ne colle, "echeance": "AAAA-MM-JJ" seulement si Matheo donne une date ou un délai (aujourd'hui = ${new Date().toISOString().slice(0, 10)}), sinon "", "reponse": "une phrase pour dire où tu l'as rangée"}`
+      : mode === 'idee'
       ? `Matheo jette une idée dans son cerveau. Range-la. Réponds UNIQUEMENT en JSON : {"titre": "titre court (max 60 caractères)", "texte": "l'idée reformulée clairement, en français, sans rien inventer", "region": une de "entreprise" | "personne" | "reponse" | "message" | "memoire" | "journal" | "agent" | "projet", "liens": [ids de 0 à 4 neurones existants vraiment liés, pris dans la liste NEURONES DISPONIBLES], "reponse": "une phrase pour dire où tu l'as rangée et pourquoi"}`
       : `Matheo pose une question à son cerveau. Réponds en français simple, court (maximum 8 lignes), en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Pas de tiret long. Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse, en Markdown léger", "neurones": [ids des neurones concernés, pris dans la liste NEURONES DISPONIBLES, 0 à 8]}`;
     const entree = [
@@ -1302,7 +1439,12 @@ async function envoyerAuCerveau(texte) {
     ];
     const r = await sample.json(entree, { cache: false, modelTier: 'default' });
     const ids = new Set((G.cur?.noeuds || []).map((n) => n.id));
-    if (mode === 'idee') {
+    if (mode === 'tache') {
+      const pr = projetsDe().find((p) => cle(p.titre) === cle(r.projet));
+      const id = await ajouterTache({ titre: String(r.titre || texte).slice(0, 140), projet: pr ? pr.titre : '', echeance: /^\d{4}-\d{2}-\d{2}$/.test(r.echeance || '') ? r.echeance : '', source: 'Matheo (cerveau)' });
+      bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><div class="md">${mdToHtml(r.reponse || 'Tâche ajoutée.')}</div>`;
+      G.attendre = 't:' + id;
+    } else if (mode === 'idee') {
       const liens = (r.liens || []).filter((x) => ids.has(x));
       const id = await ajouterIdee({ titre: String(r.titre || texte).slice(0, 80), texte: String(r.texte || texte), region: r.region, liens });
       bulle.innerHTML = fermerBtn + `<div class="q">${esc(texte)}</div><div class="md">${mdToHtml(r.reponse || 'Idée rangée.')}</div>`;
@@ -1483,6 +1625,10 @@ document.addEventListener('click', (ev) => {
   const t = ev.target;
   const cm = t.closest('[data-copy-msg]');
   if (cm) { const m = S.messages.find((x) => x.id === cm.dataset.copyMsg); if (m) copier(m.texte, cm); return; }
+  const ta = t.closest('[data-tache]');
+  if (ta) return basculerTache(ta.dataset.tache, ta);
+  const pj = t.closest('[data-projet]');
+  if (pj) { S.memo = cle(pj.dataset.projet); location.hash = 'memoire'; if (S.vue === 'memoire') render(); return; }
   const se = t.closest('[data-sent]');
   if (se) return marquerEnvoye(se.dataset.sent, se);
   const me = t.closest('[data-memo]');
@@ -1495,7 +1641,7 @@ document.addEventListener('click', (ev) => {
   if (jr) { S.jour = jr.dataset.jour; if (S.vue !== 'journal') location.hash = 'journal'; else render(); return; }
   if (t.closest('[data-fermer-bulle]')) { $('#bulle').hidden = true; G.lumiere = null; return; }
   const md = t.closest('[data-mode]');
-  if (md) { S.chatMode = md.dataset.mode; document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b === md))); $('#chat-q').placeholder = S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? montre-moi la boulangerie…'; $('#chat-q').focus(); return; }
+  if (md) { S.chatMode = md.dataset.mode; document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b === md))); $('#chat-q').placeholder = (S.chatMode === 'idee' ? 'Une idée, une note, un lien : le cerveau la range tout seul' : S.chatMode === 'tache' ? 'Une chose à faire : le cerveau la range dans le bon projet' : 'Demande au cerveau : qu\'est-ce qu\'on a décidé ? quoi faire aujourd\'hui ?'); $('#chat-q').focus(); return; }
   const mi = t.closest('[data-mission]');
   if (mi) { S.mission = mi.dataset.mission; S.confirmer = false; S.envoi = null; return render(); }
   if (t.closest('#m-prep')) { S.confirmer = true; S.envoi = null; return render(); }
@@ -1510,7 +1656,16 @@ document.addEventListener('keydown', (ev) => {
 });
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
-document.addEventListener('submit', (ev) => {
+document.addEventListener('submit', async (ev) => {
+  if (ev.target.id === 'f-tache') {
+    ev.preventDefault();
+    const f = new FormData(ev.target);
+    const titre = String(f.get('titre') || '').trim();
+    if (!titre) return;
+    try { await ajouterTache({ titre, projet: f.get('projet'), echeance: f.get('echeance') }); toast('Tâche ajoutée'); }
+    catch (err) { toast(err?.code === 'indisponible' ? 'Base indisponible ici.' : 'Enregistrement impossible, réessayez.'); }
+    return;
+  }
   if (ev.target.id !== 'barre') return;
   ev.preventDefault();
   const q = $('#chat-q'); const v = q.value; q.value = '';
@@ -1531,7 +1686,7 @@ $('#q').addEventListener('input', (ev) => {
 });
 $('#q').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && S.vue === 'cerveau' && G.lumiere?.size) G.focus?.([...G.lumiere][0], true); });
 
-const VUES = ['cerveau', 'cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'journal', 'missions'];
+const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'cockpit', 'entreprises', 'personnes', 'reponses', 'messages', 'agents', 'memoire', 'journal', 'missions'];
 function route() { const h = location.hash.slice(1) === 'graphe' ? 'cerveau' : location.hash.slice(1); S.vue = VUES.includes(h) ? h : 'cerveau'; fermer(); render(); }
 addEventListener('hashchange', route);
 
@@ -1557,7 +1712,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -1565,7 +1720,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }

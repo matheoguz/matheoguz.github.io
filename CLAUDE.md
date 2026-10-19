@@ -44,8 +44,10 @@ Collections :
 - `personnes/<id>` : `{nom, role, entreprise: <slug>, plateforme, pseudo, telephone, email, notes}`. **Uniquement ici**, jamais dans le dépôt.
 - `reponses/<id>` : chaque message reçu d'un client, texte complet : `{entreprise, date, type: brief|retour|message|paiement, resume, contenu}`. **Uniquement ici.**
 - `messages/<id>` : chaque message à envoyer par Matheo : `{entreprise, date, objet, texte, statut: a_envoyer|envoye}`. Matheo coche « Je l'ai envoyé » dans la page ; relire ce statut avant d'avancer un client.
-- `rapports/<AAAA-MM-JJ>` : rapport du matin écrit par le Night run `{date, titre, texte, a_faire}`, affiché en haut du cockpit.
+- `taches/<id>` : toutes les choses à faire, **tous projets confondus** `{titre, projet: <titre de la fiche projet>, echeance, statut: a_faire|fait, fait_le, date, source}`. Matheo en ajoute depuis la page (rubrique Tâches, ou mode « Tâche » du chat) ; Claude coche ce qu'il a fini et ajoute ce qui reste.
+- `rapports/<AAAA-MM-JJ>` : rapport du matin écrit par le Night run `{date, titre, texte, a_faire}`, affiché en haut de la rubrique Aujourd'hui.
 - `idees/<id>` : idées que Matheo jette depuis la barre « Demander au cerveau » `{titre, texte, region, liens, date}`. **Au début de chaque session**, les lire et les recopier dans le coffre (`Repos-/cerveau/Idées/AAAA-MM-JJ titre.md`, avec `tags: [idee]` et les liens en `[[...]]`), puis mettre `importee: true` sur le document.
+- Les **projets** sont des notes (`notes/<id>` avec `tags` contenant `projet`) qui portent en plus `type, statut, resume, prochaine, depot, activite, jours_actifs` (tirés de la fiche `Repos-/cerveau/Projets/<projet>.md` et du journal). Rubriques Aujourd'hui et Projets.
 - `notes/<id>` et `journal/<date>` : copie du coffre `Repos-/cerveau` (toutes les notes, dont la mémoire de l'agence ; le journal jour par jour). C'est la rubrique Mémoire, Graphe et Journal.
 
 **Synchroniser** (à la fin de chaque skill de l'agence) :
@@ -54,10 +56,16 @@ Collections :
 3. Un seul `ArtifactData batch` : `set` avec `file_path` pour chaque fichier, `if_version` pour les documents qui existent déjà, plus les personnes / réponses / messages nouveaux ou modifiés.
 Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec tirets. Le client `exemple-*` est fictif (`test: true`).
 
-## Le cerveau de Matheo (mémoire, journal : ne rien oublier)
-- Coffre Obsidian privé : `Repos-/cerveau/` (dépôt privé `matheoguz/Repos-`). `MEMOIRE.md` = le résumé vivant de tout ; `Journal/AAAA-MM-JJ.md` = toute la conversation, écrite automatiquement.
-- Hooks (`.claude/settings.json` + `.claude/hooks/cerveau.sh`) : après chaque réponse, avant une compression et en fin de session, `journal.mjs` recopie la conversation et pousse sur GitHub ; au démarrage et après compression, `rappel.mjs` remet `MEMOIRE.md` et la fin du journal dans le contexte. Il faut que `Repos-` soit dans la session.
-- **À faire par Claude** : mettre à jour `MEMOIRE.md` (et `Décisions.md`, les notes de projet) dès qu'une décision, une préférence ou un état change. Ne pas éditer le journal à la main.
-- Synchro vers le Cerveau (rubriques Graphe et Journal) : `node ../Repos-/cerveau/.outils/vers-cerveau.mjs <scratchpad>/vault`, puis `ArtifactData batch` sur `notes` et `journal` (avec `if_version` pour les documents existants).
-- **Night run** (tâche planifiée « Night run du Cerveau », chaque matin 6h52, Paris ; les dépôts `Repos-` et `matheoguz.github.io` doivent lui être attachés) : importe les idées, fait `/point-du-jour`, met à jour `MEMOIRE.md`, écrit le rapport du matin (journal + collection `rapports` du Cerveau, carte en haut du cockpit) et synchronise le Cerveau.
+## Le cerveau de Matheo (à faire dans chaque session)
+Tout ce qu'on fait doit finir dans **le Cerveau** : coffre privé `matheoguz/Repos-` (dossier `cerveau/`) + page privée https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (outil `ArtifactData`).
+- **Au début** : lire `../Repos-/cerveau/MEMOIRE.md` (le hook `rappel` le fait si `Repos-` est dans la session), puis les collections `taches` et `idees` de la page.
+- **Pendant** : le projet en cours a sa fiche dans `../Repos-/cerveau/Projets/` (frontmatter `statut`, `prochaine`, `chemins`). Une décision → `Décisions.md` + `MEMOIRE.md`.
+- **À la fin de chaque tâche** :
+  1. mettre à jour la fiche du projet (statut, prochaine étape) ; nouveau projet = nouvelle fiche, avec ses `chemins` ;
+  2. cocher les tâches faites (`taches/<id>` : `statut: "fait"`, `fait_le`) et créer celles qui restent (`{titre, projet, echeance, statut: "a_faire", date, source: "Claude"}`) ;
+  3. si le hook du journal ne tourne pas (pas de `Journal/<aujourd'hui>.md`), le lancer à la main :
+     `echo '{"session_id":"<id>","transcript_path":"<~/.claude/projects/…/<id>.jsonl>","cwd":"'$PWD'"}' | node ../Repos-/cerveau/.outils/journal.mjs` ;
+  4. synchroniser la page : `node ../Repos-/cerveau/.outils/vers-cerveau.mjs <scratchpad>/vault`, `ArtifactData list` pour les `version`, puis `ArtifactData batch` avec les fichiers du `manifeste.json` (50 au plus par batch, `if_version` pour les documents existants).
+- Brancher un nouveau dépôt : `bash ../Repos-/cerveau/.outils/brancher.sh <dossier-du-dépôt>`.
+- **Night run** (tâche planifiée « Night run du Cerveau », chaque matin 6h52, Paris ; les dépôts `Repos-` et `matheoguz.github.io` doivent lui être attachés) : importe les idées, fait `/point-du-jour`, met à jour `MEMOIRE.md`, écrit le rapport du matin (journal + collection `rapports`, en haut de la rubrique Aujourd'hui) et synchronise le Cerveau.
 - Rubrique Missions du Cerveau : Matheo peut lancer une session Claude Code depuis la page (connecteur Claude Code Remote, titre « Cerveau · … »).
