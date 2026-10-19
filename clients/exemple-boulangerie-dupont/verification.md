@@ -1,4 +1,4 @@
-# Vérification — exemple-boulangerie-dupont (2026-10-18)
+# Vérification — exemple-boulangerie-dupont (2026-10-19)
 
 **✅ Tout est bon**
 
@@ -18,7 +18,7 @@
 - ✅ Lien vers les mentions légales
 - ✅ Mentions légales complètes (responsable, SIRET)
 - ✅ Fiche Google (données structurées LocalBusiness)
-- ✅ Poids de la page : 17 Ko
+- ✅ Poids de la page : 18 Ko
 - ✅ Formulaire de contact (formule standard)
 - ✅ Aucun avis inventé
 - ✅ Pas de débordement sur mobile

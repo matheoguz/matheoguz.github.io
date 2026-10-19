@@ -34,14 +34,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .btn i{font-size:1.15em}
 header.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 header.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px}
-.logo{font-family:var(--head);font-weight:700;font-size:1.2rem;text-decoration:none;letter-spacing:-.02em}
+.logo{font-family:var(--head);font-weight:700;font-size:1.2rem;text-decoration:none;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 header.nav nav{display:flex;gap:28px;font-size:.92rem;color:var(--muted)}
 header.nav nav a{text-decoration:none}
 header.nav nav a:hover{color:var(--ink)}
 .hero{padding:48px 0 56px}
 .hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
 .eyebrow{font-size:.85rem;font-weight:600;color:var(--accent);margin-bottom:18px}
-.hero h1{font-size:clamp(2.2rem,3.6vw,3.2rem)}
+.hero h1{font-size:clamp(2rem,3.2vw,2.9rem)}
 .hero p.sub{font-size:1.15rem;color:var(--muted);margin:22px 0 32px;max-width:46ch}
 .actions{display:flex;gap:12px;flex-wrap:wrap}
 .hero figure{aspect-ratio:4/5;max-height:640px;border-radius:16px;overflow:hidden;background:var(--surface)}
@@ -123,7 +123,7 @@ footer.pied a{color:var(--muted)}
   .row{grid-template-columns:1fr}
   form{padding:22px}
 }
-@media(max-width:420px){header.nav .btn{padding:10px 16px;font-size:.88rem}}
+@media(max-width:420px){header.nav .btn{padding:10px 16px;font-size:.88rem}.logo{font-size:1rem}header.nav .wrap{gap:12px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Boulangerie Dupont","description":"Boulangerie artisanale à Metz : pains au levain, viennoiseries pur beurre et pâtisseries maison. Ouvert du mardi au dimanche.","telephone":"+33387000000","email":"contact@boulangerie-dupont.fr","address":{"@type":"PostalAddress","streetAddress":"8 rue des Jardins","addressLocality":"Metz","postalCode":"57000","addressCountry":"FR"},"image":"https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fit=crop&w=1600&q=80"}</script>
@@ -144,12 +144,12 @@ footer.pied a{color:var(--muted)}
     <p class="sub">Pains au levain, viennoiseries pur beurre et pâtisseries maison, préparés sur place depuis trois générations dans le quartier des Jardins.</p>
     <div class="actions"><a href="tel:+33387000000" class="btn"><i class="ph ph-phone" aria-hidden="true"></i>Appeler</a><a href="#services" class="btn line">Nos produits</a></div>
   </div>
-  <figure><img src="https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&amp;fit=crop&amp;w=1600&amp;q=80" alt="Pains alignés sur les étagères de la boutique" loading="lazy" decoding="async"></figure>
+  <figure><img src="https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&amp;fit=crop&amp;w=1600&amp;q=80" alt="Pains alignés sur les étagères de la boutique" fetchpriority="high" decoding="async"></figure>
 </div></section>
 
 <div class="faits"><div class="wrap">
   <div><i class="ph ph-map-pin" aria-hidden="true"></i><p><b>8 rue des Jardins</b><a href="https://www.google.com/maps/search/?api=1&amp;query=Boulangerie%20Dupont%208%20rue%20des%20Jardins%2057000%20Metz" target="_blank" rel="noopener">57000 Metz, voir l'itinéraire</a></p></div>
-  <div><i class="ph ph-clock" aria-hidden="true"></i><p><b>Horaires</b><span>Mardi au samedi : 6h30 - 19h30</span></p></div>
+  <div><i class="ph ph-clock" aria-hidden="true"></i><p><b>Horaires</b><span>Mardi au samedi : 6h30 - 19h30<br>Dimanche : 7h - 13h</span></p></div>
   <div><i class="ph ph-phone" aria-hidden="true"></i><p><b>03 87 00 00 00</b><a href="tel:+33387000000">Appeler maintenant</a></p></div>
 </div></div>
 
@@ -211,7 +211,10 @@ footer.pied a{color:var(--muted)}
       <div><dt><i class="ph ph-share-network" aria-hidden="true"></i>Réseaux</dt><dd><a href="https://instagram.com/" target="_blank" rel="noopener"><i class="ph ph-instagram-logo" aria-hidden="true"></i> Instagram</a></dd></div>
     </dl>
   </div>
-  <form action="mailto:contact@boulangerie-dupont.fr" method="post" enctype="text/plain">
+  <form action="https://formsubmit.co/contact@boulangerie-dupont.fr" method="post">
+    <input type="hidden" name="_subject" value="Nouveau message depuis le site Boulangerie Dupont">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <h3>Écrivez-nous</h3>
     <div class="row"><label>Nom<input name="nom" required autocomplete="name"></label><label>Téléphone<input name="telephone" type="tel" autocomplete="tel"></label></div>
     <label>E-mail<input name="email" type="email" required autocomplete="email"></label>

@@ -26,9 +26,14 @@ export const BANQUES = {
     galerie: [{ id: 'photo-1414235077428-338989a2e8c0', alt: 'Une assiette de la maison' }],
   },
   coiffeur: {
-    hero: { id: 'photo-1600948836101-f9ffda59d250', alt: "L'intérieur du salon" },
+    hero: { id: 'photo-1600948836101-f9ffda59d250', alt: 'Salon de coiffure' },
     about: { id: 'photo-1634449571010-02389ed0f9b0', alt: 'Coiffeuse en pleine coupe' },
-    galerie: [{ id: 'photo-1695527081848-1e46c06e6458', alt: 'Coloration en cours' }],
+    galerie: [
+      { id: 'photo-1695527081848-1e46c06e6458', alt: 'Coloration en cours' },
+      { id: 'photo-1580618672591-eb180b1a973f', alt: 'Brushing au sèche-cheveux et à la brosse ronde' },
+      { id: 'photo-1774660810725-fb04e002003d', alt: 'Coiffure attachée réalisée sur une cliente' },
+      { id: 'photo-1781450090585-1a511b7066d9', alt: 'Postes de coiffage avec fauteuils et miroirs' },
+    ],
   },
   plombier: {
     hero: { id: 'photo-1676210134188-4c05dd172f89', alt: 'Intervention sur un chantier' },
