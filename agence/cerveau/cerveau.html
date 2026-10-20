@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap">
 <style>
 /* Mise en page : barre latérale de rubriques + une seule zone de travail ; la fiche d'une entreprise relie tout (personnes, réponses, messages, historique). */
 :root{
@@ -431,6 +431,84 @@ a.lien{font-weight:500}
 .trans .md{padding-top:0}
 .mission{border-top:1px solid var(--line)}
 .mission summary{cursor:pointer;list-style:none}
+/* Le bureau : les agents en pixel art, dans leur pièce quand ils travaillent, en salle de pause sinon. Un seul décor (bureau de nuit) dans les deux thèmes. */
+.bu-tete .chips{display:flex;flex-wrap:wrap;gap:6px}
+.bu-tete .chips button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
+.bu-tete .chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bu-tete .chips .n{font-size:11px;background:#f97316;color:#fff;border-radius:999px;padding:0 6px}
+.bu-split{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;align-items:start}
+@media (max-width:1050px){.bu-split{grid-template-columns:minmax(0,1fr)}}
+.bureau{--mur:#2b2340;--mur2:#231c35;--sol:#3a3050;--sol2:#332a47;--bois:#8a5634;--bois2:#5e3620;--trait:#110d1a;--pancarte:#1a1426;--orange:#ffb86b;
+  background:#151020;border-radius:14px;padding:12px;color:#f3eefc;position:relative}
+.bu-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.piece{position:relative;min-height:172px;border:3px solid var(--trait);border-radius:4px;padding:40px 8px 10px;
+  background:linear-gradient(var(--mur) 0 26px,var(--mur2) 26px 30px,transparent 30px),repeating-conic-gradient(var(--sol) 0 25%,var(--sol2) 0 50%) 0 0/18px 18px}
+.piece.vide{opacity:.55}
+.piece .pancarte{position:absolute;top:5px;left:8px;font:700 11px/1 'Silkscreen',var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--pancarte);color:var(--orange);border:2px solid var(--orange);padding:3px 6px}
+.piece .fenetre{position:absolute;top:4px;right:8px;width:34px;height:18px;background:linear-gradient(#3b2a6b,#ff8a5b);border:2px solid var(--trait);box-shadow:inset 0 0 0 1px #6b5a9a}
+.postes{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:flex-end;min-height:110px}
+.poste{display:grid;justify-items:center;width:92px;position:relative}
+.poste .chaise{width:26px;height:24px;background:#2a2333;border:2px solid var(--trait);border-radius:4px 4px 0 0;margin-bottom:-6px}
+.bureau-meuble{width:82px;height:22px;background:var(--bois);border:2px solid var(--trait);box-shadow:inset 0 3px 0 #a86c45,inset 0 -4px 0 var(--bois2);position:relative;z-index:2;margin-top:-14px}
+.bureau-meuble .ecran{position:absolute;left:8px;top:-16px;width:22px;height:15px;background:#0d0b14;border:2px solid var(--trait)}
+.bureau-meuble .ecran::after{content:"";position:absolute;inset:2px;background:#2a2640}
+.poste.on .bureau-meuble .ecran::after{background:repeating-linear-gradient(var(--c) 0 2px,transparent 2px 4px);opacity:.85;animation:bu-ecran 1.2s steps(3) infinite}
+.bureau-meuble .tasse{position:absolute;right:8px;top:-7px;width:7px;height:6px;background:#e8e2f2;border:1px solid var(--trait)}
+.bu-agent{position:relative;display:grid;justify-items:center;gap:2px;color:inherit;z-index:3;padding:0;background:none;border:0;cursor:pointer;border-radius:6px;outline-offset:2px}
+.bu-agent:hover,.bu-agent:focus-visible,.bu-agent.hl{z-index:40}
+.bu-sp{width:44px;height:48px;display:block;filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.bu-agent.travail .bu-sp{animation:bu-tape .5s steps(2) infinite}
+.bu-agent.attend .bu-sp{filter:saturate(.45) brightness(.85)}
+.bu-agent.pause .bu-sp{animation:bu-respire 2.4s steps(2) infinite}
+.bu-agent.hl .bu-sp,.bu-agent.sel .bu-sp,.bu-agent:hover .bu-sp{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 6px var(--c))}
+.bu-nom{font:700 10px/1 'Silkscreen',var(--mono);letter-spacing:.04em;background:rgba(17,13,26,.85);border-bottom:2px solid var(--c);padding:2px 4px;color:#fff}
+.bu-bulle{position:absolute;bottom:calc(100% - 2px);left:50%;transform:translateX(-50%);background:#fbf8ff;color:#1b1626;border:2px solid var(--trait);box-shadow:2px 2px 0 var(--trait);font:500 10.5px/1.25 var(--mono);padding:3px 6px;display:flex;gap:4px;align-items:center;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.bu-bulle svg.lucide{width:11px;height:11px;flex:none;color:#c2410c}
+.bu-bulle span{overflow:hidden;text-overflow:ellipsis}
+.bu-bulle::after{content:"";position:absolute;left:50%;bottom:-6px;width:6px;height:6px;background:#fbf8ff;border-right:2px solid var(--trait);border-bottom:2px solid var(--trait);transform:translateX(-50%) rotate(45deg)}
+.bu-bulle.petit{padding:1px 6px;font-weight:700}
+.bu-bulle.ok{color:#17803d}
+.bu-carte{display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);width:250px;text-align:left;background:var(--panel);color:var(--ink);border:1px solid var(--line2);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);padding:10px 12px;font:13px/1.45 var(--sans);white-space:normal;z-index:50}
+.bu-agent:hover .bu-carte,.bu-agent:focus-visible .bu-carte{display:block}
+@media (hover:none){.bu-agent .bu-carte{display:none!important}}
+.bu-carte b{display:block}
+.bu-carte .role{display:block;color:var(--muted);font-size:12px}
+.bu-carte .etat{display:inline-flex;gap:5px;align-items:center;font-size:12px;margin:6px 0 2px}
+.bu-carte p{margin:2px 0}
+.bu-carte small{color:var(--muted);font-size:11.5px;display:block;margin-top:6px}
+.bu-dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.bu-dot.travail{background:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.25);animation:bu-pulse 1.4s ease-in-out infinite}
+.bu-dot.attend{background:#eab308}.bu-dot.fait{background:#22c55e}
+.piece.pause{grid-column:1/-1;min-height:120px}
+.piece.pause .postes{justify-content:flex-start;padding-left:120px}
+.meubles{position:absolute;left:10px;bottom:10px;display:flex;gap:8px;align-items:flex-end}
+.m-cafe{width:22px;height:34px;background:#5b5f6e;border:2px solid var(--trait);box-shadow:inset 0 6px 0 #7b8090,inset -4px 0 0 #474a57;position:relative}
+.m-cafe::after{content:"";position:absolute;left:6px;top:12px;width:6px;height:5px;background:#ff6b6b}
+.m-plante{width:18px;height:30px;background:radial-gradient(circle at 50% 35%,#4ade80 0 7px,#15803d 8px 9px,transparent 10px),linear-gradient(transparent 18px,#9a5b34 18px)}
+.m-canape{width:58px;height:20px;background:#b45309;border:2px solid var(--trait);box-shadow:inset 0 5px 0 #d97706;border-radius:4px 4px 0 0}
+.bu-agent.pause::before{content:"z";position:absolute;right:-4px;top:-6px;font:700 10px 'Silkscreen',var(--mono);color:#c4b5fd;animation:bu-z 2.4s linear infinite}
+.bu-vide{font:12px var(--mono);color:#b9aecf;padding:4px 2px}
+.bu-legende{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:#c9bfdc}
+.bu-legende span{display:inline-flex;gap:6px;align-items:center}
+.bu-liste li{display:flex;gap:10px;align-items:center;padding:8px 14px;border-top:1px solid var(--line);cursor:pointer}
+.bu-liste li:hover,.bu-liste li:focus-visible{background:var(--sunken)}
+.bu-liste .mini{width:22px;height:24px;flex:none}
+.bu-liste .info{min-width:0;flex:1}
+.bu-liste .info b{font-size:13px}
+.bu-liste .info small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bu-fiche .pad{display:grid;gap:10px}
+.bu-fiche header .mini{width:28px;height:31px;flex:none}
+.bu-fiche .bu-boite{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--sunken)}
+.bu-fiche .bu-boite h3{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.bu-fiche ol{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13px}
+.bu-fiche ol small{display:block;color:var(--muted)}
+@keyframes bu-tape{50%{transform:translateY(-2px)}}
+@keyframes bu-respire{50%{transform:translateY(1px)}}
+@keyframes bu-ecran{33%{background-position:0 2px}66%{background-position:0 4px}}
+@keyframes bu-pulse{50%{box-shadow:0 0 0 6px rgba(249,115,22,0)}}
+@keyframes bu-z{0%{opacity:0;transform:translate(0,4px)}30%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}
+@media (prefers-reduced-motion:reduce){.bureau *{animation:none!important}}
+@media (max-width:560px){.bu-grille{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.postes{gap:6px}.poste{width:58px}.bureau-meuble{width:54px}.bureau-meuble .ecran{left:4px}.bu-sp{width:34px;height:37px}.bu-nom{font-size:9px}.piece.pause .postes{padding-left:0;padding-top:40px}.bu-bulle{max-width:120px}}
 </style>
 
 <div class="app">
@@ -443,6 +521,7 @@ a.lien{font-weight:500}
       <div id="nav-projets"></div>
       <div class="h">Partout</div>
       <a href="#equipe" data-v="equipe"><i data-lucide="bot"></i>L'équipe<span class="n" id="n-equipe">0</span></a>
+      <a href="#bureau" data-v="bureau"><i data-lucide="users"></i>Le bureau<span class="n" id="n-bureau"></span></a>
       <a href="#taches" data-v="taches"><i data-lucide="circle-check"></i>Tâches<span class="n" id="n-taches">0</span></a>
       <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Notes<span class="n" id="n-memoire">0</span></a>
       <a href="#journal" data-v="journal"><i data-lucide="notebook-pen"></i>Journal<span class="n" id="n-journal">0</span></a>
@@ -510,7 +589,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -531,17 +610,18 @@ function render() {
   n('projets', projetsDe().length);
   n('taches', ouvertes().length);
   n('equipe', equipiers().length);
+  n('bureau', S.ready ? Object.values(etatsBureau(null)).filter((e) => e.etat === 'travail').length || '' : '');
   n('memoire', S.notes.filter((x) => x.dossier !== 'Journal').length);
   n('journal', new Set(S.journal.map((j) => j.date)).size);
   navProjets();
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === (S.vue === 'projet' ? 'projet-' + S.projet : S.vue) ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  const titres = { equipe: "L'équipe", aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
+  const titres = { bureau: 'Le bureau', equipe: "L'équipe", aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
   $('#v-title').textContent = S.vue === 'projet' ? (projetParId(S.projet)?.titre || 'Projet') : titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
   const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value;
   if (S.vue !== 'cerveau') arreterGraphe();
-  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projet: vueProjet, equipe: vueEquipe, projets, taches, cockpit, entreprises, personnes, reponses, messages, memoire, journal, missions })[S.vue]();
+  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projet: vueProjet, equipe: vueEquipe, bureau: vueBureau, projets, taches, cockpit, entreprises, personnes, reponses, messages, memoire, journal, missions })[S.vue]();
   icons();
   if (S.vue === 'cerveau') {
     demarrerGraphe();
@@ -794,6 +874,7 @@ function vueProjet() {
       <details class="card fiche"><summary class="pad"><b>Fiche du projet</b><span class="muted"> · tout ce que le cerveau sait</span></summary><div class="md">${mdToHtml(p.contenu || '')}</div></details>
     </div>
     <div class="stack">
+      ${bureauDuProjet(p)}
       <section class="card" aria-label="Activité"><header><h2>Activité</h2><span class="c">${p.jours_actifs || ''}</span></header>
         <ul class="rows">${jours.map((j) => `<li class="click" data-jour="${esc(j)}"><i data-lucide="notebook-pen"></i><div class="info"><b>${esc(dateFr(j))}</b><small>Voir ce qui a été fait ce jour-là</small></div></li>`).join('') || '<li><div class="info"><small>Le journal notera ici chaque jour où on travaille sur ce projet.</small></div></li>'}</ul>
       </section>
@@ -880,6 +961,139 @@ function vueEquipe() {
       ${finies.length ? `<section class="card"><header><h2>Dernières missions finies</h2></header>${finies.map((m) => `<details class="mission"><summary class="pad"><i data-lucide="circle-check" style="color:var(--ok)"></i> <b>${esc(m.titre.replace(/^\d{4}-\d{2}-\d{2} /, ''))}</b> <small class="muted">${esc(m.projet || '')}${m.fin ? ' · ' + quand(m.fin) : ''}</small></summary>${relais(m)}${(() => { const b = String(m.contenu || '').split('## Bilan')[1]; return b ? `<div class="md"><p><b>Bilan :</b> ${esc(b.trim())}</p></div>` : ''; })()}</details>`).join('')}</section>` : ''}
     </div>
   </div>`;
+}
+
+
+// ---------- le bureau : on voit les agents travailler, projet par projet ----------
+// Un agent est « au travail » quand c'est son tour dans une mission en cours (plan de la mission),
+// ou quand une session Claude l'a signalé dans la collection bureau (moins de 3 h).
+const PIECES = [
+  { id: 'chef', nom: 'Chef', agents: ['ATLAS'] },
+  { id: 'recherche', nom: 'Recherche', agents: ['ECHO'] },
+  { id: 'clients', nom: 'Clients', agents: ['NOVA', 'VOX'] },
+  { id: 'ecriture', nom: 'Écriture', agents: ['PLUME', 'LUMEN'] },
+  { id: 'code', nom: 'Code', agents: ['FORGE', 'CODA'] },
+  { id: 'design', nom: 'Design', agents: ['PIXEL'] },
+  { id: 'analyse', nom: 'Analyse', agents: ['FINO', 'ARGUS'] },
+  { id: 'boutiques', nom: 'Boutiques', agents: ['CARGO'] },
+  { id: 'etudes', nom: 'Études', agents: ['SAGE'] },
+  { id: 'memoire', nom: 'Mémoire', agents: ['TEMPO', 'MNEMO'] },
+];
+const ETATS_BU = { travail: 'Au travail', attend: 'Attend son tour', fait: 'Sa part est faite', pause: 'En pause' };
+const court = (t) => String(t || '').replace(/^\d{4}-\d{2}-\d{2} /, '');
+const coupe = (t, n) => (String(t).length > n ? String(t).slice(0, n - 1) + '…' : String(t));
+const planDe = (m) => [...String(m.contenu || '').matchAll(/^- \[( |x)\] \*\*([A-Z]+)\*\* : (.*)$/gm)].map((x) => ({ fait: x[1] === 'x', agent: x[2], part: x[3] }));
+function etatsBureau(pid) {
+  const p = pid ? projetParId(pid) : null;
+  const ms = missionsEquipe().filter((m) => m.statut !== 'terminee' && (!p || cle(m.projet || '') === cle(p.titre)));
+  const tr = transmissions();
+  const E = {};
+  for (const m of ms) {
+    const plan = planDe(m);
+    const cur = plan.findIndex((x) => !x.fait);
+    plan.forEach((x, i) => {
+      let e;
+      if (i === cur) e = { etat: 'travail', action: x.part, mission: m, rang: 3 };
+      else if (x.fait) { const t = tr.find((y) => y.mission === m.titre && y.de === x.agent); e = { etat: 'fait', action: t ? `A transmis à ${listeFm(t.vers).join(', ')}` : 'A fini sa part', mission: m, rang: 1, t }; }
+      else e = { etat: 'attend', action: `Attend ${plan[cur]?.agent || 'son tour'}, puis : ${x.part}`, mission: m, rang: 2 };
+      if (!E[x.agent] || e.rang > E[x.agent].rang) E[x.agent] = e;
+    });
+  }
+  if (ms.length && !(E.ATLAS?.rang >= 3)) E.ATLAS = { etat: 'travail', action: ms.length > 1 ? `Coordonne ${ms.length} missions` : `Coordonne « ${court(ms[0].titre)} »`, mission: ms[0], rang: 3 };
+  for (const b of S.bureau || []) {
+    if (!b.maj || Date.now() - new Date(b.maj) > 3 * 3600e3 || b.etat === 'fini') continue;
+    if (p && b.projet && cle(b.projet) !== cle(p.titre)) continue;
+    E[b.id] = { ...(E[b.id] || {}), etat: 'travail', action: b.action || E[b.id]?.action || 'Au travail', live: b, rang: 4, mission: ms.find((m) => m.titre === b.mission) || E[b.id]?.mission };
+  }
+  return E;
+}
+function sprite(c, cls = 'bu-sp') {
+  const g = ['...cccc...', '..hhhhhh..', '.hhhhhhhh.', '.hvvvvvvh.', '.hveevveh.', '.hhhhhhhh.', '..hhhhhh..', '.bbbbbbbb.', 'bbbbbbbbbb', 'b.bbbbbb.b', '..dd..dd..'];
+  const col = { c, h: '#ebe7f4', v: '#1d1b2e', e: c, b: c, d: '#3a3550' };
+  let r = '';
+  g.forEach((l, y) => [...l].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col[ch]}"/>`; }));
+  return `<svg class="${cls}" viewBox="0 0 10 11" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+const iconeAction = (t) => { t = String(t).toLowerCase();
+  return /cherch|étud|trouv|lis |lit |source|tendance|veille/.test(t) ? 'search' : /écri|script|texte|slogan|annonce|post/.test(t) ? 'pencil-line' : /page|site|code|constru|build|ligne|appliqu/.test(t) ? 'hammer'
+    : /mail|envoi|message|réponse|client/.test(t) ? 'mail' : /chiffr|prix|marge|argent|vente/.test(t) ? 'wallet' : /vérif|contrôl|relire/.test(t) ? 'shield-check' : /range|fiche|mémoire|cerveau/.test(t) ? 'brain'
+    : /visuel|logo|image|miniature|design/.test(t) ? 'sparkles' : /coordonn|transmis/.test(t) ? 'send' : /planning|semaine/.test(t) ? 'calendar' : 'loader'; };
+function carteBu(a, e) {
+  const et = e?.etat || 'pause';
+  return `<span class="bu-carte" role="tooltip"><b>${esc(a.titre)}</b><span class="role">${esc(a.role || '')}</span>
+    <span class="etat"><span class="bu-dot ${et}"></span>${ETATS_BU[et]}${e?.live ? ' · en direct' : ''}</span>
+    ${e ? `<p>${esc(e.action)}</p>` : `<p class="muted">${esc(phraseDe(a) || 'Disponible pour une mission.')}</p>`}
+    ${e?.mission ? `<small>Mission : ${esc(court(e.mission.titre))}${e.mission.projet ? ' · ' + esc(e.mission.projet) : ''}</small>` : ''}
+    <small>Cliquez pour voir tout ce qu'il a fait.</small></span>`;
+}
+function agentBu(a, e) {
+  const et = e?.etat || 'pause';
+  const bulle = et === 'travail' ? `<span class="bu-bulle"><i data-lucide="${iconeAction(e.action)}"></i><span>${esc(coupe(e.action, 40))}</span></span>` : et === 'attend' ? '<span class="bu-bulle petit">…</span>' : et === 'fait' ? '<span class="bu-bulle petit ok">✓</span>' : '';
+  return `<button type="button" class="bu-agent ${et}${S.agentSel === a.titre ? ' sel' : ''}" data-agent-sel="${esc(a.titre)}" data-ag="${esc(a.titre)}" style="--c:${esc(a.couleur || '#8b9cff')}" aria-label="${esc(a.titre)} : ${esc(ETATS_BU[et])}${e ? ', ' + esc(e.action) : ''}">${bulle}${sprite(a.couleur || '#8b9cff')}<span class="bu-nom">${esc(a.titre)}</span>${carteBu(a, e)}</button>`;
+}
+function vueBureau() {
+  const ag = equipiers();
+  if (!ag.length) return vide('Équipe pas encore synchronisée', 'Les agents apparaissent ici après une synchronisation du coffre.');
+  const pid = S.bureauProjet && projetParId(S.bureauProjet) ? S.bureauProjet : null;
+  const E = etatsBureau(pid);
+  const parNom = Object.fromEntries(ag.map((a) => [a.titre, a]));
+  const places = new Set(PIECES.flatMap((p) => p.agents));
+  const pieces = [...PIECES.map((p) => ({ ...p, agents: p.agents.filter((n) => parNom[n]) })), { id: 'autres', nom: 'Équipe', agents: ag.map((a) => a.titre).filter((n) => !places.has(n)) }].filter((p) => p.agents.length);
+  const occupe = (n) => E[n] && E[n].etat !== 'pause';
+  const enPause = ag.filter((a) => !occupe(a.titre));
+  const nb = (k) => Object.values(E).filter((e) => e.etat === k).length;
+  // Les projets : d'abord ceux où des agents travaillent, puis les autres projets en cours.
+  const actifs = projetsDe().filter((p) => !['terminé', 'en pause'].includes(p.statut)).map((p) => ({ p, n: Object.values(etatsBureau(p.id)).filter((e) => e.etat === 'travail').length }))
+    .sort((a, b) => b.n - a.n || a.p.titre.localeCompare(b.p.titre, 'fr'));
+  const chips = `<button type="button" data-bureau-projet="" aria-pressed="${!pid}">Tous les projets${nb('travail') && !pid ? ` <span class="n">${nb('travail')}</span>` : ''}</button>` + actifs.map(({ p, n }) => `<button type="button" data-bureau-projet="${esc(p.id)}" aria-pressed="${pid === p.id}">${esc(p.titre)}${n ? ` <span class="n">${n}</span>` : ''}</button>`).join('');
+  const plan = `<div class="bureau" aria-label="Le bureau des agents"><div class="bu-grille">
+    ${pieces.map((pc) => { const ici = pc.agents.filter(occupe); return `<div class="piece${ici.length ? '' : ' vide'}"><span class="pancarte">${esc(pc.nom)}</span><span class="fenetre"></span><div class="postes">
+      ${pc.agents.map((n) => { const e = E[n]; const a = parNom[n]; return `<div class="poste${e?.etat === 'travail' ? ' on' : ''}" style="--c:${esc(a.couleur || '#8b9cff')}">${occupe(n) ? agentBu(a, e) : '<span class="chaise"></span>'}<div class="bureau-meuble"><span class="ecran"></span><span class="tasse"></span></div></div>`; }).join('')}
+    </div></div>`; }).join('')}
+    <div class="piece pause"><span class="pancarte">Salle de pause</span><div class="meubles"><span class="m-cafe"></span><span class="m-canape"></span><span class="m-plante"></span></div>
+      <div class="postes">${enPause.map((a) => `<div class="poste">${agentBu(a, null)}</div>`).join('') || '<p class="bu-vide">Tout le monde travaille.</p>'}</div></div>
+  </div>
+  <div class="bu-legende"><span><span class="bu-dot travail"></span>Au travail (${nb('travail')})</span><span><span class="bu-dot attend"></span>Attend son tour (${nb('attend')})</span><span><span class="bu-dot fait"></span>Sa part est faite (${nb('fait')})</span><span><span class="bu-dot"></span>En pause (${enPause.length})</span></div></div>`;
+  const rang = { travail: 0, attend: 1, fait: 2, pause: 3 };
+  const liste = [...ag].sort((a, b) => rang[E[a.titre]?.etat || 'pause'] - rang[E[b.titre]?.etat || 'pause'] || a.titre.localeCompare(b.titre));
+  const sel = S.agentSel && parNom[S.agentSel];
+  const cote = sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
+    <ul class="bu-liste">${liste.map((a) => { const e = E[a.titre]; const et = e?.etat || 'pause'; return `<li data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(a.titre)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(a.titre)}</b><small>${esc(e ? e.action : a.role || 'Disponible')}</small></div><span class="bu-dot ${et}" title="${ETATS_BU[et]}"></span></li>`; }).join('')}</ul></section>`;
+  const p = pid && projetParId(pid);
+  return `<section class="card dash-tete bu-tete"><div class="pad" style="display:grid;gap:10px">
+      <div class="ligne"><h2>Le bureau des agents</h2>${nb('travail') ? `<span class="tag live">${nb('travail')} au travail</span>` : '<span class="tag">Tout le monde est en pause</span>'}</div>
+      <p class="muted">Chaque agent est à son bureau quand c'est à lui de travailler, et en salle de pause sinon. Passez la souris sur un agent pour voir ce qu'il fait ; cliquez pour sa fiche.</p>
+      <div class="chips" role="group" aria-label="Projet">${chips}</div>
+      ${p && !Object.keys(E).length ? `<div class="actions"><span class="muted">Aucune mission en cours sur ${esc(p.titre)}.</span><button class="btn primary" type="button" data-mission-projet="${esc(p.id)}"><i data-lucide="rocket"></i>Lancer une mission sur ce projet</button></div>` : ''}
+    </div></section>
+    <div class="bu-split"><div style="min-width:0">${plan}</div><div class="stack">${cote}</div></div>`;
+}
+function ficheBu(a, e) {
+  const et = e?.etat || 'pause';
+  const tr = transmissions();
+  const faits = tr.filter((t) => t.de === a.titre).slice(0, 8);
+  const boite = boiteDe(a.titre);
+  const m = e?.mission;
+  const premier = (t) => (String(t.contenu || '').replace(/^#.*\n+/, '').replace(/^\[\[.*\n+/, '').split('\n').find((l) => l.trim()) || '').replace(/\*\*|`/g, '');
+  return `<section class="card bu-fiche" style="--c:${esc(a.couleur || '#8b9cff')}"><header>${sprite(a.couleur || '#8b9cff', 'mini')}<h2>${esc(a.titre)}</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Revenir à toute l'équipe"><i data-lucide="x"></i></button></header>
+    <div class="pad">
+      <div><span class="muted">${esc(a.role || '')}</span><div class="ligne" style="margin-top:4px"><span class="bu-dot ${et}"></span><b>${ETATS_BU[et]}</b>${e?.live ? '<span class="tag live">en direct</span>' : ''}</div>${e ? `<p style="margin-top:4px">${esc(e.action)}</p>` : ''}</div>
+      ${m ? `<div class="bu-boite"><h3>Sa mission, écrite par ATLAS</h3><b>${esc(court(m.titre))}</b>${m.projet ? ` <span class="tag">${esc(m.projet)}</span>` : ''}${(() => { const o = String(m.contenu || '').match(/\*\*Objectif :\*\* (.*)/); return o ? `<p class="muted" style="margin-top:4px">${esc(o[1])}</p>` : ''; })()}
+        ${(() => { const x = planDe(m).find((y) => y.agent === a.titre); return x ? `<p style="margin-top:6px"><b>Sa part :</b> ${esc(x.part)}</p>` : ''; })()}</div>` : ''}
+      ${boite.length ? `<div class="bu-boite"><h3>On lui a transmis</h3><ol>${boite.slice(0, 4).map((t) => `<li><b>${esc(t.de)}</b> ${quand(t.date)}<small>${esc(coupe(premier(t), 140))}</small></li>`).join('')}</ol></div>` : ''}
+      <div class="bu-boite"><h3>Ce qu'il a fait</h3>${faits.length ? `<ol>${faits.map((t) => `<li data-voir-neurone="n:${esc(cle(t.titre))}" style="cursor:pointer"><b>→ ${esc(listeFm(t.vers).join(', '))}</b> · ${quand(t.date)}<small>${esc(court(t.mission))} : ${esc(coupe(premier(t), 140))}</small></li>`).join('')}</ol>` : '<p class="muted">Pas encore de transmission.</p>'}</div>
+      ${listeFm(a.competences).length ? `<div class="m">${listeFm(a.competences).slice(0, 6).map((c) => `<span class="tag">${esc(c)}</span>`).join(' ')}</div>` : ''}
+      <div class="actions"><button class="btn primary" type="button" data-mission-agent="${esc(a.titre)}"><i data-lucide="rocket"></i>Lui donner une mission</button><button class="btn" type="button" data-voir-neurone="n:${esc(cle(a.titre))}"><i data-lucide="brain"></i>Sa fiche dans le cerveau</button></div>
+    </div></section>`;
+}
+function bureauDuProjet(p) {
+  const E = etatsBureau(p.id);
+  const noms = Object.keys(E);
+  if (!noms.length) return `<section class="card"><header><h2>Le bureau</h2></header><div class="pad" style="display:grid;gap:8px"><p class="muted">Personne ne travaille sur ce projet en ce moment.</p><button class="btn" type="button" data-bureau-projet="${esc(p.id)}"><i data-lucide="users"></i>Ouvrir le bureau</button></div></section>`;
+  const ag = Object.fromEntries(equipiers().map((a) => [a.titre, a]));
+  return `<section class="card"><header><h2>Le bureau</h2><span class="c">${noms.filter((n) => E[n].etat === 'travail').length || ''}</span></header>
+    <ul class="bu-liste">${noms.map((n) => `<li data-bureau-projet="${esc(p.id)}" data-agent-pre="${esc(n)}">${sprite(ag[n]?.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(n)}</b><small>${esc(E[n].action)}</small></div><span class="bu-dot ${E[n].etat}"></span></li>`).join('')}</ul>
+    <div class="pad"><button class="btn" type="button" data-bureau-projet="${esc(p.id)}"><i data-lucide="users"></i>Voir les agents travailler</button></div></section>`;
 }
 
 function entreprises() {
@@ -1877,6 +2091,10 @@ document.addEventListener('click', (ev) => {
   if (og) { S.onglet = og.dataset.onglet; return render(); }
   const op = t.closest('[data-ouvrir-projet]');
   if (op) { S.onglet = 'apercu'; location.hash = 'projet-' + op.dataset.ouvrirProjet; return; }
+  const bp = t.closest('[data-bureau-projet]');
+  if (bp) { S.bureauProjet = bp.dataset.bureauProjet || null; S.agentSel = bp.dataset.agentPre || null; if (S.vue !== 'bureau') location.hash = 'bureau'; else render(); return; }
+  const as = t.closest('[data-agent-sel]');
+  if (as && !t.closest('[data-voir-neurone],[data-mission-agent]')) { const n = as.dataset.agentSel; S.agentSel = n && S.agentSel !== n ? n : null; render(); return; }
   const vn = t.closest('[data-voir-neurone]');
   if (vn) { S.note = vn.dataset.voirNeurone; if (S.vue !== 'cerveau') location.hash = 'cerveau'; else G.focus?.(S.note, true); return; }
   if (t.closest('[data-mission-agent]')) { const a = t.closest('[data-mission-agent]').dataset.missionAgent; S.mission = 'equipe'; S.missionProjet = null; S.modele = ''; S.missionTexte = `Avec ${a} : `; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
@@ -1905,7 +2123,15 @@ document.addEventListener('click', (ev) => {
   const en = t.closest('[data-ent]');
   if (en && !t.closest('.drawer')) return ouvrir(en.dataset.ent);
 });
+// Survoler une ligne de « Qui fait quoi » allume l'agent dans le bureau.
+document.addEventListener('mouseover', (ev) => {
+  if (S.vue !== 'bureau') return;
+  const r = ev.target.closest?.('[data-agent-row]');
+  document.querySelectorAll('.bu-agent.hl').forEach((x) => x.classList.remove('hl'));
+  if (r) document.querySelector(`.bu-agent[data-ag="${CSS.escape(r.dataset.agentRow)}"]`)?.classList.add('hl');
+});
 document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Enter' && ev.target.matches?.('[data-agent-row]')) ev.target.click();
   if (ev.key === 'Escape') { fermer(); $('#graph')?.classList.remove('immersion'); }
   if (ev.key === 'Enter' && ev.target.matches('tr[data-ent]')) ouvrir(ev.target.dataset.ent);
 });
@@ -1941,7 +2167,7 @@ $('#q').addEventListener('input', (ev) => {
 });
 $('#q').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && S.vue === 'cerveau' && G.lumiere?.size) G.focus?.([...G.lumiere][0], true); });
 
-const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'equipe', 'memoire', 'journal', 'missions'];
+const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'equipe', 'bureau', 'memoire', 'journal', 'missions'];
 const AGENCE = 'agence-sites-vitrines';
 const ONGLETS_AGENCE = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages'];
 function route() {
@@ -1977,7 +2203,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -1985,7 +2211,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
