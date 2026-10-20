@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartio : votre carte de restaurant sur téléphone, avec les allergènes</title>
+<meta name="description" content="Cartio met votre carte en ligne, lisible sur téléphone, avec les 14 allergènes par plat, un QR code pour vos tables et le lien dans votre fiche Google. 49 €, payé une fois. Fait sur place au Creusot.">
+<link rel="canonical" href="https://matheoguz.github.io/cartio/">
+<meta property="og:title" content="Cartio : votre carte sur téléphone, avec les allergènes">
+<meta property="og:description" content="Carte en ligne, 14 allergènes, QR code et lien Google. 49 €, payé une fois. Fait sur place au Creusot.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://matheoguz.github.io/cartio/">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#f1f2ee;--surface:#fff;--ink:#18231d;--muted:#56625a;--line:rgba(24,35,29,.12);
+  --accent:#2f5d46;--on-accent:#fff;--soft:rgba(47,93,70,.08);
+  --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#101613;--surface:#18201b;--ink:#e8eee9;--muted:#9fb0a5;--line:rgba(232,238,233,.12);
+  --accent:#7fc4a0;--on-accent:#0d1a13;--soft:rgba(127,196,160,.1)}
+  .qr img{background:#fff}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{font:700 1.45rem var(--head);color:var(--ink);text-decoration:none}
+.logo span{color:var(--accent)}
+header.top a.lien{font-size:.95rem;font-weight:600}
+h1,h2,h3{font-family:var(--head);line-height:1.2;font-weight:700}
+h1{font-size:clamp(2rem,7vw,3.3rem);max-width:15ch}
+h2{font-size:clamp(1.5rem,4.5vw,2.1rem);margin-bottom:14px}
+h3{font-size:1.15rem;margin-bottom:6px}
+.hero{padding:28px 0 44px;display:grid;gap:32px}
+.hero p.accroche{font-size:1.12rem;color:var(--muted);margin:18px 0 26px;max-width:52ch}
+.lieu{display:inline-block;font-size:.92rem;font-weight:600;color:var(--accent);background:var(--soft);padding:5px 12px;border-radius:99px;margin-bottom:16px}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:700;padding:15px 24px;border-radius:12px;font-size:1.02rem;text-align:center}
+.btn.second{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.adresse{margin-top:12px;font-size:.95rem;color:var(--muted)}
+.adresse strong{color:var(--ink);white-space:nowrap}
+@media (max-width:819px){.actions .btn{flex:1 1 100%}}
+.apercu{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;gap:20px;align-items:center}
+.apercu .qr{flex:0 0 132px}
+.qr img{display:block;width:132px;height:132px;border-radius:10px;border:1px solid var(--line)}
+.apercu p{color:var(--muted);font-size:.97rem}
+.apercu p strong{color:var(--ink);display:block;font-size:1.05rem;margin-bottom:4px}
+section{padding:44px 0;border-top:1px solid var(--line)}
+.inclus{list-style:none;display:grid;gap:14px;margin-top:8px}
+.inclus li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px 16px 50px;position:relative}
+.inclus li::before{content:"";position:absolute;left:18px;top:21px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.inclus li::after{content:"";position:absolute;left:25px;top:25px;width:5px;height:9px;border:solid var(--on-accent);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.inclus li span{display:block;color:var(--muted);font-size:.95rem}
+.prix{display:grid;gap:18px}
+.offre{background:var(--surface);border:2px solid var(--accent);border-radius:20px;padding:26px}
+.offre .montant{font:700 3rem/1 var(--head);color:var(--accent)}
+.offre .montant small{font:600 1rem var(--body);color:var(--muted)}
+.offre p{margin-top:10px}
+.option{background:var(--surface);border:1px dashed var(--muted);border-radius:20px;padding:22px}
+.etiquette{display:inline-block;font-size:.8rem;font-weight:700;border:1px solid var(--muted);color:var(--muted);padding:2px 10px;border-radius:99px;margin-bottom:10px}
+.option .montant{font:700 1.8rem/1.1 var(--head)}
+.option p{color:var(--muted);font-size:.97rem;margin-top:8px}
+.petit{font-size:.9rem;color:var(--muted);margin-top:14px}
+.avertissement{background:var(--soft);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;font-weight:600;margin-top:18px}
+.etapes{list-style:none;counter-reset:e;display:grid;gap:18px}
+.etapes li{counter-increment:e;display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+.etapes li::before{content:counter(e);width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:700;display:grid;place-items:center}
+.etapes p{color:var(--muted)}
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px}
+.contact p{color:var(--muted);margin-bottom:20px;max-width:56ch}
+footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+@media (min-width:820px){
+  body{font-size:18px}
+  .hero{grid-template-columns:1.25fr 1fr;align-items:center;padding:56px 0 64px}
+  .apercu{flex-direction:column;text-align:center;padding:30px}
+  .apercu .qr{flex-basis:auto}
+  .qr img{width:180px;height:180px}
+  .inclus{grid-template-columns:1fr 1fr}
+  .prix{grid-template-columns:1.3fr 1fr;align-items:stretch}
+  .etapes{grid-template-columns:repeat(4,1fr)}
+  .etapes li{grid-template-columns:1fr}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Service",
+  "name":"Cartio",
+  "description":"Carte de restaurant en ligne, lisible sur téléphone, avec les 14 allergènes par plat, un QR code et le lien dans la fiche Google.",
+  "areaServed":"Le Creusot",
+  "url":"https://matheoguz.github.io/cartio/",
+  "offers":{"@type":"Offer","price":"49","priceCurrency":"EUR"}
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="./">Cart<span>io</span></a>
+    <a class="lien" href="exemple/">Voir un exemple</a>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <span class="lieu">Fait sur place au Creusot</span>
+        <h1>Votre carte sur téléphone, avec les allergènes.</h1>
+        <p class="accroche">Votre carte en ligne avec les 14 allergènes par plat, un QR code pour vos tables et votre vitrine, et le lien posé dans votre fiche Google. 49 €, payé une fois, sans abonnement.</p>
+        <div class="actions">
+          <a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=Cartio">Je veux ma carte</a>
+          <a class="btn second" href="exemple/">Voir la carte d'exemple</a>
+        </div>
+        <p class="adresse">Ou écrivez directement à <strong>matheoguzzi11@gmail.com</strong></p>
+      </div>
+      <aside class="apercu">
+        <div class="qr"><img src="qr-exemple.svg" alt="QR code qui ouvre la carte d'exemple" width="180" height="180"></div>
+        <p><strong>Essayez avec votre téléphone</strong>Scannez ce QR code : il ouvre une carte d'exemple, comme celle que vos clients verraient à table. Déjà sur votre téléphone ? <a href="exemple/">Ouvrez-la ici</a>.</p>
+      </aside>
+    </div>
+
+    <section id="inclus">
+      <h2>Ce qui est inclus</h2>
+      <ul class="inclus">
+        <li>Votre carte sur téléphone<span>Lisible sans zoomer, jusqu'à 40 plats environ, avec vos prix.</span></li>
+        <li>Les 14 allergènes par plat<span>Affichés sous chaque plat, avec un filtre pour vos clients (par exemple « sans gluten »).</span></li>
+        <li>Un QR code prêt à imprimer<span>Pour vos tables, votre comptoir ou votre vitrine. On vous donne le fichier, l'impression reste à votre charge.</span></li>
+        <li>Le lien dans votre fiche Google<span>On le pose avec vous (ou on vous montre où) dans « Lien vers le menu ».</span></li>
+        <li>L'hébergement, sans abonnement<span>Votre carte reste en ligne, sans frais tous les mois.</span></li>
+        <li>Une série de corrections<span>Et les petites mises à jour gratuites pendant 30 jours.</span></li>
+      </ul>
+      <p class="avertissement">Les allergènes sont fournis et validés par écrit par le restaurateur.</p>
+      <p class="petit">On saisit ce que vous nous donnez, et vous relisez et validez la liste par mail avant la mise en ligne. Le QR code complète votre carte papier, il ne la remplace pas.</p>
+    </section>
+
+    <section id="prix">
+      <h2>Le prix</h2>
+      <div class="prix">
+        <div class="offre">
+          <div class="montant">49 € <small>payé une fois</small></div>
+          <p>Tout ce qui est inclus ci-dessus, sans abonnement. Mises à jour gratuites le premier mois.</p>
+        </div>
+        <div class="option">
+          <span class="etiquette">En option, pas obligatoire</span>
+          <div class="montant">15 € par mois</div>
+          <p>Après le premier mois, si vous voulez qu'on s'occupe des changements de prix et de plats. Sans engagement, vous arrêtez quand vous voulez.</p>
+        </div>
+      </div>
+      <p class="petit">Une nouvelle carte complète (changement de toute la carte) compte comme une nouvelle carte.</p>
+    </section>
+
+    <section id="comment">
+      <h2>Comment ça se passe</h2>
+      <ol class="etapes">
+        <li><div><h3>Vous écrivez</h3><p>Un mail suffit, avec le nom de votre restaurant.</p></div></li>
+        <li><div><h3>On récupère la carte</h3><p>Sur place au Creusot ou par mail : la carte papier et la liste de vos allergènes.</p></div></li>
+        <li><div><h3>Vous validez</h3><p>Vous relisez la carte et les allergènes, puis vous validez par écrit.</p></div></li>
+        <li><div><h3>C'est en ligne</h3><p>Vous recevez le lien, le QR code à imprimer, et le lien est posé sur Google.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="contact">
+      <div class="contact">
+        <h2>Vous avez un restaurant, un snack ou une pizzeria ?</h2>
+        <p>Écrivez un mail avec le nom de votre établissement. On vous répond pour en parler, sans engagement.</p>
+        <a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=Cartio">Écrire pour ma carte</a>
+        <p class="adresse">Adresse : <strong>matheoguzzi11@gmail.com</strong></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Cartio, par Matheo Guzzi, au Creusot (71200). <a href="exemple/">Carte d'exemple</a>
+  </footer>
+</div>
+</body>
+</html>
