@@ -199,7 +199,7 @@ const MOTOS = [
 ];
 // [heures faites, forfait, reste à payer en €]
 const ELEVES = {
-  'Léa M.': [14, 20, 0], 'Hugo D.': [22, 20, 112], 'Inès T.': [6, 20, 0], 'Yanis P.': [18, 25, 336], 'Chloé R.': [9, 20, 0], 'Lucas G.': [27, 30, 0],
+  'Léa M.': [14, 20, 0], 'Hugo D.': [18, 20, 112], 'Inès T.': [6, 20, 0], 'Yanis P.': [18, 25, 336], 'Chloé R.': [9, 20, 0], 'Lucas G.': [27, 30, 0],
   'Manon F.': [3, 20, 0], 'Rayan S.': [12, 20, 224], 'Emma V.': [16, 20, 0], 'Noah C.': [20, 20, 0], 'Jade L.': [8, 13, 0], 'Adam B.': [11, 20, 168],
   'Sarah N.': [5, 20, 0], 'Tom H.': [19, 20, 0], 'Lina A.': [2, 20, 0], 'Enzo M.': [24, 25, 400],
 };
@@ -464,7 +464,7 @@ const point = (c) => `<i style="background:${c}"></i>`;
 const libresParking = () => NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
 etiquette('place4', () => new THREE.Vector3(10, 2.6, -8.6), () => `${point('#15803d')}Parking <small>${libresParking()}/${NB_PLACES} places libres</small>`);
 etiquette('code', () => new THREE.Vector3(-13, 2.9, -2.5), () => `${point('#1d4ed8')}Salle de code <small>${nbCode()}/12</small>`);
-etiquette('plateau', () => new THREE.Vector3(9, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve} avec ${objets[l.m].data.nom}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
+etiquette('plateau', () => new THREE.Vector3(4, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve} avec ${objets[l.m].data.nom}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
 etiquette('accueil', () => new THREE.Vector3(-12, 3.1, 5), () => { const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => objets[m.id].obj.visible).length; return `${point(d ? '#15803d' : '#c2410c')}Accueil <small>${d} moniteur${d > 1 ? 's' : ''} dispo · ${n ? n + ' en attente' : 'personne en attente'}</small>`; });
 const v3 = new THREE.Vector3();
 function placerEtiquettes() {
