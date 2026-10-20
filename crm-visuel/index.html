@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto-école Modèle · démo du tableau de bord 3D</title>
+<meta name="description" content="Démo avec des données fictives : l'auto-école en maquette 3D, en direct. Voitures, moniteurs, places libres et chiffres clés.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #f4f2ee;
+    --carte: #ffffff;
+    --texte: #1d2026;
+    --doux: #6a6f78;
+    --ligne: #e4e1da;
+    --accent: #2f5bea;
+    --accent-doux: #e8eefe;
+    --vert: #1f9d62;
+    --vert-doux: #e3f4ea;
+    --orange: #d9822b;
+    --orange-doux: #fbefe1;
+    --rouge: #d44a3a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--fond);
+    color: var(--texte);
+    font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr; height: 100vh; }
+  header {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px; border-bottom: 1px solid var(--ligne); background: var(--carte);
+  }
+  .logo { width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+  .titre b { display: block; font-size: 15px; }
+  .titre span { color: var(--doux); font-size: 12.5px; }
+  .demo { margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; }
+  .direct { margin-left: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
+  .point { width: 8px; height: 8px; border-radius: 50%; background: var(--vert); box-shadow: 0 0 0 0 rgba(31,157,98,.5); animation: pouls 2s infinite; }
+  @keyframes pouls { 0% { box-shadow: 0 0 0 0 rgba(31,157,98,.45); } 70% { box-shadow: 0 0 0 8px rgba(31,157,98,0); } 100% { box-shadow: 0 0 0 0 rgba(31,157,98,0); } }
+  .heure { color: var(--doux); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  .scene { position: relative; overflow: hidden; min-height: 0; }
+  .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  .scene canvas:active { cursor: grabbing; }
+  .etiquettes { position: absolute; inset: 0; pointer-events: none; }
+  .et {
+    position: absolute; transform: translate(-50%, -100%); white-space: nowrap;
+    background: var(--carte); border: 1px solid var(--ligne); border-radius: 8px;
+    padding: 4px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 2px 8px rgba(20,24,32,.08);
+    pointer-events: auto; cursor: pointer; transition: opacity .2s;
+  }
+  .et small { font-weight: 500; color: var(--doux); }
+  .et.vert { border-color: #bfe5cf; }
+  .et.vert::before, .et.orange::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--vert); }
+  .et.orange::before { background: var(--orange); }
+  .et.orange { border-color: #f1d3b0; }
+  .outils { position: absolute; left: 16px; bottom: 16px; display: flex; gap: 8px; }
+  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+  .bouton:hover { border-color: #cfcbc2; }
+  .aide { position: absolute; right: 16px; bottom: 16px; color: var(--doux); font-size: 12px; background: rgba(255,255,255,.8); padding: 6px 10px; border-radius: 8px; }
+
+  aside { background: var(--carte); border-left: 1px solid var(--ligne); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 18px; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi { border: 1px solid var(--ligne); border-radius: 12px; padding: 12px; }
+  .kpi span { color: var(--doux); font-size: 12px; }
+  .kpi b { display: block; font-size: 21px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  .barres { display: flex; align-items: flex-end; gap: 6px; height: 64px; }
+  .barres div { flex: 1; background: var(--accent-doux); border-radius: 4px 4px 0 0; position: relative; }
+  .barres div.auj { background: var(--accent); }
+  .jours { display: flex; gap: 6px; margin-top: 4px; }
+  .jours span { flex: 1; text-align: center; color: var(--doux); font-size: 11px; }
+
+  .fiche { border: 1px solid var(--ligne); border-radius: 12px; padding: 14px; min-height: 120px; }
+  .fiche h3 { margin: 0; font-size: 16px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 10px; }
+  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .statut.dispo { color: var(--vert); background: var(--vert-doux); }
+  .statut.occupe { color: var(--orange); background: var(--orange-doux); }
+  .lignes { margin: 10px 0 0; padding: 0; list-style: none; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  .lignes li span:first-child { color: var(--doux); }
+  .lignes li.fait span { text-decoration: line-through; color: var(--doux); }
+  .vide { color: var(--doux); }
+
+  .onglets { display: flex; gap: 6px; margin-bottom: 8px; }
+  .onglets button { flex: 1; }
+  .onglets button.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
+  .liste { list-style: none; margin: 0; padding: 0; }
+  .liste li { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-radius: 8px; cursor: pointer; }
+  .liste li:hover { background: var(--fond); }
+  .liste .rond { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .liste .nom { font-weight: 600; }
+  .liste .info { margin-left: auto; color: var(--doux); font-size: 12px; }
+  .fil { list-style: none; margin: 0; padding: 0; }
+  .fil li { padding: 6px 0; border-top: 1px solid var(--ligne); font-size: 12.5px; }
+  .fil li:first-child { border-top: 0; }
+  .fil time { color: var(--doux); font-variant-numeric: tabular-nums; margin-right: 6px; }
+  .note { color: var(--doux); font-size: 11.5px; margin-top: auto; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto 48vh auto; height: auto; }
+    aside { border-left: 0; border-top: 1px solid var(--ligne); }
+    header { flex-wrap: wrap; padding: 12px 16px; }
+    .direct { margin-left: 0; }
+    .aide { display: none; }
+    .et { font-size: 10px; padding: 3px 6px; }
+    .et small { display: none; }
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">M</div>
+    <div class="titre"><b>Auto-école Modèle <span class="demo">Démo · données fictives</span></b><span>Tableau de bord de l'agence, en direct</span></div>
+    <div class="direct"><i class="point"></i> En direct <span class="heure" id="heure">--:--</span></div>
+  </header>
+
+  <main class="scene" id="scene">
+    <div class="etiquettes" id="etiquettes"></div>
+    <div class="outils">
+      <button class="bouton" id="recentrer">Recentrer</button>
+      <button class="bouton" id="tourner">Faire tourner</button>
+    </div>
+    <div class="aide">Glisser pour tourner · molette ou pincer pour zoomer · clic sur un élément pour sa fiche</div>
+  </main>
+
+  <aside>
+    <section>
+      <h2>Chiffres clés</h2>
+      <div class="kpis">
+        <div class="kpi"><span>Voitures dispo</span><b id="k-voitures">-</b><em id="k-voitures-d"></em></div>
+        <div class="kpi"><span>Places de parking</span><b id="k-places">-</b><em>libres</em></div>
+        <div class="kpi"><span>Heures de conduite</span><b id="k-heures">-</b><em>aujourd'hui</em></div>
+        <div class="kpi"><span id="k-ca-t">Encaissé ce mois</span><b id="k-ca">-</b><em>fictif</em></div>
+        <div class="kpi"><span>Examens cette semaine</span><b>6</b><em>4 permis B, 2 permis A2</em></div>
+        <div class="kpi"><span>Taux de réussite</span><b>64 %</b><em>12 derniers mois, fictif</em></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Heures de conduite, 7 derniers jours</h2>
+      <div class="barres" id="barres"></div>
+      <div class="jours" id="jours"></div>
+    </section>
+
+    <section>
+      <h2>Fiche</h2>
+      <div class="fiche" id="fiche"><p class="vide">Cliquez sur une voiture, une moto, un moniteur, une place de parking ou la salle de code.</p></div>
+    </section>
+
+    <section>
+      <div class="onglets">
+        <button class="bouton actif" data-onglet="moniteurs">Moniteurs</button>
+        <button class="bouton" data-onglet="vehicules">Véhicules</button>
+      </div>
+      <ul class="liste" id="liste"></ul>
+    </section>
+
+    <section>
+      <h2>Ce qui vient de se passer</h2>
+      <ul class="fil" id="fil"></ul>
+    </section>
+
+    <p class="note">Démo avec des données inventées : aucune vraie auto-école, aucun vrai élève. Les chiffres bougent tout seuls pour montrer le temps réel.</p>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ---------- Données fictives ----------
+const MONITEURS = [
+  { id: 'm1', nom: 'Karim B.', couleur: 0x2f5bea, permis: 'B, A2' },
+  { id: 'm2', nom: 'Sophie L.', couleur: 0x1f9d62, permis: 'B' },
+  { id: 'm3', nom: 'Thomas R.', couleur: 0xd9822b, permis: 'B, BE' },
+  { id: 'm4', nom: 'Nadia K.', couleur: 0x8a4fd6, permis: 'B' },
+];
+const ELEVES = ['Léa M.', 'Hugo D.', 'Inès T.', 'Yanis P.', 'Chloé R.', 'Lucas G.', 'Manon F.', 'Rayan S.', 'Emma V.', 'Noah C.', 'Jade L.', 'Adam B.'];
+const VOITURES = [
+  { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DEMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf2f2f0 },
+  { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DEMO-02', km: 31560, entretien: '3 déc.', couleur: 0x3a3f4a },
+  { id: 'v3', nom: 'Voiture 3', modele: 'Yaris, automatique', plaque: 'DEMO-03', km: 22940, entretien: '28 oct.', couleur: 0xc9302c },
+  { id: 'v4', nom: 'Voiture 4', modele: 'Clio, boîte manuelle', plaque: 'DEMO-04', km: 61030, entretien: '19 nov.', couleur: 0x2f5bea },
+  { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DEMO-05', km: 17480, entretien: '7 janv.', couleur: 0xe9e4d8 },
+];
+const MOTOS = [
+  { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x1d2026 },
+  { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xc9302c },
+  { id: 'mo3', nom: 'Moto 3', modele: 'Permis A2, 35 kW', couleur: 0x2f5bea },
+];
+const NB_PLACES = 6;
+const etat = { heures: 17, ca: 18420, code: 5, selection: null, onglet: 'moniteurs' };
+const fil = [];
+
+// ---------- Scène ----------
+const conteneur = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+conteneur.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf4f2ee);
+
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 500);
+const VUE = new THREE.Vector3(34, 32, 34);
+camera.position.copy(VUE);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minPolarAngle = 0.35;
+controls.maxPolarAngle = 1.15;
+controls.minZoom = 0.7;
+controls.maxZoom = 3;
+controls.enablePan = false;
+controls.target.set(0, 0, 0);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d2c4, 1.6));
+const soleil = new THREE.DirectionalLight(0xffffff, 2.2);
+soleil.position.set(-18, 34, 16);
+soleil.castShadow = true;
+soleil.shadow.mapSize.set(2048, 2048);
+Object.assign(soleil.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 90 });
+soleil.shadow.bias = -0.0004;
+soleil.shadow.radius = 4;
+scene.add(soleil);
+
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, metalness: 0, ...o });
+function boite(l, h, p, couleur, x, y, z, parent = scene, ombre = true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(l, h, p), typeof couleur === 'number' ? mat(couleur) : couleur);
+  m.position.set(x, y + h / 2, z);
+  m.castShadow = ombre; m.receiveShadow = true;
+  parent.add(m);
+  return m;
+}
+const cliquables = [];
+
+// Socle de la maquette
+boite(42, 1.2, 32, 0xe2ddd2, 0, -1.2, 0);
+boite(40, 0.05, 30, 0xd9e4cf, 0, 0, 0); // pelouse
+
+// Route en boucle
+const ROUTE = 0x4b5059;
+boite(36, 0.06, 3, ROUTE, 0, 0.05, -12.5);
+boite(36, 0.06, 3, ROUTE, 0, 0.05, 12.5);
+boite(3, 0.06, 22, ROUTE, -16.5, 0.05, 0);
+boite(3, 0.06, 22, ROUTE, 16.5, 0.05, 0);
+for (let x = -14; x <= 14; x += 2.4) { boite(1.1, 0.02, 0.14, 0xf3f1ea, x, 0.11, -12.5, scene, false); boite(1.1, 0.02, 0.14, 0xf3f1ea, x, 0.11, 12.5, scene, false); }
+for (let z = -9; z <= 9; z += 2.4) { boite(0.14, 0.02, 1.1, 0xf3f1ea, -16.5, 0.11, z, scene, false); boite(0.14, 0.02, 1.1, 0xf3f1ea, 16.5, 0.11, z, scene, false); }
+
+// Bâtiment de l'agence (murs bas, sans toit, comme une maquette)
+const SOL = 0xdcc9a9, MUR = 0xfbfaf7;
+boite(13, 0.12, 11, SOL, -7.5, 0.05, -1.5);
+const H = 1.5, E = 0.25;
+boite(13, H, E, MUR, -7.5, 0.17, -7);       // fond
+boite(E, H, 11, MUR, -14, 0.17, -1.5);      // gauche
+boite(E, H, 11, MUR, -1, 0.17, -1.5);       // droite
+boite(5, H, E, MUR, -11.5, 0.17, 4);        // façade gauche
+boite(5, H, E, MUR, -3.5, 0.17, 4);         // façade droite (porte au milieu)
+boite(E, H, 6.2, MUR, -8.5, 0.17, -3.9);    // cloison salle de code
+boite(4.9, H, E, MUR, -11.4, 0.17, -0.8);   // cloison bureau
+boite(5.4, H, E, MUR, -5.7, 0.17, -1.2);    // cloison salle de code / accueil
+// Salle de pause
+boite(1.6, 0.7, 1, 0xffffff, -11.3, 0.17, -4.5);
+boite(0.7, 0.6, 0.7, 0x9fb8a8, -13.2, 0.17, -6.3);
+// Accueil : comptoir et écran
+boite(3, 0.8, 0.8, 0xffffff, -5, 0.17, 1.6);
+boite(0.6, 0.4, 0.06, 0x1d2026, -5, 0.97, 1.6);
+boite(1.2, 0.5, 0.5, 0x9fb8a8, -2.2, 0.17, 2.8); // plante en bac
+// Bureau du gérant
+boite(1.8, 0.7, 0.9, 0x8d6e4c, -11.5, 0.17, 2);
+boite(0.5, 0.3, 0.05, 0x1d2026, -11.5, 0.87, 1.8);
+// Salle de code : écran et chaises
+const salleCode = new THREE.Group(); scene.add(salleCode);
+boite(3.6, 1.1, 0.08, 0x1d2026, -5, 0.6, -6.8, salleCode);
+boite(3.4, 0.9, 0.02, 0x4f7cf0, -5, 0.7, -6.74, salleCode, false);
+const chaises = [];
+for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) {
+  const x = -7 + c * 1.35, z = -4.6 + r * 1.3;
+  boite(0.55, 0.45, 0.5, 0x6a6f78, x, 0.17, z, salleCode);
+  chaises.push(new THREE.Vector3(x, 0.62, z));
+}
+const zoneCode = boite(7.2, 0.02, 6, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }), -4.8, 0.2, -3.9, scene, false);
+zoneCode.userData.cle = 'code';
+cliquables.push(zoneCode);
+
+// Parking
+boite(10.4, 0.07, 7.6, 0x8a8f98, 7.2, 0.05, -4.9);
+boite(3, 0.07, 3.6, 0x8a8f98, 7.2, 0.05, -9.3); // entrée vers la route
+const PLACES = [];
+for (let i = 0; i < NB_PLACES; i++) {
+  const x = 3.2 + i * 1.6;
+  PLACES.push(new THREE.Vector3(x, 0.12, -5.3));
+  boite(0.08, 0.02, 2.6, 0xffffff, x - 0.8, 0.12, -5.3, scene, false);
+  if (i === NB_PLACES - 1) boite(0.08, 0.02, 2.6, 0xffffff, x + 0.8, 0.12, -5.3, scene, false);
+  const zone = boite(1.5, 0.02, 2.6, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }), x, 0.13, -5.3, scene, false);
+  zone.userData.cle = 'place' + i;
+  cliquables.push(zone);
+}
+// Piste moto (plateau) avec plots
+boite(10.4, 0.07, 5, 0xa9adb3, 7.2, 0.05, 3.4);
+const PLOTS = [[3.5, 2.2], [5.5, 4.6], [7.5, 2.2], [9.5, 4.6], [11, 3.4]];
+for (const [x, z] of PLOTS) {
+  const c = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.4, 12), mat(0xff7a1a));
+  c.position.set(x, 0.32, z); c.castShadow = true; scene.add(c);
+}
+// Arbres
+function arbre(x, z, s = 1) {
+  const t = new THREE.Mesh(new THREE.CylinderGeometry(0.12 * s, 0.15 * s, 0.9 * s, 8), mat(0x8a6a4a));
+  t.position.set(x, 0.45 * s, z); t.castShadow = true; scene.add(t);
+  const f = new THREE.Mesh(new THREE.IcosahedronGeometry(0.85 * s, 1), mat(0x7fae7a, { flatShading: true }));
+  f.position.set(x, 1.35 * s, z); f.castShadow = true; scene.add(f);
+}
+[[-18.5, -14], [-18.5, 14], [18.5, -14], [18.5, 14], [-12, 8], [-6, 8.5], [0, 8], [6, 9], [12, 8.5], [14, -8], [-15, -9.5]].forEach(([x, z], i) => arbre(x, z, i % 3 ? 1 : 1.25));
+
+// ---------- Véhicules et personnes ----------
+function voiture(couleur) {
+  const g = new THREE.Group();
+  boite(0.92, 0.42, 1.8, couleur, 0, 0.16, 0, g);
+  boite(0.82, 0.34, 0.95, mat(0x9fb4c8, { roughness: 0.3, metalness: 0.1 }), 0, 0.58, -0.1, g);
+  boite(0.5, 0.12, 0.2, 0xd44a3a, 0, 0.92, -0.1, g); // panneau « auto-école »
+  const roue = new THREE.CylinderGeometry(0.17, 0.17, 0.14, 14);
+  for (const [x, z] of [[-0.47, 0.55], [0.47, 0.55], [-0.47, -0.6], [0.47, -0.6]]) {
+    const r = new THREE.Mesh(roue, mat(0x22252b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.17, z); r.castShadow = true; g.add(r);
+  }
+  return g;
+}
+function moto(couleur) {
+  const g = new THREE.Group();
+  boite(0.22, 0.28, 1, couleur, 0, 0.2, 0, g);
+  boite(0.18, 0.12, 0.4, 0x22252b, 0, 0.48, -0.1, g);
+  const roue = new THREE.CylinderGeometry(0.2, 0.2, 0.08, 14);
+  for (const z of [0.42, -0.42]) { const r = new THREE.Mesh(roue, mat(0x22252b)); r.rotation.z = Math.PI / 2; r.position.set(0, 0.2, z); r.castShadow = true; g.add(r); }
+  return g;
+}
+function personne(couleur, taille = 1) {
+  const g = new THREE.Group();
+  const corps = new THREE.Mesh(new THREE.CapsuleGeometry(0.17 * taille, 0.42 * taille, 4, 10), mat(couleur));
+  corps.position.y = 0.4 * taille; corps.castShadow = true; g.add(corps);
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.15 * taille, 14, 10), mat(0xe9c9a8));
+  tete.position.y = 0.88 * taille; tete.castShadow = true; g.add(tete);
+  return g;
+}
+
+// Circuit des leçons : un rectangle arrondi sur la route
+const pts = [];
+const RX = 16.5, RZ = 12.5, rc = 2.5;
+const coins = [[RX - rc, RZ - rc, 0], [-(RX - rc), RZ - rc, Math.PI / 2], [-(RX - rc), -(RZ - rc), Math.PI], [RX - rc, -(RZ - rc), 1.5 * Math.PI]];
+for (const [cx, cz, a0] of coins) for (let k = 0; k <= 6; k++) { const a = a0 + (k / 6) * Math.PI / 2; pts.push(new THREE.Vector3(cx + Math.cos(a) * rc, 0.12, cz + Math.sin(a) * rc)); }
+const CIRCUIT = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.2);
+const LONG = CIRCUIT.getLength();
+const SORTIE = new THREE.Vector3(7.2, 0.12, -12.5);
+let tSortie = 0, dMin = 1e9;
+for (let i = 0; i <= 400; i++) { const p = CIRCUIT.getPointAt(i / 400); const d = p.distanceTo(SORTIE); if (d < dMin) { dMin = d; tSortie = i / 400; } }
+
+const objets = {}; // cle -> { type, data, obj, ... }
+VOITURES.forEach((v, i) => {
+  const obj = voiture(v.couleur); scene.add(obj);
+  obj.position.copy(PLACES[i]);
+  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = v.id; cliquables.push(o); } });
+  objets[v.id] = { type: 'voiture', data: v, obj, place: i, mode: 'gare', t: 0, moniteur: null, eleve: null, debut: 0, chemin: null, k: 0 };
+});
+const PLACES_MOTO = [new THREE.Vector3(10.6, 0.12, 5), new THREE.Vector3(11.4, 0.12, 5), new THREE.Vector3(12.2, 0.12, 5)];
+MOTOS.forEach((m, i) => {
+  const obj = moto(m.couleur); scene.add(obj);
+  obj.position.copy(PLACES_MOTO[i]);
+  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = m.id; cliquables.push(o); } });
+  objets[m.id] = { type: 'moto', data: m, obj, place: i, mode: 'gare', a: 0, moniteur: null, eleve: null, debut: 0 };
+});
+const POSTES_MONITEURS = [new THREE.Vector3(-3.6, 0.17, 2.6), new THREE.Vector3(-6.4, 0.17, 2.7), new THREE.Vector3(-2.6, 0.17, 0.4), new THREE.Vector3(-6.8, 0.17, 0.2)];
+MONITEURS.forEach((m, i) => {
+  const obj = personne(m.couleur); scene.add(obj);
+  obj.position.copy(POSTES_MONITEURS[i]);
+  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = m.id; cliquables.push(o); } });
+  objets[m.id] = { type: 'moniteur', data: m, obj, poste: i, statut: 'dispo', vehicule: null, eleve: null, lecons: [] };
+});
+// Élèves dans la salle de code
+const elevesCode = chaises.map((p) => { const o = personne(0x9aa3ae, 0.8); o.position.set(p.x, 0.62, p.z); o.visible = false; scene.add(o); return o; });
+
+// Anneau de sélection
+const anneau = new THREE.Mesh(new THREE.RingGeometry(0.95, 1.12, 40), new THREE.MeshBasicMaterial({ color: 0x2f5bea, transparent: true, opacity: 0.85, side: THREE.DoubleSide }));
+anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
+
+// ---------- Planning du jour (fictif) ----------
+const heureTxt = (h) => `${String(Math.floor(h)).padStart(2, '0')}h${h % 1 ? '30' : '00'}`;
+let e = 0;
+MONITEURS.forEach((m, i) => {
+  const lecons = [];
+  for (let h = 8 + (i % 2) * 0.5; h < 18; h += 2) lecons.push({ h, eleve: ELEVES[e++ % ELEVES.length], type: m.permis.includes('A2') && h > 15 ? 'Moto A2' : 'Conduite B' });
+  objets[m.id].lecons = lecons;
+});
+
+// ---------- Simulation en direct ----------
+const maintenant = () => new Date();
+const hhmm = (d = maintenant()) => d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+function noter(txt) { fil.unshift({ t: hhmm(), txt }); fil.length = Math.min(fil.length, 7); rendreFil(); }
+
+function demarrerLecon(mon, veh, eleve, silencieux) {
+  const v = objets[veh], m = objets[mon];
+  m.statut = 'lecon'; m.vehicule = veh; m.eleve = eleve; m.obj.visible = false;
+  v.moniteur = mon; v.eleve = eleve; v.debut = performance.now();
+  if (v.type === 'voiture') {
+    const place = PLACES[v.place];
+    v.mode = 'sortie';
+    v.chemin = [place.clone(), new THREE.Vector3(place.x, 0.12, -7.8), new THREE.Vector3(7.2, 0.12, -9.6), CIRCUIT.getPointAt(tSortie)];
+    v.k = 0;
+    if (silencieux) { v.mode = 'route'; v.t = (tSortie + Math.random()) % 1; }
+  } else { v.mode = 'piste'; v.a = Math.random() * 6; }
+  if (!silencieux) noter(`<b>${m.data.nom}</b> part en leçon avec ${eleve} · ${v.data.nom}`);
+}
+function finirLecon(veh) {
+  const v = objets[veh], m = objets[v.moniteur];
+  noter(`<b>${m.data.nom}</b> est de retour · ${v.data.nom} (${v.eleve})`);
+  if (v.type === 'voiture') { v.mode = 'retour_route'; } else { v.mode = 'gare'; v.obj.position.copy(PLACES_MOTO[v.place]); v.obj.rotation.set(0, 0, 0); }
+  m.statut = 'dispo'; m.vehicule = null; m.eleve = null; m.obj.visible = true;
+  v.moniteur = null; v.eleve = null;
+  etat.heures += 1; etat.ca += 52;
+}
+const libres = (type) => Object.values(objets).filter((o) => o.type === type && o.mode === 'gare');
+let iEleve = 3;
+function tic() {
+  const enLecon = Object.values(objets).filter((o) => (o.type === 'voiture' || o.type === 'moto') && o.moniteur && (o.mode === 'route' || o.mode === 'piste'));
+  const vieux = enLecon.filter((o) => performance.now() - o.debut > 22000);
+  const dispo = MONITEURS.filter((m) => objets[m.id].statut === 'dispo');
+  const r = Math.random();
+  if (vieux.length && (r < 0.45 || !dispo.length)) finirLecon(vieux[0].data.id);
+  else if (dispo.length && r < 0.8) {
+    const m = dispo[Math.floor(Math.random() * dispo.length)];
+    const motoOk = m.permis.includes('A2') && libres('moto').length && Math.random() < 0.35;
+    const veh = motoOk ? libres('moto')[0] : libres('voiture')[0];
+    if (veh) demarrerLecon(m.id, veh.data.id, ELEVES[iEleve++ % ELEVES.length]);
+  } else {
+    const avant = etat.code;
+    etat.code = Math.max(2, Math.min(12, etat.code + (Math.random() < 0.55 ? 1 : -1)));
+    if (etat.code > avant) noter(`Un élève arrive en salle de code (${etat.code} présents)`);
+    else noter(`Un élève termine sa série de code (${etat.code} présents)`);
+  }
+  majTout();
+}
+
+// ---------- Étiquettes HTML ----------
+const couche = document.getElementById('etiquettes');
+const etiquettes = [];
+function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); const e = { el, pos, fn, cle }; etiquettes.push(e); return e; }
+etiquette('place0', () => new THREE.Vector3(7.2, 1.4, -6.6), () => { const n = NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length; return [`Parking <small>${n}/${NB_PLACES} libres</small>`, n ? 'vert' : 'orange']; });
+etiquette('mo1', () => new THREE.Vector3(11.4, 1.5, 5), () => { const n = libres('moto').length; return [`Motos <small>${n}/${MOTOS.length} dispo</small>`, n ? 'vert' : 'orange']; });
+etiquette('code', () => new THREE.Vector3(-5, 2.6, -4), () => [`Salle de code <small>${etat.code} élèves</small>`, '']);
+MONITEURS.forEach((m) => etiquette(m.id, () => objets[m.id].obj.position.clone().add(new THREE.Vector3(0, 1.45, 0)), () => objets[m.id].statut === 'dispo' ? [`${m.nom} <small>dispo</small>`, 'vert'] : null));
+VOITURES.forEach((v) => etiquette(v.id, () => objets[v.id].obj.position.clone().add(new THREE.Vector3(0, 1.5, 0)), () => objets[v.id].moniteur ? [`${objets[objets[v.id].moniteur].data.nom} <small>avec ${objets[v.id].eleve}</small>`, 'orange'] : null));
+MOTOS.forEach((v) => etiquette(v.id, () => objets[v.id].obj.position.clone().add(new THREE.Vector3(0, 1.2, 0)), () => objets[v.id].moniteur ? [`${objets[v.id].eleve} <small>sur le plateau</small>`, 'orange'] : null));
+
+const v3 = new THREE.Vector3();
+function placerEtiquettes() {
+  const r = renderer.domElement.getBoundingClientRect();
+  for (const e of etiquettes) {
+    const contenu = e.fn();
+    if (!contenu) { e.el.style.display = 'none'; continue; }
+    const [html, cls] = contenu;
+    if (e.el.innerHTML !== html) e.el.innerHTML = html;
+    e.el.className = 'et ' + cls;
+    v3.copy(e.pos()).project(camera);
+    e.el.style.display = '';
+    e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px';
+    e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px';
+  }
+}
+
+// ---------- Panneau ----------
+const $ = (id) => document.getElementById(id);
+const euros = (n) => n.toLocaleString('fr-FR') + ' €';
+function majKpis() {
+  const vDispo = VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
+  $('k-voitures').textContent = `${vDispo}/${VOITURES.length}`;
+  $('k-voitures-d').textContent = `${VOITURES.length - vDispo} en leçon`;
+  $('k-places').textContent = `${NB_PLACES - vDispo}/${NB_PLACES}`;
+  $('k-heures').textContent = `${etat.heures} h`;
+  $('k-ca').textContent = euros(etat.ca);
+  $('k-ca-t').textContent = 'Encaissé en ' + maintenant().toLocaleDateString('fr-FR', { month: 'long' });
+  const auj = maintenant().getDay(), NOMS = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'], BASE = [27, 31, 24, 29, 33, 22];
+  const jours = [...Array(7)].map((_, i) => (auj - 6 + i + 7) % 7);
+  const sem = jours.map((d, i) => (i === 6 ? etat.heures : d === 0 ? 0 : BASE[i]));
+  const max = Math.max(...sem, 1);
+  $('barres').innerHTML = sem.map((h, i) => `<div class="${i === 6 ? 'auj' : ''}" style="height:${Math.max(4, (h / max) * 100)}%" title="${h} h"></div>`).join('');
+  $('jours').innerHTML = jours.map((d, i) => `<span>${i === 6 ? 'auj.' : NOMS[d]}</span>`).join('');
+}
+function li(a, b, cls = '') { return `<li class="${cls}"><span>${a}</span><span>${b}</span></li>`; }
+function rendreFiche() {
+  const c = etat.selection, f = $('fiche');
+  if (!c) { f.innerHTML = '<p class="vide">Cliquez sur une voiture, une moto, un moniteur, une place de parking ou la salle de code.</p>'; return; }
+  // Heure de la journée de démo : l'heure réelle en journée, sinon 14h30 (pour que le planning ait du sens le soir).
+  const hr = new Date().getHours() + new Date().getMinutes() / 60;
+  const h = hr >= 8 && hr <= 18 ? hr : 14.5;
+  if (c === 'code') {
+    f.innerHTML = `<h3>Salle de code</h3><p class="sous">12 places · séries sur écran</p><span class="statut dispo">${etat.code} élèves présents</span><ul class="lignes">${li('Places libres', 12 - etat.code)}${li('Prochaine séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
+  } else if (c.startsWith('place')) {
+    const i = +c.slice(5), v = VOITURES.find((x) => objets[x.id].place === i && objets[x.id].mode === 'gare');
+    f.innerHTML = `<h3>Place ${i + 1}</h3><p class="sous">Parking de l'agence</p>${v ? `<span class="statut occupe">Occupée</span><ul class="lignes">${li('Véhicule', v.nom)}${li('Modèle', v.modele)}</ul>` : `<span class="statut dispo">Libre</span><ul class="lignes">${li('Réservée pour', objets[VOITURES[i]?.id] ? VOITURES[i].nom : 'visiteurs')}</ul>`}`;
+  } else {
+    const o = objets[c];
+    if (o.type === 'moniteur') {
+      const m = o.data;
+      f.innerHTML = `<h3>${m.nom}</h3><p class="sous">Moniteur · permis ${m.permis}</p><span class="statut ${o.statut === 'dispo' ? 'dispo' : 'occupe'}">${o.statut === 'dispo' ? 'Disponible' : 'En leçon avec ' + o.eleve}</span>${o.vehicule ? `<ul class="lignes">${li('Véhicule', objets[o.vehicule].data.nom)}</ul>` : ''}<h2 style="margin-top:14px">Élèves du jour</h2><ul class="lignes">${o.lecons.map((l) => li(`${heureTxt(l.h)} · ${l.type}`, l.eleve, l.h + 1.5 < h ? 'fait' : '')).join('')}</ul>`;
+    } else if (o.type === 'voiture') {
+      const v = o.data;
+      f.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele} · ${v.plaque}</p><span class="statut ${o.moniteur ? 'occupe' : 'dispo'}">${o.moniteur ? 'En leçon' : 'Au parking, place ' + (o.place + 1)}</span><ul class="lignes">${o.moniteur ? li('Moniteur', objets[o.moniteur].data.nom) + li('Élève', o.eleve) : ''}${li('Kilométrage', v.km.toLocaleString('fr-FR') + ' km')}${li('Prochain entretien', v.entretien)}${li('Contrôle double commande', 'à jour')}</ul>`;
+    } else {
+      const v = o.data;
+      f.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele}</p><span class="statut ${o.moniteur ? 'occupe' : 'dispo'}">${o.moniteur ? 'Sur le plateau' : 'Disponible'}</span><ul class="lignes">${o.moniteur ? li('Moniteur', objets[o.moniteur].data.nom) + li('Élève', o.eleve) : ''}${li('Équipements élève', '2 casques, 2 gilets')}${li('Prochain entretien', '15 nov.')}</ul>`;
+    }
+  }
+}
+function rendreListe() {
+  const items = etat.onglet === 'moniteurs'
+    ? MONITEURS.map((m) => { const o = objets[m.id]; return { cle: m.id, nom: m.nom, info: o.statut === 'dispo' ? 'dispo' : 'en leçon', ok: o.statut === 'dispo' }; })
+    : [...VOITURES, ...MOTOS].map((v) => { const o = objets[v.id]; return { cle: v.id, nom: v.nom, info: o.moniteur ? 'en leçon' : o.mode === 'gare' ? 'dispo' : 'revient au parking', ok: !o.moniteur && o.mode === 'gare' }; });
+  $('liste').innerHTML = items.map((x) => `<li data-cle="${x.cle}"><i class="rond" style="background:${x.ok ? 'var(--vert)' : 'var(--orange)'}"></i><span class="nom">${x.nom}</span><span class="info">${x.info}</span></li>`).join('');
+}
+function rendreFil() { $('fil').innerHTML = fil.map((x) => `<li><time>${x.t}</time>${x.txt}</li>`).join(''); }
+function majTout() { majKpis(); rendreFiche(); rendreListe(); }
+$('liste').onclick = (ev) => { const l = ev.target.closest('li'); if (l) choisir(l.dataset.cle); };
+document.querySelectorAll('[data-onglet]').forEach((b) => b.onclick = () => { etat.onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendreListe(); });
+
+function choisir(cle) { etat.selection = cle; rendreFiche(); }
+function positionSelection() {
+  const c = etat.selection; if (!c) return null;
+  if (c === 'code') return new THREE.Vector3(-5, 0.2, -3.9);
+  if (c.startsWith('place')) return PLACES[+c.slice(5)];
+  const o = objets[c]; return o && o.obj.visible ? o.obj.position : null;
+}
+
+// Clic dans la scène
+const ray = new THREE.Raycaster(), souris = new THREE.Vector2();
+let appui = null;
+renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(souris, camera);
+  const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
+  choisir(hit ? hit.object.userData.cle : null);
+});
+
+// Boutons
+let tourne = false;
+$('recentrer').onclick = () => { camera.position.copy(VUE); camera.zoom = 1; camera.updateProjectionMatrix(); controls.target.set(0, 0, 0); };
+$('tourner').onclick = (e) => { tourne = !tourne; controls.autoRotate = tourne; controls.autoRotateSpeed = 0.6; e.target.textContent = tourne ? 'Arrêter' : 'Faire tourner'; };
+
+// Taille
+function taille() {
+  const w = conteneur.clientWidth, h = conteneur.clientHeight;
+  renderer.setSize(w, h, false);
+  const a = w / h, s = a < 1 ? 15.5 / a : 17;
+  Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s });
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', taille); taille();
+
+// ---------- Boucle ----------
+const tmp = new THREE.Vector3();
+let avant = performance.now();
+function suivreChemin(v, dt) {
+  const a = v.chemin[v.k], b = v.chemin[v.k + 1];
+  const d = a.distanceTo(b), pas = 4 * dt;
+  v.u = (v.u || 0) + pas / Math.max(d, 0.01);
+  if (v.u >= 1) { v.u = 0; v.k++; if (v.k >= v.chemin.length - 1) return true; return false; }
+  v.obj.position.lerpVectors(a, b, v.u);
+  tmp.subVectors(b, a); v.obj.rotation.y = Math.atan2(tmp.x, tmp.z);
+  return false;
+}
+function animer(t) {
+  const dt = Math.min(0.05, (t - avant) / 1000); avant = t;
+  for (const o of Object.values(objets)) {
+    if (o.type === 'voiture') {
+      if (o.mode === 'sortie') { if (suivreChemin(o, dt)) { o.mode = 'route'; o.t = tSortie; } }
+      else if (o.mode === 'route' || o.mode === 'retour_route') {
+        const pas = (5.5 * dt) / LONG;
+        const reste = (((tSortie - o.t) % 1) + 1) % 1;
+        o.t = (o.t + pas) % 1;
+        const p = CIRCUIT.getPointAt(o.t), q = CIRCUIT.getPointAt((o.t + 0.002) % 1);
+        o.obj.position.copy(p); tmp.subVectors(q, p); o.obj.rotation.y = Math.atan2(tmp.x, tmp.z);
+        if (o.mode === 'retour_route' && reste <= pas) {
+          const place = PLACES[o.place];
+          o.mode = 'rentre'; o.k = 0; o.u = 0;
+          o.chemin = [CIRCUIT.getPointAt(tSortie), new THREE.Vector3(7.2, 0.12, -9.6), new THREE.Vector3(place.x, 0.12, -7.8), place.clone()];
+        }
+      } else if (o.mode === 'rentre') { if (suivreChemin(o, dt)) { o.mode = 'gare'; o.obj.position.copy(PLACES[o.place]); o.obj.rotation.y = Math.PI; majTout(); } }
+    } else if (o.type === 'moto' && o.mode === 'piste') {
+      o.a += dt * 0.9;
+      const x = 7.2 + Math.sin(o.a) * 3.8, z = 3.4 + Math.sin(o.a * 2) * 1.1;
+      const x2 = 7.2 + Math.sin(o.a + 0.02) * 3.8, z2 = 3.4 + Math.sin((o.a + 0.02) * 2) * 1.1;
+      o.obj.position.set(x, 0.12, z); o.obj.rotation.y = Math.atan2(x2 - x, z2 - z);
+    }
+  }
+  elevesCode.forEach((p, i) => { p.visible = i < etat.code; });
+  const ps = positionSelection();
+  anneau.visible = !!ps;
+  if (ps) { anneau.position.set(ps.x, 0.16, ps.z); const s = etat.selection === 'code' ? 3.6 : 1 + Math.sin(t / 300) * 0.04; anneau.scale.set(s, s, s); }
+  controls.update();
+  renderer.render(scene, camera);
+  placerEtiquettes();
+  requestAnimationFrame(animer);
+}
+
+// État de départ : deux leçons en cours, une moto sur le plateau
+VOITURES.forEach((v) => { objets[v.id].obj.rotation.y = Math.PI; });
+demarrerLecon('m1', 'v2', 'Léa M.', true);
+demarrerLecon('m3', 'v4', 'Hugo D.', true);
+demarrerLecon('m2', 'mo2', 'Inès T.', true);
+objets.v2.debut = objets.v4.debut = objets.mo2.debut = performance.now() - 15000;
+noter('<b>Sophie L.</b> démarre une leçon moto avec Inès T. · Moto 2');
+noter('<b>Thomas R.</b> part en leçon avec Hugo D. · Voiture 4');
+noter('<b>Karim B.</b> part en leçon avec Léa M. · Voiture 2');
+majTout();
+setInterval(tic, 5000);
+setInterval(() => { $('heure').textContent = hhmm(); }, 1000); $('heure').textContent = hhmm();
+requestAnimationFrame(animer);
+</script>
+</body>
+</html>
