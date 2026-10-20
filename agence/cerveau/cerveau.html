@@ -534,6 +534,9 @@ a.lien{font-weight:500}
 .arm-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
 .arm-images img{width:100%;border-radius:6px;border:1px solid var(--line)}
 .arm-rub{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
+.verifie{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--ok);margin:0}
+.verifie svg{width:14px;height:14px}
+.verifie.non{color:var(--warn)}
 .mini-armoire{width:22px;height:28px;padding:2px;border-width:2px}
 .mini-armoire .porte::after{display:none}
 .ecran-c{display:grid;grid-template-columns:auto auto;gap:1px 8px;align-items:baseline;background:#06140c;border:3px solid var(--trait,#110d1a);box-shadow:inset 0 0 0 2px #14532d;padding:6px 8px;font:700 9px/1.3 'Silkscreen',var(--mono);color:#4ade80;min-width:132px}
@@ -1096,7 +1099,7 @@ const PIECES = [
   { id: 'design', nom: 'Design', agents: ['PIXEL'], renforts: { PIXEL: ['Mila', 'Léon'] }, metier: 'graphiste' },
   { id: 'compta', nom: 'Compta', agents: ['FINO'], renforts: { FINO: ['Basile'] }, metier: 'comptable' },
   { id: 'juridique', nom: 'Juridique', agents: ['LEX'], renforts: { LEX: ['Maël'] }, metier: 'juriste' },
-  { id: 'controle', nom: 'Contrôle', agents: ['ARGUS'], renforts: { ARGUS: ['Elsa'] }, metier: 'vérificateur' },
+  { id: 'controle', nom: 'Contrôle', agents: ['ARGUS', 'VERA'], renforts: { ARGUS: ['Elsa'], VERA: ['Hugo', 'Maya'] }, metier: 'vérificateur' },
   { id: 'veille', nom: 'Veille et idées', agents: ['IDEO'] },
   { id: 'boutiques', nom: 'Boutiques', agents: ['CARGO'] },
   { id: 'etudes', nom: 'Études', agents: ['SAGE'] },
@@ -1344,7 +1347,7 @@ function carteValidation(v) {
   const corr = S.corriger === v.id;
   return `<article class="card valid"><div class="valid-images">${(v.apercus || []).map((src, i) => `<img src="${esc(src)}" alt="${esc(v.titre)}, capture ${i + 1}" loading="lazy">`).join('') || '<div class="valid-vide muted">Pas de capture</div>'}</div>
     <div class="pad valid-corps"><div class="ligne"><span class="tag">${esc(TYPES_V[v.type] || 'À voir')}</span>${v.projet ? `<span class="tag">${esc(v.projet)}</span>` : ''}${etat}<span class="grow"></span><small class="muted">${quand(v.date)} · ${esc(v.par || 'ATLAS')}</small></div>
-      <h3>${esc(v.titre)}</h3><div class="md">${mdToHtml(String(v.resume || ''))}</div>
+      <h3>${esc(v.titre)}</h3>${v.verifie ? `<p class="verifie"><i data-lucide="shield-check"></i>Vérifié par ${esc(v.verifie)}${v.verif ? ` · <button class="lien" type="button" data-voir-neurone="n:${esc(cle(v.verif))}">le rapport</button>` : ''}</p>` : '<p class="verifie non"><i data-lucide="triangle-alert"></i>Pas encore vérifié par VERA</p>'}<div class="md">${mdToHtml(String(v.resume || ''))}</div>
       ${v.si_ok ? `<p class="muted" style="font-size:13px"><b>Si tu dis OK :</b> ${esc(v.si_ok)}</p>` : ''}
       ${v.commentaire ? `<p class="muted" style="font-size:13px"><b>Ton commentaire :</b> ${esc(v.commentaire)}</p>` : ''}
       <div class="actions">${v.lien ? `<a class="btn" href="${esc(v.lien)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>Voir en vrai</a>` : ''}
