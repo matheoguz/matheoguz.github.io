@@ -690,7 +690,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], chef: [], validations: [], discussions: [], corriger: null, chefEnCours: false, bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], chef: [], validations: [], discussions: [], missions: [], corriger: null, chefEnCours: false, bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -2297,6 +2297,7 @@ function missions() {
         ${S.envoi && S.envoi !== 'en_cours' ? `<div class="result ${S.envoi.ok ? 'ok' : 'bad'}"><i data-lucide="${S.envoi.ok ? 'circle-check' : 'triangle-alert'}"></i><div><b>${esc(S.envoi.titre)}</b><p>${S.envoi.html}</p></div></div>` : ''}
       </div></section>
   </div><div class="stack">
+    ${S.missions.filter((m) => m.statut === 'en_attente' || m.statut === 'lancee').length ? `<section class="card"><header><h2>File d'attente du chef</h2><span class="c">${S.missions.filter((m) => m.statut === 'en_attente').length} en attente</span></header><ul class="rows">${[...S.missions].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 8).map((m) => `<li><i data-lucide="${m.statut === 'en_attente' ? 'hourglass' : 'circle-check'}"></i><div class="info"><b>${m.session_id ? `<a href="https://claude.ai/code/${esc(m.session_id)}" target="_blank" rel="noopener">${esc(m.titre || 'Mission')}</a>` : esc(m.titre || 'Mission')}</b><small>${m.statut === 'en_attente' ? 'En attente : ATLAS la démarre à son prochain passage' : 'Démarrée par ATLAS'} · ${quand(m.date)}</small></div></li>`).join('')}</ul></section>` : ''}
     <section class="card"><header><h2>Missions récentes</h2></header>
       ${!S.mcp ? '<div class="pad muted">Le lancement de missions n\'est pas disponible dans cette vue. Ouvrez le Cerveau sur claude.ai.</div>'
         : S.sessionsErr ? `<div class="pad muted">${esc(S.sessionsErr)}</div>`
@@ -2322,12 +2323,23 @@ async function lancerMission() {
     const txt = c === 'server_not_connected' ? 'Le connecteur « Claude Code Remote » n\'est pas branché sur votre compte. Ajoutez-le dans claude.ai, Réglages, Connecteurs.'
       : c === 'needs_reauth' ? 'Reconnectez « Claude Code Remote » dans claude.ai, Réglages, Connecteurs.'
       : c === 'approval_required' ? 'Il faut autoriser le Cerveau à lancer des sessions : acceptez la demande qui s\'affiche, puis relancez.'
-      : c === 'not_in_manifest' || c === 'blocked_by_policy' ? 'Le lancement de sessions est refusé pour cette page sur votre compte.'
+      : c === 'not_in_manifest' || c === 'blocked_by_policy' ? null
       : c === 'tool_error' ? 'Claude Code a refusé la mission : ' + esc(e.message || '')
       : 'La réponse n\'est pas arrivée. La mission a peut-être été créée : vérifiez « Missions récentes » avant de relancer.';
-    S.envoi = { ok: false, titre: 'Mission non lancée', html: txt };
+    if (txt === null && await mettreEnFile(titre)) {
+      S.envoi = { ok: true, titre: 'Mission envoyée au chef', html: `Cette page n'a pas le droit de démarrer une session elle-même${c === 'not_in_manifest' ? ' (<button class="lien" type="button" data-autoriser>autoriser le Cerveau</button> pour un lancement direct)' : ''}. La mission est dans la file : ATLAS la démarre depuis sa session et elle apparaît dans « Missions récentes ».` };
+      S.confirmer = false; S.missionTexte = '';
+    } else S.envoi = { ok: false, titre: 'Mission non lancée', html: txt || 'Le lancement de sessions est refusé pour cette page, et la file d\'attente n\'est pas joignable.' };
   }
   render();
+}
+// Plan B quand la page ne peut pas lancer de session : la demande va dans « missions », ATLAS la lance (create_session) et y note l'id.
+async function mettreEnFile(titre) {
+  if (!S.db) return false;
+  try {
+    await S.db.collection('missions').doc().set({ date: new Date().toISOString(), titre: S.missionProjet && projetParId(S.missionProjet) ? `Cerveau · ${projetParId(S.missionProjet).titre}` : titre, prompt: promptMission(), depot: depotMission(), statut: 'en_attente' });
+    return true;
+  } catch { return false; }
 }
 function suivreSessions() {
   if (!S.mcp) return;
@@ -2430,6 +2442,7 @@ document.addEventListener('click', (ev) => {
   if (vn) { S.note = vn.dataset.voirNeurone; if (S.vue !== 'cerveau') location.hash = 'cerveau'; else G.focus?.(S.note, true); return; }
   if (t.closest('[data-mission-agent]')) { const a = t.closest('[data-mission-agent]').dataset.missionAgent; S.mission = 'equipe'; S.missionProjet = null; S.modele = ''; S.missionTexte = `Avec ${a} : `; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
   if (t.closest('[data-modele]')) { const k = t.closest('[data-modele]').dataset.modele; S.modele = S.modele === k ? '' : k; S.confirmer = false; render(); return; }
+  if (t.closest('[data-autoriser]')) { claude.use('permissions').then((pm) => pm?.manage()).catch(() => toast('Ouvrez le menu de la page, puis Autorisations.')); return; }
   if (t.closest('[data-mission-equipe]')) { S.mission = 'equipe'; S.missionProjet = null; S.missionTexte = ''; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
   const mp = t.closest('[data-mission-projet]');
   if (mp) { const pr = projetParId(mp.dataset.missionProjet); S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.missionTexte = ''; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
@@ -2537,7 +2550,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -2547,7 +2560,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
