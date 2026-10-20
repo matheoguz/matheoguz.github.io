@@ -3,117 +3,129 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Auto-école Modèle · démo du tableau de bord 3D</title>
-<meta name="description" content="Démo avec des données fictives : l'auto-école en maquette 3D, en direct. Voitures, moniteurs, places libres et chiffres clés.">
+<title>Auto-école Modèle · tableau de bord 3D (démo)</title>
+<meta name="description" content="Démo avec des données fictives : l'auto-école en maquette 3D, en direct. Planning du jour, moniteurs, véhicules, élèves et chiffre d'affaires en un clic.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --fond: #f4f2ee;
+    --fond: #f3f4f6;
     --carte: #ffffff;
-    --texte: #1d2026;
-    --doux: #6a6f78;
-    --ligne: #e4e1da;
-    --accent: #2f5bea;
-    --accent-doux: #e8eefe;
-    --vert: #1f9d62;
-    --vert-doux: #e3f4ea;
-    --orange: #d9822b;
-    --orange-doux: #fbefe1;
-    --rouge: #d44a3a;
+    --texte: #111827;
+    --doux: #6b7280;
+    --ligne: #e5e7eb;
+    --accent: #1d4ed8;
+    --accent-doux: #e0e7ff;
+    --vert: #15803d;
+    --vert-doux: #dcfce7;
+    --orange: #c2410c;
+    --orange-doux: #ffedd5;
+    --gris-doux: #f3f4f6;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
-  body {
-    background: var(--fond);
-    color: var(--texte);
-    font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  .app { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr; height: 100vh; }
-  header {
-    grid-column: 1 / -1; display: flex; align-items: center; gap: 16px;
-    padding: 14px 20px; border-bottom: 1px solid var(--ligne); background: var(--carte);
-  }
-  .logo { width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+  html, body { margin: 0; }
+  body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 420px; grid-template-rows: auto auto minmax(0, 1fr); height: 100vh; }
+  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  .logo { width: 36px; height: 36px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
   .titre b { display: block; font-size: 15px; }
   .titre span { color: var(--doux); font-size: 12.5px; }
-  .demo { margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; }
-  .direct { margin-left: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
-  .point { width: 8px; height: 8px; border-radius: 50%; background: var(--vert); box-shadow: 0 0 0 0 rgba(31,157,98,.5); animation: pouls 2s infinite; }
-  @keyframes pouls { 0% { box-shadow: 0 0 0 0 rgba(31,157,98,.45); } 70% { box-shadow: 0 0 0 8px rgba(31,157,98,0); } 100% { box-shadow: 0 0 0 0 rgba(31,157,98,0); } }
-  .heure { color: var(--doux); font-variant-numeric: tabular-nums; font-weight: 500; }
+  .demo { font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; margin-left: 6px; }
+  .horloge { margin-left: auto; text-align: right; }
+  .horloge b { font-size: 20px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .horloge span { display: block; color: var(--doux); font-size: 11.5px; }
+  .direct { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert) !important; margin-right: 8px; }
+  .direct i { width: 7px; height: 7px; border-radius: 50%; background: var(--vert); animation: pouls 2s infinite; }
+  @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 
-  .scene { position: relative; overflow: hidden; min-height: 0; }
+  .kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--ligne); border-bottom: 1px solid var(--ligne); }
+  .kpi { background: var(--carte); padding: 12px 18px; }
+  .kpi span { color: var(--doux); font-size: 12px; }
+  .kpi b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin: 1px 0; }
+  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
+  .jauge { height: 4px; border-radius: 4px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
+  .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 4px; }
+
+  .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
   .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
   .scene canvas:active { cursor: grabbing; }
   .etiquettes { position: absolute; inset: 0; pointer-events: none; }
-  .et {
-    position: absolute; transform: translate(-50%, -100%); white-space: nowrap;
-    background: var(--carte); border: 1px solid var(--ligne); border-radius: 8px;
-    padding: 4px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 2px 8px rgba(20,24,32,.08);
-    pointer-events: auto; cursor: pointer; transition: opacity .2s;
-  }
+  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
   .et small { font-weight: 500; color: var(--doux); }
-  .et.vert { border-color: #bfe5cf; }
-  .et.vert::before, .et.orange::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--vert); }
-  .et.orange::before { background: var(--orange); }
-  .et.orange { border-color: #f1d3b0; }
-  .outils { position: absolute; left: 16px; bottom: 16px; display: flex; gap: 8px; }
-  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: 8px; cursor: pointer; }
-  .bouton:hover { border-color: #cfcbc2; }
-  .aide { position: absolute; right: 16px; bottom: 16px; color: var(--doux); font-size: 12px; background: rgba(255,255,255,.8); padding: 6px 10px; border-radius: 8px; }
-
-  aside { background: var(--carte); border-left: 1px solid var(--ligne); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 18px; }
-  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .kpi { border: 1px solid var(--ligne); border-radius: 12px; padding: 12px; }
-  .kpi span { color: var(--doux); font-size: 12px; }
-  .kpi b { display: block; font-size: 21px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
-  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
-  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
-  .barres { display: flex; align-items: flex-end; gap: 6px; height: 64px; }
-  .barres div { flex: 1; background: var(--accent-doux); border-radius: 4px 4px 0 0; position: relative; }
-  .barres div.auj { background: var(--accent); }
-  .jours { display: flex; gap: 6px; margin-top: 4px; }
-  .jours span { flex: 1; text-align: center; color: var(--doux); font-size: 11px; }
-
-  .fiche { border: 1px solid var(--ligne); border-radius: 12px; padding: 14px; min-height: 120px; }
+  .et i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .outils { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; }
+  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 7px; cursor: pointer; }
+  .bouton:hover { border-color: #cbd0d8; }
+  .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
+  .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis; }
+  .annonce.vu { opacity: .92; }
+  .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; }
+  .fiche.vu { display: block; }
   .fiche h3 { margin: 0; font-size: 16px; }
-  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 10px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 8px; }
+  .fermer { position: absolute; right: 10px; top: 8px; border: 0; background: none; font-size: 18px; color: var(--doux); cursor: pointer; }
   .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
-  .statut.dispo { color: var(--vert); background: var(--vert-doux); }
+  .statut.dispo, .statut.fait { color: var(--vert); background: var(--vert-doux); }
   .statut.occupe { color: var(--orange); background: var(--orange-doux); }
-  .lignes { margin: 10px 0 0; padding: 0; list-style: none; }
-  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  .statut.avenir { color: var(--accent); background: var(--accent-doux); }
+  .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
   .lignes li span:first-child { color: var(--doux); }
-  .lignes li.fait span { text-decoration: line-through; color: var(--doux); }
-  .vide { color: var(--doux); }
+  .lignes li b { font-weight: 600; text-align: right; }
 
-  .onglets { display: flex; gap: 6px; margin-bottom: 8px; }
-  .onglets button { flex: 1; }
-  .onglets button.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
-  .liste { list-style: none; margin: 0; padding: 0; }
-  .liste li { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-radius: 8px; cursor: pointer; }
-  .liste li:hover { background: var(--fond); }
-  .liste .rond { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-  .liste .nom { font-weight: 600; }
-  .liste .info { margin-left: auto; color: var(--doux); font-size: 12px; }
-  .fil { list-style: none; margin: 0; padding: 0; }
-  .fil li { padding: 6px 0; border-top: 1px solid var(--ligne); font-size: 12.5px; }
-  .fil li:first-child { border-top: 0; }
-  .fil time { color: var(--doux); font-variant-numeric: tabular-nums; margin-right: 6px; }
-  .note { color: var(--doux); font-size: 11.5px; margin-top: auto; }
+  aside { background: var(--carte); border-left: 1px solid var(--ligne); display: flex; flex-direction: column; min-height: 0; }
+  .onglets { display: flex; border-bottom: 1px solid var(--ligne); padding: 0 12px; }
+  .onglets button { flex: 1; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--doux); padding: 12px 4px 10px; border-bottom: 2px solid transparent; cursor: pointer; }
+  .onglets button.actif { color: var(--accent); border-color: var(--accent); }
+  .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
 
+  .gantt { position: relative; }
+  .heures, .rangee { display: grid; grid-template-columns: 84px 1fr; align-items: center; }
+  .heures div:last-child { position: relative; height: 18px; }
+  .heures span { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--doux); font-variant-numeric: tabular-nums; }
+  .rangee { height: 48px; border-top: 1px solid var(--ligne); }
+  .rangee > b { font-size: 12.5px; font-weight: 600; line-height: 1.2; cursor: pointer; }
+  .rangee > b small { display: block; font-weight: 500; color: var(--doux); font-size: 11px; }
+  .piste { position: relative; height: 38px; }
+  .bloc { position: absolute; top: 3px; bottom: 3px; border-radius: 5px; font-size: 10.5px; font-weight: 600; padding: 2px 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; border: 1px solid transparent; line-height: 1.25; }
+  .bloc small { display: block; font-weight: 500; opacity: .85; }
+  .bloc.fait { background: #eef0f3; color: #6b7280; }
+  .bloc.occupe { background: var(--orange-doux); color: var(--orange); border-color: #fdba74; }
+  .bloc.avenir { background: var(--accent-doux); color: var(--accent); }
+  .bloc.sel { outline: 2px solid var(--texte); }
+  .maintenant { position: absolute; top: 18px; bottom: 0; width: 2px; background: #dc2626; pointer-events: none; }
+  .maintenant::before { content: ""; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
+  .legende { display: flex; gap: 12px; margin-top: 10px; font-size: 11.5px; color: var(--doux); flex-wrap: wrap; }
+  .legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid var(--ligne); }
+  td { padding: 8px 4px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+  tr.clic { cursor: pointer; }
+  tr.clic:hover td { background: var(--gris-doux); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mini { height: 5px; border-radius: 5px; background: var(--gris-doux); width: 70px; display: inline-block; vertical-align: middle; overflow: hidden; }
+  .mini i { display: block; height: 100%; background: var(--accent); }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  .bloc-txt { margin-top: 18px; }
+
+  @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: auto 48vh auto; height: auto; }
+    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto; height: auto; }
     aside { border-left: 0; border-top: 1px solid var(--ligne); }
-    header { flex-wrap: wrap; padding: 12px 16px; }
-    .direct { margin-left: 0; }
-    .aide { display: none; }
-    .et { font-size: 10px; padding: 3px 6px; }
+    .contenu { overflow: visible; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi { padding: 10px 14px; }
+    .kpi b { font-size: 19px; }
+    header { flex-wrap: wrap; padding: 12px 14px; }
+    .horloge { margin-left: 0; text-align: left; width: 100%; }
+    .et { font-size: 10px; padding: 2px 6px; }
     .et small { display: none; }
+    .fiche { width: auto; right: 14px; }
+    .annonce { display: none; }
   }
 </style>
 <script type="importmap">
@@ -127,57 +139,38 @@
 <div class="app">
   <header>
     <div class="logo">M</div>
-    <div class="titre"><b>Auto-école Modèle <span class="demo">Démo · données fictives</span></b><span>Tableau de bord de l'agence, en direct</span></div>
-    <div class="direct"><i class="point"></i> En direct <span class="heure" id="heure">--:--</span></div>
+    <div class="titre"><b>Auto-école Modèle <span class="demo">Démo · données fictives</span></b><span>Tableau de bord de l'agence · tout est à jour en direct</span></div>
+    <div class="horloge"><span class="direct"><i></i>En direct</span><b id="heure">--:--</b><span>journée accélérée pour la démo (1 s = 1 min)</span></div>
   </header>
+
+  <section class="kpis" aria-label="Chiffres clés">
+    <div class="kpi"><span>Encaissé aujourd'hui</span><b id="k-jour">-</b><em id="k-jour-d"></em></div>
+    <div class="kpi"><span id="k-mois-t">Encaissé ce mois</span><b id="k-mois">-</b><em>objectif 24 000 €</em><div class="jauge"><i id="k-mois-j"></i></div></div>
+    <div class="kpi"><span>Heures de conduite</span><b id="k-heures">-</b><em>faites / prévues aujourd'hui</em></div>
+    <div class="kpi"><span>Remplissage des moniteurs</span><b id="k-rempl">-</b><em>heures vendues / heures dispo</em><div class="jauge"><i id="k-rempl-j"></i></div></div>
+    <div class="kpi"><span>Véhicules disponibles</span><b id="k-veh">-</b><em id="k-veh-d"></em></div>
+    <div class="kpi"><span>Reste à encaisser</span><b id="k-solde">-</b><em id="k-solde-d"></em></div>
+  </section>
 
   <main class="scene" id="scene">
     <div class="etiquettes" id="etiquettes"></div>
     <div class="outils">
       <button class="bouton" id="recentrer">Recentrer</button>
-      <button class="bouton" id="tourner">Faire tourner</button>
+      <button class="bouton" id="pause">Pause</button>
     </div>
-    <div class="aide">Glisser pour tourner · molette ou pincer pour zoomer · clic sur un élément pour sa fiche</div>
+    <div class="annonce" id="annonce"></div>
+    <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
   </main>
 
   <aside>
-    <section>
-      <h2>Chiffres clés</h2>
-      <div class="kpis">
-        <div class="kpi"><span>Voitures dispo</span><b id="k-voitures">-</b><em id="k-voitures-d"></em></div>
-        <div class="kpi"><span>Places de parking</span><b id="k-places">-</b><em>libres</em></div>
-        <div class="kpi"><span>Heures de conduite</span><b id="k-heures">-</b><em>aujourd'hui</em></div>
-        <div class="kpi"><span id="k-ca-t">Encaissé ce mois</span><b id="k-ca">-</b><em>fictif</em></div>
-        <div class="kpi"><span>Examens cette semaine</span><b>6</b><em>4 permis B, 2 permis A2</em></div>
-        <div class="kpi"><span>Taux de réussite</span><b>64 %</b><em>12 derniers mois, fictif</em></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Heures de conduite, 7 derniers jours</h2>
-      <div class="barres" id="barres"></div>
-      <div class="jours" id="jours"></div>
-    </section>
-
-    <section>
-      <h2>Fiche</h2>
-      <div class="fiche" id="fiche"><p class="vide">Cliquez sur une voiture, une moto, un moniteur, une place de parking ou la salle de code.</p></div>
-    </section>
-
-    <section>
-      <div class="onglets">
-        <button class="bouton actif" data-onglet="moniteurs">Moniteurs</button>
-        <button class="bouton" data-onglet="vehicules">Véhicules</button>
-      </div>
-      <ul class="liste" id="liste"></ul>
-    </section>
-
-    <section>
-      <h2>Ce qui vient de se passer</h2>
-      <ul class="fil" id="fil"></ul>
-    </section>
-
-    <p class="note">Démo avec des données inventées : aucune vraie auto-école, aucun vrai élève. Les chiffres bougent tout seuls pour montrer le temps réel.</p>
+    <nav class="onglets" role="tablist">
+      <button class="actif" data-onglet="planning">Planning</button>
+      <button data-onglet="moniteurs">Moniteurs</button>
+      <button data-onglet="vehicules">Véhicules</button>
+      <button data-onglet="eleves">Élèves</button>
+    </nav>
+    <div class="contenu" id="contenu"></div>
+    <p class="note">Démo avec des données inventées : aucune vraie auto-école, aucun vrai élève. Un clic sur un élément de la maquette ou du planning ouvre sa fiche.</p>
   </aside>
 </div>
 
@@ -185,454 +178,465 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// ---------- Données fictives ----------
+// ================= Données fictives =================
+const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
 const MONITEURS = [
-  { id: 'm1', nom: 'Karim B.', couleur: 0x2f5bea, permis: 'B, A2' },
-  { id: 'm2', nom: 'Sophie L.', couleur: 0x1f9d62, permis: 'B' },
-  { id: 'm3', nom: 'Thomas R.', couleur: 0xd9822b, permis: 'B, BE' },
-  { id: 'm4', nom: 'Nadia K.', couleur: 0x8a4fd6, permis: 'B' },
+  { id: 'm1', nom: 'Karim B.', permis: 'B, A2', couleur: 0x1d4ed8 },
+  { id: 'm2', nom: 'Sophie L.', permis: 'B', couleur: 0x15803d },
+  { id: 'm3', nom: 'Thomas R.', permis: 'B, BE', couleur: 0xc2410c },
+  { id: 'm4', nom: 'Nadia K.', permis: 'B, boîte auto', couleur: 0x7c3aed },
 ];
-const ELEVES = ['Léa M.', 'Hugo D.', 'Inès T.', 'Yanis P.', 'Chloé R.', 'Lucas G.', 'Manon F.', 'Rayan S.', 'Emma V.', 'Noah C.', 'Jade L.', 'Adam B.'];
 const VOITURES = [
-  { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DEMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf2f2f0 },
-  { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DEMO-02', km: 31560, entretien: '3 déc.', couleur: 0x3a3f4a },
-  { id: 'v3', nom: 'Voiture 3', modele: 'Yaris, automatique', plaque: 'DEMO-03', km: 22940, entretien: '28 oct.', couleur: 0xc9302c },
-  { id: 'v4', nom: 'Voiture 4', modele: 'Clio, boîte manuelle', plaque: 'DEMO-04', km: 61030, entretien: '19 nov.', couleur: 0x2f5bea },
-  { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DEMO-05', km: 17480, entretien: '7 janv.', couleur: 0xe9e4d8 },
+  { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf1f1ee },
+  { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DÉMO-02', km: 31560, entretien: '3 déc.', couleur: 0x374151 },
+  { id: 'v3', nom: 'Voiture 3', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-03', km: 61030, entretien: '28 oct.', couleur: 0x9ca3af },
+  { id: 'v4', nom: 'Voiture 4', modele: 'Yaris, boîte manuelle', plaque: 'DÉMO-04', km: 22940, entretien: '19 nov.', couleur: 0xb91c1c },
+  { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DÉMO-05', km: 17480, entretien: '7 janv.', couleur: 0x1e3a8a },
 ];
 const MOTOS = [
-  { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x1d2026 },
-  { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xc9302c },
-  { id: 'mo3', nom: 'Moto 3', modele: 'Permis A2, 35 kW', couleur: 0x2f5bea },
+  { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x111827, entretien: '15 nov.' },
+  { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xb91c1c, entretien: '2 déc.' },
 ];
-const NB_PLACES = 6;
-const etat = { heures: 17, ca: 18420, code: 5, selection: null, onglet: 'moniteurs' };
-const fil = [];
+// [heures faites, forfait, reste à payer en €]
+const ELEVES = {
+  'Léa M.': [14, 20, 0], 'Hugo D.': [22, 20, 112], 'Inès T.': [6, 20, 0], 'Yanis P.': [18, 25, 336], 'Chloé R.': [9, 20, 0], 'Lucas G.': [27, 30, 0],
+  'Manon F.': [3, 20, 0], 'Rayan S.': [12, 20, 224], 'Emma V.': [16, 20, 0], 'Noah C.': [20, 20, 0], 'Jade L.': [8, 13, 0], 'Adam B.': [11, 20, 168],
+  'Sarah N.': [5, 20, 0], 'Tom H.': [19, 20, 0], 'Lina A.': [2, 20, 0], 'Enzo M.': [24, 25, 400],
+};
+// Planning du jour : [moniteur, début (h), durée (h), élève, type, véhicule]
+const PLANNING = [
+  ['m1', 8, 1, 'Léa M.', 'Conduite 1 h', 'v1'], ['m1', 9, 2, 'Hugo D.', 'Conduite 2 h', 'v1'], ['m1', 11, 1, 'Manon F.', 'Conduite 1 h', 'v1'],
+  ['m1', 14, 2, 'Rayan S.', 'Plateau moto 2 h', 'mo1'], ['m1', 16, 1, 'Jade L.', 'Conduite 1 h', 'v1'], ['m1', 17, 1, 'Adam B.', 'Conduite 1 h', 'v1'],
+  ['m2', 8, 2, 'Inès T.', 'Conduite 2 h', 'v2'], ['m2', 10, 1, 'Chloé R.', 'Conduite 1 h', 'v2'], ['m2', 11.5, 1, 'Sarah N.', 'Conduite 1 h', 'v2'],
+  ['m2', 13.5, 1, 'Emma V.', 'Conduite 1 h', 'v2'], ['m2', 14.5, 2, 'Yanis P.', 'Conduite 2 h', 'v2'], ['m2', 17, 1, 'Lina A.', 'Conduite 1 h', 'v2'],
+  ['m3', 8.5, 1, 'Lucas G.', 'Conduite 1 h', 'v3'], ['m3', 10, 1.5, 'Noah C.', 'Examen permis B', 'v3'], ['m3', 13.5, 2, 'Tom H.', 'Conduite 2 h', 'v3'],
+  ['m3', 15.5, 1, 'Chloé R.', 'Conduite 1 h', 'v3'], ['m3', 16.5, 1, 'Enzo M.', 'Conduite 1 h', 'v3'],
+  ['m4', 9, 1, 'Jade L.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 10.5, 1, 'Emma V.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 11.5, 1, 'Tom H.', 'Conduite boîte auto 1 h', 'v5'],
+  ['m4', 14, 1, 'Sarah N.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo M.', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Lina A.', 'Conduite boîte auto 1 h', 'v5'],
+].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
+const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
+const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000;
 
-// ---------- Scène ----------
+// ================= Horloge de démo (journée accélérée) =================
+let t = 13.3, pause = false; // 13h18 : la démo démarre juste avant les départs de l'après-midi
+const hh = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60 + 1e-6)).padStart(2, '0')}`;
+const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60)).padStart(2, '0') : ''}`;
+const statut = (l) => (l.fin <= t ? 'fait' : l.debut <= t ? 'occupe' : 'avenir');
+const enCours = (cond) => PLANNING.find((l) => l.debut <= t && t < l.fin && cond(l));
+const euros = (n) => n.toLocaleString('fr-FR') + ' €';
+
+// ================= Scène 3D =================
 const conteneur = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
 conteneur.prepend(renderer.domElement);
-
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf4f2ee);
+scene.background = new THREE.Color(0xe9ebe6);
 
-const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 500);
-const VUE = new THREE.Vector3(34, 32, 34);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 400);
+const VUE = new THREE.Vector3(48, 52, 58);
 camera.position.copy(VUE);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.minPolarAngle = 0.35;
-controls.maxPolarAngle = 1.15;
-controls.minZoom = 0.7;
-controls.maxZoom = 3;
-controls.enablePan = false;
-controls.target.set(0, 0, 0);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.3, maxPolarAngle: 1.2, minZoom: 0.8, maxZoom: 4, enablePan: true, screenSpacePanning: false });
+controls.target.set(-2, 0, -1);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d2c4, 1.6));
-const soleil = new THREE.DirectionalLight(0xffffff, 2.2);
-soleil.position.set(-18, 34, 16);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
+const soleil = new THREE.DirectionalLight(0xfff6ea, 2.4);
+soleil.position.set(-30, 60, 25);
 soleil.castShadow = true;
-soleil.shadow.mapSize.set(2048, 2048);
-Object.assign(soleil.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 90 });
-soleil.shadow.bias = -0.0004;
-soleil.shadow.radius = 4;
+soleil.shadow.mapSize.set(4096, 4096);
+Object.assign(soleil.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 160 });
+soleil.shadow.bias = -0.0003;
+soleil.shadow.normalBias = 0.02;
 scene.add(soleil);
 
-const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, metalness: 0, ...o });
-function boite(l, h, p, couleur, x, y, z, parent = scene, ombre = true) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(l, h, p), typeof couleur === 'number' ? mat(couleur) : couleur);
-  m.position.set(x, y + h / 2, z);
-  m.castShadow = ombre; m.receiveShadow = true;
-  parent.add(m);
-  return m;
+const mats = new Map();
+const mat = (c, o = {}) => { const k = c + JSON.stringify(o); if (!mats.has(k)) mats.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, metalness: 0, ...o })); return mats.get(k); };
+function boite(l, h, p, m, x, y, z, parent = scene, ombre = true) {
+  const b = new THREE.Mesh(new THREE.BoxGeometry(l, h, p), typeof m === 'number' ? mat(m) : m);
+  b.position.set(x, y + h / 2, z); b.castShadow = ombre; b.receiveShadow = true; parent.add(b); return b;
+}
+function texte(txt, { w = 512, h = 128, fond = '#ffffff', couleur = '#111827', taille = 64, poids = 700 } = {}) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.fillStyle = fond; g.fillRect(0, 0, w, h);
+  g.fillStyle = couleur; g.font = `${poids} ${taille}px Inter, Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, w / 2, h / 2 + 4);
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; return tx;
 }
 const cliquables = [];
+const clic = (obj, cle) => { obj.traverse((o) => { if (o.isMesh) { o.userData.cle = cle; cliquables.push(o); } }); };
+const zone = (l, p, x, z, cle, y = 0.13) => { const b = boite(l, 0.05, p, new THREE.MeshBasicMaterial({ visible: false }), x, y, z, scene, false); b.userData.cle = cle; cliquables.push(b); return b; };
 
-// Socle de la maquette
-boite(42, 1.2, 32, 0xe2ddd2, 0, -1.2, 0);
-boite(40, 0.05, 30, 0xd9e4cf, 0, 0, 0); // pelouse
+// --- Terrain, trottoirs, rue ---
+boite(66, 1.5, 50, 0xd6d3cb, 0, -1.5, 0);              // socle de la maquette
+boite(64, 0.05, 48, 0xc9d8b8, 0, 0, 0);                // pelouse
+boite(64, 0.12, 8, 0x50555e, 0, 0, 18);                // rue
+boite(64, 0.2, 1.8, 0xc8c6c0, 0, 0, 13.1);             // trottoir côté agence
+boite(64, 0.2, 1.8, 0xc8c6c0, 0, 0, 22.9);             // trottoir d'en face
+for (let x = -30; x <= 30; x += 4) boite(2, 0.02, 0.15, 0xf5f5f0, x, 0.12, 18, scene, false);
+for (let i = 0; i < 6; i++) boite(0.5, 0.02, 3.4, 0xf5f5f0, -12 + i, 0.12, 16.2, scene, false), boite(0.5, 0.02, 3.4, 0xf5f5f0, -12 + i, 0.12, 19.8, scene, false);
+for (const x of [-26, -6, 14, 28]) { boite(0.15, 4.2, 0.15, 0x4b5563, x, 0.2, 12.6); boite(1.2, 0.12, 0.3, 0x4b5563, x + 0.5, 4.3, 12.6); }
 
-// Route en boucle
-const ROUTE = 0x4b5059;
-boite(36, 0.06, 3, ROUTE, 0, 0.05, -12.5);
-boite(36, 0.06, 3, ROUTE, 0, 0.05, 12.5);
-boite(3, 0.06, 22, ROUTE, -16.5, 0.05, 0);
-boite(3, 0.06, 22, ROUTE, 16.5, 0.05, 0);
-for (let x = -14; x <= 14; x += 2.4) { boite(1.1, 0.02, 0.14, 0xf3f1ea, x, 0.11, -12.5, scene, false); boite(1.1, 0.02, 0.14, 0xf3f1ea, x, 0.11, 12.5, scene, false); }
-for (let z = -9; z <= 9; z += 2.4) { boite(0.14, 0.02, 1.1, 0xf3f1ea, -16.5, 0.11, z, scene, false); boite(0.14, 0.02, 1.1, 0xf3f1ea, 16.5, 0.11, z, scene, false); }
+// --- Bâtiment de l'agence (coupe à 1,2 m, comme une maquette d'architecte) ---
+const BX0 = -24, BX1 = -8, BZ0 = -4, BZ1 = 8, HM = 1.2, EM = 0.25;
+boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) / 2);
+boite(8, 0.02, 5.6, 0xd9c3a0, -12, 0.2, 5, scene, false);     // accueil : parquet
+boite(7.6, 0.02, 5.6, 0xe4e1da, -20, 0.2, 5, scene, false);   // attente
+boite(10, 0.02, 6, 0xb9bec7, -13, 0.2, -1, scene, false);     // salle de code : moquette
+boite(5.8, 0.02, 6, 0xd9c3a0, -21, 0.2, -1, scene, false);    // bureau du gérant
+const MUR = 0xfafaf8;
+const mur = (l, p, x, z) => boite(l, HM, p, MUR, x, 0.2, z);
+mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0);
+mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2);
+mur(EM, BZ1 - BZ0, BX1, (BZ0 + BZ1) / 2);
+mur(1, EM, BX0 + 0.5, BZ1); mur(1, EM, -15, BZ1); mur(1, EM, -13, BZ1); mur(1, EM, BX1 - 0.5, BZ1);
+const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.45, roughness: 0.1, metalness: 0.1 });
+boite(7, 1.1, 0.06, verre, -19.5, 0.2, BZ1, scene, false); boite(4, 1.1, 0.06, verre, -10.5, 0.2, BZ1, scene, false);
+mur(EM, 6, -18, -1); mur(6.5, EM, -14.75, 2); mur(1.5, EM, -9.2, 2);
+const enseigneTx = new THREE.MeshStandardMaterial({ map: texte('AUTO-ÉCOLE MODÈLE', { fond: '#1d4ed8', couleur: '#ffffff', taille: 58, w: 1024 }) });
+const enseigne = new THREE.Mesh(new THREE.BoxGeometry(7, 1.1, 0.15), [mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), enseigneTx, mat(0x1d4ed8)]);
+enseigne.position.set(-16, 2.3, BZ1 + 0.2); enseigne.castShadow = true; scene.add(enseigne);
+boite(0.12, 1.75, 0.12, 0x6b7280, -19, 0, BZ1 + 0.2); boite(0.12, 1.75, 0.12, 0x6b7280, -13, 0, BZ1 + 0.2);
 
-// Bâtiment de l'agence (murs bas, sans toit, comme une maquette)
-const SOL = 0xdcc9a9, MUR = 0xfbfaf7;
-boite(13, 0.12, 11, SOL, -7.5, 0.05, -1.5);
-const H = 1.5, E = 0.25;
-boite(13, H, E, MUR, -7.5, 0.17, -7);       // fond
-boite(E, H, 11, MUR, -14, 0.17, -1.5);      // gauche
-boite(E, H, 11, MUR, -1, 0.17, -1.5);       // droite
-boite(5, H, E, MUR, -11.5, 0.17, 4);        // façade gauche
-boite(5, H, E, MUR, -3.5, 0.17, 4);         // façade droite (porte au milieu)
-boite(E, H, 6.2, MUR, -8.5, 0.17, -3.9);    // cloison salle de code
-boite(4.9, H, E, MUR, -11.4, 0.17, -0.8);   // cloison bureau
-boite(5.4, H, E, MUR, -5.7, 0.17, -1.2);    // cloison salle de code / accueil
-// Salle de pause
-boite(1.6, 0.7, 1, 0xffffff, -11.3, 0.17, -4.5);
-boite(0.7, 0.6, 0.7, 0x9fb8a8, -13.2, 0.17, -6.3);
-// Accueil : comptoir et écran
-boite(3, 0.8, 0.8, 0xffffff, -5, 0.17, 1.6);
-boite(0.6, 0.4, 0.06, 0x1d2026, -5, 0.97, 1.6);
-boite(1.2, 0.5, 0.5, 0x9fb8a8, -2.2, 0.17, 2.8); // plante en bac
-// Bureau du gérant
-boite(1.8, 0.7, 0.9, 0x8d6e4c, -11.5, 0.17, 2);
-boite(0.5, 0.3, 0.05, 0x1d2026, -11.5, 0.87, 1.8);
-// Salle de code : écran et chaises
-const salleCode = new THREE.Group(); scene.add(salleCode);
-boite(3.6, 1.1, 0.08, 0x1d2026, -5, 0.6, -6.8, salleCode);
-boite(3.4, 0.9, 0.02, 0x4f7cf0, -5, 0.7, -6.74, salleCode, false);
-const chaises = [];
-for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) {
-  const x = -7 + c * 1.35, z = -4.6 + r * 1.3;
-  boite(0.55, 0.45, 0.5, 0x6a6f78, x, 0.17, z, salleCode);
-  chaises.push(new THREE.Vector3(x, 0.62, z));
-}
-const zoneCode = boite(7.2, 0.02, 6, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }), -4.8, 0.2, -3.9, scene, false);
-zoneCode.userData.cle = 'code';
-cliquables.push(zoneCode);
+// Mobilier
+function chaise(x, z, r = 0, c = 0x374151) { const g = new THREE.Group(); boite(0.45, 0.06, 0.45, c, 0, 0.42, 0, g); boite(0.45, 0.45, 0.06, c, 0, 0.48, -0.2, g); for (const [a, b] of [[-0.18, -0.18], [0.18, -0.18], [-0.18, 0.18], [0.18, 0.18]]) boite(0.04, 0.42, 0.04, 0x9ca3af, a, 0, b, g); g.position.set(x, 0.2, z); g.rotation.y = r; scene.add(g); return g; }
+function table(l, p, x, z, c = 0xf5f5f4) { boite(l, 0.05, p, c, x, 0.92, z); for (const [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) boite(0.05, 0.72, 0.05, 0x9ca3af, x + a * (l / 2 - 0.08), 0.2, z + b * (p / 2 - 0.08)); }
+function ecran(x, z, l = 0.55) { boite(l, 0.35, 0.04, 0x111827, x, 0.99, z); }
+function plante(x, z, s = 1) { boite(0.45 * s, 0.45 * s, 0.45 * s, 0xe7e5e4, x, 0.2, z); const f = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42 * s, 1), mat(0x4d7c4a, { flatShading: true })); f.position.set(x, 0.2 + 0.85 * s, z); f.castShadow = true; scene.add(f); }
+boite(3.2, 1.05, 0.7, 0xf8fafc, -11.5, 0.2, 4.2); boite(0.7, 1.05, 1.6, 0xf8fafc, -9.6, 0.2, 4.75);
+boite(3.2, 0.04, 0.75, 0x1d4ed8, -11.5, 1.25, 4.2, scene, false);
+ecran(-11.8, 3.85); ecran(-10.8, 3.85); chaise(-10.8, 3.2, Math.PI, 0x1f2937);
+plante(-8.8, 7.4);
+boite(3, 0.45, 0.8, 0x64748b, -20, 0.2, 7.2); boite(3, 0.45, 0.2, 0x64748b, -20, 0.65, 7.55);
+boite(0.8, 0.45, 2.4, 0x64748b, -23.2, 0.2, 5); boite(0.2, 0.45, 2.4, 0x64748b, -23.55, 0.65, 5);
+boite(1.2, 0.35, 0.7, 0xd6d3d1, -20.5, 0.2, 5.4); plante(-23.2, 7.3, 0.8);
+boite(4, 1.6, 0.08, 0x111827, -13, 0.9, -3.75); boite(3.8, 1.4, 0.02, 0x2563eb, -13, 1.0, -3.7, scene, false);
+const postesCode = [];
+for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = -16.4 + c * 2.3, z = -1.8 + r * 1.35; table(1.6, 0.55, x, z); chaise(x, z + 0.55, Math.PI); postesCode.push(new THREE.Vector3(x, 0.2, z + 0.55)); }
+zone(9.6, 5.6, -13, -1, 'code', 0.2);
+zone(7.5, 5, -12, 5, 'accueil', 0.2);
+table(1.8, 0.9, -21, -2.2, 0x8b6b4a); ecran(-21, -2.5); chaise(-21, -1.4, Math.PI, 0x111827); chaise(-21.5, -3.3, 0); boite(0.5, 1.8, 2, 0xe7e5e4, -23.5, 0.2, 0.5); plante(-19, 1.4, 0.8);
 
-// Parking
-boite(10.4, 0.07, 7.6, 0x8a8f98, 7.2, 0.05, -4.9);
-boite(3, 0.07, 3.6, 0x8a8f98, 7.2, 0.05, -9.3); // entrée vers la route
+// --- Parking (7 places), allée, entrée ---
+const PX0 = -4, NB_PLACES = 7;
+boite(30, 0.08, 13, 0x6b7079, 10.5, 0.05, -1.5);
+boite(5, 0.08, 6.6, 0x6b7079, 22, 0.05, 8.8);
+boite(5, 0.22, 1.8, 0x9a9890, 22, 0, 13.1);
 const PLACES = [];
 for (let i = 0; i < NB_PLACES; i++) {
-  const x = 3.2 + i * 1.6;
-  PLACES.push(new THREE.Vector3(x, 0.12, -5.3));
-  boite(0.08, 0.02, 2.6, 0xffffff, x - 0.8, 0.12, -5.3, scene, false);
-  if (i === NB_PLACES - 1) boite(0.08, 0.02, 2.6, 0xffffff, x + 0.8, 0.12, -5.3, scene, false);
-  const zone = boite(1.5, 0.02, 2.6, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }), x, 0.13, -5.3, scene, false);
-  zone.userData.cle = 'place' + i;
-  cliquables.push(zone);
+  const x = PX0 + 1.5 + i * 2.7;
+  PLACES.push(new THREE.Vector3(x + 1.35, 0.13, -4.6));
+  boite(0.1, 0.02, 5, 0xf5f5f0, x, 0.13, -5.5, scene, false);
+  const num = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.6), new THREE.MeshBasicMaterial({ map: texte(String(i + 1), { fond: '#6b7079', couleur: '#f5f5f0', taille: 90, w: 160, h: 96 }) }));
+  num.rotation.x = -Math.PI / 2; num.position.set(x + 1.35, 0.14, -1.6); scene.add(num);
+  zone(2.5, 5, x + 1.35, -5.5, 'place' + i);
 }
-// Piste moto (plateau) avec plots
-boite(10.4, 0.07, 5, 0xa9adb3, 7.2, 0.05, 3.4);
-const PLOTS = [[3.5, 2.2], [5.5, 4.6], [7.5, 2.2], [9.5, 4.6], [11, 3.4]];
-for (const [x, z] of PLOTS) {
-  const c = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.4, 12), mat(0xff7a1a));
-  c.position.set(x, 0.32, z); c.castShadow = true; scene.add(c);
-}
-// Arbres
-function arbre(x, z, s = 1) {
-  const t = new THREE.Mesh(new THREE.CylinderGeometry(0.12 * s, 0.15 * s, 0.9 * s, 8), mat(0x8a6a4a));
-  t.position.set(x, 0.45 * s, z); t.castShadow = true; scene.add(t);
-  const f = new THREE.Mesh(new THREE.IcosahedronGeometry(0.85 * s, 1), mat(0x7fae7a, { flatShading: true }));
-  f.position.set(x, 1.35 * s, z); f.castShadow = true; scene.add(f);
-}
-[[-18.5, -14], [-18.5, 14], [18.5, -14], [18.5, 14], [-12, 8], [-6, 8.5], [0, 8], [6, 9], [12, 8.5], [14, -8], [-15, -9.5]].forEach(([x, z], i) => arbre(x, z, i % 3 ? 1 : 1.25));
+boite(0.1, 0.02, 5, 0xf5f5f0, PX0 + 1.5 + NB_PLACES * 2.7, 0.13, -5.5, scene, false);
+const totemTx = new THREE.MeshStandardMaterial({ map: texte('M', { fond: '#1d4ed8', couleur: '#fff', taille: 100, w: 128, h: 200 }) });
+const totem = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.2, 0.25), [mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), totemTx, mat(0x1d4ed8)]);
+totem.position.set(25.6, 1.3, 11.2); totem.castShadow = true; scene.add(totem);
+boite(0.4, 1.3, 0.3, 0xe5e7eb, PLACES[6].x, 0.13, -8.3); // borne de recharge
 
-// ---------- Véhicules et personnes ----------
-function voiture(couleur) {
+// --- Plateau moto (tracés et plots) ---
+boite(26, 0.08, 9, 0x8f949b, 9, 0.05, -14.5);
+for (let x = -2; x <= 20; x += 2.2) boite(0.08, 0.02, 7, 0xfde68a, x, 0.13, -14.5, scene, false);
+for (let i = 0; i < 9; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.45, 14), mat(0xf97316)); c.position.set(i * 2.2, 0.35, -14.5 + (i % 2 ? 1.6 : -1.6)); c.castShadow = true; scene.add(c); }
+zone(26, 9, 9, -14.5, 'plateau');
+for (let x = -30; x <= 30; x += 2.5) boite(0.08, 0.9, 0.08, 0x9ca3af, x, 0, -22.6);
+boite(60, 0.06, 0.06, 0x9ca3af, 0, 0.85, -22.6, scene, false);
+function arbre(x, z, s = 1) {
+  const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * s, 0.2 * s, 1.6 * s, 8), mat(0x7c5a3c)); tr.position.set(x, 0.8 * s, z); tr.castShadow = true; scene.add(tr);
+  const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.3 * s, 1), mat(0x5f8f55, { flatShading: true })); f.position.set(x, 2.3 * s, z); f.castShadow = true; scene.add(f);
+}
+[[-28, -20], [-28, -8], [-28, 4], [28, -20], [28, -6], [-4, 10.5], [4, 10.5], [10, 10.5], [-27, 10.5], [-1, -20.5], [18, -20.5], [-14, -8.5], [-20, -9]].forEach(([x, z], i) => arbre(x, z, i % 3 ? 1 : 1.2));
+for (const x of [-22, -10, 2, 16]) arbre(x, 24, 0.9);
+
+// --- Véhicules (profil de voiture extrudé, vraies dimensions) ---
+const panneauTx = new THREE.MeshStandardMaterial({ map: texte('AUTO-ÉCOLE', { fond: '#ffffff', couleur: '#b91c1c', taille: 60 }) });
+function voiture(couleur, ecole = true) {
   const g = new THREE.Group();
-  boite(0.92, 0.42, 1.8, couleur, 0, 0.16, 0, g);
-  boite(0.82, 0.34, 0.95, mat(0x9fb4c8, { roughness: 0.3, metalness: 0.1 }), 0, 0.58, -0.1, g);
-  boite(0.5, 0.12, 0.2, 0xd44a3a, 0, 0.92, -0.1, g); // panneau « auto-école »
-  const roue = new THREE.CylinderGeometry(0.17, 0.17, 0.14, 14);
-  for (const [x, z] of [[-0.47, 0.55], [0.47, 0.55], [-0.47, -0.6], [0.47, -0.6]]) {
-    const r = new THREE.Mesh(roue, mat(0x22252b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.17, z); r.castShadow = true; g.add(r);
+  const W = 1.76;
+  const s = new THREE.Shape();
+  [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v)));
+  const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 });
+  geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2);
+  const corps = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); corps.castShadow = true; corps.receiveShadow = true; g.add(corps);
+  const vitre = mat(0x1f2a37, { roughness: 0.15, metalness: 0.4 });
+  const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v)));
+  const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2);
+  g.add(new THREE.Mesh(vg, vitre));
+  const pb = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, 0.78), vitre); pb.position.set(0, 1.19, 0.61); pb.rotation.x = -0.68; g.add(pb);
+  const lu = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, 0.72), vitre); lu.position.set(0, 1.24, -1.56); lu.rotation.x = 0.95; lu.rotation.y = Math.PI; g.add(lu);
+  const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 18), jante = new THREE.CylinderGeometry(0.2, 0.2, 0.26, 12);
+  for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) {
+    const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); r.castShadow = true; g.add(r);
+    const j = new THREE.Mesh(jante, mat(0xd1d5db, { metalness: 0.6, roughness: 0.3 })); j.rotation.z = Math.PI / 2; j.position.set(x, 0.33, z); g.add(j);
+  }
+  for (const x of [-0.6, 0.6]) { boite(0.36, 0.1, 0.06, 0xfefce8, x, 0.62, 2.1, g, false); boite(0.32, 0.1, 0.06, 0xdc2626, x, 0.7, -2.1, g, false); }
+  if (ecole) {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.3, 1.1), [panneauTx, panneauTx, mat(0xffffff), mat(0xffffff), mat(0xffffff), mat(0xffffff)]);
+    p.position.set(0, 1.62, -0.5); p.castShadow = true; g.add(p);
   }
   return g;
 }
 function moto(couleur) {
   const g = new THREE.Group();
-  boite(0.22, 0.28, 1, couleur, 0, 0.2, 0, g);
-  boite(0.18, 0.12, 0.4, 0x22252b, 0, 0.48, -0.1, g);
-  const roue = new THREE.CylinderGeometry(0.2, 0.2, 0.08, 14);
-  for (const z of [0.42, -0.42]) { const r = new THREE.Mesh(roue, mat(0x22252b)); r.rotation.z = Math.PI / 2; r.position.set(0, 0.2, z); r.castShadow = true; g.add(r); }
+  boite(0.3, 0.35, 1.1, couleur, 0, 0.45, 0, g); boite(0.26, 0.12, 0.6, 0x111827, 0, 0.8, -0.2, g); boite(0.6, 0.05, 0.05, 0x111827, 0, 1.0, 0.45, g);
+  const roue = new THREE.CylinderGeometry(0.32, 0.32, 0.12, 18);
+  for (const z of [0.72, -0.72]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(0, 0.32, z); r.castShadow = true; g.add(r); }
   return g;
 }
 function personne(couleur, taille = 1) {
   const g = new THREE.Group();
-  const corps = new THREE.Mesh(new THREE.CapsuleGeometry(0.17 * taille, 0.42 * taille, 4, 10), mat(couleur));
-  corps.position.y = 0.4 * taille; corps.castShadow = true; g.add(corps);
-  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.15 * taille, 14, 10), mat(0xe9c9a8));
-  tete.position.y = 0.88 * taille; tete.castShadow = true; g.add(tete);
+  for (const x of [-0.1, 0.1]) boite(0.13 * taille, 0.8 * taille, 0.16 * taille, 0x1f2937, x * taille, 0, 0, g);
+  const torse = new THREE.Mesh(new THREE.CapsuleGeometry(0.2 * taille, 0.42 * taille, 4, 12), mat(couleur)); torse.position.y = 1.12 * taille; torse.castShadow = true; g.add(torse);
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.14 * taille, 16, 12), mat(0xdcb08a)); tete.position.y = 1.62 * taille; tete.castShadow = true; g.add(tete);
   return g;
 }
 
-// Circuit des leçons : un rectangle arrondi sur la route
-const pts = [];
-const RX = 16.5, RZ = 12.5, rc = 2.5;
-const coins = [[RX - rc, RZ - rc, 0], [-(RX - rc), RZ - rc, Math.PI / 2], [-(RX - rc), -(RZ - rc), Math.PI], [RX - rc, -(RZ - rc), 1.5 * Math.PI]];
-for (const [cx, cz, a0] of coins) for (let k = 0; k <= 6; k++) { const a = a0 + (k / 6) * Math.PI / 2; pts.push(new THREE.Vector3(cx + Math.cos(a) * rc, 0.12, cz + Math.sin(a) * rc)); }
-const CIRCUIT = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.2);
-const LONG = CIRCUIT.getLength();
-const SORTIE = new THREE.Vector3(7.2, 0.12, -12.5);
-let tSortie = 0, dMin = 1e9;
-for (let i = 0; i <= 400; i++) { const p = CIRCUIT.getPointAt(i / 400); const d = p.distanceTo(SORTIE); if (d < dMin) { dMin = d; tSortie = i / 400; } }
+const objets = {};
+const RANG_PLACE = { v1: 0, v2: 1, v3: 2, v4: 3, v5: 6 };
+VOITURES.forEach((v) => {
+  const obj = voiture(v.couleur); obj.position.copy(PLACES[RANG_PLACE[v.id]]); obj.rotation.y = Math.PI; scene.add(obj); clic(obj, v.id);
+  objets[v.id] = { type: 'voiture', data: v, obj, place: RANG_PLACE[v.id], mode: 'gare', chemin: null, k: 0, u: 0, rot: Math.PI };
+});
+const PLACES_MOTO = [new THREE.Vector3(21.5, 0.13, -9.6), new THREE.Vector3(23, 0.13, -9.6)];
+MOTOS.forEach((m, i) => { const obj = moto(m.couleur); obj.position.copy(PLACES_MOTO[i]); scene.add(obj); clic(obj, m.id); objets[m.id] = { type: 'moto', data: m, obj, place: i, mode: 'gare', a: 0 }; });
+const POSTES = [new THREE.Vector3(-12.6, 0.2, 6), new THREE.Vector3(-14.2, 0.2, 6.6), new THREE.Vector3(-10.3, 0.2, 6.4), new THREE.Vector3(-15.4, 0.2, 5.2)];
+MONITEURS.forEach((m, i) => { const obj = personne(m.couleur); obj.position.copy(POSTES[i]); obj.rotation.y = 0.4 - i * 0.5; scene.add(obj); clic(obj, m.id); objets[m.id] = { type: 'moniteur', data: m, obj }; });
+const secretaire = personne(0x1d4ed8, 0.95); secretaire.position.set(-11.8, 0.2, 3.3); scene.add(secretaire);
+const elevesCode = postesCode.map((p) => { const o = personne(0x94a3b8, 0.85); o.position.copy(p); o.rotation.y = Math.PI; o.visible = false; scene.add(o); return o; });
+const attente = [[-20.5, 7], [-19.5, 7], [-23.1, 5.4], [-23.1, 4.4]].map(([x, z], i) => { const o = personne(0x94a3b8, 0.9); o.position.set(x, 0.2, z); o.rotation.y = i < 2 ? Math.PI : Math.PI / 2; o.visible = false; scene.add(o); return o; });
+const trafic = [[0x6b7280, 15.9, 1, -10], [0xe5e7eb, 20.1, -1, 5], [0x0f766e, 15.9, 1, 22], [0x78350f, 20.1, -1, -24]].map(([c, z, sens, x]) => { const o = voiture(c, false); o.position.set(x, 0.13, z); o.rotation.y = sens > 0 ? Math.PI / 2 : -Math.PI / 2; scene.add(o); return { o, sens, v: 7 + Math.random() * 2 }; });
 
-const objets = {}; // cle -> { type, data, obj, ... }
-VOITURES.forEach((v, i) => {
-  const obj = voiture(v.couleur); scene.add(obj);
-  obj.position.copy(PLACES[i]);
-  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = v.id; cliquables.push(o); } });
-  objets[v.id] = { type: 'voiture', data: v, obj, place: i, mode: 'gare', t: 0, moniteur: null, eleve: null, debut: 0, chemin: null, k: 0 };
-});
-const PLACES_MOTO = [new THREE.Vector3(10.6, 0.12, 5), new THREE.Vector3(11.4, 0.12, 5), new THREE.Vector3(12.2, 0.12, 5)];
-MOTOS.forEach((m, i) => {
-  const obj = moto(m.couleur); scene.add(obj);
-  obj.position.copy(PLACES_MOTO[i]);
-  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = m.id; cliquables.push(o); } });
-  objets[m.id] = { type: 'moto', data: m, obj, place: i, mode: 'gare', a: 0, moniteur: null, eleve: null, debut: 0 };
-});
-const POSTES_MONITEURS = [new THREE.Vector3(-3.6, 0.17, 2.6), new THREE.Vector3(-6.4, 0.17, 2.7), new THREE.Vector3(-2.6, 0.17, 0.4), new THREE.Vector3(-6.8, 0.17, 0.2)];
-MONITEURS.forEach((m, i) => {
-  const obj = personne(m.couleur); scene.add(obj);
-  obj.position.copy(POSTES_MONITEURS[i]);
-  obj.traverse((o) => { if (o.isMesh) { o.userData.cle = m.id; cliquables.push(o); } });
-  objets[m.id] = { type: 'moniteur', data: m, obj, poste: i, statut: 'dispo', vehicule: null, eleve: null, lecons: [] };
-});
-// Élèves dans la salle de code
-const elevesCode = chaises.map((p) => { const o = personne(0x9aa3ae, 0.8); o.position.set(p.x, 0.62, p.z); o.visible = false; scene.add(o); return o; });
-
-// Anneau de sélection
-const anneau = new THREE.Mesh(new THREE.RingGeometry(0.95, 1.12, 40), new THREE.MeshBasicMaterial({ color: 0x2f5bea, transparent: true, opacity: 0.85, side: THREE.DoubleSide }));
+const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0x1d4ed8, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
 anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
 
-// ---------- Planning du jour (fictif) ----------
-const heureTxt = (h) => `${String(Math.floor(h)).padStart(2, '0')}h${h % 1 ? '30' : '00'}`;
-let e = 0;
-MONITEURS.forEach((m, i) => {
-  const lecons = [];
-  for (let h = 8 + (i % 2) * 0.5; h < 18; h += 2) lecons.push({ h, eleve: ELEVES[e++ % ELEVES.length], type: m.permis.includes('A2') && h > 15 ? 'Moto A2' : 'Conduite B' });
-  objets[m.id].lecons = lecons;
-});
-
-// ---------- Simulation en direct ----------
-const maintenant = () => new Date();
-const hhmm = (d = maintenant()) => d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-function noter(txt) { fil.unshift({ t: hhmm(), txt }); fil.length = Math.min(fil.length, 7); rendreFil(); }
-
-function demarrerLecon(mon, veh, eleve, silencieux) {
-  const v = objets[veh], m = objets[mon];
-  m.statut = 'lecon'; m.vehicule = veh; m.eleve = eleve; m.obj.visible = false;
-  v.moniteur = mon; v.eleve = eleve; v.debut = performance.now();
-  if (v.type === 'voiture') {
-    const place = PLACES[v.place];
-    v.mode = 'sortie';
-    v.chemin = [place.clone(), new THREE.Vector3(place.x, 0.12, -7.8), new THREE.Vector3(7.2, 0.12, -9.6), CIRCUIT.getPointAt(tSortie)];
-    v.k = 0;
-    if (silencieux) { v.mode = 'route'; v.t = (tSortie + Math.random()) % 1; }
-  } else { v.mode = 'piste'; v.a = Math.random() * 6; }
-  if (!silencieux) noter(`<b>${m.data.nom}</b> part en leçon avec ${eleve} · ${v.data.nom}`);
+// ================= Mouvements, calés sur le planning =================
+const VOIE = 15.9;
+function depart(v) {
+  const p = PLACES[v.place];
+  v.chemin = [p.clone(), new THREE.Vector3(p.x, 0.13, 0.6), new THREE.Vector3(22, 0.13, 0.6), new THREE.Vector3(22, 0.13, 10.5), new THREE.Vector3(24.5, 0.13, VOIE), new THREE.Vector3(36, 0.13, VOIE)];
+  v.k = 0; v.u = 0; v.mode = 'sortie';
 }
-function finirLecon(veh) {
-  const v = objets[veh], m = objets[v.moniteur];
-  noter(`<b>${m.data.nom}</b> est de retour · ${v.data.nom} (${v.eleve})`);
-  if (v.type === 'voiture') { v.mode = 'retour_route'; } else { v.mode = 'gare'; v.obj.position.copy(PLACES_MOTO[v.place]); v.obj.rotation.set(0, 0, 0); }
-  m.statut = 'dispo'; m.vehicule = null; m.eleve = null; m.obj.visible = true;
-  v.moniteur = null; v.eleve = null;
-  etat.heures += 1; etat.ca += 52;
+function retour(v) {
+  const p = PLACES[v.place];
+  v.chemin = [new THREE.Vector3(-36, 0.13, VOIE), new THREE.Vector3(19.5, 0.13, VOIE), new THREE.Vector3(22, 0.13, 10.5), new THREE.Vector3(22, 0.13, 0.6), new THREE.Vector3(p.x, 0.13, 0.6), p.clone()];
+  v.k = 0; v.u = 0; v.mode = 'retour'; v.obj.visible = true; v.obj.position.copy(v.chemin[0]); v.rot = Math.PI / 2;
 }
-const libres = (type) => Object.values(objets).filter((o) => o.type === type && o.mode === 'gare');
-let iEleve = 3;
-function tic() {
-  const enLecon = Object.values(objets).filter((o) => (o.type === 'voiture' || o.type === 'moto') && o.moniteur && (o.mode === 'route' || o.mode === 'piste'));
-  const vieux = enLecon.filter((o) => performance.now() - o.debut > 22000);
-  const dispo = MONITEURS.filter((m) => objets[m.id].statut === 'dispo');
-  const r = Math.random();
-  if (vieux.length && (r < 0.45 || !dispo.length)) finirLecon(vieux[0].data.id);
-  else if (dispo.length && r < 0.8) {
-    const m = dispo[Math.floor(Math.random() * dispo.length)];
-    const motoOk = m.permis.includes('A2') && libres('moto').length && Math.random() < 0.35;
-    const veh = motoOk ? libres('moto')[0] : libres('voiture')[0];
-    if (veh) demarrerLecon(m.id, veh.data.id, ELEVES[iEleve++ % ELEVES.length]);
-  } else {
-    const avant = etat.code;
-    etat.code = Math.max(2, Math.min(12, etat.code + (Math.random() < 0.55 ? 1 : -1)));
-    if (etat.code > avant) noter(`Un élève arrive en salle de code (${etat.code} présents)`);
-    else noter(`Un élève termine sa série de code (${etat.code} présents)`);
+function avancer(v, dt, vitesse = 7) {
+  const a = v.chemin[v.k], b = v.chemin[v.k + 1];
+  v.u += (vitesse * dt) / Math.max(a.distanceTo(b), 0.01);
+  if (v.u >= 1) { v.u = 0; v.k++; if (v.k >= v.chemin.length - 1) return true; }
+  const a2 = v.chemin[v.k], b2 = v.chemin[v.k + 1];
+  v.obj.position.lerpVectors(a2, b2, v.u);
+  const cible = Math.atan2(b2.x - a2.x, b2.z - a2.z);
+  let d = cible - v.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); v.rot += d * Math.min(1, dt * 8); v.obj.rotation.y = v.rot;
+  return false;
+}
+const nbCode = () => (t < 9 || t > 18.5 ? 0 : Math.max(0, Math.round(5 + 3 * Math.sin(t * 1.3) + 2 * Math.sin(t * 3.1))));
+function synchroniser(instant = false) {
+  for (const v of [...VOITURES, ...MOTOS]) {
+    const o = objets[v.id], l = enCours((x) => x.veh === v.id);
+    if (o.type === 'voiture') {
+      if (l && o.mode === 'gare') { if (instant) { o.mode = 'dehors'; o.obj.visible = false; } else { depart(o); annoncer(`${hh(t)} · ${objets[l.m].data.nom} part en leçon avec ${l.eleve} (${v.nom})`); } }
+      if (!l && o.mode === 'dehors') { retour(o); annoncer(`${hh(t)} · ${v.nom} rentre au parking`); }
+    } else {
+      if (l && o.mode === 'gare') { o.mode = 'piste'; if (!instant) annoncer(`${hh(t)} · ${objets[l.m].data.nom} commence le plateau moto avec ${l.eleve}`); }
+      if (!l && o.mode === 'piste') { o.mode = 'gare'; o.obj.position.copy(PLACES_MOTO[o.place]); o.obj.rotation.set(0, 0, 0); }
+    }
   }
-  majTout();
+  for (const m of MONITEURS) objets[m.id].obj.visible = !enCours((x) => x.m === m.id);
+  const prochains = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).length;
+  attente.forEach((p, i) => { p.visible = i < prochains; });
+  elevesCode.forEach((p, i) => { p.visible = i < nbCode(); });
 }
 
-// ---------- Étiquettes HTML ----------
+// ================= Étiquettes =================
 const couche = document.getElementById('etiquettes');
 const etiquettes = [];
-function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); const e = { el, pos, fn, cle }; etiquettes.push(e); return e; }
-etiquette('place0', () => new THREE.Vector3(7.2, 1.4, -6.6), () => { const n = NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length; return [`Parking <small>${n}/${NB_PLACES} libres</small>`, n ? 'vert' : 'orange']; });
-etiquette('mo1', () => new THREE.Vector3(11.4, 1.5, 5), () => { const n = libres('moto').length; return [`Motos <small>${n}/${MOTOS.length} dispo</small>`, n ? 'vert' : 'orange']; });
-etiquette('code', () => new THREE.Vector3(-5, 2.6, -4), () => [`Salle de code <small>${etat.code} élèves</small>`, '']);
-MONITEURS.forEach((m) => etiquette(m.id, () => objets[m.id].obj.position.clone().add(new THREE.Vector3(0, 1.45, 0)), () => objets[m.id].statut === 'dispo' ? [`${m.nom} <small>dispo</small>`, 'vert'] : null));
-VOITURES.forEach((v) => etiquette(v.id, () => objets[v.id].obj.position.clone().add(new THREE.Vector3(0, 1.5, 0)), () => objets[v.id].moniteur ? [`${objets[objets[v.id].moniteur].data.nom} <small>avec ${objets[v.id].eleve}</small>`, 'orange'] : null));
-MOTOS.forEach((v) => etiquette(v.id, () => objets[v.id].obj.position.clone().add(new THREE.Vector3(0, 1.2, 0)), () => objets[v.id].moniteur ? [`${objets[v.id].eleve} <small>sur le plateau</small>`, 'orange'] : null));
-
+function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn }); }
+const point = (c) => `<i style="background:${c}"></i>`;
+const libresParking = () => NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
+etiquette('place4', () => new THREE.Vector3(10, 2.6, -8.6), () => `${point('#15803d')}Parking <small>${libresParking()}/${NB_PLACES} places libres</small>`);
+etiquette('code', () => new THREE.Vector3(-13, 2.9, -2.5), () => `${point('#1d4ed8')}Salle de code <small>${nbCode()}/12</small>`);
+etiquette('plateau', () => new THREE.Vector3(9, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve} avec ${objets[l.m].data.nom}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
+etiquette('accueil', () => new THREE.Vector3(-12, 3.1, 5), () => { const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => objets[m.id].obj.visible).length; return `${point(d ? '#15803d' : '#c2410c')}Accueil <small>${d} moniteur${d > 1 ? 's' : ''} dispo · ${n ? n + ' en attente' : 'personne en attente'}</small>`; });
 const v3 = new THREE.Vector3();
 function placerEtiquettes() {
   const r = renderer.domElement.getBoundingClientRect();
   for (const e of etiquettes) {
-    const contenu = e.fn();
-    if (!contenu) { e.el.style.display = 'none'; continue; }
-    const [html, cls] = contenu;
+    const html = e.fn();
+    if (!html) { e.el.style.display = 'none'; continue; }
     if (e.el.innerHTML !== html) e.el.innerHTML = html;
-    e.el.className = 'et ' + cls;
     v3.copy(e.pos()).project(camera);
     e.el.style.display = '';
     e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px';
     e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px';
   }
 }
+let minuteur;
+function annoncer(txt) { const a = document.getElementById('annonce'); a.textContent = txt; a.classList.add('vu'); clearTimeout(minuteur); minuteur = setTimeout(() => a.classList.remove('vu'), 3500); }
 
-// ---------- Panneau ----------
+// ================= Chiffres et panneau =================
 const $ = (id) => document.getElementById(id);
-const euros = (n) => n.toLocaleString('fr-FR') + ' €';
 function majKpis() {
+  const faits = PLANNING.filter((l) => l.fin <= t);
+  const caJour = faits.reduce((s, l) => s + l.prix, 0);
+  const hFaites = faits.reduce((s, l) => s + l.duree, 0) + PLANNING.filter((l) => l.debut <= t && t < l.fin).reduce((s, l) => s + (t - l.debut), 0);
+  const hPrevues = PLANNING.reduce((s, l) => s + l.duree, 0);
+  $('k-jour').textContent = euros(caJour);
+  $('k-jour-d').textContent = `${faits.length} leçons terminées sur ${PLANNING.length}`;
+  const mois = CA_MOIS_AVANT + caJour;
+  $('k-mois').textContent = euros(mois);
+  $('k-mois-t').textContent = 'Encaissé en ' + new Date().toLocaleDateString('fr-FR', { month: 'long' });
+  $('k-mois-j').style.width = Math.min(100, (mois / OBJECTIF_MOIS) * 100) + '%';
+  $('k-heures').textContent = `${String(Math.round(hFaites * 10) / 10).replace('.', ',')} / ${String(hPrevues).replace('.', ',')} h`;
+  const r = Math.round((hPrevues / H_DISPO) * 100);
+  $('k-rempl').textContent = r + ' %';
+  $('k-rempl-j').style.width = r + '%';
   const vDispo = VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
-  $('k-voitures').textContent = `${vDispo}/${VOITURES.length}`;
-  $('k-voitures-d').textContent = `${VOITURES.length - vDispo} en leçon`;
-  $('k-places').textContent = `${NB_PLACES - vDispo}/${NB_PLACES}`;
-  $('k-heures').textContent = `${etat.heures} h`;
-  $('k-ca').textContent = euros(etat.ca);
-  $('k-ca-t').textContent = 'Encaissé en ' + maintenant().toLocaleDateString('fr-FR', { month: 'long' });
-  const auj = maintenant().getDay(), NOMS = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'], BASE = [27, 31, 24, 29, 33, 22];
-  const jours = [...Array(7)].map((_, i) => (auj - 6 + i + 7) % 7);
-  const sem = jours.map((d, i) => (i === 6 ? etat.heures : d === 0 ? 0 : BASE[i]));
-  const max = Math.max(...sem, 1);
-  $('barres').innerHTML = sem.map((h, i) => `<div class="${i === 6 ? 'auj' : ''}" style="height:${Math.max(4, (h / max) * 100)}%" title="${h} h"></div>`).join('');
-  $('jours').innerHTML = jours.map((d, i) => `<span>${i === 6 ? 'auj.' : NOMS[d]}</span>`).join('');
+  $('k-veh').textContent = `${vDispo} / ${VOITURES.length}`;
+  $('k-veh-d').textContent = `voitures · ${MOTOS.filter((m) => objets[m.id].mode === 'gare').length} / ${MOTOS.length} motos`;
+  const dus = Object.entries(ELEVES).filter(([, e]) => e[2] > 0);
+  $('k-solde').textContent = euros(dus.reduce((s, [, e]) => s + e[2], 0));
+  $('k-solde-d').textContent = `${dus.length} élèves à relancer`;
 }
-function li(a, b, cls = '') { return `<li class="${cls}"><span>${a}</span><span>${b}</span></li>`; }
-function rendreFiche() {
-  const c = etat.selection, f = $('fiche');
-  if (!c) { f.innerHTML = '<p class="vide">Cliquez sur une voiture, une moto, un moniteur, une place de parking ou la salle de code.</p>'; return; }
-  // Heure de la journée de démo : l'heure réelle en journée, sinon 14h30 (pour que le planning ait du sens le soir).
-  const hr = new Date().getHours() + new Date().getMinutes() / 60;
-  const h = hr >= 8 && hr <= 18 ? hr : 14.5;
-  if (c === 'code') {
-    f.innerHTML = `<h3>Salle de code</h3><p class="sous">12 places · séries sur écran</p><span class="statut dispo">${etat.code} élèves présents</span><ul class="lignes">${li('Places libres', 12 - etat.code)}${li('Prochaine séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
-  } else if (c.startsWith('place')) {
-    const i = +c.slice(5), v = VOITURES.find((x) => objets[x.id].place === i && objets[x.id].mode === 'gare');
-    f.innerHTML = `<h3>Place ${i + 1}</h3><p class="sous">Parking de l'agence</p>${v ? `<span class="statut occupe">Occupée</span><ul class="lignes">${li('Véhicule', v.nom)}${li('Modèle', v.modele)}</ul>` : `<span class="statut dispo">Libre</span><ul class="lignes">${li('Réservée pour', objets[VOITURES[i]?.id] ? VOITURES[i].nom : 'visiteurs')}</ul>`}`;
+const pct = (h) => ((h - OUVERTURE) / (FERMETURE - OUVERTURE)) * 100;
+const statutTxt = { fait: 'Terminée', occupe: 'En cours', avenir: 'À venir' };
+let onglet = 'planning', selection = null;
+function rendrePanneau() {
+  const c = $('contenu');
+  if (onglet === 'planning') {
+    const heures = []; for (let h = OUVERTURE; h <= FERMETURE; h += 2) heures.push(`<span style="left:${pct(h)}%">${h}h</span>`);
+    const tt = Math.min(Math.max(t, OUVERTURE), FERMETURE);
+    c.innerHTML = `<h2>Planning du jour</h2><div class="gantt"><div class="heures"><div></div><div>${heures.join('')}</div></div>${MONITEURS.map((m) => {
+      const l = enCours((x) => x.m === m.id);
+      return `<div class="rangee"><b data-cle="${m.id}">${m.nom}<small>${l ? 'en leçon' : 'dispo'}</small></b><div class="piste">${PLANNING.filter((x) => x.m === m.id).map((x) => `<div class="bloc ${statut(x)} ${selection === x.id ? 'sel' : ''}" data-cle="${x.id}" style="left:${pct(x.debut)}%;width:calc(${(x.duree / (FERMETURE - OUVERTURE)) * 100}% - 2px)" title="${hTxt(x.debut)} · ${x.eleve} · ${x.type}">${x.eleve.split(' ')[0]}<small>${x.veh.startsWith('mo') ? 'moto' : x.type.startsWith('Examen') ? 'examen' : hTxt(x.debut)}</small></div>`).join('')}</div></div>`;
+    }).join('')}<div class="maintenant" style="left:calc(84px + (100% - 84px) * ${pct(tt) / 100})"></div></div>
+    <div class="legende"><span><i style="background:#eef0f3"></i>terminée</span><span><i style="background:var(--orange-doux);border:1px solid #fdba74"></i>en cours</span><span><i style="background:var(--accent-doux)"></i>à venir</span><span><i style="background:#dc2626"></i>maintenant</span></div>
+    <div class="bloc-txt"><h2>Prochaines leçons</h2><table><tbody>${PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 5).map((l) => `<tr class="clic" data-cle="${l.id}"><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td><td class="num">${euros(l.prix)}</td></tr>`).join('') || '<tr><td>Plus de leçon aujourd\'hui</td></tr>'}</tbody></table></div>`;
+  } else if (onglet === 'moniteurs') {
+    c.innerHTML = `<h2>Moniteurs</h2><table><thead><tr><th>Moniteur</th><th>Statut</th><th class="num">Heures</th><th class="num">CA du jour</th></tr></thead><tbody>${MONITEURS.map((m) => {
+      const ls = PLANNING.filter((x) => x.m === m.id), l = enCours((x) => x.m === m.id), h = ls.reduce((s, x) => s + x.duree, 0);
+      return `<tr class="clic" data-cle="${m.id}"><td><b>${m.nom}</b><br><small style="color:var(--doux)">permis ${m.permis}</small></td><td><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</span></td><td class="num">${h} / 10 h<br><span class="mini"><i style="width:${h * 10}%"></i></span></td><td class="num">${euros(ls.reduce((s, x) => s + x.prix, 0))}</td></tr>`;
+    }).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">CA du jour = leçons prévues aujourd'hui.</p>`;
+  } else if (onglet === 'vehicules') {
+    c.innerHTML = `<h2>Véhicules</h2><table><thead><tr><th>Véhicule</th><th>Statut</th><th class="num">Utilisation</th><th>Entretien</th></tr></thead><tbody>${[...VOITURES, ...MOTOS].map((v) => {
+      const o = objets[v.id], h = PLANNING.filter((x) => x.veh === v.id).reduce((s, x) => s + x.duree, 0), dehors = o.mode !== 'gare';
+      return `<tr class="clic" data-cle="${v.id}"><td><b>${v.nom}</b><br><small style="color:var(--doux)">${v.modele}</small></td><td><span class="statut ${dehors ? 'occupe' : 'dispo'}">${dehors ? 'en leçon' : 'dispo'}</span></td><td class="num">${String(h).replace('.', ',')} h<br><span class="mini"><i style="width:${Math.min(100, h * 10)}%"></i></span></td><td>${v.entretien}</td></tr>`;
+    }).join('')}</tbody></table>`;
   } else {
-    const o = objets[c];
+    const noms = [...new Set(PLANNING.map((l) => l.eleve))];
+    c.innerHTML = `<h2>Élèves du jour</h2><table><thead><tr><th>Élève</th><th>Heure</th><th class="num">Forfait</th><th class="num">Reste à payer</th></tr></thead><tbody>${noms.map((n) => {
+      const e = ELEVES[n], l = PLANNING.filter((x) => x.eleve === n).sort((a, b) => a.debut - b.debut)[0];
+      return `<tr class="clic" data-cle="${l.id}"><td><b>${n}</b></td><td>${hTxt(l.debut)}</td><td class="num">${e[0]} / ${e[1]} h<br><span class="mini"><i style="width:${Math.min(100, (e[0] / e[1]) * 100)}%"></i></span></td><td class="num" style="color:${e[2] ? 'var(--orange)' : 'var(--vert)'}">${e[2] ? euros(e[2]) : 'à jour'}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  }
+}
+$('contenu').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
+document.querySelectorAll('[data-onglet]').forEach((b) => b.onclick = () => { onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendrePanneau(); });
+
+const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
+function rendreFiche() {
+  const f = $('fiche'), c = $('fiche-c'), s = selection;
+  if (!s) { f.classList.remove('vu'); return; }
+  f.classList.add('vu');
+  if (/^l\d/.test(s)) {
+    const l = PLANNING.find((x) => x.id === s), e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data;
+    c.innerHTML = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span><ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}</ul>`;
+  } else if (s === 'code') {
+    c.innerHTML = `<h3>Salle de code</h3><p class="sous">12 postes · séries sur écran</p><span class="statut dispo">${nbCode()} élèves présents</span><ul class="lignes">${li('Postes libres', 12 - nbCode())}${li('Séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
+  } else if (s === 'plateau') {
+    const l = enCours((x) => x.veh.startsWith('mo'));
+    c.innerHTML = `<h3>Plateau moto</h3><p class="sous">Piste de maniabilité, 9 plots</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'Occupé' : 'Libre'}</span><ul class="lignes">${l ? li('Élève', l.eleve) + li('Moniteur', objets[l.m].data.nom) + li('Jusqu\'à', hTxt(l.fin)) : li('Prochain créneau', '14h, Karim B.')}</ul>`;
+  } else if (s === 'accueil') {
+    const p = PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 4);
+    const dispo = MONITEURS.filter((m) => objets[m.id].obj.visible).map((m) => m.nom).join(', ') || 'aucun';
+    c.innerHTML = `<h3>Accueil</h3><p class="sous">Secrétariat ouvert de 8h à 19h</p><ul class="lignes">${li('Moniteurs dispo', dispo)}${p.map((l) => li(hTxt(l.debut), `${l.eleve} avec ${objets[l.m].data.nom}`)).join('') || li('Prochaines arrivées', 'aucune')}</ul>`;
+  } else if (s.startsWith('place')) {
+    const i = +s.slice(5), v = VOITURES.find((x) => objets[x.id].place === i), occ = v && objets[v.id].mode === 'gare', l = v && enCours((x) => x.veh === v.id);
+    c.innerHTML = `<h3>Place ${i + 1}</h3><p class="sous">Parking de l'agence${i === 6 ? ' · borne de recharge' : ''}</p><span class="statut ${occ ? 'occupe' : 'dispo'}">${occ ? 'Occupée' : 'Libre'}</span><ul class="lignes">${li('Réservée à', v ? v.nom : 'visiteurs')}${l ? li('Retour prévu', hTxt(l.fin)) : ''}${li('Places libres maintenant', `${libresParking()} sur ${NB_PLACES}`)}</ul>`;
+  } else {
+    const o = objets[s];
     if (o.type === 'moniteur') {
-      const m = o.data;
-      f.innerHTML = `<h3>${m.nom}</h3><p class="sous">Moniteur · permis ${m.permis}</p><span class="statut ${o.statut === 'dispo' ? 'dispo' : 'occupe'}">${o.statut === 'dispo' ? 'Disponible' : 'En leçon avec ' + o.eleve}</span>${o.vehicule ? `<ul class="lignes">${li('Véhicule', objets[o.vehicule].data.nom)}</ul>` : ''}<h2 style="margin-top:14px">Élèves du jour</h2><ul class="lignes">${o.lecons.map((l) => li(`${heureTxt(l.h)} · ${l.type}`, l.eleve, l.h + 1.5 < h ? 'fait' : '')).join('')}</ul>`;
-    } else if (o.type === 'voiture') {
-      const v = o.data;
-      f.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele} · ${v.plaque}</p><span class="statut ${o.moniteur ? 'occupe' : 'dispo'}">${o.moniteur ? 'En leçon' : 'Au parking, place ' + (o.place + 1)}</span><ul class="lignes">${o.moniteur ? li('Moniteur', objets[o.moniteur].data.nom) + li('Élève', o.eleve) : ''}${li('Kilométrage', v.km.toLocaleString('fr-FR') + ' km')}${li('Prochain entretien', v.entretien)}${li('Contrôle double commande', 'à jour')}</ul>`;
+      const m = o.data, ls = PLANNING.filter((x) => x.m === m.id), l = enCours((x) => x.m === m.id);
+      c.innerHTML = `<h3>${m.nom}</h3><p class="sous">Moniteur · permis ${m.permis}</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'En leçon avec ' + l.eleve : 'Disponible'}</span><ul class="lignes">${ls.map((x) => li(`${hTxt(x.debut)} · ${x.type}`, `${x.eleve}${statut(x) === 'fait' ? ' ✓' : ''}`)).join('')}${li('CA du jour', euros(ls.reduce((a, x) => a + x.prix, 0)))}</ul>`;
     } else {
-      const v = o.data;
-      f.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele}</p><span class="statut ${o.moniteur ? 'occupe' : 'dispo'}">${o.moniteur ? 'Sur le plateau' : 'Disponible'}</span><ul class="lignes">${o.moniteur ? li('Moniteur', objets[o.moniteur].data.nom) + li('Élève', o.eleve) : ''}${li('Équipements élève', '2 casques, 2 gilets')}${li('Prochain entretien', '15 nov.')}</ul>`;
+      const v = o.data, l = enCours((x) => x.veh === v.id), h = PLANNING.filter((x) => x.veh === v.id).reduce((a, x) => a + x.duree, 0);
+      const st = l ? 'En leçon' : o.mode === 'gare' ? (o.type === 'voiture' ? 'Au parking, place ' + (o.place + 1) : 'Disponible') : 'Revient au parking';
+      c.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele}${v.plaque ? ' · ' + v.plaque : ''}</p><span class="statut ${o.mode !== 'gare' ? 'occupe' : 'dispo'}">${st}</span><ul class="lignes">${l ? li('Moniteur', objets[l.m].data.nom) + li('Élève', l.eleve) + li('Retour prévu', hTxt(l.fin)) : ''}${v.km ? li('Kilométrage', v.km.toLocaleString('fr-FR') + ' km') : ''}${li('Utilisation aujourd\'hui', String(h).replace('.', ',') + ' h')}${li('Prochain entretien', v.entretien)}</ul>`;
     }
   }
 }
-function rendreListe() {
-  const items = etat.onglet === 'moniteurs'
-    ? MONITEURS.map((m) => { const o = objets[m.id]; return { cle: m.id, nom: m.nom, info: o.statut === 'dispo' ? 'dispo' : 'en leçon', ok: o.statut === 'dispo' }; })
-    : [...VOITURES, ...MOTOS].map((v) => { const o = objets[v.id]; return { cle: v.id, nom: v.nom, info: o.moniteur ? 'en leçon' : o.mode === 'gare' ? 'dispo' : 'revient au parking', ok: !o.moniteur && o.mode === 'gare' }; });
-  $('liste').innerHTML = items.map((x) => `<li data-cle="${x.cle}"><i class="rond" style="background:${x.ok ? 'var(--vert)' : 'var(--orange)'}"></i><span class="nom">${x.nom}</span><span class="info">${x.info}</span></li>`).join('');
-}
-function rendreFil() { $('fil').innerHTML = fil.map((x) => `<li><time>${x.t}</time>${x.txt}</li>`).join(''); }
-function majTout() { majKpis(); rendreFiche(); rendreListe(); }
-$('liste').onclick = (ev) => { const l = ev.target.closest('li'); if (l) choisir(l.dataset.cle); };
-document.querySelectorAll('[data-onglet]').forEach((b) => b.onclick = () => { etat.onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendreListe(); });
-
-function choisir(cle) { etat.selection = cle; rendreFiche(); }
+function choisir(cle) { selection = cle; rendreFiche(); if (onglet === 'planning') rendrePanneau(); }
+$('fermer').onclick = () => choisir(null);
 function positionSelection() {
-  const c = etat.selection; if (!c) return null;
-  if (c === 'code') return new THREE.Vector3(-5, 0.2, -3.9);
-  if (c.startsWith('place')) return PLACES[+c.slice(5)];
-  const o = objets[c]; return o && o.obj.visible ? o.obj.position : null;
+  const s = selection; if (!s) return null;
+  if (s === 'code') return [new THREE.Vector3(-13, 0.25, -1), 2.2];
+  if (s === 'plateau') return [new THREE.Vector3(9, 0.15, -14.5), 4];
+  if (s === 'accueil') return [new THREE.Vector3(-11.5, 0.25, 5), 1.4];
+  if (s.startsWith('place')) return [PLACES[+s.slice(5)], 1];
+  const k = /^l\d/.test(s) ? PLANNING.find((x) => x.id === s).veh : s;
+  const o = objets[k]; return o && o.obj.visible ? [o.obj.position, o.type === 'moniteur' ? 0.4 : 1] : null;
 }
 
-// Clic dans la scène
-const ray = new THREE.Raycaster(), souris = new THREE.Vector2();
-let appui = null;
+const ray = new THREE.Raycaster(), souris = new THREE.Vector2(); let appui = null;
 renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
 renderer.domElement.addEventListener('pointerup', (e) => {
   if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6) return;
   const r = renderer.domElement.getBoundingClientRect();
   souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(souris, camera);
-  const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
+  const visibles = cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; });
+  const hit = ray.intersectObjects(visibles, false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
+$('recentrer').onclick = () => { camera.position.copy(VUE); camera.zoom = 1; camera.updateProjectionMatrix(); controls.target.set(-2, 0, -1); };
+$('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
 
-// Boutons
-let tourne = false;
-$('recentrer').onclick = () => { camera.position.copy(VUE); camera.zoom = 1; camera.updateProjectionMatrix(); controls.target.set(0, 0, 0); };
-$('tourner').onclick = (e) => { tourne = !tourne; controls.autoRotate = tourne; controls.autoRotateSpeed = 0.6; e.target.textContent = tourne ? 'Arrêter' : 'Faire tourner'; };
-
-// Taille
 function taille() {
   const w = conteneur.clientWidth, h = conteneur.clientHeight;
   renderer.setSize(w, h, false);
-  const a = w / h, s = a < 1 ? 15.5 / a : 17;
-  Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s });
-  camera.updateProjectionMatrix();
+  const a = w / h, s = a < 1.1 ? 24 / a : 19.5;
+  Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix();
 }
 addEventListener('resize', taille); taille();
 
-// ---------- Boucle ----------
-const tmp = new THREE.Vector3();
-let avant = performance.now();
-function suivreChemin(v, dt) {
-  const a = v.chemin[v.k], b = v.chemin[v.k + 1];
-  const d = a.distanceTo(b), pas = 4 * dt;
-  v.u = (v.u || 0) + pas / Math.max(d, 0.01);
-  if (v.u >= 1) { v.u = 0; v.k++; if (v.k >= v.chemin.length - 1) return true; return false; }
-  v.obj.position.lerpVectors(a, b, v.u);
-  tmp.subVectors(b, a); v.obj.rotation.y = Math.atan2(tmp.x, tmp.z);
-  return false;
-}
-function animer(t) {
-  const dt = Math.min(0.05, (t - avant) / 1000); avant = t;
+// ================= Boucle =================
+let avant = performance.now(), dernierRendu = -1;
+function animer(now) {
+  const dt = Math.min(0.05, (now - avant) / 1000); avant = now;
+  if (!pause) {
+    t += dt / 60; // 1 s réelle = 1 min de la journée
+    if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
+    synchroniser();
+  }
   for (const o of Object.values(objets)) {
     if (o.type === 'voiture') {
-      if (o.mode === 'sortie') { if (suivreChemin(o, dt)) { o.mode = 'route'; o.t = tSortie; } }
-      else if (o.mode === 'route' || o.mode === 'retour_route') {
-        const pas = (5.5 * dt) / LONG;
-        const reste = (((tSortie - o.t) % 1) + 1) % 1;
-        o.t = (o.t + pas) % 1;
-        const p = CIRCUIT.getPointAt(o.t), q = CIRCUIT.getPointAt((o.t + 0.002) % 1);
-        o.obj.position.copy(p); tmp.subVectors(q, p); o.obj.rotation.y = Math.atan2(tmp.x, tmp.z);
-        if (o.mode === 'retour_route' && reste <= pas) {
-          const place = PLACES[o.place];
-          o.mode = 'rentre'; o.k = 0; o.u = 0;
-          o.chemin = [CIRCUIT.getPointAt(tSortie), new THREE.Vector3(7.2, 0.12, -9.6), new THREE.Vector3(place.x, 0.12, -7.8), place.clone()];
-        }
-      } else if (o.mode === 'rentre') { if (suivreChemin(o, dt)) { o.mode = 'gare'; o.obj.position.copy(PLACES[o.place]); o.obj.rotation.y = Math.PI; majTout(); } }
+      if (o.mode === 'sortie' && avancer(o, dt)) { o.mode = 'dehors'; o.obj.visible = false; }
+      else if (o.mode === 'retour' && avancer(o, dt)) { o.mode = 'gare'; o.obj.position.copy(PLACES[o.place]); }
     } else if (o.type === 'moto' && o.mode === 'piste') {
-      o.a += dt * 0.9;
-      const x = 7.2 + Math.sin(o.a) * 3.8, z = 3.4 + Math.sin(o.a * 2) * 1.1;
-      const x2 = 7.2 + Math.sin(o.a + 0.02) * 3.8, z2 = 3.4 + Math.sin((o.a + 0.02) * 2) * 1.1;
-      o.obj.position.set(x, 0.12, z); o.obj.rotation.y = Math.atan2(x2 - x, z2 - z);
+      o.a += dt * 0.6;
+      const x = 9 + Math.sin(o.a) * 10, z = -14.5 + Math.sin(o.a * 2) * 2.4, x2 = 9 + Math.sin(o.a + 0.01) * 10, z2 = -14.5 + Math.sin((o.a + 0.01) * 2) * 2.4;
+      o.obj.position.set(x, 0.13, z); o.obj.rotation.y = Math.atan2(x2 - x, z2 - z);
     }
   }
-  elevesCode.forEach((p, i) => { p.visible = i < etat.code; });
-  const ps = positionSelection();
-  anneau.visible = !!ps;
-  if (ps) { anneau.position.set(ps.x, 0.16, ps.z); const s = etat.selection === 'code' ? 3.6 : 1 + Math.sin(t / 300) * 0.04; anneau.scale.set(s, s, s); }
+  for (const c of trafic) { c.o.position.x += c.sens * c.v * dt; if (c.o.position.x > 34) c.o.position.x = -34; if (c.o.position.x < -34) c.o.position.x = 34; }
+  const ps = positionSelection(); anneau.visible = !!ps;
+  if (ps) { anneau.position.set(ps[0].x, 0.2, ps[0].z); anneau.scale.setScalar(ps[1] * (1 + Math.sin(now / 300) * 0.04)); }
   controls.update();
   renderer.render(scene, camera);
   placerEtiquettes();
+  const minute = Math.floor(t * 60);
+  if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
   requestAnimationFrame(animer);
 }
-
-// État de départ : deux leçons en cours, une moto sur le plateau
-VOITURES.forEach((v) => { objets[v.id].obj.rotation.y = Math.PI; });
-demarrerLecon('m1', 'v2', 'Léa M.', true);
-demarrerLecon('m3', 'v4', 'Hugo D.', true);
-demarrerLecon('m2', 'mo2', 'Inès T.', true);
-objets.v2.debut = objets.v4.debut = objets.mo2.debut = performance.now() - 15000;
-noter('<b>Sophie L.</b> démarre une leçon moto avec Inès T. · Moto 2');
-noter('<b>Thomas R.</b> part en leçon avec Hugo D. · Voiture 4');
-noter('<b>Karim B.</b> part en leçon avec Léa M. · Voiture 2');
-majTout();
-setInterval(tic, 5000);
-setInterval(() => { $('heure').textContent = hhmm(); }, 1000); $('heure').textContent = hhmm();
+synchroniser(true);
 requestAnimationFrame(animer);
 </script>
 </body>
