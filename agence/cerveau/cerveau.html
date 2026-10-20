@@ -2542,6 +2542,8 @@ async function demarrer() {
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
       S[col] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      // Bureau : un agent peut avoir plusieurs états « ID@horodatage » (relais d'ATLAS) ; on garde le plus récent.
+      if (col === 'bureau') { const m = {}; for (const b of S.bureau) { const id = String(b.id).split('@')[0]; if (!m[id] || String(b.maj || '') > String(m[id].maj || '')) m[id] = { ...b, id }; } S.bureau = Object.values(m); }
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
