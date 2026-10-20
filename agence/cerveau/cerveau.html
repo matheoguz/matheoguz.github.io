@@ -514,6 +514,28 @@ a.lien{font-weight:500}
 .piece.moyenne .postes,.piece.grande .postes{padding-top:24px}
 .bu-liste li.sous{padding-left:34px;background:var(--sunken)}
 .bu-liste li.sous .mini{width:18px;height:20px}
+
+.bu-placard,.bu-tableau{position:relative;display:grid;justify-items:center;gap:3px;background:none;border:0;padding:0;cursor:pointer;color:inherit;z-index:3;align-self:flex-end}
+.bu-placard:hover,.bu-tableau:hover,.bu-placard:focus-visible,.bu-tableau:focus-visible{z-index:40}
+.bu-placard:hover .bu-carte,.bu-placard:focus-visible .bu-carte,.bu-tableau:hover .bu-carte,.bu-tableau:focus-visible .bu-carte{display:block}
+.armoire{position:relative;display:flex;gap:2px;width:46px;height:62px;background:#4b5563;border:3px solid var(--trait,#110d1a);padding:3px;box-shadow:inset 0 4px 0 #6b7280}
+.armoire .porte{flex:1;background:#374151;border:2px solid #1f2937;position:relative}
+.armoire .porte::after{content:"";position:absolute;top:45%;width:3px;height:6px;background:#facc15}
+.armoire .porte:first-child::after{right:2px}.armoire .porte:last-of-type::after{left:2px}
+.armoire .chemise{position:absolute;left:8px;top:-12px;width:26px;height:14px;background:#facc15;border:2px solid var(--trait,#110d1a);transform:rotate(-8deg);box-shadow:inset 0 3px 0 #fde047}
+.bu-placard:hover .armoire,.bu-placard.sel .armoire{box-shadow:0 0 0 2px #facc15,0 0 14px #facc15}
+.pastille-n{position:absolute;top:-10px;right:-8px;background:#f97316;color:#fff;font:700 10px/1 var(--mono);border:2px solid var(--trait,#110d1a);border-radius:999px;padding:2px 5px}
+.mini-armoire{width:22px;height:28px;padding:2px;border-width:2px}
+.mini-armoire .porte::after{display:none}
+.ecran-c{display:grid;grid-template-columns:auto auto;gap:1px 8px;align-items:baseline;background:#06140c;border:3px solid var(--trait,#110d1a);box-shadow:inset 0 0 0 2px #14532d;padding:6px 8px;font:700 9px/1.3 'Silkscreen',var(--mono);color:#4ade80;min-width:132px}
+.ecran-c span{opacity:.7}.ecran-c b{font:700 11px/1.3 var(--mono);text-align:right}.ecran-c b.s{color:#bbf7d0}
+.bu-tableau:hover .ecran-c,.bu-tableau.sel .ecran-c{box-shadow:inset 0 0 0 2px #14532d,0 0 14px #4ade80}
+.md.dossier{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.md.dossier strong{color:var(--warn)}
+.kpis-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpis-mini div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.kpis-mini small{display:block;color:var(--muted);font-size:11px}
+.kpis-mini b{font-size:16px}
 @keyframes bu-tape{50%{transform:translateY(-2px)}}
 @keyframes bu-respire{50%{transform:translateY(1px)}}
 @keyframes bu-ecran{33%{background-position:0 2px}66%{background-position:0 4px}}
@@ -987,7 +1009,9 @@ const PIECES = [
   { id: 'ecriture', nom: 'Écriture', agents: ['PLUME', 'LUMEN'], renforts: { PLUME: ['Rose'], LUMEN: ['Gabin'] }, metier: 'rédacteur' },
   { id: 'code', nom: 'Code', agents: ['FORGE', 'CODA'], renforts: { FORGE: ['Sacha'], CODA: ['Nora', 'Yanis'] }, metier: 'développeur' },
   { id: 'design', nom: 'Design', agents: ['PIXEL'], renforts: { PIXEL: ['Mila', 'Léon'] }, metier: 'graphiste' },
-  { id: 'analyse', nom: 'Analyse', agents: ['FINO', 'ARGUS'], renforts: { FINO: ['Basile'], ARGUS: ['Elsa'] }, metier: 'analyste' },
+  { id: 'compta', nom: 'Compta', agents: ['FINO'], renforts: { FINO: ['Basile'] }, metier: 'comptable' },
+  { id: 'juridique', nom: 'Juridique', agents: ['LEX'], renforts: { LEX: ['Maël'] }, metier: 'juriste' },
+  { id: 'analyse', nom: 'Contrôle', agents: ['ARGUS'], renforts: { ARGUS: ['Elsa'] }, metier: 'vérificateur' },
   { id: 'boutiques', nom: 'Boutiques', agents: ['CARGO'] },
   { id: 'etudes', nom: 'Études', agents: ['SAGE'] },
   { id: 'memoire', nom: 'Mémoire', agents: ['TEMPO', 'MNEMO'] },
@@ -1063,6 +1087,42 @@ function renfortBu(pc, chef, n, nom, r, couleur) {
       <span class="bu-bulle"><i data-lucide="${iconeAction(action)}"></i><span>${esc(coupe(action, 34))}</span></span>${sprite(couleur, 'bu-sp')}<span class="bu-nom">${esc(nom)}</span>
       <span class="bu-carte" role="tooltip"><b>${esc(nom)}</b><span class="role">${esc(metier)} de l'équipe de ${esc(chef)}</span><span class="etat"><span class="bu-dot travail"></span>Au travail · en direct</span><p>${esc(action)}</p>${r.mission ? `<small>Mission : ${esc(court(r.mission))}${r.projet ? ' · ' + esc(r.projet) : ''}</small>` : ''}<small>Cliquez pour la fiche de ${esc(chef)}.</small></span></button>` : '<span class="chaise"></span>'}<div class="bureau-meuble"><span class="ecran"></span></div><span class="etiquette">${esc(nom)}</span></div>`;
 }
+// Le placard du chef : le dossier Matheo, que chaque agent lit avant de commencer.
+const dossierMatheo = () => S.notes.find((n) => n.titre === 'Dossier Matheo');
+const aCompleter = (d) => (String(d?.contenu || '').match(/à compléter/g) || []).length;
+function placardBu() {
+  const d = dossierMatheo();
+  const n = aCompleter(d);
+  return `<button type="button" class="bu-placard${S.agentSel === '__dossier' ? ' sel' : ''}" data-agent-sel="__dossier" aria-label="Le placard : dossier Matheo${n ? ', ' + n + ' cases à compléter' : ''}">
+    <span class="armoire"><span class="porte"></span><span class="porte"></span><span class="chemise"></span></span>${n ? `<span class="pastille-n">${n}</span>` : ''}<span class="bu-nom">Dossier Matheo</span>
+    <span class="bu-carte" role="tooltip"><b>Le placard du chef</b><span class="role">Dossier Matheo</span><p>Tout ce qu'il faut savoir sur toi pour lancer un business de A à Z. Chaque agent le lit avant de commencer une tâche.</p>${n ? `<small>${n} case(s) à compléter : ce sont des questions pour toi.</small>` : ''}<small>Cliquez pour l'ouvrir.</small></span></button>`;
+}
+const comptaEtat = () => S.etat.find((x) => x.id === 'compta');
+function tableauCompta() {
+  const c = comptaEtat();
+  return `<button type="button" class="bu-tableau${S.agentSel === '__compta' ? ' sel' : ''}" data-agent-sel="__compta" aria-label="La compta : solde ${c ? euro(c.solde) : 'pas encore calculé'}">
+    <span class="ecran-c"><span>ENTRÉES</span><b>${c ? euro(c.entrees) : '-'}</b><span>SORTIES</span><b>${c ? euro(c.sorties) : '-'}</b><span>SOLDE</span><b class="s">${c ? euro(c.solde) : '-'}</b></span><span class="bu-nom">Registre</span>
+    <span class="bu-carte" role="tooltip"><b>La compta de tout</b><span class="role">Registre tenu par FINO</span><p>${c ? `${c.mouvements} mouvement(s) réel(s) : ${euro(c.entrees)} d'entrées, ${euro(c.sorties)} de sorties.` : 'Pas encore de bilan.'}</p><small>Seulement des mouvements réels, chacun avec sa preuve. Cliquez pour le détail.</small></span></button>`;
+}
+function ficheDossier() {
+  const d = dossierMatheo();
+  const n = aCompleter(d);
+  return `<section class="card bu-fiche"><header><span class="armoire mini-armoire"><span class="porte"></span><span class="porte"></span></span><h2>Dossier Matheo</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Fermer"><i data-lucide="x"></i></button></header>
+    <div class="pad">${d ? `<p class="muted">Le placard du chef. Chaque agent le lit avant de commencer une tâche.${n ? ` <b>${n} case(s) à compléter</b> : dis-les à Claude, il les range ici.` : ''}</p><div class="md dossier">${mdToHtml(String(d.contenu || '').replace(/^#.*\n+/, '').replace(/à compléter/g, '**à compléter**'))}</div>
+      <div class="actions"><button class="btn primary" type="button" data-mission-agent="ATLAS"><i data-lucide="pencil-line"></i>Compléter mon dossier avec Claude</button><button class="btn" type="button" data-voir-neurone="n:${esc(cle(d.titre))}"><i data-lucide="brain"></i>Dans le cerveau</button></div>`
+      : '<p class="muted">Le dossier arrive à la prochaine synchronisation.</p>'}</div></section>`;
+}
+function ficheCompta() {
+  const c = comptaEtat();
+  const lignes = (o) => Object.entries(o || {}).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${euro(v.entrees)}</td><td class="num">${euro(v.sorties)}</td><td class="num"><b>${euro(v.entrees - v.sorties)}</b></td></tr>`).join('');
+  return `<section class="card bu-fiche"><header><h2>La compta</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Fermer"><i data-lucide="x"></i></button></header>
+    <div class="pad">${c ? `<div class="kpis-mini"><div><small>Entrées</small><b>${euro(c.entrees)}</b></div><div><small>Sorties</small><b>${euro(c.sorties)}</b></div><div><small>Solde</small><b>${euro(c.solde)}</b></div></div>
+      ${c.mouvements ? `<div class="bu-boite"><h3>Par projet</h3><div class="table-wrap"><table><thead><tr><th>Projet</th><th class="num">Entrées</th><th class="num">Sorties</th><th class="num">Solde</th></tr></thead><tbody>${lignes(c.projets)}</tbody></table></div></div>
+      <div class="bu-boite"><h3>Derniers mouvements</h3><ol>${(c.derniers || []).map((x) => `<li><b>${x.type === 'entree' ? '+' : '−'}${euro(x.montant)}</b> · ${esc(x.projet)}<small>${esc(x.date)} · ${esc(x.quoi)} · preuve : ${esc(x.preuve)}</small></li>`).join('')}</ol></div>`
+      : '<p class="muted">Aucun mouvement réel noté pour l\'instant : pas encore de vente encaissée ni de dépense. Dès qu\'un client paie ou qu\'on dépense quelque chose, FINO le note ici, avec la preuve.</p>'}
+      <small class="muted">Mis à jour ${quand(c.maj)}. Que du réel : les estimations restent dans les études.</small>` : '<p class="muted">Le registre arrive à la prochaine synchronisation.</p>'}
+      <div class="actions"><button class="btn" type="button" data-mission-agent="FINO"><i data-lucide="wallet"></i>Demander un point argent à FINO</button></div></div></section>`;
+}
 function vueBureau() {
   const ag = equipiers();
   if (!ag.length) return vide('Équipe pas encore synchronisée', 'Les agents apparaissent ici après une synchronisation du coffre.');
@@ -1082,9 +1142,10 @@ function vueBureau() {
   const plan = `<div class="bureau" aria-label="Le bureau des agents"><div class="bu-grille">
     ${pieces.map((pc) => { const ici = pc.agents.filter(occupe); const aides = Object.entries(pc.renforts || {}).flatMap(([chef, noms]) => noms.map((nom, i) => [chef, i + 1, nom])).filter(([chef]) => parNom[chef]);
       const nbAides = aides.filter(([chef, n]) => R[chef + '-' + n]).length;
-      return `<div class="piece${ici.length || nbAides ? '' : ' vide'}${pc.agents.length + aides.length >= 5 ? ' grande' : pc.agents.length + aides.length >= 3 ? ' moyenne' : ''}"><span class="pancarte">${esc(pc.nom)}${nbAides ? ` · ${nbAides + ici.length} au travail` : ''}</span><span class="fenetre"></span><div class="postes">
+      return `<div class="piece${ici.length || nbAides ? '' : ' vide'}${pc.agents.length + aides.length >= 5 ? ' grande' : pc.agents.length + aides.length >= 3 || pc.id === 'chef' ? ' moyenne' : ''}"><span class="pancarte">${esc(pc.nom)}${nbAides ? ` · ${nbAides + ici.length} au travail` : ''}</span><span class="fenetre"></span><div class="postes">
       ${pc.agents.map((n) => { const e = E[n]; const a = parNom[n]; return `<div class="poste${e?.etat === 'travail' || Object.values(R).some((r) => r.chef === n) ? ' on' : ''}" style="--c:${esc(a.couleur || '#8b9cff')}">${occupe(n) ? agentBu(a, e?.etat === 'travail' || !Object.values(R).some((r) => r.chef === n) ? e : { ...(e || {}), etat: 'travail', action: `Dirige ${Object.values(R).filter((r) => r.chef === n).length} ${pc.metier || 'renfort'}s` }) : '<span class="chaise"></span>'}<div class="bureau-meuble"><span class="ecran"></span><span class="tasse"></span></div></div>`; }).join('')}
       ${aides.map(([chef, n, nom]) => renfortBu(pc, chef, n, nom, R[chef + '-' + n], parNom[chef].couleur || '#8b9cff')).join('')}
+      ${pc.id === 'chef' ? placardBu() : pc.id === 'compta' ? tableauCompta() : ''}
     </div></div>`; }).join('')}
     <div class="piece pause"><span class="pancarte">Salle de pause</span><div class="meubles"><span class="m-cafe"></span><span class="m-canape"></span><span class="m-plante"></span></div>
       <div class="postes">${enPause.map((a) => `<div class="poste">${agentBu(a, null)}</div>`).join('') || '<p class="bu-vide">Tout le monde travaille.</p>'}</div></div>
@@ -1094,7 +1155,7 @@ function vueBureau() {
   const etatDe = (n) => (Object.values(R).some((r) => r.chef === n) ? 'travail' : E[n]?.etat || 'pause');
   const liste = [...ag].sort((a, b) => rang[etatDe(a.titre)] - rang[etatDe(b.titre)] || a.titre.localeCompare(b.titre));
   const sel = S.agentSel && parNom[S.agentSel];
-  const cote = sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
+  const cote = S.agentSel === '__dossier' ? ficheDossier() : S.agentSel === '__compta' ? ficheCompta() : sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
     <ul class="bu-liste">${liste.map((a) => { const e = E[a.titre]; const et = e?.etat || 'pause'; const pc = PIECES.find((x) => x.agents.includes(a.titre)); const rs = Object.values(R).filter((r) => r.chef === a.titre).sort((x, y) => x.n - y.n);
       return `<li data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(a.titre)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(a.titre)}</b><small>${esc(rs.length && e?.etat !== 'travail' ? `Dirige ${rs.length} ${pc?.metier || 'renfort'}${rs.length > 1 ? 's' : ''}` : e ? e.action : a.role || 'Disponible')}</small></div><span class="bu-dot ${rs.length ? 'travail' : et}" title="${ETATS_BU[rs.length ? 'travail' : et]}"></span></li>`
         + rs.map((r) => `<li class="sous" data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(r.id)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(pc?.renforts?.[a.titre]?.[r.n - 1] || r.id)}</b><small>${esc(r.action || '')}</small></div><span class="bu-dot travail"></span></li>`).join(''); }).join('')}</ul></section>`;
@@ -1989,6 +2050,9 @@ const MODELES = {
   argent: { t: 'Argent', agents: ['FINO', 'MNEMO'] },
   semaine: { t: 'Planning', agents: ['TEMPO', 'MNEMO'] },
   boutique: { t: 'Boutique', agents: ['ECHO', 'CARGO', 'PIXEL', 'LUMEN', 'FINO', 'MNEMO'] },
+  prospection: { t: 'Prospection', agents: ['ECHO', 'VOX', 'MNEMO'] },
+  business: { t: 'Nouveau business', agents: ['ECHO', 'FINO', 'LEX', 'CODA', 'PIXEL', 'LUMEN', 'MNEMO'] },
+  papiers: { t: 'Papiers et légal', agents: ['LEX', 'MNEMO'] },
 };
 function promptMission() {
   const m = MISSIONS[S.mission];
@@ -2133,7 +2197,7 @@ document.addEventListener('click', (ev) => {
   const bp = t.closest('[data-bureau-projet]');
   if (bp) { S.bureauProjet = bp.dataset.bureauProjet || null; S.agentSel = bp.dataset.agentPre || null; if (S.vue !== 'bureau') location.hash = 'bureau'; else render(); return; }
   const as = t.closest('[data-agent-sel]');
-  if (as && !t.closest('[data-voir-neurone],[data-mission-agent]')) { const n = as.dataset.agentSel; S.agentSel = n && S.agentSel !== n ? n : null; render(); return; }
+  if (as && !t.closest('[data-voir-neurone],[data-mission-agent]')) { const n = as.dataset.agentSel; S.agentSel = n && S.agentSel !== n ? n : null; if (S.vue !== 'bureau') location.hash = 'bureau'; else render(); return; }
   const vn = t.closest('[data-voir-neurone]');
   if (vn) { S.note = vn.dataset.voirNeurone; if (S.vue !== 'cerveau') location.hash = 'cerveau'; else G.focus?.(S.note, true); return; }
   if (t.closest('[data-mission-agent]')) { const a = t.closest('[data-mission-agent]').dataset.missionAgent; S.mission = 'equipe'; S.missionProjet = null; S.modele = ''; S.missionTexte = `Avec ${a} : `; S.confirmer = false; S.envoi = null; location.hash = 'missions'; return; }
