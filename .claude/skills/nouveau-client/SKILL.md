@@ -17,6 +17,7 @@ Le message du client : $ARGUMENTS (s'il est vide, demande à Matheo de coller le
 7. **Vérificateur** : lance l'agent `verificateur`. S'il répond `À CORRIGER`, renvoie les corrections au bon pôle (textes → contenu, mise en page → build), puis revérifie. Maximum 3 tours ; au-delà, explique à Matheo ce qui bloque.
 8. Quand le vérificateur dit `OK` : commit (`Agence: nouveau client <nom>`) et push sur la branche courante.
 
+8 bis. **À valider** : le site du client va dans la boîte « À valider » du Cerveau avec les captures mobile et ordinateur d'ARGUS (`node ../Repos-/cerveau/.outils/valider.mjs ajouter --type site --projet "Agence sites vitrines" --titre "Site de <client>" --lien <aperçu> --images <captures> --resume … --si-ok "Matheo envoie l'aperçu au client"`). Matheo regarde, dit OK ou écrit ce qu'il faut corriger (alors `/modifs`).
 9. **Cerveau** (voir « Le Cerveau » dans `CLAUDE.md`) : crée la personne de contact (`personnes`), range le message du client (`reponses`, type `brief`), ajoute le message d'aperçu à envoyer (`messages`, statut `a_envoyer`), et synchronise l'entreprise et la mémoire. Un seul batch.
 
 Termine par un rapport court pour Matheo :

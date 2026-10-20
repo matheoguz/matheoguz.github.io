@@ -59,6 +59,7 @@ Collections :
 Ids : `<slug>-<sujet>` (ex. `boulangerie-dupont-retour-2`), en minuscules avec tirets. Le client `exemple-*` est fictif (`test: true`).
 
 ## Le cerveau de Matheo (à faire dans chaque session)
+**Nouveau business ou nouveau projet** : `/nouveau-business` ou `/nouveau-projet` (skills du dépôt `Repos-`, à ajouter s'il manque). Lire d'abord le placard : `../Repos-/cerveau/Matheo/Dossier Matheo.md`. Matheo ne fait pas de vidéos.
 **Obligatoire dans chaque session, quel que soit le sujet** : ouvrir le Cerveau au début (`/debut` ; si `Repos-` n'est pas dans la session, l'ajouter avec `add_repo`), s'en servir pour répondre (mémoire, fiches projet, leçons), et le compléter à la fin de chaque tâche (`/fin`). Sans exception.
 Tout ce qu'on fait doit finir dans **le Cerveau** : coffre privé `matheoguz/Repos-` (dossier `cerveau/`) + page privée https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (outil `ArtifactData`).
 - **Au début** : lire `../Repos-/cerveau/MEMOIRE.md` (le hook `rappel` le fait si `Repos-` est dans la session), puis les collections `taches` et `idees` de la page.

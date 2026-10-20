@@ -555,6 +555,35 @@ a.lien{font-weight:500}
 .liege{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:150px;min-height:62px;background:#b07a46;border:3px solid var(--trait,#110d1a);box-shadow:inset 0 0 0 3px #8a5a30;padding:6px}
 .postit{font:9px/1.15 var(--mono);color:#1b1626;padding:3px;min-height:22px;transform:rotate(-2deg);box-shadow:1px 1px 0 rgba(0,0,0,.35)}
 .postit.p0{background:#fde047}.postit.p1{background:#a3e635;transform:rotate(2deg)}.postit.p2{background:#f9a8d4}.postit.p3{background:#7dd3fc;transform:rotate(1deg)}
+
+.chef-fil{display:grid;gap:8px;max-height:420px;overflow:auto;padding:2px}
+.chef-fil .msg{padding:8px 11px;border-radius:12px;font-size:13px;max-width:92%}
+.chef-fil .msg.moi{justify-self:end;background:var(--accent);color:var(--on-accent);border-bottom-right-radius:4px}
+.chef-fil .msg.lui{justify-self:start;background:var(--sunken);border:1px solid var(--line);border-bottom-left-radius:4px}
+.chef-fil .msg.lui .md{font-size:13px;padding:0;border:0;background:none}
+.chef-fil .attente{color:var(--muted)}
+.mission-prop{margin-top:8px;border-top:1px dashed var(--line2);padding-top:8px;display:grid;gap:6px}
+.mission-prop small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.chef-saisie{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.chef-saisie textarea{font:inherit;font-size:14px;resize:vertical;min-height:44px;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;background:var(--panel);color:var(--ink)}
+
+.side .nav .n.alerte:not(:empty){background:#f97316;color:#fff;border-radius:999px;padding:0 6px}
+.valid-corps .md{padding:0;border:0;background:none}
+.n-alerte{background:#f97316;color:#fff;border-radius:999px;padding:0 6px;font-size:11px;margin-left:4px}
+.valid-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:14px;margin-bottom:14px}
+.card.valid{overflow:hidden;display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr)}
+@media (max-width:640px){.card.valid{grid-template-columns:minmax(0,1fr)}}
+.valid-images{display:grid;gap:6px;background:var(--sunken);padding:8px;align-content:start;max-height:420px;overflow:auto}
+.valid-images img{width:100%;border-radius:6px;border:1px solid var(--line);display:block}
+.valid-vide{padding:30px 10px;text-align:center;font-size:13px}
+.valid-corps{display:grid;gap:8px;align-content:start;min-width:0}
+.valid-corps h3{font-size:16px}
+.valid-corr{display:grid;gap:8px}
+.valid-corr textarea{font:inherit;font-size:14px;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;background:var(--panel);color:var(--ink)}
+.bandeau-valider{display:flex;gap:12px;align-items:center;padding:14px 16px;text-decoration:none;border-color:#f97316}
+.bandeau-valider>div{flex:1;min-width:0;display:grid}
+.bandeau-valider small{color:var(--muted)}
+.bandeau-valider svg.lucide{color:#f97316;width:22px;height:22px}
 @keyframes bu-tape{50%{transform:translateY(-2px)}}
 @keyframes bu-respire{50%{transform:translateY(1px)}}
 @keyframes bu-ecran{33%{background-position:0 2px}66%{background-position:0 4px}}
@@ -573,6 +602,7 @@ a.lien{font-weight:500}
       <a href="#projets" data-v="projets"><i data-lucide="folder-kanban"></i>Projets<span class="n" id="n-projets">0</span></a>
       <div class="h">Partout</div>
       <a href="#equipe" data-v="equipe"><i data-lucide="bot"></i>L'équipe<span class="n" id="n-equipe">0</span></a>
+      <a href="#valider" data-v="valider"><i data-lucide="circle-check"></i>À valider<span class="n alerte" id="n-valider"></span></a>
       <a href="#bureau" data-v="bureau"><i data-lucide="users"></i>Le bureau<span class="n" id="n-bureau"></span></a>
       <a href="#taches" data-v="taches"><i data-lucide="circle-check"></i>Tâches<span class="n" id="n-taches">0</span></a>
       <a href="#memoire" data-v="memoire"><i data-lucide="library"></i>Notes<span class="n" id="n-memoire">0</span></a>
@@ -641,7 +671,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], chef: [], validations: [], corriger: null, chefEnCours: false, bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -662,19 +692,23 @@ function render() {
   n('projets', projetsDe().length);
   n('taches', ouvertes().length);
   n('equipe', equipiers().length);
+  n('valider', aValider().length || '');
   n('bureau', S.ready ? Object.values(etatsBureau(null)).filter((e) => e.etat === 'travail').length + Object.keys(renfortsActifs(null)).length || '' : '');
   n('memoire', S.notes.filter((x) => x.dossier !== 'Journal').length);
   n('journal', new Set(S.journal.map((j) => j.date)).size);
   navProjets();
   document.querySelectorAll('.nav a[data-v]').forEach((a) => (a.dataset.v === (S.vue === 'projet' ? 'projet-' + S.projet : S.vue) ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-  const titres = { bureau: 'Le bureau', equipe: "L'équipe", aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
+  const titres = { valider: 'À valider', bureau: 'Le bureau', equipe: "L'équipe", aujourdhui: "Aujourd'hui", projets: 'Projets', taches: 'Tâches', memoire: 'Notes', cerveau: 'Le Cerveau', journal: 'Journal', missions: 'Missions' };
   $('#v-title').textContent = S.vue === 'projet' ? (projetParId(S.projet)?.titre || 'Projet') : titres[S.vue];
   if (!S.ready) return;
   const v = $('#view');
-  const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value;
+  const bulleAvant = $('#bulle')?.innerHTML, bulleVue = $('#bulle') && !$('#bulle').hidden, saisie = $('#chat-q')?.value, saisieChef = $('#chef-q')?.value, focusChef = document.activeElement?.id === 'chef-q';
   if (S.vue !== 'cerveau') arreterGraphe();
-  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projet: vueProjet, equipe: vueEquipe, bureau: vueBureau, projets, taches, cockpit, entreprises, personnes, reponses, messages, memoire, journal, missions })[S.vue]();
+  v.innerHTML = ({ cerveau: vueCerveau, aujourdhui: vueAujourdhui, projet: vueProjet, equipe: vueEquipe, bureau: vueBureau, valider: vueValider, projets, taches, cockpit, entreprises, personnes, reponses, messages, memoire, journal, missions })[S.vue]();
   icons();
+  if ($('#chef-q') && saisieChef) $('#chef-q').value = saisieChef;
+  if (focusChef) $('#chef-q')?.focus();
+  const fil = $('#chef-fil'); if (fil) fil.scrollTop = fil.scrollHeight;
   if (S.vue === 'cerveau') {
     demarrerGraphe();
     if (bulleVue && $('#bulle')) { $('#bulle').innerHTML = bulleAvant; $('#bulle').hidden = false; }
@@ -800,7 +834,8 @@ function vueAujourdhui() {
   const idees = [...S.idees].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 5);
   const aEnvoyer = S.messages.filter((m) => m.statut !== 'envoye');
   const jours = [...new Set(S.journal.map((j) => j.date))].sort().reverse().slice(0, 4);
-  return `${carteRapport()}${carteSante()}
+  const av = aValider();
+  return `${av.length ? `<a class="card bandeau-valider" href="#valider"><i data-lucide="circle-check"></i><div><b>${av.length} chose${av.length > 1 ? 's' : ''} à valider</b><small>${esc(av.slice(0, 3).map((v) => v.titre).join(' · '))}</small></div><span class="btn primary">Regarder</span></a>` : ''}${carteRapport()}${carteSante()}
   <div class="split">
     <div class="stack">
       <section class="card" aria-label="Tâches"><header><h2>À faire</h2><span class="c">${ouv.length || ''}</span><div class="grow"></div><a class="lien" href="#taches">Toutes les tâches</a></header>
@@ -1148,6 +1183,75 @@ function tableauCompta() {
     <span class="ecran-c"><span>ENTRÉES</span><b>${c ? euro(c.entrees) : '-'}</b><span>SORTIES</span><b>${c ? euro(c.sorties) : '-'}</b><span>SOLDE</span><b class="s">${c ? euro(c.solde) : '-'}</b></span><span class="bu-nom">Registre</span>
     <span class="bu-carte" role="tooltip"><b>La compta de tout</b><span class="role">Registre tenu par FINO</span><p>${c ? `${c.mouvements} mouvement(s) réel(s) : ${euro(c.entrees)} d'entrées, ${euro(c.sorties)} de sorties.` : 'Pas encore de bilan.'}</p><small>Seulement des mouvements réels, chacun avec sa preuve. Cliquez pour le détail.</small></span></button>`;
 }
+// Parler au chef : Matheo écrit à ATLAS. Chaque échange est gardé dans la collection chef,
+// que la prochaine session Claude lit au début (/debut) ; une mission proposée se lance depuis Missions.
+const echangesChef = () => [...S.chef].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+function ficheChef() {
+  const a = equipiers().find((x) => x.titre === 'ATLAS') || { titre: 'ATLAS', couleur: '#e5e7eb', role: "Chef d'équipe" };
+  const ex = echangesChef().slice(-12);
+  return `<section class="card bu-fiche chef-chat" style="--c:${esc(a.couleur || '#e5e7eb')}"><header>${sprite(a.couleur || '#e5e7eb', 'mini')}<h2>Parler au chef</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Fermer"><i data-lucide="x"></i></button></header>
+    <div class="pad">
+      <p class="muted">ATLAS connaît tout le Cerveau : les projets, les missions, ce que fait chaque agent, ton dossier. Demande-lui où on en est, ou confie-lui une mission.</p>
+      <div class="chef-fil" id="chef-fil">${ex.map((x) => `<div class="msg moi">${esc(x.question)}</div><div class="msg lui"><div class="md">${mdToHtml(String(x.reponse || ''))}</div>${x.mission?.texte ? `<div class="mission-prop"><small>Mission proposée${x.mission.projet ? ' · ' + esc(x.mission.projet) : ''}</small><p>${esc(x.mission.texte)}</p>${x.lancee ? '<span class="tag ok">Lancée</span>' : `<button class="btn primary" type="button" data-lancer-chef="${esc(x.id)}"><i data-lucide="rocket"></i>Lancer cette mission</button>`}</div>` : ''}</div>`).join('') || '<p class="muted" style="font-size:13px">Exemples : « On en est où sur Cartio ? », « Qui travaille en ce moment ? », « Lance un nouveau business autour des restaurants. »</p>'}
+        ${S.chefEnCours ? `<div class="msg moi">${esc(S.chefQuestion || '')}</div><div class="msg lui attente">ATLAS réfléchit…</div>` : ''}</div>
+      <form id="f-chef" class="chef-saisie"><textarea id="chef-q" rows="2" placeholder="Écris au chef…" aria-label="Message au chef"></textarea><button class="btn primary" type="submit"${S.chefEnCours ? ' disabled' : ''}><i data-lucide="send"></i>Envoyer</button></form>
+      <small class="muted">Tes messages sont gardés dans le Cerveau : la prochaine session Claude les lit en commençant.</small>
+    </div></section>`;
+}
+function contexteBureau() {
+  const E = etatsBureau(null), R = renfortsActifs(null);
+  const ag = equipiers().map((a) => `- ${a.titre} (${a.role || ''}) : ${E[a.titre] ? ETATS_BU[E[a.titre].etat] + ', ' + E[a.titre].action : 'en pause'}`).join('\n');
+  const ms = missionsEquipe().filter((m) => m.statut !== 'terminee').map((m) => `- ${court(m.titre)} (${m.projet || ''}) : ${planDe(m).map((x) => (x.fait ? '✓' : '·') + x.agent).join(' ')}`).join('\n');
+  const val = aValider().map((v) => `- ${v.titre} (${v.projet}, ${TYPES_V[v.type] || v.type})`).join('\n');
+  return `À VALIDER PAR MATHEO (dis-le-lui : « c'est prêt, regarde dans À valider »)\n${val || 'rien'}\nAGENTS EN CE MOMENT\n${ag}\nRENFORTS AU TRAVAIL : ${Object.values(R).map((r) => r.id + ' ' + r.action).join(' ; ') || 'aucun'}\nMISSIONS EN COURS\n${ms || 'aucune'}\nDOSSIER MATHEO\n${String(dossierMatheo()?.contenu || '').slice(0, 4000)}`;
+}
+async function parlerAuChef(texte) {
+  if (!texte.trim() || S.chefEnCours) return;
+  const sample = window.claude?.use ? await window.claude.use('sample').catch(() => null) : null;
+  if (!sample || !S.db) { toast('Le chef n\'est joignable que dans claude.ai (ou l\'appli).'); return; }
+  S.chefEnCours = true; S.chefQuestion = texte; render();
+  try {
+    const hist = echangesChef().slice(-6).flatMap((x) => [{ role: 'user', content: x.question }, { role: 'assistant', content: JSON.stringify({ reponse: x.reponse, mission: x.mission || null }) }]);
+    const regles = `Tu es ATLAS, le chef de l'équipe d'agents de Matheo. Tu parles à Matheo en français simple, court (8 lignes maximum), sans tiret long, en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Règles fixes : Matheo ne fait pas de vidéos ; les agents ne dépensent rien, ne signent rien, ne créent aucun compte et n'écrivent jamais sur ComeUp ou Fiverr. Si Matheo demande un travail (nouveau business, page, recherche, pub…), propose UNE mission claire que l'équipe fera dans une session Claude. Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse en markdown simple", "mission": null ou {"texte": "la mission à confier à l'équipe, précise, en une ou deux phrases", "projet": le titre exact d'un projet de la liste ou ""}}.`;
+    const entree = [{ role: 'user', content: `${contexteCerveau()}\n\n${contexteBureau()}\n\n${regles}` }, { role: 'assistant', content: '{"reponse": "Compris.", "mission": null}' }, ...hist, { role: 'user', content: texte }];
+    const r = await sample.json(entree, { cache: false, modelTier: 'default' });
+    const pr = r?.mission?.projet ? projetsDe().find((p) => cle(p.titre) === cle(r.mission.projet)) : null;
+    await S.db.collection('chef').doc().set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), mission: r?.mission?.texte ? { texte: String(r.mission.texte).slice(0, 600), projet: pr ? pr.titre : '' } : null, lu: false });
+  } catch (err) {
+    toast(err?.code === 'rate_limited' ? 'Le chef est occupé, réessaie dans un instant.' : 'Le chef n\'a pas pu répondre, réessaie.');
+  } finally { S.chefEnCours = false; S.chefQuestion = ''; render(); }
+}
+// ---------- À valider : rien ne part sans l'OK de Matheo ----------
+const aValider = () => S.validations.filter((v) => v.statut === 'a_valider').sort((a, b) => String(b.date).localeCompare(String(a.date)));
+const TYPES_V = { site: 'Site', app: 'Application', design: 'Design', page: 'Page', message: 'Message', autre: 'À voir' };
+function carteValidation(v) {
+  const etat = v.statut === 'ok' ? '<span class="tag ok">Validé</span>' : v.statut === 'a_corriger' ? '<span class="tag warn">À corriger</span>' : '<span class="tag live">À valider</span>';
+  const corr = S.corriger === v.id;
+  return `<article class="card valid"><div class="valid-images">${(v.apercus || []).map((src, i) => `<img src="${esc(src)}" alt="${esc(v.titre)}, capture ${i + 1}" loading="lazy">`).join('') || '<div class="valid-vide muted">Pas de capture</div>'}</div>
+    <div class="pad valid-corps"><div class="ligne"><span class="tag">${esc(TYPES_V[v.type] || 'À voir')}</span>${v.projet ? `<span class="tag">${esc(v.projet)}</span>` : ''}${etat}<span class="grow"></span><small class="muted">${quand(v.date)} · ${esc(v.par || 'ATLAS')}</small></div>
+      <h3>${esc(v.titre)}</h3><div class="md">${mdToHtml(String(v.resume || ''))}</div>
+      ${v.si_ok ? `<p class="muted" style="font-size:13px"><b>Si tu dis OK :</b> ${esc(v.si_ok)}</p>` : ''}
+      ${v.commentaire ? `<p class="muted" style="font-size:13px"><b>Ton commentaire :</b> ${esc(v.commentaire)}</p>` : ''}
+      <div class="actions">${v.lien ? `<a class="btn" href="${esc(v.lien)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>Voir en vrai</a>` : ''}
+        ${v.statut === 'a_valider' ? `<button class="btn primary" type="button" data-valider="${esc(v.id)}"><i data-lucide="check"></i>C'est bon, envoie</button><button class="btn" type="button" data-corriger="${esc(v.id)}"><i data-lucide="pencil-line"></i>À corriger</button>` : ''}
+        ${v.statut === 'ok' && v.si_ok && !v.lance ? `<button class="btn primary" type="button" data-lancer-valid="${esc(v.id)}"><i data-lucide="rocket"></i>Le faire maintenant</button><small class="muted">sinon l'équipe s'en occupe au prochain passage</small>` : ''}</div>
+      ${corr ? `<form class="valid-corr" data-form-corr="${esc(v.id)}"><textarea name="c" rows="3" placeholder="Ce qu'il faut changer…" aria-label="Ce qu'il faut changer"></textarea><button class="btn primary" type="submit"><i data-lucide="send"></i>Renvoyer à l'équipe</button></form>` : ''}
+    </div></article>`;
+}
+function vueValider() {
+  const att = aValider();
+  const autres = S.validations.filter((v) => v.statut !== 'a_valider').sort((a, b) => String(b.maj_matheo || b.date).localeCompare(String(a.maj_matheo || a.date))).slice(0, 10);
+  return `<section class="card dash-tete"><div class="pad" style="display:grid;gap:8px"><div class="ligne"><h2>À valider</h2>${att.length ? `<span class="tag live">${att.length} en attente</span>` : '<span class="tag ok">Rien en attente</span>'}</div>
+      <p class="muted">Ce que l'équipe a fini : sites, applis, designs, pages, messages. Rien n'est mis en ligne ni envoyé avant que tu dises « C'est bon ». Si quelque chose ne va pas, écris ce qu'il faut changer : l'équipe le reprend.</p></div></section>
+    <div class="valid-grille">${att.map(carteValidation).join('') || vide('Rien à valider', 'Quand l\'équipe finit un site, une appli ou un design, il arrive ici avec des captures et un lien.')}</div>
+    ${autres.length ? `<section class="card"><header><h2>Déjà répondu</h2><span class="c">${autres.length}</span></header></section><div class="valid-grille">${autres.map(carteValidation).join('')}</div>` : ''}`;
+}
+async function repondreValidation(id, data) {
+  const v = S.validations.find((x) => x.id === id);
+  if (!v || !S.db) return toast('Base indisponible ici.');
+  try { await S.db.doc('validations/' + id).update({ ...data, maj_matheo: new Date().toISOString() }); toast(data.statut === 'ok' ? 'Validé : l\'équipe s\'en occupe' : 'Renvoyé à l\'équipe'); }
+  catch (err) { toast('Enregistrement impossible, réessaie.'); }
+}
 function ficheDossier() {
   const d = dossierMatheo();
   const n = aCompleter(d);
@@ -1199,7 +1303,7 @@ function vueBureau() {
   const etatDe = (n) => (Object.values(R).some((r) => r.chef === n) ? 'travail' : E[n]?.etat || 'pause');
   const liste = [...ag].sort((a, b) => rang[etatDe(a.titre)] - rang[etatDe(b.titre)] || a.titre.localeCompare(b.titre));
   const sel = S.agentSel && parNom[S.agentSel];
-  const cote = S.agentSel === '__dossier' ? ficheDossier() : S.agentSel === '__compta' ? ficheCompta() : sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
+  const cote = S.agentSel === '__chef' || S.agentSel === 'ATLAS' ? ficheChef() : S.agentSel === '__dossier' ? ficheDossier() : S.agentSel === '__compta' ? ficheCompta() : sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
     <ul class="bu-liste">${liste.map((a) => { const e = E[a.titre]; const et = e?.etat || 'pause'; const pc = PIECES.find((x) => x.agents.includes(a.titre)); const rs = Object.values(R).filter((r) => r.chef === a.titre).sort((x, y) => x.n - y.n);
       return `<li data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(a.titre)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(a.titre)}</b><small>${esc(rs.length && e?.etat !== 'travail' ? `Dirige ${rs.length} ${pc?.metier || 'renfort'}${rs.length > 1 ? 's' : ''}` : e ? e.action : a.role || 'Disponible')}</small></div><span class="bu-dot ${rs.length ? 'travail' : et}" title="${ETATS_BU[rs.length ? 'travail' : et]}"></span></li>`
         + rs.map((r) => `<li class="sous" data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(r.id)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(pc?.renforts?.[a.titre]?.[r.n - 1] || r.id)}</b><small>${esc(r.action || '')}</small></div><span class="bu-dot travail"></span></li>`).join(''); }).join('')}</ul></section>`;
@@ -1207,6 +1311,7 @@ function vueBureau() {
   return `<section class="card dash-tete bu-tete"><div class="pad" style="display:grid;gap:10px">
       <div class="ligne"><h2>Le bureau des agents</h2>${nb('travail') ? `<span class="tag live">${nb('travail')} au travail</span>` : '<span class="tag">Tout le monde est en pause</span>'}</div>
       <p class="muted">Chaque agent est à son bureau quand c'est à lui de travailler, et en salle de pause sinon. Passez la souris sur un agent pour voir ce qu'il fait ; cliquez pour sa fiche.</p>
+      <div class="actions"><button class="btn primary" type="button" data-agent-sel="__chef"><i data-lucide="message-circle"></i>Parler au chef</button><button class="btn" type="button" data-agent-sel="__dossier"><i data-lucide="file-text"></i>Mon dossier</button>${aValider().length ? `<a class="btn" href="#valider"><i data-lucide="circle-check"></i>À valider <span class="n-alerte">${aValider().length}</span></a>` : ''}</div>
       <div class="chips" role="group" aria-label="Projet">${chips}</div>
       ${p && !Object.keys(E).length ? `<div class="actions"><span class="muted">Aucune mission en cours sur ${esc(p.titre)}.</span><button class="btn primary" type="button" data-mission-projet="${esc(p.id)}"><i data-lucide="rocket"></i>Lancer une mission sur ce projet</button></div>` : ''}
     </div></section>
@@ -2238,6 +2343,14 @@ document.addEventListener('click', (ev) => {
   if (og) { S.onglet = og.dataset.onglet; return render(); }
   const op = t.closest('[data-ouvrir-projet]');
   if (op) { S.onglet = 'apercu'; location.hash = 'projet-' + op.dataset.ouvrirProjet; return; }
+  const va = t.closest('[data-valider]');
+  if (va) return repondreValidation(va.dataset.valider, { statut: 'ok', valide_le: new Date().toISOString().slice(0, 10) });
+  const co = t.closest('[data-corriger]');
+  if (co) { S.corriger = S.corriger === co.dataset.corriger ? null : co.dataset.corriger; return render(); }
+  const lv = t.closest('[data-lancer-valid]');
+  if (lv) { const v = S.validations.find((x) => x.id === lv.dataset.lancerValid); if (v) { const pr = projetsDe().find((p) => cle(p.titre) === cle(v.projet)); S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = `Matheo a validé « ${v.titre} » (validations/${v.id}). À faire maintenant : ${v.si_ok}`; S.confirmer = false; S.envoi = null; S.db?.doc('validations/' + v.id).update({ lance: true }).catch(() => {}); location.hash = 'missions'; } return; }
+  const lc = t.closest('[data-lancer-chef]');
+  if (lc) { const x = S.chef.find((c) => c.id === lc.dataset.lancerChef); if (x?.mission) { const pr = projetsDe().find((p) => cle(p.titre) === cle(x.mission.projet)); S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = x.mission.texte; S.confirmer = false; S.envoi = null; S.db?.doc('chef/' + x.id).update({ lancee: true }).catch(() => {}); location.hash = 'missions'; } return; }
   const bp = t.closest('[data-bureau-projet]');
   if (bp) { S.bureauProjet = bp.dataset.bureauProjet || null; S.agentSel = bp.dataset.agentPre || null; if (S.vue !== 'bureau') location.hash = 'bureau'; else render(); return; }
   const as = t.closest('[data-agent-sel]');
@@ -2279,12 +2392,15 @@ document.addEventListener('mouseover', (ev) => {
 });
 document.addEventListener('keydown', (ev) => {
   if (ev.key === 'Enter' && ev.target.matches?.('[data-agent-row]')) ev.target.click();
+  if (ev.key === 'Enter' && !ev.shiftKey && ev.target.id === 'chef-q') { ev.preventDefault(); const v = ev.target.value; ev.target.value = ''; parlerAuChef(v); }
   if (ev.key === 'Escape') { fermer(); $('#graph')?.classList.remove('immersion'); }
   if (ev.key === 'Enter' && ev.target.matches('tr[data-ent]')) ouvrir(ev.target.dataset.ent);
 });
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
 document.addEventListener('submit', async (ev) => {
+  if (ev.target.matches?.('[data-form-corr]')) { ev.preventDefault(); const c = String(new FormData(ev.target).get('c') || '').trim(); if (!c) return; const id = ev.target.dataset.formCorr; S.corriger = null; return repondreValidation(id, { statut: 'a_corriger', commentaire: c.slice(0, 1500) }); }
+  if (ev.target.id === 'f-chef') { ev.preventDefault(); const q = $('#chef-q'); const v = q.value; q.value = ''; return parlerAuChef(v); }
   if (ev.target.id === 'f-tache') {
     ev.preventDefault();
     const f = new FormData(ev.target);
@@ -2314,7 +2430,7 @@ $('#q').addEventListener('input', (ev) => {
 });
 $('#q').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && S.vue === 'cerveau' && G.lumiere?.size) G.focus?.([...G.lumiere][0], true); });
 
-const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'equipe', 'bureau', 'memoire', 'journal', 'missions'];
+const VUES = ['cerveau', 'aujourdhui', 'projets', 'taches', 'equipe', 'bureau', 'valider', 'memoire', 'journal', 'missions'];
 const AGENCE = 'agence-sites-vitrines';
 const ONGLETS_AGENCE = ['cockpit', 'entreprises', 'personnes', 'reponses', 'messages'];
 function route() {
@@ -2350,7 +2466,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -2358,7 +2474,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
