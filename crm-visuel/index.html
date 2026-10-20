@@ -124,7 +124,9 @@
     .horloge { margin-left: 0; text-align: left; width: 100%; }
     .et { font-size: 10px; padding: 2px 6px; }
     .et small { display: none; }
-    .fiche { width: auto; right: 14px; }
+    .fiche { width: auto; right: 14px; left: 10px; bottom: 10px; max-height: 48%; overflow-y: auto; padding: 10px 12px; }
+    .fiche h3 { font-size: 15px; }
+    .lignes li { font-size: 12px; padding: 4px 0; }
     .annonce { display: none; }
   }
 </style>
@@ -155,7 +157,7 @@
   <main class="scene" id="scene">
     <div class="etiquettes" id="etiquettes"></div>
     <div class="outils">
-      <button class="bouton" id="recentrer">Recentrer</button>
+      <button class="bouton" id="recentrer">Vue d'ensemble</button>
       <button class="bouton" id="pause">Pause</button>
     </div>
     <div class="annonce" id="annonce"></div>
@@ -319,6 +321,9 @@ const postesCode = [];
 for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = -16.4 + c * 2.3, z = -1.8 + r * 1.35; table(1.6, 0.55, x, z); chaise(x, z + 0.55, Math.PI); postesCode.push(new THREE.Vector3(x, 0.2, z + 0.55)); }
 zone(9.6, 5.6, -13, -1, 'code', 0.2);
 zone(7.5, 5, -12, 5, 'accueil', 0.2);
+zone(5.6, 5.6, -21, -1, 'agence', 0.2);
+zone(7.4, 5.4, -20, 5, 'agence', 0.2);
+zone(BX1 - BX0, BZ1 - BZ0, (BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 'agence', 0.12);
 table(1.8, 0.9, -21, -2.2, 0x8b6b4a); ecran(-21, -2.5); chaise(-21, -1.4, Math.PI, 0x111827); chaise(-21.5, -3.3, 0); boite(0.5, 1.8, 2, 0xe7e5e4, -23.5, 0.2, 0.5); plante(-19, 1.4, 0.8);
 
 // --- Parking (7 places), allée, entrée ---
@@ -549,6 +554,9 @@ function rendreFiche() {
   if (/^l\d/.test(s)) {
     const l = PLANNING.find((x) => x.id === s), e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data;
     c.innerHTML = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span><ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}</ul>`;
+  } else if (s === 'agence') {
+    const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => objets[m.id].obj.visible).length;
+    c.innerHTML = `<h3>L'agence</h3><p class="sous">Accueil, salle d'attente, salle de code (12 postes), bureau du gérant</p><ul class="lignes">${li('Moniteurs à l\'agence', `${d} sur ${MONITEURS.length}`)}${li('Élèves en attente', n)}${li('En salle de code', `${nbCode()} / 12`)}${li('Prochaine leçon', (() => { const l = PLANNING.filter((x) => x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return l ? `${hTxt(l.debut)} · ${l.eleve}` : 'aucune'; })())}</ul>`;
   } else if (s === 'code') {
     c.innerHTML = `<h3>Salle de code</h3><p class="sous">12 postes · séries sur écran</p><span class="statut dispo">${nbCode()} élèves présents</span><ul class="lignes">${li('Postes libres', 12 - nbCode())}${li('Séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
   } else if (s === 'plateau') {
@@ -573,13 +581,26 @@ function rendreFiche() {
     }
   }
 }
-function choisir(cle) { selection = cle; rendreFiche(); if (onglet === 'planning') rendrePanneau(); }
+// Zoom : un clic dans la maquette (ou dans le panneau) rapproche la caméra de l'élément choisi.
+const ZOOMS = { agence: 2, accueil: 2.4, code: 2.4, plateau: 1.8, moniteur: 2.6, voiture: 2.4, moto: 2.4, place: 2.4 };
+let vise = null;
+function viser(cible, zoom) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0 }; }
+function zoomPour(cle) {
+  if (!cle) return null;
+  if (cle === 'agence') return [new THREE.Vector3(-16, 0, 2), ZOOMS.agence];
+  if (cle.startsWith('place')) return [PLACES[+cle.slice(5)], ZOOMS.place];
+  const p = positionSelection(); if (!p) return null;
+  const o = objets[/^l\d/.test(cle) ? PLANNING.find((x) => x.id === cle).veh : cle];
+  return [p[0], ZOOMS[cle] || ZOOMS[o?.type] || 2.4];
+}
+function choisir(cle) { selection = cle; rendreFiche(); if (onglet === 'planning') rendrePanneau(); const z = zoomPour(cle); if (z) viser(z[0], z[1]); }
 $('fermer').onclick = () => choisir(null);
 function positionSelection() {
   const s = selection; if (!s) return null;
   if (s === 'code') return [new THREE.Vector3(-13, 0.25, -1), 2.2];
   if (s === 'plateau') return [new THREE.Vector3(9, 0.15, -14.5), 4];
   if (s === 'accueil') return [new THREE.Vector3(-11.5, 0.25, 5), 1.4];
+  if (s === 'agence') return [new THREE.Vector3(-16, 0.25, 2), 3.6];
   if (s.startsWith('place')) return [PLACES[+s.slice(5)], 1];
   const k = /^l\d/.test(s) ? PLANNING.find((x) => x.id === s).veh : s;
   const o = objets[k]; return o && o.obj.visible ? [o.obj.position, o.type === 'moniteur' ? 0.4 : 1] : null;
@@ -596,7 +617,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   const hit = ray.intersectObjects(visibles, false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
-$('recentrer').onclick = () => { camera.position.copy(VUE); camera.zoom = 1; camera.updateProjectionMatrix(); controls.target.set(-2, 0, -1); };
+$('recentrer').onclick = () => { choisir(null); viser(new THREE.Vector3(-2, 0, -1), 1); };
 $('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
 
 function taille() {
@@ -629,6 +650,12 @@ function animer(now) {
   for (const c of trafic) { c.o.position.x += c.sens * c.v * dt; if (c.o.position.x > 34) c.o.position.x = -34; if (c.o.position.x < -34) c.o.position.x = 34; }
   const ps = positionSelection(); anneau.visible = !!ps;
   if (ps) { anneau.position.set(ps[0].x, 0.2, ps[0].z); anneau.scale.setScalar(ps[1] * (1 + Math.sin(now / 300) * 0.04)); }
+  if (vise) {
+    vise.k = Math.min(1, vise.k + dt * 1.8); const e = 1 - Math.pow(1 - vise.k, 3);
+    const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv);
+    camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix();
+    if (vise.k >= 1) vise = null;
+  }
   controls.update();
   renderer.render(scene, camera);
   placerEtiquettes();
