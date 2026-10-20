@@ -1,0 +1,20 @@
+# robots.txt de https://matheoguz.github.io/
+# Google ne lit que ce fichier (celui à la racine), pas ceux des sous-dossiers.
+User-agent: *
+Allow: /
+
+# Outils internes, sources et pages privées
+Disallow: /agence/
+Disallow: /fruits-api/
+Disallow: /lyricmood-app/
+Disallow: /shop/admin/
+Disallow: /shop/guide/
+Disallow: /flocon/admin.html
+
+# Cartio : pas encore validé par Matheo (à retirer quand il valide)
+Disallow: /cartio/
+
+# Notes de travail (annonces, recherches, README)
+Disallow: /*.md$
+
+Sitemap: https://matheoguz.github.io/sitemap.xml
