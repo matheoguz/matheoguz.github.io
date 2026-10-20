@@ -525,6 +525,15 @@ a.lien{font-weight:500}
 .armoire .chemise{position:absolute;left:8px;top:-12px;width:26px;height:14px;background:#facc15;border:2px solid var(--trait,#110d1a);transform:rotate(-8deg);box-shadow:inset 0 3px 0 #fde047}
 .bu-placard:hover .armoire,.bu-placard.sel .armoire{box-shadow:0 0 0 2px #facc15,0 0 14px #facc15}
 .pastille-n{position:absolute;top:-10px;right:-8px;background:#f97316;color:#fff;font:700 10px/1 var(--mono);border:2px solid var(--trait,#110d1a);border-radius:999px;padding:2px 5px}
+.bu-placard.projet .armoire{background:color-mix(in srgb,var(--c) 45%,#374151)}
+.bu-placard.projet .armoire .chemise{background:var(--c)}
+.bu-placard.projet:hover .armoire,.bu-placard.projet.sel .armoire{box-shadow:0 0 0 2px var(--c),0 0 14px var(--c)}
+.arm-visuel{display:grid;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.arm-visuel:first-of-type{border-top:0}
+.arm-visuel .ligne{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.arm-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.arm-images img{width:100%;border-radius:6px;border:1px solid var(--line)}
+.arm-rub{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
 .mini-armoire{width:22px;height:28px;padding:2px;border-width:2px}
 .mini-armoire .porte::after{display:none}
 .ecran-c{display:grid;grid-template-columns:auto auto;gap:1px 8px;align-items:baseline;background:#06140c;border:3px solid var(--trait,#110d1a);box-shadow:inset 0 0 0 2px #14532d;padding:6px 8px;font:700 9px/1.3 'Silkscreen',var(--mono);color:#4ade80;min-width:132px}
@@ -1225,6 +1234,39 @@ function placardBu() {
     <span class="armoire"><span class="porte"></span><span class="porte"></span><span class="chemise"></span></span>${n ? `<span class="pastille-n">${n}</span>` : ''}<span class="bu-nom">Dossier Matheo</span>
     <span class="bu-carte" role="tooltip"><b>Le placard du chef</b><span class="role">Dossier Matheo</span><p>Tout ce qu'il faut savoir sur toi pour lancer un business de A à Z. Chaque agent le lit avant de commencer une tâche.</p>${n ? `<small>${n} case(s) à compléter : ce sont des questions pour toi.</small>` : ''}<small>Cliquez pour l'ouvrir.</small></span></button>`;
 }
+// Une armoire par projet en cours, à côté du placard : ses dossiers (notes rangées par rubrique) et ses visuels (captures « À valider »).
+function dossiersProjet(p) {
+  const k = cle(p.titre);
+  return S.notes.filter((n) => n.titre !== p.titre && !['Journal', 'Equipe/Transmissions'].includes(n.dossier) && (cle(n.projet || '') === k || (n.liens || []).some((l) => cle(l) === k)))
+    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+}
+const PALETTE_PROJ = ['#7dd3fc', '#f9a8d4', '#a3e635', '#fdba74', '#c4b5fd', '#5eead4', '#fde047'];
+function couleurProj(p) { let h = 0; for (const ch of String(p.titre)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return p.couleur || PALETTE_PROJ[h % PALETTE_PROJ.length]; }
+function visuelsProjet(p) { return S.validations.filter((v) => cle(v.projet || '') === cle(p.titre)).sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))); }
+function projetsEnCours(pid) {
+  const actif = (p) => Object.values(etatsBureau(p.id)).some((e) => e.etat === 'travail') || missionsEquipe().some((m) => m.statut !== 'terminee' && cle(m.projet || '') === cle(p.titre)) || visuelsProjet(p).some((v) => v.statut === 'a_valider');
+  const ps = projetsDe().filter((p) => !['terminé', 'en pause'].includes(p.statut) && (pid ? p.id === pid : actif(p)));
+  return ps.slice(0, 4);
+}
+function armoiresProjets(pid) {
+  return projetsEnCours(pid).map((p) => { const docs = dossiersProjet(p), vis = visuelsProjet(p); const nv = vis.reduce((t, v) => t + (v.apercus || []).length, 0);
+    return `<button type="button" class="bu-placard projet${S.agentSel === '__projet:' + p.id ? ' sel' : ''}" data-agent-sel="__projet:${esc(p.id)}" style="--c:${esc(couleurProj(p))}" aria-label="Armoire du projet ${esc(p.titre)} : ${docs.length} dossiers, ${nv} visuels">
+      <span class="armoire"><span class="porte"></span><span class="porte"></span><span class="chemise"></span></span>${nv ? `<span class="pastille-n">${nv}</span>` : ''}<span class="bu-nom">${esc(court(p.titre))}</span>
+      <span class="bu-carte" role="tooltip"><b>${esc(p.titre)}</b><span class="role">L'armoire du projet</span><p>${esc(p.resume || '')}</p><small>${docs.length} dossier(s) · ${nv} visuel(s)${vis.some((v) => v.statut === 'a_valider') ? ' · des visuels attendent ton OK' : ''}</small><small>Cliquez pour l'ouvrir.</small></span></button>`; }).join('');
+}
+function ficheArmoire(id) {
+  const p = projetParId(id);
+  if (!p) return '';
+  const docs = dossiersProjet(p), vis = visuelsProjet(p);
+  const groupes = {};
+  for (const n of docs) (groupes[n.dossier || 'Notes'] ||= []).push(n);
+  const etat = (v) => v.statut === 'ok' ? '<span class="tag ok">Validé</span>' : v.statut === 'a_corriger' ? '<span class="tag warn">À corriger</span>' : '<span class="tag live">À valider</span>';
+  return `<section class="card bu-fiche"><header><span class="armoire mini-armoire" style="--c:${esc(couleurProj(p))}"><span class="porte"></span><span class="porte"></span></span><h2>${esc(p.titre)}</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Fermer"><i data-lucide="x"></i></button></header>
+    <div class="pad"><p class="muted">${esc(p.resume || '')}</p>${p.prochaine ? `<p><b>Prochaine étape :</b> ${esc(p.prochaine)}</p>` : ''}
+      <div class="bu-boite"><h3>Les visuels · ${vis.reduce((t, v) => t + (v.apercus || []).length, 0)}</h3>${vis.length ? vis.map((v) => `<div class="arm-visuel"><div class="ligne">${etat(v)}<b>${esc(v.titre)}</b></div>${(v.apercus || []).length ? `<div class="arm-images">${v.apercus.map((src, i) => `<img src="${esc(src)}" alt="${esc(v.titre)}, capture ${i + 1}" loading="lazy">`).join('')}</div>` : ''}${v.lien ? `<a class="lien" href="${esc(v.lien)}" target="_blank" rel="noopener">Voir en vrai</a>` : ''}</div>`).join('') : '<p class="muted">Pas encore de visuel : les maquettes arrivent ici dès que PIXEL ou FORGE les déposent dans « À valider ».</p>'}</div>
+      <div class="bu-boite"><h3>Les dossiers · ${docs.length}</h3>${docs.length ? Object.entries(groupes).map(([g, ns]) => `<p class="arm-rub">${esc(g.split('/').pop())}</p><ol>${ns.slice(0, 8).map((n) => `<li><button class="lien" type="button" data-voir-neurone="n:${esc(cle(n.titre))}">${esc(n.titre)}</button>${n.date ? `<small>${quand(n.date)}</small>` : ''}</li>`).join('')}</ol>`).join('') : '<p class="muted">Rien de rangé pour l\'instant : les recherches, notes et missions du projet arrivent ici.</p>'}</div>
+      <div class="actions"><button class="btn" type="button" data-ouvrir-projet="${esc(p.id)}"><i data-lucide="layout-dashboard"></i>Tableau de bord</button><button class="btn" type="button" data-voir-neurone="n:${esc(cle(p.titre))}"><i data-lucide="brain"></i>Fiche du projet</button></div></div></section>`;
+}
 // La salle de réunion : une table par mission en cours, avec ses agents autour.
 function salleReunion(pid, parNom) {
   const p = pid ? projetParId(pid) : null;
@@ -1363,7 +1405,7 @@ function vueBureau() {
       return `<div data-piece="${esc(pc.id)}" class="piece${ici.length || nbAides ? '' : ' vide'}${parolesDe(pc.id).length ? ' parle' : ''}${pc.agents.length + aides.length >= 5 ? ' grande' : pc.agents.length + aides.length >= 3 || pc.id === 'chef' ? ' moyenne' : ''}"><button type="button" class="pancarte" data-agent-sel="__piece:${esc(pc.id)}" title="Voir ce qui se dit dans la pièce">${esc(pc.nom)}${nbAides ? ` · ${nbAides + ici.length} au travail` : ''}${parolesDe(pc.id).length ? ' · 💬' : ''}</button><span class="fenetre"></span><div class="postes">
       ${pc.agents.map((n) => { const e = E[n]; const a = parNom[n]; return `<div class="poste${e?.etat === 'travail' || Object.values(R).some((r) => r.chef === n) ? ' on' : ''}" style="--c:${esc(a.couleur || '#8b9cff')}">${occupe(n) ? agentBu(a, e?.etat === 'travail' || !Object.values(R).some((r) => r.chef === n) ? e : { ...(e || {}), etat: 'travail', action: `Dirige ${Object.values(R).filter((r) => r.chef === n).length} ${pc.metier || 'renfort'}s` }) : '<span class="chaise"></span>'}<div class="bureau-meuble"><span class="ecran"></span><span class="tasse"></span></div></div>`; }).join('')}
       ${aides.map(([chef, n, nom]) => renfortBu(pc, chef, n, nom, R[chef + '-' + n], parNom[chef].couleur || '#8b9cff')).join('')}
-      ${pc.id === 'chef' ? placardBu() : pc.id === 'compta' ? tableauCompta() : pc.id === 'veille' ? tableauIdees() : ''}
+      ${pc.id === 'chef' ? placardBu() + armoiresProjets(pid) : pc.id === 'compta' ? tableauCompta() : pc.id === 'veille' ? tableauIdees() : ''}
     </div></div>`; }).join('')}
     <div class="piece pause"><span class="pancarte">Salle de pause</span><div class="meubles"><span class="m-cafe"></span><span class="m-canape"></span><span class="m-plante"></span></div>
       <div class="postes">${enPause.map((a) => `<div class="poste">${agentBu(a, null)}</div>`).join('') || '<p class="bu-vide">Tout le monde travaille.</p>'}</div></div>
@@ -1374,7 +1416,7 @@ function vueBureau() {
   const etatDe = (n) => (Object.values(R).some((r) => r.chef === n) ? 'travail' : E[n]?.etat || 'pause');
   const liste = [...ag].sort((a, b) => rang[etatDe(a.titre)] - rang[etatDe(b.titre)] || a.titre.localeCompare(b.titre));
   const sel = S.agentSel && parNom[S.agentSel];
-  const cote = String(S.agentSel || '').startsWith('__piece:') ? fichePiece(S.agentSel.slice(8), E, R, parNom) : S.agentSel === '__chef' || S.agentSel === 'ATLAS' ? ficheChef() : S.agentSel === '__dossier' ? ficheDossier() : S.agentSel === '__compta' ? ficheCompta() : sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
+  const cote = String(S.agentSel || '').startsWith('__piece:') ? fichePiece(S.agentSel.slice(8), E, R, parNom) : S.agentSel === '__chef' || S.agentSel === 'ATLAS' ? ficheChef() : S.agentSel === '__dossier' ? ficheDossier() : String(S.agentSel || '').startsWith('__projet:') ? ficheArmoire(S.agentSel.slice(9)) : S.agentSel === '__compta' ? ficheCompta() : sel ? ficheBu(sel, E[sel.titre]) : `<section class="card"><header><h2>Qui fait quoi</h2><span class="c">${nb('travail') || ''}</span></header>
     <ul class="bu-liste">${liste.map((a) => { const e = E[a.titre]; const et = e?.etat || 'pause'; const pc = PIECES.find((x) => x.agents.includes(a.titre)); const rs = Object.values(R).filter((r) => r.chef === a.titre).sort((x, y) => x.n - y.n);
       return `<li data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(a.titre)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(a.titre)}</b><small>${esc(rs.length && e?.etat !== 'travail' ? `Dirige ${rs.length} ${pc?.metier || 'renfort'}${rs.length > 1 ? 's' : ''}` : e ? e.action : a.role || 'Disponible')}</small></div><span class="bu-dot ${rs.length ? 'travail' : et}" title="${ETATS_BU[rs.length ? 'travail' : et]}"></span></li>`
         + rs.map((r) => `<li class="sous" data-agent-sel="${esc(a.titre)}" data-agent-row="${esc(r.id)}" tabindex="0">${sprite(a.couleur || '#8b9cff', 'mini')}<div class="info"><b>${esc(pc?.renforts?.[a.titre]?.[r.n - 1] || r.id)}</b><small>${esc(r.action || '')}</small></div><span class="bu-dot travail"></span></li>`).join(''); }).join('')}</ul></section>`;
