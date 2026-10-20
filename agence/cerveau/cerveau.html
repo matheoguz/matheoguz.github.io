@@ -1324,11 +1324,14 @@ async function parlerAuChef(texte) {
   S.chefEnCours = true; S.chefQuestion = texte; render();
   try {
     const hist = echangesChef().slice(-6).flatMap((x) => [{ role: 'user', content: x.question }, { role: 'assistant', content: JSON.stringify({ reponse: x.reponse, mission: x.mission || null }) }]);
-    const regles = `Tu es ATLAS, le chef de l'équipe d'agents de Matheo. Tu parles à Matheo en français simple, court (8 lignes maximum), sans tiret long, en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Règles fixes : Matheo ne fait pas de vidéos ; les agents ne dépensent rien, ne signent rien, ne créent aucun compte et n'écrivent jamais sur ComeUp ou Fiverr. Si Matheo demande un travail (nouveau business, page, recherche, pub…), propose UNE mission claire que l'équipe fera dans une session Claude. Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse en markdown simple", "mission": null ou {"texte": "la mission à confier à l'équipe, précise, en une ou deux phrases", "projet": le titre exact d'un projet de la liste ou ""}}.`;
+    const regles = `Tu es ATLAS, le chef de l'équipe d'agents de Matheo. Tu parles à Matheo en français simple, court (8 lignes maximum), sans tiret long, en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Règles fixes : Matheo ne fait pas de vidéos ; les agents ne dépensent rien, ne signent rien, ne créent aucun compte et n'écrivent jamais sur ComeUp ou Fiverr. Si Matheo demande un travail (nouveau business, page, recherche, pub…), propose UNE mission claire que l'équipe fera dans une session Claude : elle part toute seule dès ta réponse. Tu ne fais pas le travail toi-même : ne dis JAMAIS qu'un agent a commencé, est au travail ou a fini quelque chose qui n'est pas écrit dans les données ; dis « je lance la mission, tu verras les agents arriver dans le bureau ». Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse en markdown simple", "mission": null ou {"texte": "la mission à confier à l'équipe, précise, en une ou deux phrases", "projet": le titre exact d'un projet de la liste ou ""}}.`;
     const entree = [{ role: 'user', content: `${contexteCerveau()}\n\n${contexteBureau()}\n\n${regles}` }, { role: 'assistant', content: '{"reponse": "Compris.", "mission": null}' }, ...hist, { role: 'user', content: texte }];
     const r = await sample.json(entree, { cache: false, modelTier: 'default' });
     const pr = r?.mission?.projet ? projetsDe().find((p) => cle(p.titre) === cle(r.mission.projet)) : null;
-    await S.db.collection('chef').doc().set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), mission: r?.mission?.texte ? { texte: String(r.mission.texte).slice(0, 600), projet: pr ? pr.titre : '' } : null, lu: false });
+    const ref = S.db.collection('chef').doc();
+    await ref.set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), mission: r?.mission?.texte ? { texte: String(r.mission.texte).slice(0, 600), projet: pr ? pr.titre : '' } : null, lu: false, lancee: !!r?.mission?.texte });
+    // La mission proposée par le chef part tout de suite (session directe, sinon file d'attente) : Matheo n'a plus rien à cliquer.
+    if (r?.mission?.texte) { S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = String(r.mission.texte).slice(0, 600); await lancerMission(); toast(S.envoi?.ok ? 'Mission lancée : les agents arrivent dans le bureau' : 'La mission n\'a pas pu partir : voir Missions'); }
   } catch (err) {
     toast(err?.code === 'rate_limited' ? 'Le chef est occupé, réessaie dans un instant.' : 'Le chef n\'a pas pu répondre, réessaie.');
   } finally { S.chefEnCours = false; S.chefQuestion = ''; render(); }
@@ -2339,7 +2342,7 @@ function missions() {
         ${S.envoi && S.envoi !== 'en_cours' ? `<div class="result ${S.envoi.ok ? 'ok' : 'bad'}"><i data-lucide="${S.envoi.ok ? 'circle-check' : 'triangle-alert'}"></i><div><b>${esc(S.envoi.titre)}</b><p>${S.envoi.html}</p></div></div>` : ''}
       </div></section>
   </div><div class="stack">
-    ${S.missions.filter((m) => m.statut === 'en_attente' || m.statut === 'lancee').length ? `<section class="card"><header><h2>File d'attente du chef</h2><span class="c">${S.missions.filter((m) => m.statut === 'en_attente').length} en attente</span></header><ul class="rows">${[...S.missions].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 8).map((m) => `<li><i data-lucide="${m.statut === 'en_attente' ? 'hourglass' : 'circle-check'}"></i><div class="info"><b>${m.session_id ? `<a href="https://claude.ai/code/${esc(m.session_id)}" target="_blank" rel="noopener">${esc(m.titre || 'Mission')}</a>` : esc(m.titre || 'Mission')}</b><small>${m.statut === 'en_attente' ? 'En attente : ATLAS la démarre à son prochain passage' : 'Démarrée par ATLAS'} · ${quand(m.date)}</small></div></li>`).join('')}</ul></section>` : ''}
+    ${S.missions.filter((m) => m.statut === 'en_attente' || m.statut === 'lancee').length ? `<section class="card"><header><h2>File d'attente du chef</h2><span class="c">${S.missions.filter((m) => m.statut === 'en_attente').length} en attente</span></header><ul class="rows">${[...S.missions].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 8).map((m) => `<li><i data-lucide="${m.statut === 'en_attente' ? 'hourglass' : 'circle-check'}"></i><div class="info"><b>${m.session_id ? `<a href="https://claude.ai/code/${esc(m.session_id)}" target="_blank" rel="noopener">${esc(m.titre || 'Mission')}</a>` : esc(m.titre || 'Mission')}</b><small>${m.statut === 'en_attente' ? `En attente : ATLAS la démarre au plus tard à ${prochainPassage()}` : 'Démarrée par ATLAS'} · ${quand(m.date)}</small></div></li>`).join('')}</ul></section>` : ''}
     <section class="card"><header><h2>Missions récentes</h2></header>
       ${!S.mcp ? '<div class="pad muted">Le lancement de missions n\'est pas disponible dans cette vue. Ouvrez le Cerveau sur claude.ai.</div>'
         : S.sessionsErr ? `<div class="pad muted">${esc(S.sessionsErr)}</div>`
@@ -2350,10 +2353,11 @@ function missions() {
   </div></div>`;
 }
 async function lancerMission() {
-  if (!S.mcp || S.envoi === 'en_cours') return;
+  if (S.envoi === 'en_cours') return;
   S.envoi = 'en_cours'; render();
   const titre = `Cerveau · ${MISSIONS[S.mission].t}`;
   try {
+    if (!S.mcp) throw { code: 'blocked_by_policy' };
     const r = await S.mcp.callTool('Claude Code Remote', 'create_session', { prompt: promptMission(), environment_id: ENV, source_url: depotMission(), title: S.missionProjet && projetParId(S.missionProjet) ? `Cerveau · ${projetParId(S.missionProjet).titre}` : titre }, { cache: false });
     const p = r?.payload || {};
     const id = p.session_id || p.id || p.session?.id || p.ccr?.id || '';
@@ -2369,12 +2373,13 @@ async function lancerMission() {
       : c === 'tool_error' ? 'Claude Code a refusé la mission : ' + esc(e.message || '')
       : 'La réponse n\'est pas arrivée. La mission a peut-être été créée : vérifiez « Missions récentes » avant de relancer.';
     if (txt === null && await mettreEnFile(titre)) {
-      S.envoi = { ok: true, titre: 'Mission envoyée au chef', html: `Cette page n'a pas le droit de démarrer une session elle-même${c === 'not_in_manifest' ? ' (<button class="lien" type="button" data-autoriser>autoriser le Cerveau</button> pour un lancement direct)' : ''}. La mission est dans la file : ATLAS la démarre depuis sa session et elle apparaît dans « Missions récentes ».` };
+      S.envoi = { ok: true, titre: 'Mission envoyée au chef', html: `Cette page n'a pas le droit de démarrer une session elle-même${c === 'not_in_manifest' ? ' (<button class="lien" type="button" data-autoriser>autoriser le Cerveau</button> pour un lancement direct)' : ''}. La mission est dans la file : ATLAS la démarre au plus tard à ${prochainPassage()} et elle apparaît dans « Missions récentes ».` };
       S.confirmer = false; S.missionTexte = '';
     } else S.envoi = { ok: false, titre: 'Mission non lancée', html: txt || 'Le lancement de sessions est refusé pour cette page, et la file d\'attente n\'est pas joignable.' };
   }
   render();
 }
+function prochainPassage() { const d = new Date(); d.setSeconds(0, 0); if (d.getMinutes() >= 26) d.setHours(d.getHours() + 1); d.setMinutes(26); return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
 // Plan B quand la page ne peut pas lancer de session : la demande va dans « missions », ATLAS la lance (create_session) et y note l'id.
 async function mettreEnFile(titre) {
   if (!S.db) return false;
