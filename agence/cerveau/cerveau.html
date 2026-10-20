@@ -1324,6 +1324,7 @@ async function parlerAuChef(texte) {
   if (!texte.trim() || S.chefEnCours) return;
   const sample = window.claude?.use ? await window.claude.use('sample').catch(() => null) : null;
   if (!sample || !S.db) { toast('Le chef n\'est joignable que dans claude.ai (ou l\'appli).'); return; }
+  const reveil = prevenirClaude(`[Cerveau · Chef] Matheo écrit au chef : ${texte}`, document.getElementById('chef-fil'));
   S.chefEnCours = true; S.chefQuestion = texte; render();
   try {
     const hist = echangesChef().slice(-6).flatMap((x) => [{ role: 'user', content: x.question }, { role: 'assistant', content: JSON.stringify({ reponse: x.reponse, mission: x.mission || null }) }]);
@@ -1334,7 +1335,8 @@ async function parlerAuChef(texte) {
     const ref = S.db.collection('chef').doc();
     await ref.set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), mission: r?.mission?.texte ? { texte: String(r.mission.texte).slice(0, 600), projet: pr ? pr.titre : '' } : null, lu: false, lancee: !!r?.mission?.texte });
     // La mission proposée par le chef part tout de suite (session directe, sinon file d'attente) : Matheo n'a plus rien à cliquer.
-    if (r?.mission?.texte) { S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = String(r.mission.texte).slice(0, 600); await lancerMission(); toast(S.envoi?.ok ? 'Mission lancée : les agents arrivent dans le bureau' : 'La mission n\'a pas pu partir : voir Missions'); }
+    if (r?.mission?.texte && await reveil) { await ref.update({ claude_prevenu: true }).catch(() => {}); toast('ATLAS a reçu ta demande : il lance l\'équipe maintenant'); }
+    else if (r?.mission?.texte) { S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = String(r.mission.texte).slice(0, 600); await lancerMission(); toast(S.envoi?.ok ? 'Mission lancée : les agents arrivent dans le bureau' : 'La mission n\'a pas pu partir : voir Missions'); }
   } catch (err) {
     toast(err?.code === 'rate_limited' ? 'Le chef est occupé, réessaie dans un instant.' : 'Le chef n\'a pas pu répondre, réessaie.');
   } finally { S.chefEnCours = false; S.chefQuestion = ''; render(); }
@@ -1364,10 +1366,23 @@ function vueValider() {
     <div class="valid-grille">${att.map(carteValidation).join('') || vide('Rien à valider', 'Quand l\'équipe finit un site, une appli ou un design, il arrive ici avec des captures et un lien.')}</div>
     ${autres.length ? `<section class="card"><header><h2>Déjà répondu</h2><span class="c">${autres.length}</span></header></section><div class="valid-grille">${autres.map(carteValidation).join('')}</div>` : ''}`;
 }
-async function repondreValidation(id, data) {
+// Réveille ATLAS (la session Claude qui suit le Cerveau) tout de suite : un commentaire « envoyé à Claude », fait au clic de Matheo.
+async function prevenirClaude(texte, el) {
+  try {
+    const c = await claude.use('comments');
+    if (!c || (await c.canSendToClaude()) !== 'available') return false;
+    const anchor = await c.anchorFor(el || document.querySelector('main') || document.body);
+    await c.sendToClaude({ anchor, text: String(texte).slice(0, 3800) });
+    return true;
+  } catch { return false; }
+}
+async function repondreValidation(id, data, el) {
   const v = S.validations.find((x) => x.id === id);
   if (!v || !S.db) return toast('Base indisponible ici.');
-  try { await S.db.doc('validations/' + id).update({ ...data, maj_matheo: new Date().toISOString() }); toast(data.statut === 'ok' ? 'Validé : l\'équipe s\'en occupe' : 'Renvoyé à l\'équipe'); }
+  const reveil = prevenirClaude(data.statut === 'ok'
+    ? `[Cerveau · À valider] Matheo dit OK pour « ${v.titre} » (validations/${id}, projet ${v.projet || '?'}). À faire tout de suite : ${v.si_ok || 'la suite prévue'}.`
+    : `[Cerveau · À corriger] Matheo renvoie « ${v.titre} » (validations/${id}, projet ${v.projet || '?'}). Ses corrections : ${data.commentaire}`, el);
+  try { await S.db.doc('validations/' + id).update({ ...data, maj_matheo: new Date().toISOString() }); const ok = await reveil; await S.db.doc('validations/' + id).update({ claude_prevenu: ok }).catch(() => {}); toast(ok ? (data.statut === 'ok' ? 'Validé : ATLAS lance la suite maintenant' : 'Renvoyé : ATLAS remet l\'équipe au travail maintenant') : (data.statut === 'ok' ? 'Validé : l\'équipe s\'en occupe au prochain passage' : 'Renvoyé à l\'équipe (prochain passage)')); }
   catch (err) { toast('Enregistrement impossible, réessaie.'); }
 }
 function ficheDossier() {
@@ -2375,7 +2390,11 @@ async function lancerMission() {
       : c === 'not_in_manifest' || c === 'blocked_by_policy' ? null
       : c === 'tool_error' ? 'Claude Code a refusé la mission : ' + esc(e.message || '')
       : 'La réponse n\'est pas arrivée. La mission a peut-être été créée : vérifiez « Missions récentes » avant de relancer.';
-    if (txt === null && await mettreEnFile(titre)) {
+    const reveil = txt === null ? prevenirClaude(`[Cerveau · Mission] Matheo lance une mission (la page ne peut pas démarrer la session elle-même). Lance-la maintenant : ${promptMission().slice(0, 3000)}`) : Promise.resolve(false);
+    if (txt === null && await reveil) {
+      S.envoi = { ok: true, titre: 'Mission envoyée à ATLAS', html: 'ATLAS l\'a reçue et démarre la session maintenant. Elle apparaît dans « Missions récentes » dans une minute.' };
+      S.confirmer = false; S.missionTexte = '';
+    } else if (txt === null && await mettreEnFile(titre)) {
       S.envoi = { ok: true, titre: 'Mission envoyée au chef', html: `Cette page n'a pas le droit de démarrer une session elle-même${c === 'not_in_manifest' ? ' (<button class="lien" type="button" data-autoriser>autoriser le Cerveau</button> pour un lancement direct)' : ''}. La mission est dans la file : ATLAS la démarre au plus tard à ${prochainPassage()} et elle apparaît dans « Missions récentes ».` };
       S.confirmer = false; S.missionTexte = '';
     } else S.envoi = { ok: false, titre: 'Mission non lancée', html: txt || 'Le lancement de sessions est refusé pour cette page, et la file d\'attente n\'est pas joignable.' };
@@ -2477,7 +2496,7 @@ document.addEventListener('click', (ev) => {
   const op = t.closest('[data-ouvrir-projet]');
   if (op) { S.onglet = 'apercu'; location.hash = 'projet-' + op.dataset.ouvrirProjet; return; }
   const va = t.closest('[data-valider]');
-  if (va) return repondreValidation(va.dataset.valider, { statut: 'ok', valide_le: new Date().toISOString().slice(0, 10) });
+  if (va) return repondreValidation(va.dataset.valider, { statut: 'ok', valide_le: new Date().toISOString().slice(0, 10) }, va.closest('.card') || va);
   const co = t.closest('[data-corriger]');
   if (co) { S.corriger = S.corriger === co.dataset.corriger ? null : co.dataset.corriger; return render(); }
   const lv = t.closest('[data-lancer-valid]');
@@ -2533,7 +2552,7 @@ document.addEventListener('keydown', (ev) => {
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
 document.addEventListener('submit', async (ev) => {
-  if (ev.target.matches?.('[data-form-corr]')) { ev.preventDefault(); const c = String(new FormData(ev.target).get('c') || '').trim(); if (!c) return; const id = ev.target.dataset.formCorr; S.corriger = null; return repondreValidation(id, { statut: 'a_corriger', commentaire: c.slice(0, 1500) }); }
+  if (ev.target.matches?.('[data-form-corr]')) { ev.preventDefault(); const c = String(new FormData(ev.target).get('c') || '').trim(); if (!c) return; const id = ev.target.dataset.formCorr; S.corriger = null; return repondreValidation(id, { statut: 'a_corriger', commentaire: c.slice(0, 1500) }, ev.target.closest('.card') || ev.target); }
   if (ev.target.id === 'f-chef') { ev.preventDefault(); const q = $('#chef-q'); const v = q.value; q.value = ''; return parlerAuChef(v); }
   if (ev.target.id === 'f-tache') {
     ev.preventDefault();
