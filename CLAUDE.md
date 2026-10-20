@@ -38,6 +38,7 @@ Matheo vend des sites vitrines sur ComeUp / Fiverr (annonce : `sites/ANNONCE.md`
 `clients/exemple-boulangerie-dupont/` est un client fictif (`test: true`) qui sert d'exemple.
 
 ### Le Cerveau (page privée, tenue par les agents)
+**Appli Mac** : Matheo ouvre le Cerveau avec « Le Cerveau.app » (`Repos-/app-mac/`), qui affiche la page publiée. Toute modif de `agence/cerveau/cerveau.html` doit donc être **republiée aussitôt** (outil `Artifact`, même `url`), sinon elle ne se voit pas dans l'appli.
 Tout ce que Matheo consulte est dans le Cerveau : https://claude.ai/artifact/UPP4jo5X6LqiWXkCpd3mme (outil `ArtifactData` avec cette URL).
 Collections :
 - `entreprises/<slug>` : copie de la fiche du client (générée, ne pas écrire à la main).
