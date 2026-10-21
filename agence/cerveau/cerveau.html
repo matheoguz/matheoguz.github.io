@@ -1370,11 +1370,14 @@ function vueValider() {
 async function prevenirClaude(texte, el) {
   try {
     const c = await claude.use('comments');
-    if (!c || (await c.canSendToClaude()) !== 'available') return false;
+    if (!c) { S.reveilRaison = 'comments indisponible'; return false; }
+    const etat = await c.canSendToClaude().catch((e) => 'erreur ' + (e?.code || ''));
+    if (etat !== 'available') { S.reveilRaison = 'canSendToClaude: ' + etat; return false; }
     const anchor = await c.anchorFor(el || document.querySelector('main') || document.body);
     await c.sendToClaude({ anchor, text: String(texte).slice(0, 3800) });
+    S.reveilRaison = 'ok';
     return true;
-  } catch { return false; }
+  } catch (e) { S.reveilRaison = 'sendToClaude: ' + (e?.code || e?.message || 'erreur'); return false; }
 }
 async function repondreValidation(id, data, el) {
   const v = S.validations.find((x) => x.id === id);
@@ -1382,7 +1385,7 @@ async function repondreValidation(id, data, el) {
   const reveil = prevenirClaude(data.statut === 'ok'
     ? `[Cerveau · À valider] Matheo dit OK pour « ${v.titre} » (validations/${id}, projet ${v.projet || '?'}). À faire tout de suite : ${v.si_ok || 'la suite prévue'}.`
     : `[Cerveau · À corriger] Matheo renvoie « ${v.titre} » (validations/${id}, projet ${v.projet || '?'}). Ses corrections : ${data.commentaire}`, el);
-  try { await S.db.doc('validations/' + id).update({ ...data, maj_matheo: new Date().toISOString() }); const ok = await reveil; await S.db.doc('validations/' + id).update({ claude_prevenu: ok }).catch(() => {}); toast(ok ? (data.statut === 'ok' ? 'Validé : ATLAS lance la suite maintenant' : 'Renvoyé : ATLAS remet l\'équipe au travail maintenant') : (data.statut === 'ok' ? 'Validé : l\'équipe s\'en occupe au prochain passage' : 'Renvoyé à l\'équipe (prochain passage)')); }
+  try { await S.db.doc('validations/' + id).update({ ...data, maj_matheo: new Date().toISOString() }); const ok = await reveil; await S.db.doc('validations/' + id).update({ claude_prevenu: ok, reveil_raison: S.reveilRaison || '' }).catch(() => {}); toast(ok ? (data.statut === 'ok' ? 'Validé : ATLAS lance la suite maintenant' : 'Renvoyé : ATLAS remet l\'équipe au travail maintenant') : (data.statut === 'ok' ? 'Validé : l\'équipe s\'en occupe au prochain passage' : 'Renvoyé à l\'équipe (prochain passage)')); }
   catch (err) { toast('Enregistrement impossible, réessaie.'); }
 }
 function ficheDossier() {
