@@ -576,6 +576,12 @@ a.lien{font-weight:500}
 .chef-fil .attente{color:var(--muted)}
 .mission-prop{margin-top:8px;border-top:1px dashed var(--line2);padding-top:8px;display:grid;gap:6px}
 .mission-prop small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.eq-liste{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.eq-liste li{display:grid;gap:4px;padding:6px 8px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.eq-liste .ligne{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.eq-liste .ag{font-weight:700;color:var(--c,var(--fg))}
+.eq-liste details summary{cursor:pointer;font-size:12px;color:var(--accent)}
+.eq-liste details .md{font-size:13px;margin-top:6px}
 .chef-saisie{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
 .chef-saisie textarea{font:inherit;font-size:14px;resize:vertical;min-height:44px;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;background:var(--panel);color:var(--ink)}
 
@@ -702,7 +708,7 @@ const etapeTag = (s) => `<span class="tag"><i data-lucide="${(COL[s] || [, 'circ
 const testTag = (x) => (x.test ? '<span class="tag test">Exemple</span>' : '');
 
 // ---------- état ----------
-const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], chef: [], validations: [], discussions: [], missions: [], corriger: null, chefEnCours: false, bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
+const S = { entreprises: [], personnes: [], reponses: [], messages: [], notes: [], journal: [], idees: [], rapports: [], taches: [], dashboards: [], etat: [], bureau: [], chef: [], validations: [], discussions: [], missions: [], livrables: [], direct: {}, corriger: null, chefEnCours: false, bureauProjet: null, agentSel: null, modele: '', projet: null, onglet: 'apercu', ready: false, db: null, mcp: null, vue: 'cerveau', q: '', memo: 'memoire', ouvert: null, note: 'hub:cerveau', jour: null, mission: 'point', missionTexte: '', confirmer: false, envoi: null, sessions: null, sessionsErr: null };
 const parSlug = (slug) => S.entreprises.find((e) => e.id === slug);
 const nomEnt = (slug) => parSlug(slug)?.nom || slug || 'Sans entreprise';
 const match = (txt) => !S.q || String(txt).toLowerCase().includes(S.q);
@@ -1268,6 +1274,7 @@ function ficheArmoire(id) {
     <div class="pad"><p class="muted">${esc(p.resume || '')}</p>${p.prochaine ? `<p><b>Prochaine étape :</b> ${esc(p.prochaine)}</p>` : ''}
       <div class="bu-boite"><h3>Les visuels · ${vis.reduce((t, v) => t + (v.apercus || []).length, 0)}</h3>${vis.length ? vis.map((v) => `<div class="arm-visuel"><div class="ligne">${etat(v)}<b>${esc(v.titre)}</b></div>${(v.apercus || []).length ? `<div class="arm-images">${v.apercus.map((src, i) => `<img src="${esc(src)}" alt="${esc(v.titre)}, capture ${i + 1}" loading="lazy">`).join('')}</div>` : ''}${v.lien ? `<a class="lien" href="${esc(v.lien)}" target="_blank" rel="noopener">Voir en vrai</a>` : ''}</div>`).join('') : '<p class="muted">Pas encore de visuel : les maquettes arrivent ici dès que PIXEL ou FORGE les déposent dans « À valider ».</p>'}</div>
       <div class="bu-boite"><h3>Les dossiers · ${docs.length}</h3>${docs.length ? Object.entries(groupes).map(([g, ns]) => `<p class="arm-rub">${esc(g.split('/').pop())}</p><ol>${ns.slice(0, 8).map((n) => `<li><button class="lien" type="button" data-voir-neurone="n:${esc(cle(n.titre))}">${esc(n.titre)}</button>${n.date ? `<small>${quand(n.date)}</small>` : ''}</li>`).join('')}</ol>`).join('') : '<p class="muted">Rien de rangé pour l\'instant : les recherches, notes et missions du projet arrivent ici.</p>'}</div>
+      ${(() => { const L = S.livrables.filter((l) => cle(l.projet || '') === cle(p.titre) && l.resultat).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 12); return L.length ? `<div class="bu-boite"><h3>Le travail de l'équipe · ${L.length}</h3><ul class="eq-liste">${L.map((l) => `<li style="--c:${esc(couleurAgent(l.agent))}"><div class="ligne"><span class="ag">${esc(l.agent)}</span>${l.verdict === 'OK' ? '<span class="tag ok">Relu par VERA</span>' : ''}<small class="muted">${quand(l.date)}</small></div><span>${esc(l.tache)}</span><details><summary>Lire</summary><div class="md">${mdToHtml(String(l.resultat))}</div></details></li>`).join('')}</ul></div>` : ''; })()}
       <div class="actions"><button class="btn" type="button" data-ouvrir-projet="${esc(p.id)}"><i data-lucide="layout-dashboard"></i>Tableau de bord</button><button class="btn" type="button" data-voir-neurone="n:${esc(cle(p.titre))}"><i data-lucide="brain"></i>Fiche du projet</button></div></div></section>`;
 }
 // La salle de réunion : une table par mission en cours, avec ses agents autour.
@@ -1306,12 +1313,20 @@ function ficheChef() {
   const ex = echangesChef().slice(-12);
   return `<section class="card bu-fiche chef-chat" style="--c:${esc(a.couleur || '#e5e7eb')}"><header>${sprite(a.couleur || '#e5e7eb', 'mini')}<h2>Parler au chef</h2><span class="grow"></span><button class="icon" type="button" data-agent-sel="" aria-label="Fermer"><i data-lucide="x"></i></button></header>
     <div class="pad">
-      <p class="muted">ATLAS connaît tout le Cerveau : les projets, les missions, ce que fait chaque agent, ton dossier. Demande-lui où on en est, ou confie-lui une mission.</p>
-      <div class="chef-fil" id="chef-fil">${ex.map((x) => `<div class="msg moi">${esc(x.question)}</div><div class="msg lui"><div class="md">${mdToHtml(String(x.reponse || ''))}</div>${x.mission?.texte ? `<div class="mission-prop"><small>Mission proposée${x.mission.projet ? ' · ' + esc(x.mission.projet) : ''}</small><p>${esc(x.mission.texte)}</p>${x.lancee ? '<span class="tag ok">Lancée</span>' : `<button class="btn primary" type="button" data-lancer-chef="${esc(x.id)}"><i data-lucide="rocket"></i>Lancer cette mission</button>`}</div>` : ''}</div>`).join('') || '<p class="muted" style="font-size:13px">Exemples : « On en est où sur Cartio ? », « Qui travaille en ce moment ? », « Lance un nouveau business autour des restaurants. »</p>'}
+      <p class="muted">ATLAS connaît tout le Cerveau : les projets, les missions, ce que fait chaque agent, ton dossier. Demande-lui où on en est, ou donne-lui un travail : il le distribue tout de suite à son équipe, et tu les vois travailler dans le bureau.</p>
+      <div class="chef-fil" id="chef-fil">${ex.map((x) => `<div class="msg moi">${esc(x.question)}</div><div class="msg lui"><div class="md">${mdToHtml(String(x.reponse || ''))}</div>${x.mission?.texte ? `<div class="mission-prop"><small>Mission proposée${x.mission.projet ? ' · ' + esc(x.mission.projet) : ''}</small><p>${esc(x.mission.texte)}</p>${x.lancee ? '<span class="tag ok">Lancée</span>' : `<button class="btn primary" type="button" data-lancer-chef="${esc(x.id)}"><i data-lucide="rocket"></i>Lancer cette mission</button>`}</div>` : ''}${(x.equipe || []).length ? travailEquipe(x) : ''}</div>`).join('') || '<p class="muted" style="font-size:13px">Exemples : « On en est où sur Cartio ? », « Qui travaille en ce moment ? », « Lance un nouveau business autour des restaurants. »</p>'}
         ${S.chefEnCours ? `<div class="msg moi">${esc(S.chefQuestion || '')}</div><div class="msg lui attente">ATLAS réfléchit…</div>` : ''}</div>
       <form id="f-chef" class="chef-saisie"><textarea id="chef-q" rows="2" placeholder="Écris au chef…" aria-label="Message au chef"></textarea><button class="btn primary" type="submit"${S.chefEnCours ? ' disabled' : ''}><i data-lucide="send"></i>Envoyer</button></form>
-      <small class="muted">Tes messages sont gardés dans le Cerveau : la prochaine session Claude les lit en commençant.</small>
+      <small class="muted">Tout est gardé dans le Cerveau : le travail de chaque agent reste ici et dans l'armoire du projet.</small>
     </div></section>`;
+}
+// Le travail distribué par le chef : qui fait quoi, où il en est, et son résultat à lire.
+function travailEquipe(x) {
+  const L = livrablesDe(x.id);
+  const fini = x.equipe_statut === 'fini';
+  return `<div class="mission-prop"><small>L'équipe au travail${fini ? (x.verdict === 'OK' ? ' · relu par VERA' : '') : ''}</small><ul class="eq-liste">${x.equipe.map((t) => { const l = L.find((y) => y.agent === t.agent);
+    const etat = t.type === 'session' ? `<span class="tag">${x.session === 'lancee' ? 'En session Claude' : x.session === 'en_file' ? `En file : part à ${prochainPassage()}` : x.session === 'non_lancee' ? 'Pas lancée : voir Missions' : 'Partira en session'}</span>` : !l ? `<span class="tag live">${fini ? 'Pas fait' : 'Attend'}</span>` : l.statut === 'fait' ? `<span class="tag ok">Fait${l.corrige ? ' · corrigé' : ''}</span>` : l.statut === 'erreur' ? '<span class="tag warn">Bloqué</span>' : '<span class="tag live">Au travail…</span>';
+    return `<li style="--c:${esc(couleurAgent(t.agent))}"><div class="ligne"><span class="ag">${esc(t.agent)}</span>${etat}</div><span>${esc(t.tache)}</span>${l?.resultat ? `<details><summary>Lire le travail de ${esc(t.agent)}</summary><div class="md">${mdToHtml(String(l.resultat))}</div></details>` : ''}</li>`; }).join('')}</ul>${fini && x.bilan ? `<p class="muted" style="font-size:12px">VERA : ${esc(x.bilan)}</p>` : ''}</div>`;
 }
 function contexteBureau() {
   const E = etatsBureau(null), R = renfortsActifs(null);
@@ -1324,22 +1339,105 @@ async function parlerAuChef(texte) {
   if (!texte.trim() || S.chefEnCours) return;
   const sample = window.claude?.use ? await window.claude.use('sample').catch(() => null) : null;
   if (!sample || !S.db) { toast('Le chef n\'est joignable que dans claude.ai (ou l\'appli).'); return; }
-  const reveil = prevenirClaude(`[Cerveau · Chef] Matheo écrit au chef : ${texte}`, document.getElementById('chef-fil'));
   S.chefEnCours = true; S.chefQuestion = texte; render();
   try {
-    const hist = echangesChef().slice(-6).flatMap((x) => [{ role: 'user', content: x.question }, { role: 'assistant', content: JSON.stringify({ reponse: x.reponse, mission: x.mission || null }) }]);
-    const regles = `Tu es ATLAS, le chef de l'équipe d'agents de Matheo. Tu parles à Matheo en français simple, court (8 lignes maximum), sans tiret long, en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Règles fixes : Matheo ne fait pas de vidéos ; les agents ne dépensent rien, ne signent rien, ne créent aucun compte et n'écrivent jamais sur ComeUp ou Fiverr. Si Matheo demande un travail (nouveau business, page, recherche, pub…), propose UNE mission claire que l'équipe fera dans une session Claude : elle part toute seule dès ta réponse. Tu ne fais pas le travail toi-même : ne dis JAMAIS qu'un agent a commencé, est au travail ou a fini quelque chose qui n'est pas écrit dans les données ; dis « je lance la mission, tu verras les agents arriver dans le bureau ». Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse en markdown simple", "mission": null ou {"texte": "la mission à confier à l'équipe, précise, en une ou deux phrases", "projet": le titre exact d'un projet de la liste ou ""}}.`;
-    const entree = [{ role: 'user', content: `${contexteCerveau()}\n\n${contexteBureau()}\n\n${regles}` }, { role: 'assistant', content: '{"reponse": "Compris.", "mission": null}' }, ...hist, { role: 'user', content: texte }];
+    const hist = echangesChef().slice(-6).flatMap((x) => [{ role: 'user', content: x.question }, { role: 'assistant', content: JSON.stringify({ reponse: x.reponse, equipe: x.equipe || [] }) }]);
+    const qui = equipiers().filter((a) => a.titre !== 'ATLAS').map((a) => `- ${a.titre} : ${a.role || ''}`).join('\n');
+    const regles = `Tu es ATLAS, le chef de l'équipe d'agents de Matheo. Tu parles à Matheo en français simple, court (8 lignes maximum), sans tiret long, en t'appuyant UNIQUEMENT sur les données ci-dessous ; si l'info n'y est pas, dis-le. Règles fixes : Matheo ne fait pas de vidéos ; les agents ne dépensent rien, ne signent rien, ne créent aucun compte et n'écrivent jamais sur ComeUp ou Fiverr.
+Quand Matheo demande un travail, tu le distribues TOUT DE SUITE à ton équipe : une tâche précise par agent (2 à 6 agents, les bons métiers), comme un chef qui dit « toi tu fais ça, toi tu fais ça ». Tes collègues :\n${qui}
+Chaque tâche a un type :
+- "ecrire" : l'agent la fait tout de suite, ici, avec ce qu'il sait et les données du Cerveau (plan, textes, slogan, annonce, idées, prix et marges, check-list légale, mails en brouillon, planning, analyse). C'est le cas normal.
+- "session" : seulement si elle demande de coder, construire ou modifier un site ou une appli, chercher des faits précis sur internet avec les sources, ou envoyer quelque chose. Elle part dans une session Claude.
+Ne mets pas VERA : elle relit tout à la fin d'elle-même. Dans ta réponse à Matheo, dis qui fait quoi (« ECHO cherche…, PLUME écrit… ») et qu'il les voit travailler dans le bureau. Ne dis jamais qu'un travail est fini. Si Matheo pose juste une question, réponds et laisse "equipe" vide.
+Réponds UNIQUEMENT en JSON : {"reponse": "ta réponse en markdown simple", "projet": le titre exact d'un projet de la liste ou "", "equipe": [{"agent": "NOM", "tache": "la tâche précise, en une phrase", "type": "ecrire" ou "session"}]}.`;
+    const entree = [{ role: 'user', content: `${contexteCerveau()}\n\n${contexteBureau()}\n\n${regles}` }, { role: 'assistant', content: '{"reponse": "Compris.", "projet": "", "equipe": []}' }, ...hist, { role: 'user', content: texte }];
     const r = await sample.json(entree, { cache: false, modelTier: 'default' });
-    const pr = r?.mission?.projet ? projetsDe().find((p) => cle(p.titre) === cle(r.mission.projet)) : null;
+    const noms = new Set(equipiers().map((a) => a.titre));
+    const equipe = (Array.isArray(r?.equipe) ? r.equipe : []).filter((t) => t && noms.has(String(t.agent).toUpperCase()) && t.tache && String(t.agent).toUpperCase() !== 'ATLAS')
+      .slice(0, 7).map((t) => ({ agent: String(t.agent).toUpperCase(), tache: String(t.tache).slice(0, 400), type: t.type === 'session' ? 'session' : 'ecrire' }));
+    const pr = r?.projet ? projetsDe().find((p) => cle(p.titre) === cle(r.projet)) : null;
     const ref = S.db.collection('chef').doc();
-    await ref.set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), mission: r?.mission?.texte ? { texte: String(r.mission.texte).slice(0, 600), projet: pr ? pr.titre : '' } : null, lu: false, lancee: !!r?.mission?.texte });
-    // La mission proposée par le chef part tout de suite (session directe, sinon file d'attente) : Matheo n'a plus rien à cliquer.
-    if (r?.mission?.texte && await reveil) { await ref.update({ claude_prevenu: true }).catch(() => {}); toast('ATLAS a reçu ta demande : il lance l\'équipe maintenant'); }
-    else if (r?.mission?.texte) { S.mission = 'equipe'; S.missionProjet = pr?.id || null; S.modele = ''; S.missionTexte = String(r.mission.texte).slice(0, 600); await lancerMission(); toast(S.envoi?.ok ? 'Mission lancée : les agents arrivent dans le bureau' : 'La mission n\'a pas pu partir : voir Missions'); }
+    await ref.set({ date: new Date().toISOString(), question: texte, reponse: String(r?.reponse || ''), projet: pr ? pr.titre : '', equipe, equipe_statut: equipe.length ? 'en_cours' : '', mission: null, lu: false, lancee: !!equipe.length });
+    if (equipe.length) equipeEnDirect(ref.id, texte, equipe, pr, sample);
   } catch (err) {
     toast(err?.code === 'rate_limited' ? 'Le chef est occupé, réessaie dans un instant.' : 'Le chef n\'a pas pu répondre, réessaie.');
   } finally { S.chefEnCours = false; S.chefQuestion = ''; render(); }
+}
+// ---------- l'équipe en direct : ATLAS distribue, chaque agent travaille dans la page, VERA relit ----------
+// Chaque agent écrit son état dans bureau/<AGENT>@<horodatage> (on le voit au travail), parle dans discussions,
+// et rend son travail dans livrables. Ce qui demande du code ou internet part ensuite dans une session Claude.
+const pieceDe = (agent) => PIECES.find((p) => p.agents.includes(agent))?.id || 'chef';
+const livrablesDe = (chefId) => S.livrables.filter((l) => l.chef === chefId);
+async function etatAgent(agent, data) { try { await S.db.doc(`bureau/${agent}@${Date.now()}`).set({ maj: new Date().toISOString(), ...data }); } catch {} }
+async function dire(de, a, texte, mission, projet) { try { await S.db.collection('discussions').doc().set({ piece: pieceDe(de), de, a: a || '', texte: String(texte || '').slice(0, 400), mission, projet: projet || '', date: new Date().toISOString() }); } catch {} }
+async function parPaquets(items, n, fn) { const res = []; let i = 0; await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) { const k = i++; res[k] = await fn(items[k], k); } })); return res; }
+const REGLES_AGENTS = 'Règles de l\'équipe : écrire en français simple, sans tiret long ; Matheo ne fait pas de vidéos ; ne rien dépenser, signer, créer ni envoyer ; ne JAMAIS inventer un chiffre, un avis, un nom, une adresse ou une info d\'entreprise : ce que tu ne sais pas avec certitude, écris-le comme une hypothèse marquée « à vérifier » ; pas de données personnelles de clients.';
+async function travailAgent(sample, t, ctx, remarque, avant) {
+  const fiche = equipiers().find((a) => a.titre === t.agent);
+  const entree = `Tu es ${t.agent}, ${fiche?.role || 'agent'} dans l'équipe de Matheo.\nTA FICHE\n${String(fiche?.contenu || '').slice(0, 2500)}\n\nDOSSIER MATHEO\n${String(dossierMatheo()?.contenu || '').slice(0, 2500)}\n\n${ctx.projet ? `LE PROJET : ${ctx.projet.titre}\n${ctx.projet.resume || ''}${ctx.projet.prochaine ? '\nProchaine étape : ' + ctx.projet.prochaine : ''}\n${String(ctx.projet.contenu || '').slice(0, 2500)}\n\n` : ''}${REGLES_AGENTS}\n\nLA DEMANDE DE MATHEO : ${ctx.demande}\nCE QUE FONT TES COLLÈGUES : ${ctx.equipe.filter((x) => x.agent !== t.agent).map((x) => `${x.agent} : ${x.tache}`).join(' ; ') || 'personne'}\n\nTA TÂCHE (donnée par ATLAS) : ${t.tache}${remarque ? `\n\nVERA a relu ta première version et demande : ${remarque}\nTA PREMIÈRE VERSION :\n${String(avant || '').slice(0, 5000)}\nRends la version corrigée complète.` : ''}\n\nFais le travail maintenant, en entier et concret (pas un plan de ce que tu ferais). Réponds UNIQUEMENT en JSON : {"resultat": "ton travail en markdown", "message": "une phrase courte que tu dis à un collègue ou au chef sur ce que tu as fait", "a": "le NOM du collègue à qui tu parles, ou ATLAS"}`;
+  return sample.json(entree, { cache: false, modelTier: 'default' });
+}
+async function equipeEnDirect(chefId, demande, equipe, projet, sample) {
+  const mission = `Direct · ${coupe(demande, 60)}`;
+  const pt = projet?.titre || '';
+  const ctx = { demande, equipe, projet };
+  const ecrire = equipe.filter((t) => t.type === 'ecrire'), enSession = equipe.filter((t) => t.type === 'session');
+  S.direct[chefId] = { encours: true };
+  await etatAgent('ATLAS', { etat: 'travail', action: `Distribue le travail : ${equipe.map((t) => t.agent).join(', ')}`, etape: '1/3', progression: 10, mission, projet: pt });
+  for (const t of equipe) await dire('ATLAS', t.agent, `${t.agent}, tu ${t.type === 'session' ? 'prends en session' : 'fais'} : ${t.tache}`, mission, pt);
+  const docs = {};
+  await parPaquets(ecrire, 3, async (t) => {
+    await etatAgent(t.agent, { etat: 'travail', action: t.tache, etape: '1/2', progression: 15, mission, projet: pt });
+    const ref = S.db.collection('livrables').doc(); docs[t.agent] = ref;
+    await ref.set({ date: new Date().toISOString(), chef: chefId, mission, projet: pt, agent: t.agent, tache: t.tache, statut: 'en_cours', resultat: '' });
+    try {
+      const r = await travailAgent(sample, t, ctx);
+      await ref.update({ statut: 'fait', resultat: String(r?.resultat || '').slice(0, 20000), fini: new Date().toISOString() });
+      await dire(t.agent, r?.a || 'ATLAS', r?.message || 'J\'ai fini ma part.', mission, pt);
+      await etatAgent(t.agent, { etat: 'fini', action: `A fini : ${t.tache}`, etape: '2/2', progression: 100, mission, projet: pt });
+      t.resultat = String(r?.resultat || '');
+    } catch (e) {
+      await ref.update({ statut: 'erreur', resultat: e?.code === 'rate_limited' ? 'Trop de demandes en même temps : relance cette tâche dans un instant.' : 'Le travail n\'a pas pu se faire.' }).catch(() => {});
+      await etatAgent(t.agent, { etat: 'fini', action: `Bloqué sur : ${t.tache}`, progression: 100, mission, projet: pt });
+    }
+  });
+  // VERA relit tout ; ce qui ne va pas repart une fois chez l'agent concerné.
+  const faits = ecrire.filter((t) => t.resultat);
+  let verdict = '', resume = '';
+  if (faits.length) {
+    await etatAgent('VERA', { etat: 'travail', action: `Relit le travail de ${faits.map((t) => t.agent).join(', ')}`, etape: '1/1', progression: 30, mission, projet: pt });
+    try {
+      const v = await sample.json(`Tu es VERA, le contrôle qualité de l'équipe de Matheo. Relis le travail ci-dessous avant qu'il arrive chez Matheo. Vérifie : ça répond à la demande, c'est concret et utilisable, rien d'inventé présenté comme sûr (chiffres, avis, noms, adresses), les règles sont respectées. ${REGLES_AGENTS}\n\nLA DEMANDE DE MATHEO : ${demande}\n\n${faits.map((t) => `### ${t.agent} (tâche : ${t.tache})\n${t.resultat.slice(0, 6000)}`).join('\n\n')}\n\nRéponds UNIQUEMENT en JSON : {"verdict": "OK" ou "A_CORRIGER", "resume": "2 phrases pour Matheo", "corrections": [{"agent": "NOM", "quoi": "ce qu'il doit corriger, précis"}]}`, { cache: false, modelTier: 'default' });
+      verdict = v?.verdict === 'A_CORRIGER' ? 'A_CORRIGER' : 'OK'; resume = String(v?.resume || '');
+      const corr = (Array.isArray(v?.corrections) ? v.corrections : []).filter((c) => docs[String(c.agent).toUpperCase()] && c.quoi);
+      if (verdict === 'A_CORRIGER' && corr.length) {
+        for (const c of corr) await dire('VERA', String(c.agent).toUpperCase(), `À reprendre : ${c.quoi}`, mission, pt);
+        await parPaquets(corr, 3, async (c) => {
+          const t = faits.find((x) => x.agent === String(c.agent).toUpperCase()); if (!t) return;
+          await etatAgent(t.agent, { etat: 'travail', action: `Corrige : ${c.quoi}`, etape: '2/2', progression: 60, mission, projet: pt });
+          try { const r = await travailAgent(sample, t, ctx, c.quoi, t.resultat); t.resultat = String(r?.resultat || t.resultat); await docs[t.agent].update({ resultat: t.resultat.slice(0, 20000), corrige: c.quoi }); await dire(t.agent, 'VERA', r?.message || 'C\'est corrigé.', mission, pt); } catch {}
+          await etatAgent(t.agent, { etat: 'fini', action: `A corrigé : ${t.tache}`, progression: 100, mission, projet: pt });
+        });
+        verdict = 'OK'; resume = resume || 'Les corrections demandées ont été faites.';
+      }
+      for (const t of faits) await docs[t.agent].update({ verdict, verifie: 'VERA' }).catch(() => {});
+      await dire('VERA', 'ATLAS', verdict === 'OK' ? 'J\'ai tout relu : c\'est bon pour Matheo.' : 'Il reste des points à revoir.', mission, pt);
+    } catch { resume = 'VERA n\'a pas pu relire cette fois.'; }
+    await etatAgent('VERA', { etat: 'fini', action: 'A relu le travail de l\'équipe', progression: 100, mission, projet: pt });
+  }
+  // Ce qui demande du code, internet ou un envoi part dans une session Claude, avec le travail déjà fait.
+  let session = '';
+  if (enSession.length) {
+    S.mission = 'equipe'; S.missionProjet = projet?.id || null; S.modele = '';
+    S.missionTexte = `Demande de Matheo : ${demande}\nÀ faire en session : ${enSession.map((t) => `${t.agent} : ${t.tache}`).join(' ; ')}.\nLe travail déjà fait par l'équipe est dans la collection livrables (chef = ${chefId}).`.slice(0, 1500);
+    try { await lancerMission(); session = S.envoi?.titre === 'Mission lancée' ? 'lancee' : S.envoi?.ok ? 'en_file' : 'non_lancee'; } catch { session = 'non_lancee'; }
+    for (const t of enSession) await etatAgent(t.agent, { etat: 'travail', action: `En session : ${t.tache}`, etape: '1/2', progression: 5, mission, projet: pt });
+  }
+  await S.db.doc('chef/' + chefId).update({ equipe_statut: 'fini', verdict, bilan: resume, session }).catch(() => {});
+  await dire('ATLAS', '', `C'est prêt, Matheo${resume ? ' : ' + resume : '.'}${session ? ' La partie code / internet part en session.' : ''}`, mission, pt);
+  await etatAgent('ATLAS', { etat: 'fini', action: 'A rendu le travail à Matheo', progression: 100, mission, projet: pt });
+  delete S.direct[chefId];
+  toast('L\'équipe a fini : le travail est dans « Parler au chef »');
 }
 // ---------- À valider : rien ne part sans l'OK de Matheo ----------
 const aValider = () => S.validations.filter((v) => v.statut === 'a_valider').sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -2622,7 +2720,7 @@ async function demarrer() {
   }
   S.db = db;
   const recu = new Set();
-  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions'];
+  const total = ['entreprises', 'personnes', 'reponses', 'messages', 'notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions', 'livrables'];
   claude.use('mcp').then((m) => { S.mcp = m; suivreSessions(); if (S.vue === 'missions') render(); }).catch(() => {});
   for (const col of total) {
     db.collection(col).onSnapshot((snap) => {
@@ -2632,7 +2730,7 @@ async function demarrer() {
       recu.add(col);
       if (recu.size === total.length) { S.ready = true; etatSync('live', 'À jour, en direct'); }
       render();
-      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions'].includes(col)) ouvrir(S.ouvert, true);
+      if (S.ouvert && !['notes', 'journal', 'idees', 'rapports', 'taches', 'dashboards', 'etat', 'bureau', 'chef', 'validations', 'discussions', 'missions', 'livrables'].includes(col)) ouvrir(S.ouvert, true);
       if (G.attendre && col === 'idees' && G.focus) { const id = G.attendre; setTimeout(() => G.focus?.(id, true), 700); G.attendre = null; }
     }, () => { etatSync('off', 'Connexion perdue, rechargez la page'); });
   }
