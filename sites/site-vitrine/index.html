@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Création de site vitrine pour artisans et commerces, partout en France — Matheo Guzzi</title>
+<meta name="description" content="Création de sites vitrines pour les artisans, commerces et indépendants, partout en France et 100 % à distance. Trois formules à prix fixe : 60 €, 150 € ou 280 €, sans abonnement.">
+<link rel="canonical" href="https://matheoguz.github.io/sites/site-vitrine/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://matheoguz.github.io/sites/site-vitrine/">
+<meta property="og:title" content="Création de site vitrine, partout en France">
+<meta property="og:description" content="Un site clair, adapté au téléphone, pour les artisans, commerces et indépendants. 100 % à distance, prix fixe, sans abonnement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Matheo Guzzi — création de sites vitrines",
+  "description": "Création de sites vitrines pour les artisans, commerces et indépendants, partout en France, 100 % à distance.",
+  "url": "https://matheoguz.github.io/sites/site-vitrine/",
+  "email": "matheoguzzi11@gmail.com",
+  "founder": {"@type": "Person", "name": "Matheo Guzzi"},
+  "areaServed": {"@type": "Country", "name": "France"},
+  "priceRange": "60 € – 280 €",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Formules de site vitrine",
+    "itemListElement": [
+      {"@type": "Offer", "name": "Essentiel", "description": "Une page adaptée au téléphone, sans formulaire. Livrée en 3 jours, une série de retouches.", "price": "60", "priceCurrency": "EUR"},
+      {"@type": "Offer", "name": "Standard", "description": "Site complet avec formulaire de contact. Livré en 5 jours, deux séries de retouches.", "price": "150", "priceCurrency": "EUR"},
+      {"@type": "Offer", "name": "Premium", "description": "Plusieurs pages, référencement Google local et nom de domaine. Livré en 7 jours, retouches illimitées pendant 30 jours.", "price": "280", "priceCurrency": "EUR"}
+    ]
+  }
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --paper:#f3f0e8;--paper2:#ebe7dc;--ink:#161512;--muted:#6d685e;--line:rgba(22,21,18,.14);
+  --accent:#a8492a;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:400;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;width:100%;height:100%;object-fit:cover}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.label{font-size:.78rem;color:var(--muted);letter-spacing:.02em}
+
+/* NAV */
+header.top{position:sticky;top:0;z-index:20;background:rgba(243,240,232,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{font-weight:500;font-size:.95rem;letter-spacing:-.01em;white-space:nowrap}
+.brand span{color:var(--muted);font-weight:400}
+header.top nav{display:none;gap:32px;font-size:.9rem;color:var(--muted)}
+header.top nav a:hover{color:var(--ink)}
+.link{display:inline-flex;align-items:center;gap:.5em;font-weight:500;border-bottom:1px solid currentColor;padding-bottom:2px;transition:color .2s}
+.link:hover{color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:.6em;background:var(--ink);color:var(--paper);padding:14px 22px;border-radius:999px;font-size:.93rem;font-weight:500;transition:background .25s}
+.btn:hover{background:var(--accent)}
+.btn i{font-style:normal;transition:transform .25s}
+.btn:hover i{transform:translateX(3px)}
+
+/* HERO */
+.hero{padding-top:52px;padding-bottom:40px}
+.hero .meta{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-bottom:32px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4a8a52;margin-right:8px;vertical-align:middle;box-shadow:0 0 0 3px rgba(74,138,82,.18)}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.7rem,8.4vw,7rem);line-height:.98;letter-spacing:-.025em;max-width:14ch}
+.hero h1 em{color:var(--accent)}
+.hero .under{display:grid;grid-template-columns:1fr;gap:28px;margin-top:36px;align-items:end}
+.hero .under p{font-size:1.1rem;color:var(--muted);max-width:48ch;font-weight:300}
+.hero .under .cta{display:flex;gap:20px 28px;align-items:center;flex-wrap:wrap}
+
+section{padding:76px 0;border-top:1px solid var(--line)}
+.sec-title{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:40px}
+.sec-title h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,4.6vw,4rem);line-height:1;letter-spacing:-.02em}
+.sec-title p{color:var(--muted);font-size:1.05rem;max-width:56ch;font-weight:300;align-self:end}
+
+/* POUR QUI */
+.who{display:grid;grid-template-columns:1fr;gap:28px}
+.who article{border-top:1px solid var(--ink);padding-top:20px}
+.who .img{display:block;aspect-ratio:16/10;overflow:hidden;border-radius:4px;background:var(--paper2);margin-bottom:18px}
+.who h3{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.05;margin-bottom:10px}
+.who p{color:var(--muted);font-weight:300;margin-bottom:14px}
+.who ul{list-style:none;margin-bottom:18px}
+.who li{padding:4px 0 4px 18px;font-weight:300;position:relative}
+.who li::before{content:"";position:absolute;left:0;top:1.05em;width:8px;height:1px;background:var(--ink)}
+.fine{font-size:.82rem;color:var(--muted);margin-top:28px}
+
+/* ZONE */
+.zone{display:grid;grid-template-columns:1fr;gap:24px}
+.zone p{color:var(--muted);font-weight:300;max-width:60ch;font-size:1.05rem}
+.zone p strong{color:var(--ink);font-weight:500}
+
+/* PRICING */
+.offers{border-top:1px solid var(--ink)}
+.offer{display:grid;grid-template-columns:1fr;gap:16px;padding:32px 0;border-bottom:1px solid var(--line);align-items:start}
+.offer h3{font-family:var(--serif);font-weight:400;font-size:2.2rem;line-height:1}
+.offer h3 small{display:block;font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-top:10px}
+.offer ul{list-style:none}
+.offer li{padding:5px 0 5px 18px;font-weight:300;position:relative}
+.offer li::before{content:"";position:absolute;left:0;top:1.05em;width:8px;height:1px;background:var(--ink)}
+.offer .price b{font-family:var(--serif);font-weight:400;font-size:3.2rem;line-height:1;display:block}
+.offer .price span{font-size:.85rem;color:var(--muted)}
+.offer.rec .tagrec{display:inline-block;font-size:.72rem;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:3px 10px;margin-top:14px}
+.terms{display:grid;grid-template-columns:1fr;gap:28px;margin-top:44px}
+.terms h4{font-weight:500;margin-bottom:6px}
+.terms p{color:var(--muted);font-weight:300;font-size:.95rem}
+
+/* METHOD */
+.steps{list-style:none;border-top:1px solid var(--line)}
+.steps li{display:grid;grid-template-columns:44px 1fr;gap:6px 16px;padding:26px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.steps .n{font-family:var(--serif);font-size:1.3rem;color:var(--muted)}
+.steps h3{font-weight:500;font-size:1.12rem;margin-bottom:6px}
+.steps p{color:var(--muted);font-weight:300;max-width:52ch}
+.steps p a{border-bottom:1px solid currentColor}
+.steps .t{grid-column:2;font-size:.88rem;color:var(--muted)}
+
+/* FAQ */
+.faq{border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:24px;padding:22px 0;font-size:1.08rem;font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";width:12px;height:12px;flex-shrink:0;margin-top:8px;background:linear-gradient(var(--ink),var(--ink)) center/100% 1px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1px 100% no-repeat;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);font-weight:300;max-width:62ch;padding-bottom:24px;margin-top:-6px}
+details p a{border-bottom:1px solid currentColor}
+
+/* CONTACT */
+.contact{background:var(--ink);color:var(--paper);border-top:0;padding:90px 0 40px}
+.contact h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.7rem,8vw,6.4rem);line-height:.98;letter-spacing:-.025em;max-width:13ch}
+.contact h2 em{color:#e0906f}
+.contact .row{display:grid;grid-template-columns:1fr;gap:28px;margin-top:40px}
+.contact p{color:rgba(243,240,232,.7);max-width:46ch;font-weight:300}
+.mail{display:inline-block;font-family:var(--sans);font-weight:500;letter-spacing:-.01em;font-size:clamp(1.25rem,4.4vw,2.2rem);line-height:1.1;color:var(--paper);border-bottom:1px solid rgba(243,240,232,.4);word-break:break-all;margin-top:8px}
+.mail:hover{color:#e0906f}
+.contact .cta{display:flex;gap:20px 28px;align-items:center;flex-wrap:wrap}
+.contact .btn{background:var(--paper);color:var(--ink)}
+.contact .btn:hover{background:#e0906f}
+.contact .link{color:var(--paper)}
+.contact footer{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-top:80px;padding-top:24px;border-top:1px solid rgba(243,240,232,.15);font-size:.82rem;color:rgba(243,240,232,.55)}
+.contact footer nav{display:flex;gap:20px;flex-wrap:wrap}
+.contact footer a:hover{color:var(--paper)}
+
+@media(min-width:900px){
+  .wrap{padding:0 32px}
+  header.top .wrap{height:64px}
+  header.top nav{display:flex}
+  .hero{padding-top:88px;padding-bottom:64px}
+  .hero .meta{margin-bottom:56px}
+  .hero .under{grid-template-columns:1fr 1fr;gap:48px;margin-top:56px}
+  .hero .under .cta{justify-content:flex-end}
+  section{padding:120px 0}
+  .sec-title{grid-template-columns:1fr 2fr;gap:48px;margin-bottom:72px}
+  .who{grid-template-columns:repeat(3,1fr);gap:32px}
+  .zone{grid-template-columns:1fr 2fr;gap:48px}
+  .offer{grid-template-columns:1fr 2fr 1fr;gap:48px;padding:40px 0}
+  .offer ul{columns:2;column-gap:32px}
+  .offer li{break-inside:avoid}
+  .offer .price{text-align:right}
+  .terms{grid-template-columns:repeat(3,1fr);gap:48px;margin-top:56px}
+  .steps li{grid-template-columns:1fr 2fr 1fr;gap:48px;padding:30px 0}
+  .steps .t{grid-column:auto;text-align:right}
+  .contact{padding:140px 0 60px}
+  .contact .row{grid-template-columns:1fr 1fr;gap:48px;align-items:end;margin-top:56px}
+  .contact .cta{justify-content:flex-end}
+  .contact footer{margin-top:120px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="../" class="brand">Matheo Guzzi <span>— sites web</span></a>
+    <nav aria-label="Sur cette page">
+      <a href="#pour-qui">Pour qui</a>
+      <a href="#formules">Formules</a>
+      <a href="#deroulement">Déroulement</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a href="#contact" class="link">Me contacter</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero wrap">
+    <div class="meta label">
+      <span><span class="dot"></span>Partout en France · 100 % à distance</span>
+      <span>Artisans · Commerces · Indépendants</span>
+    </div>
+    <h1>Création de site vitrine <em>partout en France.</em></h1>
+    <div class="under">
+      <p>Je m'appelle Matheo Guzzi et je crée des sites vitrines pour les artisans, les commerces et les indépendants, où que vous soyez en France. Tout se fait à distance. Un site clair, pensé pour le téléphone, à un prix fixe annoncé avant de commencer. Vous n'avez rien de technique à gérer.</p>
+      <div class="cta">
+        <a href="../" class="link">Voir des exemples</a>
+        <a href="#formules" class="btn">Voir les formules <i>→</i></a>
+      </div>
+    </div>
+  </div>
+
+  <section id="pour-qui">
+    <div class="wrap">
+      <div class="sec-title">
+        <h2>Pour qui ?</h2>
+        <p>Pour les artisans, les commerces et les indépendants qui travaillent bien mais qu'on trouve mal en ligne : pas de site, un site ancien qui s'affiche mal sur téléphone, ou seulement une page Facebook.</p>
+      </div>
+      <div class="who">
+        <article>
+          <a href="../coiffeur/" class="img"><img src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=900&q=80" alt="Intérieur d'un salon de coiffure, site d'exemple Studio Nova" loading="lazy"></a>
+          <h3>Commerçants</h3>
+          <p>Boutique, salon, institut, boulangerie : vos clients veulent savoir quand vous êtes ouvert et où vous trouver.</p>
+          <ul><li>Horaires et adresse bien visibles</li><li>Appel en un geste depuis le téléphone</li><li>Vos services et vos prix</li></ul>
+          <a href="../coiffeur/" class="link">Voir l'exemple d'un salon →</a>
+        </article>
+        <article>
+          <a href="../artisan/" class="img"><img src="https://images.unsplash.com/photo-1749532125405-70950966b0e5?auto=format&fit=crop&w=900&q=80" alt="Intervention dans une salle de bain, site d'exemple Martin Plomberie" loading="lazy"></a>
+          <h3>Artisans</h3>
+          <p>Plombier, électricien, menuisier, paysagiste : on vous cherche souvent dans l'urgence, depuis un téléphone.</p>
+          <ul><li>Votre numéro visible partout</li><li>Votre zone d'intervention</li><li>Une demande de devis simple</li></ul>
+          <a href="../artisan/" class="link">Voir l'exemple d'un artisan →</a>
+        </article>
+        <article>
+          <a href="../restaurant/" class="img"><img src="https://images.unsplash.com/photo-1663530761401-15eefb544889?auto=format&fit=crop&w=900&q=80" alt="Chef dressant une assiette, site d'exemple La Table d'Olivia" loading="lazy"></a>
+          <h3>Restaurants</h3>
+          <p>Restaurant, brasserie, pizzeria, snack : on regarde votre carte avant de venir ou de réserver.</p>
+          <ul><li>Une carte lisible sur téléphone</li><li>Horaires d'ouverture à jour</li><li>Réserver par un simple appel</li></ul>
+          <a href="../restaurant/" class="link">Voir l'exemple d'un restaurant →</a>
+        </article>
+      </div>
+      <p class="fine">Les trois sites montrés ici sont des exemples : les entreprises sont fictives et servent à montrer ce que je réalise.</p>
+    </div>
+  </section>
+
+  <section id="distance">
+    <div class="wrap zone">
+      <p class="label">À distance</p>
+      <div>
+        <p><strong>Partout en France, 100 % à distance.</strong> Pas besoin de rendez-vous ni de déplacement : tout se fait par mail.</p>
+        <p style="margin-top:16px">Vous m'envoyez vos informations (par le questionnaire ou par mail), je vous envoie un aperçu de votre site à regarder sur votre téléphone, puis on ajuste ensemble jusqu'à ce qu'il vous convienne.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="formules">
+    <div class="wrap">
+      <div class="sec-title">
+        <h2>Les formules</h2>
+        <p>Trois prix fixes, annoncés avant de commencer. Vous payez une fois, sans abonnement.</p>
+      </div>
+      <div class="offers">
+        <div class="offer">
+          <h3>Essentiel<small>Être trouvable, simplement</small></h3>
+          <ul><li>Une page, sans formulaire</li><li>Adaptée au téléphone</li><li>Horaires, adresse, appel direct</li><li>Une série de retouches</li><li>Livrée en 3 jours</li></ul>
+          <div class="price"><b>60 €</b><span>paiement unique</span></div>
+        </div>
+        <div class="offer rec">
+          <h3>Standard<small>Un site complet</small><span class="tagrec">Recommandé</span></h3>
+          <ul><li>Site complet, plusieurs sections</li><li>Formulaire de contact</li><li>Carte, tarifs ou services</li><li>Deux séries de retouches</li><li>Livré en 5 jours</li></ul>
+          <div class="price"><b>150 €</b><span>paiement unique</span></div>
+        </div>
+        <div class="offer">
+          <h3>Premium<small>Plusieurs pages et votre nom</small></h3>
+          <ul><li>Plusieurs pages</li><li>Formulaire de contact</li><li>Référencement Google local</li><li>Votre nom de domaine inclus</li><li>Retouches illimitées pendant 30 jours</li><li>Livré en 7 jours</li></ul>
+          <div class="price"><b>280 €</b><span>paiement unique</span></div>
+        </div>
+      </div>
+      <div class="terms">
+        <div><h4>Paiement</h4><p>Par une plateforme (ComeUp, Fiverr) : votre paiement est bloqué et ne m'est versé qu'une fois le site validé. En direct : 50 % au démarrage, 50 % avant la mise en ligne.</p></div>
+        <div><h4>Nom de domaine</h4><p>Inclus dans le Premium. En option sur les autres formules : environ 10 € par an, à votre nom et à votre charge.</p></div>
+        <div><h4>Besoin de plus ?</h4><p>Pages en plus, boutique en ligne, réservation en ligne : je vous fais un devis à part, avant de commencer.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="deroulement">
+    <div class="wrap">
+      <div class="sec-title">
+        <h2>Comment ça se passe</h2>
+        <p>Vous connaissez votre métier, je m'occupe du site. Aucune compétence technique n'est nécessaire.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="n">01</span><div><h3>Vous me parlez de votre activité</h3><p>Le nom, vos horaires, votre adresse, vos services ou votre carte, et quelques photos si vous en avez. Le plus simple : remplir <a href="../brief/">le questionnaire</a>, ou m'écrire par mail.</p></div><span class="t">5 minutes</span></li>
+        <li><span class="n">02</span><div><h3>Je conçois votre site</h3><p>J'écris les textes à partir de vos informations et je fais une mise en page pensée pour votre métier, à vos couleurs.</p></div><span class="t">3, 5 ou 7 jours selon la formule</span></li>
+        <li><span class="n">03</span><div><h3>Vous relisez, j'ajuste</h3><p>Je vous envoie un aperçu. Vous le regardez sur votre téléphone et vous me dites ce qu'il faut changer : un texte, une photo, une couleur.</p></div><span class="t">Retouches de votre formule</span></li>
+        <li><span class="n">04</span><div><h3>Mise en ligne</h3><p>Une fois que vous validez, le site est publié. Vous pouvez mettre le lien sur votre fiche Google, vos réseaux et vos cartes de visite.</p></div><span class="t">Après votre accord</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="questions">
+    <div class="wrap">
+      <div class="sec-title">
+        <h2>Questions</h2>
+        <p>Ce qu'on demande le plus souvent avant de commencer.</p>
+      </div>
+      <div class="faq">
+        <details><summary>Je n'y connais rien en informatique. Est-ce un problème ?</summary><p>Non, c'est le principe. Vous m'envoyez vos informations comme vous le feriez par message, et je m'occupe du reste.</p></details>
+        <details><summary>Est-ce que je dois payer tous les mois ?</summary><p>Non. Vous payez une seule fois. Un suivi pour les petites mises à jour peut être proposé ensuite, mais il n'est jamais obligatoire.</p></details>
+        <details><summary>Je n'ai ni textes ni photos.</summary><p>Ce n'est pas grave. J'écris les textes à partir de vos informations, et j'utilise des photos libres de droits adaptées à votre activité. Vous pourrez les remplacer par les vôtres quand vous voulez.</p></details>
+        <details><summary>Mon site sera-t-il sur Google ?</summary><p>Le site est fait pour être lu par Google (titres, descriptions, pages adaptées au téléphone). La formule Premium comprend en plus le référencement Google local. Personne ne peut honnêtement promettre une place précise dans les résultats : je ne le promets pas non plus.</p></details>
+        <details><summary>Et si je veux changer quelque chose plus tard ?</summary><p>Les retouches de votre formule sont incluses. Ensuite, les petites modifications (horaires, tarifs, textes) restent rapides : on en parle au cas par cas.</p></details>
+        <details><summary>Puis-je avoir mon propre nom de domaine ?</summary><p>Oui. Il est inclus dans la formule Premium et possible en option sur les autres : comptez environ 10 € par an.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <h2>Parlons de <em>votre site.</em></h2>
+      <div class="row">
+        <div>
+          <p>Écrivez-moi le nom de votre activité, votre ville et ce que vous attendez de votre site. Je vous réponds avec une proposition claire et la formule qui vous correspond.</p>
+          <a class="mail" href="mailto:matheoguzzi11@gmail.com?subject=Site%20vitrine">matheoguzzi11@gmail.com</a>
+        </div>
+        <div class="cta">
+          <a href="../brief/" class="link">Remplir le questionnaire</a>
+          <a href="mailto:matheoguzzi11@gmail.com?subject=Site%20vitrine" class="btn">M'écrire un mail <i>→</i></a>
+        </div>
+      </div>
+      <footer>
+        <span>© 2026 Matheo Guzzi · Sites vitrines partout en France, à distance</span>
+        <nav aria-label="Liens">
+          <a href="../">Exemples de sites</a>
+          <a href="../brief/">Questionnaire</a>
+          <a href="/">Portfolio</a>
+        </nav>
+      </footer>
+    </div>
+  </section>
+</main>
+</body>
+</html>

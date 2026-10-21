@@ -23,6 +23,7 @@
   .qr img{background:#fff}
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
 a{color:var(--accent)}
@@ -72,6 +73,22 @@ section{padding:44px 0;border-top:1px solid var(--line)}
 .etapes p{color:var(--muted)}
 .contact{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px}
 .contact p{color:var(--muted);margin-bottom:20px;max-width:56ch}
+.formulaire{margin-top:6px}
+.champs{display:grid;gap:14px;margin-bottom:16px}
+.champs label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.95rem}
+.facultatif{font-weight:400;color:var(--muted);display:inline}
+.champs label .lib{display:block}
+.champs input,.champs textarea,.pret textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+.champs input:focus,.champs textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.champs input[aria-invalid="true"]{border-color:#b3261e}
+.erreur{color:#b3261e;font-weight:600;margin-bottom:14px}
+button.btn{border:0;cursor:pointer;font-family:inherit}
+.pret{margin-top:6px}
+.pret h3{margin-bottom:8px}
+.pret textarea{font-size:.92rem;margin:4px 0 14px;resize:vertical}
+.contact .rgpd{font-size:.82rem;color:var(--muted);margin:22px 0 0;max-width:none;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:819px){.contact .btn{width:100%}}
+@media (min-width:820px){.champs{grid-template-columns:1fr 1fr}.champs .large{grid-column:1/-1}}
 footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
 @media (min-width:820px){
   body{font-size:18px}
@@ -111,10 +128,10 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
         <h1>Votre carte sur téléphone, avec les allergènes.</h1>
         <p class="accroche">Votre carte en ligne avec les 14 allergènes par plat, un QR code pour vos tables et votre vitrine, et le lien posé dans votre fiche Google. 49 €, payé une fois, sans abonnement.</p>
         <div class="actions">
-          <a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=Cartio">Je veux ma carte</a>
+          <a class="btn" href="#ma-carte">Je veux ma carte</a>
           <a class="btn second" href="exemple/">Voir la carte d'exemple</a>
         </div>
-        <p class="adresse">Ou écrivez directement à <strong>matheoguzzi11@gmail.com</strong></p>
+        <p class="adresse">Laissez vos coordonnées en 1 minute, ou écrivez à <strong>matheoguzzi11@gmail.com</strong></p>
       </div>
       <aside class="apercu">
         <div class="qr"><img src="qr-exemple.svg" alt="QR code qui ouvre la carte d'exemple" width="180" height="180"></div>
@@ -155,19 +172,41 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
     <section id="comment">
       <h2>Comment ça se passe</h2>
       <ol class="etapes">
-        <li><div><h3>Vous écrivez</h3><p>Un mail suffit, avec le nom de votre restaurant.</p></div></li>
+        <li><div><h3>Vous laissez vos coordonnées</h3><p>Le formulaire en bas de page, ou un simple mail avec le nom de votre restaurant.</p></div></li>
         <li><div><h3>On récupère la carte</h3><p>Sur place au Creusot ou par mail : la carte papier et la liste de vos allergènes.</p></div></li>
         <li><div><h3>Vous validez</h3><p>Vous relisez la carte et les allergènes, puis vous validez par écrit.</p></div></li>
         <li><div><h3>C'est en ligne</h3><p>Vous recevez le lien, le QR code à imprimer, et le lien est posé sur Google.</p></div></li>
       </ol>
     </section>
 
-    <section id="contact">
+    <section id="ma-carte">
       <div class="contact">
-        <h2>Vous avez un restaurant, un snack ou une pizzeria ?</h2>
-        <p>Écrivez un mail avec le nom de votre établissement. On vous répond pour en parler, sans engagement.</p>
-        <a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=Cartio">Écrire pour ma carte</a>
-        <p class="adresse">Adresse : <strong>matheoguzzi11@gmail.com</strong></p>
+        <h2>Je veux ma carte</h2>
+        <p>Vous avez un restaurant, un snack ou une pizzeria ? Laissez vos coordonnées : on vous répond pour en parler, sans engagement. Rien n'est à payer pour l'instant.</p>
+        <form id="form-carte" class="formulaire" novalidate>
+          <div class="champs">
+            <label>Prénom<input name="prenom" autocomplete="given-name" required></label>
+            <label>Nom<input name="nom" autocomplete="family-name" required></label>
+            <label class="large">Nom du restaurant<input name="restaurant" autocomplete="organization" required></label>
+            <label>Mail<input name="mail" type="email" autocomplete="email" inputmode="email" required></label>
+            <label>Téléphone<input name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+            <label class="large"><span class="lib">Message <span class="facultatif">(facultatif)</span></span><textarea name="message" rows="3" placeholder="Par exemple : le meilleur moment pour vous appeler"></textarea></label>
+          </div>
+          <p class="erreur" id="erreur" role="alert" hidden></p>
+          <button class="btn" type="submit">Préparer mon mail</button>
+          <p class="petit">Le bouton ouvre votre messagerie avec un mail déjà rempli, adressé à <strong>matheoguzzi11@gmail.com</strong> : il ne reste qu'à l'envoyer.</p>
+        </form>
+        <div class="pret" id="pret" hidden>
+          <h3>Votre mail est prêt</h3>
+          <p>Votre messagerie s'est ouverte avec le mail rempli : envoyez-le. Elle ne s'est pas ouverte ? Copiez le texte ci-dessous et envoyez-le à <strong>matheoguzzi11@gmail.com</strong>.</p>
+          <textarea id="texte-mail" rows="9" readonly></textarea>
+          <div class="actions">
+            <button class="btn" type="button" id="copier">Copier le texte</button>
+            <a class="btn second" id="rouvrir" href="mailto:matheoguzzi11@gmail.com">Rouvrir le mail</a>
+          </div>
+          <p class="petit" id="copie-ok" role="status"></p>
+        </div>
+        <p class="rgpd">Vos informations servent uniquement à vous recontacter au sujet de Cartio. Ce site n'enregistre rien : elles partent seulement dans le mail que vous envoyez vous-même à Matheo Guzzi. Elles sont gardées le temps de notre échange, et 3 ans au plus après notre dernier contact si vous ne devenez pas client. Vous pouvez demander à tout moment à les voir, les corriger ou les supprimer en écrivant à matheoguzzi11@gmail.com.</p>
       </div>
     </section>
   </main>
@@ -176,5 +215,34 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
     Cartio, par Matheo Guzzi, au Creusot (71200). <a href="exemple/">Carte d'exemple</a>
   </footer>
 </div>
+<script>
+(function(){
+  var f=document.getElementById('form-carte'),err=document.getElementById('erreur'),pret=document.getElementById('pret');
+  var A='matheoguzzi11@gmail.com';
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var v={},manque=[];
+    ['prenom','nom','restaurant','mail','tel','message'].forEach(function(k){v[k]=f.elements[k].value.trim();});
+    var noms={prenom:'votre prénom',nom:'votre nom',restaurant:'le nom du restaurant',mail:'votre mail',tel:'votre téléphone'};
+    Object.keys(noms).forEach(function(k){var ok=!!v[k];if(k==='mail'&&ok)ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v[k]);if(k==='tel'&&ok)ok=v[k].replace(/\D/g,'').length>=9;f.elements[k].setAttribute('aria-invalid',ok?'false':'true');if(!ok)manque.push(noms[k]);});
+    if(manque.length){err.textContent='Il manque ou il faut corriger : '+manque.join(', ')+'.';err.hidden=false;f.querySelector('[aria-invalid="true"]').focus();return;}
+    err.hidden=true;
+    var sujet='Cartio : je veux ma carte ('+v.restaurant+')';
+    var corps='Bonjour,\n\nJe veux ma carte Cartio.\n\nPrénom : '+v.prenom+'\nNom : '+v.nom+'\nRestaurant : '+v.restaurant+'\nMail : '+v.mail+'\nTéléphone : '+v.tel+(v.message?'\n\nMessage : '+v.message:'')+'\n\nMerci de me recontacter.';
+    var lien='mailto:'+A+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
+    document.getElementById('texte-mail').value='À : '+A+'\nObjet : '+sujet+'\n\n'+corps;
+    document.getElementById('rouvrir').href=lien;
+    f.hidden=true;pret.hidden=false;pret.scrollIntoView({block:'start'});
+    window.location.href=lien;
+  });
+  document.getElementById('copier').addEventListener('click',function(){
+    var t=document.getElementById('texte-mail'),ok=document.getElementById('copie-ok');
+    var fini=function(r){ok.textContent=r?'Texte copié. Collez-le dans un mail à '+A+'.':'La copie automatique ne marche pas ici : le texte est sélectionné, copiez-le à la main.';};
+    var secours=function(){t.focus();t.select();var r=false;try{r=document.execCommand('copy');}catch(e){}fini(r);};
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t.value).then(function(){fini(true);},secours);}
+    else{secours();}
+  });
+})();
+</script>
 </body>
 </html>
