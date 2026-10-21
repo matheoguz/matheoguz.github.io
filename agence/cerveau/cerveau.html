@@ -1499,7 +1499,8 @@ async function prevenirClaude(texte, el) {
     if (!c) { S.reveilRaison = 'comments indisponible'; return false; }
     const etat = await c.canSendToClaude().catch((e) => 'erreur ' + (e?.code || ''));
     if (etat !== 'available') { S.reveilRaison = 'canSendToClaude: ' + etat; return false; }
-    const anchor = await c.anchorFor(el || document.querySelector('main') || document.body);
+    // Toujours sur <main> : une carte re-dessinée entre-temps rend l'ancre invalide (« sendToClaude: invalid »).
+    const anchor = await c.anchorFor(document.querySelector('main') || document.body);
     await c.sendToClaude({ anchor, text: String(texte).slice(0, 3800) });
     S.reveilRaison = 'ok';
     return true;
