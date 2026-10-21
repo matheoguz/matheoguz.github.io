@@ -728,7 +728,7 @@ addEventListener('resize', taille); taille();
 // ================= Boucle =================
 let avant = performance.now(), dernierRendu = -1;
 function animer(now) {
-  const ecoule = Math.min(1, (now - avant) / 1000), dt = Math.min(0.05, ecoule); avant = now;
+  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
     if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
