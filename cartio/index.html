@@ -14,13 +14,13 @@
 <meta name="color-scheme" content="light dark">
 <style>
 :root{
-  --bg:#f7f0e6;--surface:#fffaf3;--ink:#2b1d14;--muted:#6e5646;--line:rgba(43,29,20,.13);
-  --accent:#a33d1c;--on-accent:#fff;--soft:rgba(163,61,28,.08);--err:#b3261e;--err-bg:#fdecea;
+  --bg:#fff6ea;--surface:#ffffff;--ink:#2a1a12;--muted:#6b4a3a;--line:rgba(42,26,18,.14);
+  --accent:#b8321a;--on-accent:#fff;--soft:rgba(184,50,26,.09);--band:#4a1526;--on-band:#fff4e6;--band-muted:#f0c9a8;--sun:#f4b23c;--on-sun:#2a1606;--err:#b3261e;--err-bg:#fdecea;
   --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#1b1410;--surface:#261b15;--ink:#f4eadf;--muted:#c4ab98;--line:rgba(244,234,223,.13);
-  --accent:#f0976d;--on-accent:#2b1208;--soft:rgba(240,151,109,.12);--err:#ff8a80;--err-bg:#3a1714}
+  :root{--bg:#170f0c;--surface:#24170f;--ink:#f6ebdf;--muted:#d2b49d;--line:rgba(246,235,223,.14);
+  --accent:#ff7d5e;--on-accent:#2a0d05;--soft:rgba(255,125,94,.12);--band:#3a0f1d;--on-band:#fff4e6;--band-muted:#e6c0a0;--sun:#f5c04f;--on-sun:#2a1606;--err:#ff8a80;--err-bg:#3a1714}
   .qr img{background:#fff}
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -103,6 +103,28 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
   .etapes{grid-template-columns:repeat(4,1fr)}
   .etapes li{grid-template-columns:1fr}
 }
+/* Identité Cartio : bandeau bordeaux, safran, rouge tomate */
+.bande,header.top,.hero{background:var(--band);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax)}
+header.top .logo{color:var(--on-band)}
+header.top .logo span,header.top a.lien{color:var(--sun)}
+.hero{color:var(--on-band)}
+.hero h1{color:var(--on-band)}
+.hero p.accroche,.hero .adresse{color:var(--band-muted)}
+.hero .adresse strong{color:var(--on-band)}
+.hero .lieu{background:var(--sun);color:var(--on-sun)}
+.hero .btn{background:var(--sun);color:var(--on-sun)}
+.hero .btn.second{background:transparent;color:var(--on-band);border-color:var(--on-band)}
+.hero .apercu{border:0;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.hero .apercu p{color:var(--muted)}
+.hero .apercu p strong{color:var(--ink)}
+.hero .apercu a{color:var(--accent)}
+#prix{background:var(--soft);box-shadow:0 0 0 100vmax var(--soft);clip-path:inset(0 -100vmax)}
+.offre{border-color:var(--accent);box-shadow:0 10px 0 -2px var(--sun)}
+.etapes li::before{background:var(--sun);color:var(--on-sun)}
+.inclus li::before{background:var(--accent)}
+.contact{border-top:6px solid var(--sun)}
+footer{background:var(--band);color:var(--band-muted);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax);border-top:0}
+footer a{color:var(--sun)}
 </style>
 <script type="application/ld+json">
 {
@@ -119,8 +141,8 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
 <body>
 <div class="wrap">
   <header class="top">
-    <a class="logo" href="./">Cart<span>io</span></a>
-    <a class="lien" href="exemple/">Voir un exemple</a>
+    <a class="logo" href="index.html">Cart<span>io</span></a>
+    <a class="lien" href="exemple/index.html">Voir un exemple</a>
   </header>
 
   <main>
@@ -131,13 +153,13 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
         <p class="accroche">Votre carte en ligne avec les 14 allergènes par plat, un QR code pour vos tables et votre vitrine, et le lien posé dans votre fiche Google. 49 €, payé une fois, sans abonnement.</p>
         <div class="actions">
           <a class="btn" href="#ma-carte">Je veux ma carte</a>
-          <a class="btn second" href="exemple/">Voir la carte d'exemple</a>
+          <a class="btn second" href="exemple/index.html">Voir la carte d'exemple</a>
         </div>
         <p class="adresse">Laissez vos coordonnées en 1 minute, ou écrivez à <strong>matheoguzzi11@gmail.com</strong></p>
       </div>
       <aside class="apercu">
         <div class="qr"><img src="qr-exemple.svg" alt="QR code qui ouvre la carte d'exemple" width="180" height="180"></div>
-        <p><strong>Essayez avec votre téléphone</strong>Scannez ce QR code : il ouvre une carte d'exemple, comme celle que vos clients verraient à table. Déjà sur votre téléphone ? <a href="exemple/">Ouvrez-la ici</a>.</p>
+        <p><strong>Essayez avec votre téléphone</strong>Scannez ce QR code : il ouvre une carte d'exemple, comme celle que vos clients verraient à table. Déjà sur votre téléphone ? <a href="exemple/index.html">Ouvrez-la ici</a>.</p>
       </aside>
     </div>
 
@@ -214,7 +236,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
   </main>
 
   <footer>
-    Cartio, par Matheo Guzzi, au Creusot (71200). <a href="exemple/">Carte d'exemple</a>
+    Cartio, par Matheo Guzzi, au Creusot (71200). <a href="exemple/index.html">Carte d'exemple</a>
   </footer>
 </div>
 <script>
