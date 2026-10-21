@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRM visuel 3D · votre entreprise en 3D, en direct</title>
+<meta name="description" content="Toute votre entreprise sur un seul écran : une maquette 3D en direct de vos locaux, de vos équipes, de vos véhicules et de vos stocks, avec vos chiffres clés. 490 € de mise en place, 99 € par mois.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --fond: #f6f7f9; --carte: #fff; --texte: #111827; --doux: #5b6472; --ligne: #e5e7eb; --accent: #1d4ed8; --accent-doux: #e0e7ff; --vert: #15803d; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); }
+  .large { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  nav { background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  nav .large { display: flex; align-items: center; gap: 18px; height: 64px; }
+  .marque { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--texte); text-decoration: none; }
+  .marque i { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-style: normal; font-size: 14px; }
+  nav .liens { margin-left: auto; display: flex; gap: 22px; font-size: 14.5px; }
+  nav .liens a { color: var(--doux); text-decoration: none; font-weight: 500; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 8px; font-size: 15px; }
+  .btn.clair { background: var(--carte); color: var(--texte); border: 1px solid var(--ligne); }
+  .btn:hover { filter: brightness(1.05); }
+  header.une { padding: 64px 0 40px; }
+  .une .large { display: grid; grid-template-columns: 1fr 1.15fr; gap: 48px; align-items: center; }
+  .pastille { display: inline-block; font-size: 13px; font-weight: 600; color: var(--vert); background: #dcfce7; padding: 4px 10px; border-radius: 99px; margin-bottom: 14px; }
+  h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 16px; }
+  .une p { font-size: 18px; color: var(--doux); margin: 0 0 26px; max-width: 520px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .apercu { border-radius: 12px; overflow: hidden; border: 1px solid var(--ligne); box-shadow: 0 20px 50px rgba(17,24,39,.12); background: var(--carte); }
+  .apercu img { display: block; width: 100%; height: auto; }
+  .apercu span { display: block; font-size: 12.5px; color: var(--doux); padding: 8px 12px; border-top: 1px solid var(--ligne); }
+  section { padding: 56px 0; }
+  h2 { font-size: 32px; letter-spacing: -.015em; margin: 0 0 10px; line-height: 1.2; }
+  .chapo { color: var(--doux); margin: 0 0 32px; max-width: 640px; }
+  .grille4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 12px; padding: 22px; }
+  .carte h3 { margin: 0 0 6px; font-size: 18px; }
+  .carte p { margin: 0; color: var(--doux); font-size: 15px; }
+  .etapes { counter-reset: e; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .etapes .carte::before { counter-increment: e; content: counter(e); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-doux); color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+  .exemples { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .exemple { background: var(--carte); border: 1px solid var(--ligne); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .exemple img { width: 100%; height: 230px; object-fit: cover; object-position: left top; display: block; border-bottom: 1px solid var(--ligne); }
+  .exemple div { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  .exemple h3 { margin: 0 0 6px; }
+  .exemple p { margin: 0 0 16px; color: var(--doux); font-size: 15px; flex: 1; }
+  .prix { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: start; }
+  .tarif { background: var(--carte); border: 2px solid var(--accent); border-radius: 14px; padding: 28px; }
+  .tarif .ligne { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--ligne); gap: 12px; }
+  .tarif .ligne:last-of-type { border-bottom: 0; }
+  .tarif b { font-size: 30px; letter-spacing: -.01em; white-space: nowrap; }
+  .tarif small { display: block; color: var(--doux); font-size: 14px; }
+  .tarif ul { margin: 16px 0 22px; padding-left: 20px; color: var(--doux); font-size: 15px; }
+  .conditions { background: var(--carte); border: 1px solid var(--ligne); border-radius: 14px; padding: 8px 24px; }
+  details { border-bottom: 1px solid var(--ligne); padding: 14px 0; }
+  details:last-child { border-bottom: 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  details p { color: var(--doux); margin: 8px 0 0; font-size: 15px; }
+  .contact { background: var(--texte); color: #fff; border-radius: 16px; padding: 40px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; align-items: center; }
+  .contact h2 { color: #fff; }
+  .contact p { color: #cbd5e1; margin: 0; }
+  .contact .btn { background: #fff; color: var(--texte); }
+  footer { padding: 32px 0 48px; color: var(--doux); font-size: 13.5px; }
+  footer h4 { color: var(--texte); margin: 0 0 6px; font-size: 14px; }
+  @media (max-width: 900px) {
+    nav .liens { display: none; }
+    .une .large, .prix, .exemples, .contact { grid-template-columns: 1fr; }
+    .grille4 { grid-template-columns: 1fr 1fr; }
+    .etapes { grid-template-columns: 1fr; }
+    h1 { font-size: 34px; }
+    header.une { padding: 36px 0 20px; }
+    section { padding: 40px 0; }
+    .contact { padding: 28px; }
+  }
+  @media (max-width: 520px) { .grille4 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav><div class="large">
+  <a class="marque" href="#"><i>3D</i>CRM visuel 3D</a>
+  <div class="liens"><a href="#exemples">Exemples</a><a href="#tarifs">Tarifs</a><a href="#conditions">Conditions</a><a href="#contact">Contact</a></div>
+</div></nav>
+
+<header class="une"><div class="large">
+  <div>
+    <span class="pastille">Lancement : démos et réservations ouvertes</span>
+    <h1>Toute votre entreprise sur un seul écran.</h1>
+    <p>Vos locaux en maquette 3D, en direct : qui travaille, ce qui est libre, ce qui est en stock, et vos chiffres clés juste à côté. Un clic sur une personne, un véhicule ou un rayon ouvre sa fiche.</p>
+    <div class="actions"><a class="btn" href="../">Voir la démo auto-école</a><a class="btn clair" href="#contact">Réserver une démo de 10 minutes</a></div>
+  </div>
+  <a class="apercu" href="../"><img src="demo-auto-ecole.jpg" alt="Démo : une auto-école fictive en maquette 3D, avec le planning du jour et les chiffres clés" width="1200" height="750"><span>Démo avec des données inventées : « Auto-école Modèle »</span></a>
+</div></header>
+
+<section><div class="large">
+  <h2>Clair, précis, facile, rentable.</h2>
+  <p class="chapo">Pensé pour les gérants qui veulent voir leur journée en un coup d'œil, sans apprendre un logiciel.</p>
+  <div class="grille4">
+    <div class="carte"><h3>Clair</h3><p>Vos locaux dessinés comme une maquette. Vert, c'est libre ; orange, c'est occupé.</p></div>
+    <div class="carte"><h3>Précis</h3><p>Le planning du jour heure par heure, avec un trait « maintenant ». Le prénom et le nom de chaque personne.</p></div>
+    <div class="carte"><h3>Facile</h3><p>Un clic sur un élément zoome dessus et ouvre sa fiche. Sur ordinateur, tablette ou téléphone.</p></div>
+    <div class="carte"><h3>Rentable</h3><p>En haut de l'écran : encaissé du jour et du mois, remplissage de l'équipe, ce qui reste à encaisser.</p></div>
+  </div>
+</div></section>
+
+<section id="exemples" style="background:var(--carte);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne)"><div class="large">
+  <h2>Deux exemples à ouvrir</h2>
+  <p class="chapo">Les deux démos tournent toutes seules, avec des noms et des chiffres inventés. Votre version reprend vos locaux, votre équipe et vos chiffres.</p>
+  <div class="exemples">
+    <div class="exemple"><img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" loading="lazy"><div><h3>Une auto-école</h3><p>Voitures en leçon ou au parking, moniteurs disponibles, élèves de la salle de code, planning de chaque moniteur, élèves à relancer.</p><a class="btn" href="../">Ouvrir la démo</a></div></div>
+    <div class="exemple"><img src="demo-grande-surface.jpg" alt="Hypermarché fictif en maquette 3D" loading="lazy"><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock de chaque rayon et ruptures, équipe présente et coût de la journée, livraisons au quai.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a></div></div>
+  </div>
+</div></section>
+
+<section><div class="large">
+  <h2>Comment ça se passe</h2>
+  <p class="chapo">Vous n'avez rien à installer.</p>
+  <div class="etapes">
+    <div class="carte"><h3>Une démo de 10 minutes</h3><p>À votre agence ou en visio. On regarde ensemble ce que vous voulez voir sur l'écran.</p></div>
+    <div class="carte"><h3>La maquette de vos locaux</h3><p>On dessine vos locaux, vos véhicules, vos postes et vos rayons, puis on importe votre planning et vos chiffres de départ.</p></div>
+    <div class="carte"><h3>Votre écran en direct</h3><p>Accès en ligne pour vous et votre équipe. Les mises à jour sont comprises dans l'abonnement.</p></div>
+  </div>
+</div></section>
+
+<section id="tarifs"><div class="large">
+  <h2>Tarifs</h2>
+  <p class="chapo">Un prix simple, le même pour tous les métiers.</p>
+  <div class="prix">
+    <div class="tarif">
+      <div class="ligne"><span>Mise en place<small>une seule fois, par établissement</small></span><b>490 €</b></div>
+      <div class="ligne"><span>Abonnement<small>par établissement</small></span><b>99 € / mois</b></div>
+      <ul>
+        <li>la maquette 3D de vos locaux, dessinée pour vous</li>
+        <li>le planning, l'équipe, les véhicules ou les stocks, en direct</li>
+        <li>les chiffres clés et les fiches au clic</li>
+        <li>l'accès sur ordinateur, tablette et téléphone</li>
+        <li>les mises à jour et l'aide par mail</li>
+      </ul>
+      <a class="btn" href="#contact">Réserver ma démo</a>
+    </div>
+    <div class="conditions" id="conditions">
+      <details open><summary>Quand est-ce que je paie ?</summary><p>Rien maintenant. Nous sommes en lancement : vous réservez une démo ou une place, sans engagement et sans paiement. Le paiement commence au démarrage de votre écran, sur devis.</p></details>
+      <details><summary>Est-ce que je suis engagé ?</summary><p>Non. L'abonnement est mensuel, sans engagement, et se résilie chaque mois.</p></details>
+      <details><summary>Et la TVA ?</summary><p>Le régime de TVA est précisé sur le devis.</p></details>
+      <details><summary>Mes données restent-elles à moi ?</summary><p>Oui. Les données de votre établissement restent les vôtres : un contrat de traitement des données (RGPD) est signé avec l'abonnement, et vous pouvez tout récupérer ou tout faire supprimer à la fin.</p></details>
+      <details><summary>Faut-il un GPS dans les véhicules ?</summary><p>Non. Les statuts (en leçon, disponible, en pause) viennent de votre planning ou se mettent en un clic. Aucun suivi de trajet.</p></details>
+      <details><summary>J'ai déjà un logiciel de gestion.</summary><p>L'écran 3D peut reprendre votre planning existant (export iCal ou Google Agenda) pour éviter de tout saisir deux fois. On regarde ça ensemble pendant la démo.</p></details>
+    </div>
+  </div>
+</div></section>
+
+<section id="contact"><div class="large">
+  <div class="contact">
+    <div><h2>Une démo de 10 minutes ?</h2><p>Écrivez-moi votre métier, votre ville et le nombre de personnes dans l'équipe. Je vous réponds sous 24 h avec deux créneaux.</p></div>
+    <div><a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=D%C3%A9mo%20CRM%20visuel%203D&amp;body=Bonjour%2C%0A%0AM%C3%A9tier%20%3A%20%0AVille%20%3A%20%0APersonnes%20dans%20l'%C3%A9quipe%20%3A%20%0A">Demander une démo par mail</a><p style="margin-top:12px;font-size:14px">matheoguzzi11@gmail.com</p></div>
+  </div>
+</div></section>
+
+<footer><div class="large">
+  <h4>Mentions légales</h4>
+  <p>Éditeur : Matheo Guzzi, entrepreneur individuel, immatriculation en cours. Contact : matheoguzzi11@gmail.com. Adresse communiquée sur demande.<br>
+  Hébergeur : GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis (GitHub Pages).<br>
+  Cette page n'utilise ni cookie ni mesure d'audience. Le lien de contact ouvre simplement votre messagerie. Les démos utilisent des données inventées.</p>
+</div></footer>
+</body>
+</html>
