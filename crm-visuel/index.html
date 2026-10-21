@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto-école Modèle · tableau de bord 3D (démo)</title>
+<meta name="description" content="Démo avec des données fictives : l'auto-école en maquette 3D, en direct. Planning du jour, moniteurs, véhicules, élèves et chiffre d'affaires en un clic.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #f3f4f6;
+    --carte: #ffffff;
+    --texte: #111827;
+    --doux: #6b7280;
+    --ligne: #e5e7eb;
+    --accent: #1d4ed8;
+    --accent-doux: #e0e7ff;
+    --vert: #15803d;
+    --vert-doux: #dcfce7;
+    --orange: #c2410c;
+    --orange-doux: #ffedd5;
+    --gris-doux: #f3f4f6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 420px; grid-template-rows: auto auto minmax(0, 1fr); height: 100vh; }
+  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  .logo { width: 36px; height: 36px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .titre b { display: block; font-size: 15px; }
+  .titre span { color: var(--doux); font-size: 12.5px; }
+  .demo { font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; margin-left: 6px; }
+  .horloge { margin-left: auto; text-align: right; }
+  .horloge b { font-size: 20px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .horloge span { display: block; color: var(--doux); font-size: 11.5px; }
+  .direct { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert) !important; margin-right: 8px; }
+  .direct i { width: 7px; height: 7px; border-radius: 50%; background: var(--vert); animation: pouls 2s infinite; }
+  @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+  .kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--ligne); border-bottom: 1px solid var(--ligne); }
+  .kpi { background: var(--carte); padding: 12px 18px; }
+  .kpi span { color: var(--doux); font-size: 12px; }
+  .kpi b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin: 1px 0; }
+  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
+  .jauge { height: 4px; border-radius: 4px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
+  .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 4px; }
+
+  .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
+  .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  .scene canvas:active { cursor: grabbing; }
+  .etiquettes { position: absolute; inset: 0; pointer-events: none; }
+  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
+  .et small { font-weight: 500; color: var(--doux); }
+  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(17,24,39,.86); color: #fff; border-radius: 5px; padding: 2px 6px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
+  .badge small { display: block; font-weight: 500; font-size: 9.5px; opacity: .8; }
+  .et i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .outils { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; }
+  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 7px; cursor: pointer; }
+  .bouton:hover { border-color: #cbd0d8; }
+  .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
+  .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis; }
+  .annonce.vu { opacity: .92; }
+  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--texte); text-align: center; }
+  .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; }
+  .fiche.vu { display: block; }
+  .fiche h3 { margin: 0; font-size: 16px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 8px; }
+  .fermer { position: absolute; right: 10px; top: 8px; border: 0; background: none; font-size: 18px; color: var(--doux); cursor: pointer; }
+  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .statut.dispo, .statut.fait { color: var(--vert); background: var(--vert-doux); }
+  .statut.occupe { color: var(--orange); background: var(--orange-doux); }
+  .statut.avenir { color: var(--accent); background: var(--accent-doux); }
+  .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  .lignes li span:first-child { color: var(--doux); }
+  .lignes li b { font-weight: 600; text-align: right; }
+
+  aside { background: var(--carte); border-left: 1px solid var(--ligne); display: flex; flex-direction: column; min-height: 0; }
+  .onglets { display: flex; border-bottom: 1px solid var(--ligne); padding: 0 12px; }
+  .onglets button { flex: 1; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--doux); padding: 12px 4px 10px; border-bottom: 2px solid transparent; cursor: pointer; }
+  .onglets button.actif { color: var(--accent); border-color: var(--accent); }
+  .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
+
+  .agenda { display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)); gap: 0 4px; }
+  .agenda .tete { font-size: 12px; font-weight: 600; text-align: center; padding-bottom: 6px; cursor: pointer; line-height: 1.2; }
+  .agenda .tete small { display: block; font-weight: 500; font-size: 11px; color: var(--doux); }
+  .agenda .tete small.dispo { color: var(--vert); }
+  .agenda .tete small.occupe { color: var(--orange); }
+  .grille { grid-column: 1 / -1; display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)); gap: 0 4px; position: relative; }
+  .colonne { position: relative; border-left: 1px solid var(--ligne); }
+  .graduation { position: relative; }
+  .graduation span { position: absolute; right: 4px; transform: translateY(-50%); font-size: 10.5px; color: var(--doux); font-variant-numeric: tabular-nums; }
+  .trait { position: absolute; left: 38px; right: 0; border-top: 1px solid var(--ligne); }
+  .agenda .bloc { left: 2px; right: 2px; top: auto; bottom: auto; font-size: 11.5px; padding: 3px 5px; white-space: normal; }
+  .agenda .bloc small { font-size: 10.5px; }
+  .heures, .rangee { display: grid; grid-template-columns: 84px 1fr; align-items: center; }
+  .heures div:last-child { position: relative; height: 18px; }
+  .heures span { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--doux); font-variant-numeric: tabular-nums; }
+  .rangee { height: 48px; border-top: 1px solid var(--ligne); }
+  .rangee > b { font-size: 12.5px; font-weight: 600; line-height: 1.2; cursor: pointer; }
+  .rangee > b small { display: block; font-weight: 500; color: var(--doux); font-size: 11px; }
+  .piste { position: relative; height: 38px; }
+  .bloc { position: absolute; top: 3px; bottom: 3px; border-radius: 5px; font-size: 10.5px; font-weight: 600; padding: 2px 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; border: 1px solid transparent; line-height: 1.25; }
+  .bloc small { display: block; font-weight: 500; opacity: .85; }
+  .bloc.fait { background: #eef0f3; color: #6b7280; }
+  .bloc.occupe { background: var(--orange-doux); color: var(--orange); border-color: #fdba74; }
+  .bloc.avenir { background: var(--accent-doux); color: var(--accent); }
+  .bloc.sel { outline: 2px solid var(--texte); }
+  .maintenant { position: absolute; left: 38px; right: 0; height: 2px; background: #dc2626; pointer-events: none; z-index: 2; }
+  .maintenant::before { content: ""; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
+  .legende { display: flex; gap: 12px; margin-top: 10px; font-size: 11.5px; color: var(--doux); flex-wrap: wrap; }
+  .legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid var(--ligne); }
+  td { padding: 8px 4px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+  tr.clic { cursor: pointer; }
+  tr.clic:hover td { background: var(--gris-doux); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mini { height: 5px; border-radius: 5px; background: var(--gris-doux); width: 70px; display: inline-block; vertical-align: middle; overflow: hidden; }
+  .mini i { display: block; height: 100%; background: var(--accent); }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  .bloc-txt { margin-top: 18px; }
+
+  @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto; height: auto; }
+    aside { border-left: 0; border-top: 1px solid var(--ligne); }
+    .contenu { overflow: visible; }
+    .scene canvas { touch-action: pan-y; }
+    .badge { font-size: 9.5px; padding: 1px 5px; }
+    .badge small { display: none; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi { padding: 10px 14px; }
+    .kpi b { font-size: 19px; }
+    header { flex-wrap: wrap; padding: 12px 14px; }
+    .horloge { margin-left: 0; text-align: left; width: 100%; }
+    .et { font-size: 10px; padding: 2px 6px; }
+    .fiche { width: auto; right: 14px; left: 10px; bottom: 10px; max-height: 42%; overflow-y: auto; padding: 10px 12px; }
+    .fiche h3 { font-size: 15px; }
+    .lignes li { font-size: 12px; padding: 4px 0; }
+    .annonce { display: none; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script>
+  // Si la maquette 3D ne démarre pas (navigateur trop ancien, WebGL coupé, fichier bloqué), on le dit clairement.
+  addEventListener('error', (e) => { if (!window.maquetteOk) setTimeout(() => window.montrerErreur && window.montrerErreur(), 0); });
+  window.montrerErreur = () => { const el = document.getElementById('erreur'); if (el) el.hidden = false; };
+  setTimeout(() => { if (!window.maquetteOk) window.montrerErreur(); }, 10000);
+</script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">M</div>
+    <div class="titre"><b>Auto-école Modèle <span class="demo">Démo · données fictives</span></b><span>Tableau de bord de l'agence · tout est à jour en direct</span></div>
+    <div class="horloge"><span class="direct"><i></i>En direct</span><b id="heure">--:--</b><span>journée accélérée pour la démo (1 s = 1 min)</span></div>
+  </header>
+
+  <section class="kpis" aria-label="Chiffres clés">
+    <div class="kpi"><span>Encaissé aujourd'hui</span><b id="k-jour">-</b><em id="k-jour-d"></em></div>
+    <div class="kpi"><span id="k-mois-t">Encaissé ce mois</span><b id="k-mois">-</b><em>objectif 24 000 €</em><div class="jauge"><i id="k-mois-j"></i></div></div>
+    <div class="kpi"><span>Heures de conduite</span><b id="k-heures">-</b><em>faites / prévues aujourd'hui</em></div>
+    <div class="kpi"><span>Remplissage des moniteurs</span><b id="k-rempl">-</b><em>heures vendues / heures dispo</em><div class="jauge"><i id="k-rempl-j"></i></div></div>
+    <div class="kpi"><span>Véhicules disponibles</span><b id="k-veh">-</b><em id="k-veh-d"></em></div>
+    <div class="kpi"><span>Reste à encaisser</span><b id="k-solde">-</b><em id="k-solde-d"></em></div>
+  </section>
+
+  <main class="scene" id="scene">
+    <div class="etiquettes" id="etiquettes"></div>
+    <div class="outils">
+      <button class="bouton" id="recentrer">Vue d'ensemble</button>
+      <button class="bouton" id="pause">Pause</button>
+    </div>
+    <div class="annonce" id="annonce"></div>
+    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Le planning et les chiffres à droite restent à jour. Essayez avec un navigateur récent (Chrome, Safari, Firefox).</div>
+    <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
+  </main>
+
+  <aside>
+    <nav class="onglets" role="tablist">
+      <button class="actif" data-onglet="planning">Planning</button>
+      <button data-onglet="moniteurs">Moniteurs</button>
+      <button data-onglet="vehicules">Véhicules</button>
+      <button data-onglet="eleves">Élèves</button>
+    </nav>
+    <div class="contenu" id="contenu"></div>
+    <p class="note">Démo avec des données inventées : aucune vraie auto-école, aucun vrai élève. Un clic sur un élément de la maquette ou du planning ouvre sa fiche.</p>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from './vendor/OrbitControls.js';
+
+// ================= Données fictives =================
+const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
+const MONITEURS = [
+  { id: 'm1', nom: 'Karim Benali', permis: 'B, A2', couleur: 0x1d4ed8 },
+  { id: 'm2', nom: 'Sophie Lambert', permis: 'B', couleur: 0x15803d },
+  { id: 'm3', nom: 'Thomas Renaud', permis: 'B, BE', couleur: 0xc2410c },
+  { id: 'm4', nom: 'Nadia Kaci', permis: 'B, boîte auto', couleur: 0x7c3aed },
+];
+const VOITURES = [
+  { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf1f1ee },
+  { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DÉMO-02', km: 31560, entretien: '3 déc.', couleur: 0x374151 },
+  { id: 'v3', nom: 'Voiture 3', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-03', km: 61030, entretien: '28 oct.', couleur: 0x9ca3af },
+  { id: 'v4', nom: 'Voiture 4', modele: 'Yaris, boîte manuelle', plaque: 'DÉMO-04', km: 22940, entretien: '19 nov.', couleur: 0xb91c1c },
+  { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DÉMO-05', km: 17480, entretien: '7 janv.', couleur: 0x1e3a8a },
+];
+const MOTOS = [
+  { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x111827, entretien: '15 nov.' },
+  { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xb91c1c, entretien: '2 déc.' },
+];
+// [heures faites, forfait, reste à payer en €]
+const ELEVES = {
+  'Léa Martin': [14, 20, 0], 'Hugo Durand': [18, 20, 112], 'Inès Toumi': [6, 20, 0], 'Yanis Petit': [18, 25, 336], 'Chloé Roux': [9, 20, 0], 'Lucas Girard': [27, 30, 0],
+  'Manon Faure': [3, 20, 0], 'Rayan Saidi': [12, 20, 224], 'Emma Vidal': [16, 20, 0], 'Noah Colin': [20, 20, 0], 'Jade Lefèvre': [8, 13, 0], 'Adam Bernard': [11, 20, 168],
+  'Sarah Nicolas': [5, 20, 0], 'Tom Henry': [19, 20, 0], 'Lina Amrani': [2, 20, 0], 'Enzo Marchal': [24, 25, 400],
+};
+// Planning du jour : [moniteur, début (h), durée (h), élève, type, véhicule]
+const PLANNING = [
+  ['m1', 8, 1, 'Léa Martin', 'Conduite 1 h', 'v1'], ['m1', 9, 2, 'Hugo Durand', 'Conduite 2 h', 'v1'], ['m1', 11, 1, 'Manon Faure', 'Conduite 1 h', 'v1'],
+  ['m1', 14, 2, 'Rayan Saidi', 'Plateau moto 2 h', 'mo1'], ['m1', 16, 1, 'Jade Lefèvre', 'Conduite 1 h', 'v1'], ['m1', 17, 1, 'Adam Bernard', 'Conduite 1 h', 'v1'],
+  ['m2', 8, 2, 'Inès Toumi', 'Conduite 2 h', 'v2'], ['m2', 10, 1, 'Chloé Roux', 'Conduite 1 h', 'v2'], ['m2', 11.5, 1, 'Sarah Nicolas', 'Conduite 1 h', 'v2'],
+  ['m2', 13.5, 1, 'Emma Vidal', 'Conduite 1 h', 'v2'], ['m2', 14.5, 2, 'Yanis Petit', 'Conduite 2 h', 'v2'], ['m2', 17, 1, 'Lina Amrani', 'Conduite 1 h', 'v2'],
+  ['m3', 8.5, 1, 'Lucas Girard', 'Conduite 1 h', 'v3'], ['m3', 10, 1.5, 'Noah Colin', 'Examen permis B', 'v3'], ['m3', 13.5, 2, 'Tom Henry', 'Conduite 2 h', 'v3'],
+  ['m3', 15.5, 1, 'Chloé Roux', 'Conduite 1 h', 'v3'], ['m3', 16.5, 1, 'Léa Martin', 'Conduite 1 h', 'v3'],
+  ['m4', 9, 1, 'Jade Lefèvre', 'Conduite boîte auto 1 h', 'v5'], ['m4', 10.5, 1, 'Emma Vidal', 'Conduite boîte auto 1 h', 'v5'], ['m4', 11.5, 1, 'Tom Henry', 'Conduite boîte auto 1 h', 'v5'],
+  ['m4', 14, 1, 'Sarah Nicolas', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo Marchal', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Hugo Durand', 'Conduite boîte auto 1 h', 'v5'],
+].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
+const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
+const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000;
+
+// ================= Horloge de démo (journée accélérée) =================
+let t = 13.3, pause = false; // 13h18 : la démo démarre juste avant les départs de l'après-midi
+const hh = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60 + 1e-6)).padStart(2, '0')}`;
+const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60)).padStart(2, '0') : ''}`;
+const statut = (l) => (l.fin <= t ? 'fait' : l.debut <= t ? 'occupe' : 'avenir');
+const enCours = (cond) => PLANNING.find((l) => l.debut <= t && t < l.fin && cond(l));
+const euros = (n) => n.toLocaleString('fr-FR') + ' €';
+
+// ================= Scène 3D =================
+const conteneur = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+conteneur.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xe9ebe6);
+
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 400);
+const VUE = new THREE.Vector3(48, 52, 58);
+camera.position.copy(VUE);
+const controls = new OrbitControls(camera, renderer.domElement);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.3, maxPolarAngle: 1.2, minZoom: 0.8, maxZoom: 4, enablePan: true, screenSpacePanning: false });
+const MOBILE = matchMedia('(max-width: 900px)').matches;
+const CIBLE = MOBILE ? new THREE.Vector3(-1, 0, -3) : new THREE.Vector3(-2, 0, -1);
+controls.target.copy(CIBLE);
+if (MOBILE) renderer.domElement.style.touchAction = 'pan-y'; // un doigt fait défiler la page, deux doigts zooment
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
+const soleil = new THREE.DirectionalLight(0xfff6ea, 2.4);
+soleil.position.set(-30, 60, 25);
+soleil.castShadow = true;
+soleil.shadow.mapSize.set(2048, 2048);
+Object.assign(soleil.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 160 });
+soleil.shadow.bias = -0.0003;
+soleil.shadow.normalBias = 0.02;
+scene.add(soleil);
+
+const mats = new Map();
+const mat = (c, o = {}) => { const k = c + JSON.stringify(o); if (!mats.has(k)) mats.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, metalness: 0, ...o })); return mats.get(k); };
+function boite(l, h, p, m, x, y, z, parent = scene, ombre = true) {
+  const b = new THREE.Mesh(new THREE.BoxGeometry(l, h, p), typeof m === 'number' ? mat(m) : m);
+  b.position.set(x, y + h / 2, z); b.castShadow = ombre; b.receiveShadow = true; parent.add(b); return b;
+}
+function texte(txt, { w = 512, h = 128, fond = '#ffffff', couleur = '#111827', taille = 64, poids = 700 } = {}) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.fillStyle = fond; g.fillRect(0, 0, w, h);
+  g.fillStyle = couleur; g.font = `${poids} ${taille}px Inter, Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, w / 2, h / 2 + 4);
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; return tx;
+}
+const cliquables = [];
+const clic = (obj, cle) => { obj.traverse((o) => { if (o.isMesh) { o.userData.cle = cle; cliquables.push(o); } }); };
+const zone = (l, p, x, z, cle, y = 0.13) => { const b = boite(l, 0.05, p, new THREE.MeshBasicMaterial({ visible: false }), x, y, z, scene, false); b.userData.cle = cle; cliquables.push(b); return b; };
+
+// --- Terrain, trottoirs, rue ---
+boite(66, 1.5, 50, 0xd6d3cb, 0, -1.5, 0);              // socle de la maquette
+boite(64, 0.05, 48, 0xc9d8b8, 0, 0, 0);                // pelouse
+boite(64, 0.12, 8, 0x50555e, 0, 0, 18);                // rue
+boite(64, 0.2, 1.8, 0xc8c6c0, 0, 0, 13.1);             // trottoir côté agence
+boite(64, 0.2, 1.8, 0xc8c6c0, 0, 0, 22.9);             // trottoir d'en face
+for (let x = -30; x <= 30; x += 4) boite(2, 0.02, 0.15, 0xf5f5f0, x, 0.12, 18, scene, false);
+for (let i = 0; i < 6; i++) boite(0.5, 0.02, 3.4, 0xf5f5f0, -12 + i, 0.12, 16.2, scene, false), boite(0.5, 0.02, 3.4, 0xf5f5f0, -12 + i, 0.12, 19.8, scene, false);
+for (const x of [-26, -6, 14, 28]) { boite(0.15, 4.2, 0.15, 0x4b5563, x, 0.2, 12.6); boite(1.2, 0.12, 0.3, 0x4b5563, x + 0.5, 4.3, 12.6); }
+
+// --- Bâtiment de l'agence (coupe à 1,2 m, comme une maquette d'architecte) ---
+const BX0 = -24, BX1 = -8, BZ0 = -4, BZ1 = 8, HM = 1.2, EM = 0.25;
+boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) / 2);
+boite(8, 0.02, 5.6, 0xd9c3a0, -12, 0.2, 5, scene, false);     // accueil : parquet
+boite(7.6, 0.02, 5.6, 0xe4e1da, -20, 0.2, 5, scene, false);   // attente
+boite(10, 0.02, 6, 0xb9bec7, -13, 0.2, -1, scene, false);     // salle de code : moquette
+boite(5.8, 0.02, 6, 0xd9c3a0, -21, 0.2, -1, scene, false);    // bureau du gérant
+const MUR = 0xfafaf8;
+const mur = (l, p, x, z) => boite(l, HM, p, MUR, x, 0.2, z);
+mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0);
+mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2);
+mur(EM, BZ1 - BZ0, BX1, (BZ0 + BZ1) / 2);
+mur(1, EM, BX0 + 0.5, BZ1); mur(1, EM, -15, BZ1); mur(1, EM, -13, BZ1); mur(1, EM, BX1 - 0.5, BZ1);
+const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.45, roughness: 0.1, metalness: 0.1 });
+boite(7, 1.1, 0.06, verre, -19.5, 0.2, BZ1, scene, false); boite(4, 1.1, 0.06, verre, -10.5, 0.2, BZ1, scene, false);
+mur(EM, 6, -18, -1); mur(6.5, EM, -14.75, 2); mur(1.5, EM, -9.2, 2);
+const enseigneTx = new THREE.MeshStandardMaterial({ map: texte('AUTO-ÉCOLE MODÈLE', { fond: '#1d4ed8', couleur: '#ffffff', taille: 58, w: 1024 }) });
+const enseigne = new THREE.Mesh(new THREE.BoxGeometry(7, 1.1, 0.15), [mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), enseigneTx, mat(0x1d4ed8)]);
+enseigne.position.set(-16, 2.3, BZ1 + 0.2); enseigne.castShadow = true; scene.add(enseigne);
+boite(0.12, 1.75, 0.12, 0x6b7280, -19, 0, BZ1 + 0.2); boite(0.12, 1.75, 0.12, 0x6b7280, -13, 0, BZ1 + 0.2);
+
+// Mobilier
+function chaise(x, z, r = 0, c = 0x374151) { const g = new THREE.Group(); boite(0.45, 0.06, 0.45, c, 0, 0.42, 0, g); boite(0.45, 0.45, 0.06, c, 0, 0.48, -0.2, g); for (const [a, b] of [[-0.18, -0.18], [0.18, -0.18], [-0.18, 0.18], [0.18, 0.18]]) boite(0.04, 0.42, 0.04, 0x9ca3af, a, 0, b, g); g.position.set(x, 0.2, z); g.rotation.y = r; scene.add(g); return g; }
+function table(l, p, x, z, c = 0xf5f5f4) { boite(l, 0.05, p, c, x, 0.92, z); for (const [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) boite(0.05, 0.72, 0.05, 0x9ca3af, x + a * (l / 2 - 0.08), 0.2, z + b * (p / 2 - 0.08)); }
+function ecran(x, z, l = 0.55) { boite(l, 0.35, 0.04, 0x111827, x, 0.99, z); }
+function plante(x, z, s = 1) { boite(0.45 * s, 0.45 * s, 0.45 * s, 0xe7e5e4, x, 0.2, z); const f = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42 * s, 1), mat(0x4d7c4a, { flatShading: true })); f.position.set(x, 0.2 + 0.85 * s, z); f.castShadow = true; scene.add(f); }
+boite(3.2, 1.05, 0.7, 0xf8fafc, -11.5, 0.2, 4.2); boite(0.7, 1.05, 1.6, 0xf8fafc, -9.6, 0.2, 4.75);
+boite(3.2, 0.04, 0.75, 0x1d4ed8, -11.5, 1.25, 4.2, scene, false);
+ecran(-11.8, 3.85); ecran(-10.8, 3.85); chaise(-10.8, 3.2, Math.PI, 0x1f2937);
+plante(-8.8, 7.4);
+boite(3, 0.45, 0.8, 0x64748b, -20, 0.2, 7.2); boite(3, 0.45, 0.2, 0x64748b, -20, 0.65, 7.55);
+boite(0.8, 0.45, 2.4, 0x64748b, -23.2, 0.2, 5); boite(0.2, 0.45, 2.4, 0x64748b, -23.55, 0.65, 5);
+boite(1.2, 0.35, 0.7, 0xd6d3d1, -20.5, 0.2, 5.4); plante(-23.2, 7.3, 0.8);
+boite(4, 1.6, 0.08, 0x111827, -13, 0.9, -3.75); boite(3.8, 1.4, 0.02, 0x2563eb, -13, 1.0, -3.7, scene, false);
+const postesCode = [];
+for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = -16.4 + c * 2.3, z = -1.8 + r * 1.35; table(1.6, 0.55, x, z); chaise(x, z + 0.55, Math.PI); postesCode.push(new THREE.Vector3(x, 0.2, z + 0.55)); }
+zone(9.6, 5.6, -13, -1, 'code', 0.2);
+zone(7.5, 5, -12, 5, 'accueil', 0.2);
+zone(5.6, 5.6, -21, -1, 'agence', 0.2);
+zone(7.4, 5.4, -20, 5, 'agence', 0.2);
+zone(BX1 - BX0, BZ1 - BZ0, (BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 'agence', 0.12);
+table(1.8, 0.9, -21, -2.2, 0x8b6b4a); ecran(-21, -2.5); chaise(-21, -1.4, Math.PI, 0x111827); chaise(-21.5, -3.3, 0); boite(0.5, 1.8, 2, 0xe7e5e4, -23.5, 0.2, 0.5); plante(-19, 1.4, 0.8);
+
+// --- Parking (7 places), allée, entrée ---
+const PX0 = -4, NB_PLACES = 7;
+boite(30, 0.08, 13, 0x6b7079, 10.5, 0.05, -1.5);
+boite(5, 0.08, 6.6, 0x6b7079, 22, 0.05, 8.8);
+boite(5, 0.22, 1.8, 0x9a9890, 22, 0, 13.1);
+const PLACES = [];
+for (let i = 0; i < NB_PLACES; i++) {
+  const x = PX0 + 1.5 + i * 2.7;
+  PLACES.push(new THREE.Vector3(x + 1.35, 0.13, -4.6));
+  boite(0.1, 0.02, 5, 0xf5f5f0, x, 0.13, -5.5, scene, false);
+  const num = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.6), new THREE.MeshBasicMaterial({ map: texte(String(i + 1), { fond: '#6b7079', couleur: '#f5f5f0', taille: 90, w: 160, h: 96 }) }));
+  num.rotation.x = -Math.PI / 2; num.position.set(x + 1.35, 0.14, -1.6); scene.add(num);
+  zone(2.5, 5, x + 1.35, -5.5, 'place' + i);
+}
+boite(0.1, 0.02, 5, 0xf5f5f0, PX0 + 1.5 + NB_PLACES * 2.7, 0.13, -5.5, scene, false);
+const totemTx = new THREE.MeshStandardMaterial({ map: texte('M', { fond: '#1d4ed8', couleur: '#fff', taille: 100, w: 128, h: 200 }) });
+const totem = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.2, 0.25), [mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), mat(0x1d4ed8), totemTx, mat(0x1d4ed8)]);
+totem.position.set(25.6, 1.3, 11.2); totem.castShadow = true; scene.add(totem);
+boite(0.4, 1.3, 0.3, 0xe5e7eb, PLACES[6].x, 0.13, -8.3); // borne de recharge
+
+// --- Plateau moto (tracés et plots) ---
+boite(26, 0.08, 9, 0x8f949b, 9, 0.05, -14.5);
+for (let x = -2; x <= 20; x += 2.2) boite(0.08, 0.02, 7, 0xfde68a, x, 0.13, -14.5, scene, false);
+for (let i = 0; i < 9; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.45, 14), mat(0xf97316)); c.position.set(i * 2.2, 0.35, -14.5 + (i % 2 ? 1.6 : -1.6)); c.castShadow = true; scene.add(c); }
+zone(26, 9, 9, -14.5, 'plateau');
+for (let x = -30; x <= 30; x += 2.5) boite(0.08, 0.9, 0.08, 0x9ca3af, x, 0, -22.6);
+boite(60, 0.06, 0.06, 0x9ca3af, 0, 0.85, -22.6, scene, false);
+function arbre(x, z, s = 1) {
+  const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * s, 0.2 * s, 1.6 * s, 8), mat(0x7c5a3c)); tr.position.set(x, 0.8 * s, z); tr.castShadow = true; scene.add(tr);
+  const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.3 * s, 1), mat(0x5f8f55, { flatShading: true })); f.position.set(x, 2.3 * s, z); f.castShadow = true; scene.add(f);
+}
+[[-28, -20], [-28, -8], [-28, 4], [28, -20], [28, -6], [-4, 10.5], [4, 10.5], [10, 10.5], [-27, 10.5], [-1, -20.5], [18, -20.5], [-14, -8.5], [-20, -9]].forEach(([x, z], i) => arbre(x, z, i % 3 ? 1 : 1.2));
+for (const x of [-22, -10, 2, 16]) arbre(x, 24, 0.9);
+
+// --- Véhicules (profil de voiture extrudé, vraies dimensions) ---
+const panneauTx = new THREE.MeshStandardMaterial({ map: texte('AUTO-ÉCOLE', { fond: '#ffffff', couleur: '#b91c1c', taille: 60 }) });
+function voiture(couleur, ecole = true) {
+  const g = new THREE.Group();
+  const W = 1.76;
+  const s = new THREE.Shape();
+  [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v)));
+  const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 });
+  geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2);
+  const corps = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); corps.castShadow = true; corps.receiveShadow = true; g.add(corps);
+  const vitre = mat(0x1f2a37, { roughness: 0.15, metalness: 0.4 });
+  const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v)));
+  const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2);
+  g.add(new THREE.Mesh(vg, vitre));
+  const pb = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, 0.78), vitre); pb.position.set(0, 1.19, 0.61); pb.rotation.x = -0.68; g.add(pb);
+  const lu = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, 0.72), vitre); lu.position.set(0, 1.24, -1.56); lu.rotation.x = 0.95; lu.rotation.y = Math.PI; g.add(lu);
+  const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 18), jante = new THREE.CylinderGeometry(0.2, 0.2, 0.26, 12);
+  for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) {
+    const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); r.castShadow = true; g.add(r);
+    const j = new THREE.Mesh(jante, mat(0xd1d5db, { metalness: 0.6, roughness: 0.3 })); j.rotation.z = Math.PI / 2; j.position.set(x, 0.33, z); g.add(j);
+  }
+  for (const x of [-0.6, 0.6]) { boite(0.36, 0.1, 0.06, 0xfefce8, x, 0.62, 2.1, g, false); boite(0.32, 0.1, 0.06, 0xdc2626, x, 0.7, -2.1, g, false); }
+  if (ecole) {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.3, 1.1), [panneauTx, panneauTx, mat(0xffffff), mat(0xffffff), mat(0xffffff), mat(0xffffff)]);
+    p.position.set(0, 1.62, -0.5); p.castShadow = true; g.add(p);
+  }
+  return g;
+}
+function moto(couleur) {
+  const g = new THREE.Group();
+  boite(0.3, 0.35, 1.1, couleur, 0, 0.45, 0, g); boite(0.26, 0.12, 0.6, 0x111827, 0, 0.8, -0.2, g); boite(0.6, 0.05, 0.05, 0x111827, 0, 1.0, 0.45, g);
+  const roue = new THREE.CylinderGeometry(0.32, 0.32, 0.12, 18);
+  for (const z of [0.72, -0.72]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(0, 0.32, z); r.castShadow = true; g.add(r); }
+  return g;
+}
+function personne(couleur, taille = 1) {
+  const g = new THREE.Group();
+  for (const x of [-0.1, 0.1]) boite(0.13 * taille, 0.8 * taille, 0.16 * taille, 0x1f2937, x * taille, 0, 0, g);
+  const torse = new THREE.Mesh(new THREE.CapsuleGeometry(0.2 * taille, 0.42 * taille, 4, 12), mat(couleur)); torse.position.y = 1.12 * taille; torse.castShadow = true; g.add(torse);
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.14 * taille, 16, 12), mat(0xdcb08a)); tete.position.y = 1.62 * taille; tete.castShadow = true; g.add(tete);
+  return g;
+}
+
+const objets = {};
+const RANG_PLACE = { v1: 0, v2: 1, v3: 2, v4: 3, v5: 6 };
+VOITURES.forEach((v) => {
+  const obj = voiture(v.couleur); obj.position.copy(PLACES[RANG_PLACE[v.id]]); obj.rotation.y = Math.PI; scene.add(obj); clic(obj, v.id);
+  objets[v.id] = { type: 'voiture', data: v, obj, place: RANG_PLACE[v.id], mode: 'gare', chemin: null, k: 0, u: 0, rot: Math.PI };
+});
+const PLACES_MOTO = [new THREE.Vector3(21.5, 0.13, -9.6), new THREE.Vector3(23, 0.13, -9.6)];
+MOTOS.forEach((m, i) => { const obj = moto(m.couleur); obj.position.copy(PLACES_MOTO[i]); scene.add(obj); clic(obj, m.id); objets[m.id] = { type: 'moto', data: m, obj, place: i, mode: 'gare', a: 0 }; });
+const POSTES = [new THREE.Vector3(-12.6, 0.2, 6), new THREE.Vector3(-14.2, 0.2, 6.6), new THREE.Vector3(-10.3, 0.2, 6.4), new THREE.Vector3(-15.4, 0.2, 5.2)];
+MONITEURS.forEach((m, i) => { const obj = personne(m.couleur); obj.position.copy(POSTES[i]); obj.rotation.y = 0.4 - i * 0.5; scene.add(obj); clic(obj, m.id); objets[m.id] = { type: 'moniteur', data: m, obj }; });
+const secretaire = personne(0x1d4ed8, 0.95); secretaire.position.set(-11.8, 0.2, 3.3); scene.add(secretaire);
+secretaire.userData.nom = 'Julie Moreau'; secretaire.userData.role = 'secrétaire';
+const NOMS_CODE = ['Camille Robert', 'Louis Fontaine', 'Zoé Garnier', 'Nathan Perrin', 'Alice Chevalier', 'Théo Blanc', 'Mia Guérin', 'Ethan Muller', 'Rose Gauthier', 'Gabriel Roche', 'Lou Barbier', 'Jules Mercier'];
+const elevesCode = postesCode.map((p, i) => { const o = personne(0x94a3b8, 0.85); o.position.copy(p); o.rotation.y = Math.PI; o.visible = false; o.userData.nom = NOMS_CODE[i]; o.userData.role = 'élève · code'; scene.add(o); return o; });
+const attente = [[-20.5, 7], [-19.5, 7], [-23.1, 5.4], [-23.1, 4.4]].map(([x, z], i) => { const o = personne(0x94a3b8, 0.9); o.position.set(x, 0.2, z); o.rotation.y = i < 2 ? Math.PI : Math.PI / 2; o.visible = false; scene.add(o); return o; });
+const trafic = [[0x6b7280, 15.9, 1, -10], [0xe5e7eb, 20.1, -1, 5], [0x0f766e, 15.9, 1, 22], [0x78350f, 20.1, -1, -24]].map(([c, z, sens, x]) => { const o = voiture(c, false); o.position.set(x, 0.13, z); o.rotation.y = sens > 0 ? Math.PI / 2 : -Math.PI / 2; scene.add(o); return { o, sens, v: 7 + Math.random() * 2 }; });
+
+const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0x1d4ed8, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
+anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
+
+// ================= Mouvements, calés sur le planning =================
+const VOIE = 15.9;
+// Trajets lissés : une courbe continue (virages arrondis), parcourue à vitesse constante,
+// avec un démarrage et un freinage doux ; l'orientation suit la tangente de la courbe.
+const V3 = (x, z) => new THREE.Vector3(x, 0.13, z);
+function courbe(points) { const c = new THREE.CatmullRomCurve3(points, false, 'centripetal'); return { c, L: c.getLength(), s: 0 }; }
+function depart(v) {
+  const p = PLACES[v.place];
+  // marche arrière pour sortir de la place, en tournant vers la sortie, puis départ en avant
+  // 1) recule tout droit hors de la place, 2) continue à reculer en braquant (le nez se tourne vers la sortie)
+  v.reculs = [{ de: p.clone(), vers: V3(p.x, 0.2), r0: Math.PI, r1: Math.PI, duree: 1.4 }, { de: V3(p.x, 0.2), vers: V3(p.x - 1.8, 2), r0: Math.PI, r1: Math.PI / 2, duree: 1.4 }];
+  v.recul = { ...v.reculs.shift(), k: 0 };
+  v.trajet = courbe([V3(p.x - 1.8, 2), V3(p.x + 1.5, 2), V3(19.5, 2), V3(22, 4), V3(22, 9.5), V3(23.6, 14.4), V3(27, VOIE), V3(42, VOIE)]);
+  v.freine = false; v.mode = 'sortie';
+}
+function retour(v) {
+  const p = PLACES[v.place];
+  v.recul = null;
+  v.trajet = courbe([V3(-42, VOIE), V3(17.5, VOIE), V3(20.8, 14.2), V3(22, 10.5), V3(22, 3.5), V3(19.5, 1.2), V3(p.x + 3, 1.2), V3(p.x + 0.3, -1.2), p.clone()]);
+  v.freine = true; v.mode = 'retour'; v.obj.visible = true;
+  v.obj.position.copy(v.trajet.c.getPointAt(0)); v.rot = Math.PI / 2;
+}
+const doux = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+function avancer(v, dt, vmax = 7.5) {
+  if (v.recul) { // marche arrière : 1,6 s, départ et arrêt en douceur
+    const r = v.recul; r.k = Math.min(1, r.k + dt / r.duree); const e = doux(r.k);
+    v.obj.position.lerpVectors(r.de, r.vers, e); v.rot = r.r0 + (r.r1 - r.r0) * e; v.obj.rotation.y = v.rot;
+    if (r.k >= 1) v.recul = v.reculs?.length ? { ...v.reculs.shift(), k: 0 } : null;
+    return false;
+  }
+  const tj = v.trajet;
+  const reste = tj.L - tj.s;
+  const vit = vmax * Math.min(1, 0.2 + tj.s / 5, v.freine ? 0.15 + reste / 6 : 1); // accélère sur 5 m, freine sur 6 m
+  tj.s = Math.min(tj.L, tj.s + vit * dt);
+  const u = tj.s / tj.L;
+  v.obj.position.copy(tj.c.getPointAt(u));
+  v.obj.visible = Math.abs(v.obj.position.x) < 33.5; // hors du socle : on ne la voit plus
+  const tg = tj.c.getTangentAt(Math.min(u, 0.999));
+  let d = Math.atan2(tg.x, tg.z) - v.rot; d = Math.atan2(Math.sin(d), Math.cos(d));
+  v.rot += d * Math.min(1, dt * 12); v.obj.rotation.y = v.rot;
+  return tj.s >= tj.L;
+}
+// Apparition et disparition des personnes en fondu (pas de saut)
+let instantane = false;
+function montrer(o, oui) {
+  o.userData.cible = oui ? 1 : 0;
+  if (instantane) { o.userData.s = oui ? 1 : 0; o.scale.setScalar(oui ? 1 : 0.001); o.visible = oui; return; }
+  if (oui && !o.visible) { o.visible = true; o.userData.s = 0.001; o.scale.setScalar(0.001); }
+}
+function fondus(dt) {
+  for (const o of [...MONITEURS.map((m) => objets[m.id].obj), ...elevesCode, ...attente]) {
+    if (o.userData.cible === undefined) continue;
+    const s0 = o.userData.s ?? (o.visible ? 1 : 0), s1 = s0 + (o.userData.cible - s0) * Math.min(1, dt * 7);
+    o.userData.s = s1; o.scale.setScalar(Math.max(s1, 0.001)); o.visible = s1 > 0.02;
+  }
+}
+const dispo = (m) => !enCours((x) => x.m === m.id);
+const nbCode = () => (t < 9 || t > 18.5 ? 0 : Math.min(12, Math.max(4, Math.round(8 + 2 * Math.sin(t * 1.3) + 2 * Math.sin(t * 3.1)))));
+let derniereSortie = -1e9, dernierRetour = -1e9;
+function synchroniser(instant = false) {
+  instantane = instant;
+  const maintenantMs = performance.now();
+  for (const v of [...VOITURES, ...MOTOS]) {
+    const o = objets[v.id], l = enCours((x) => x.veh === v.id);
+    if (o.type === 'voiture') {
+      if (l && o.mode === 'gare') { if (instant) { o.mode = 'dehors'; o.obj.visible = false; } else if (maintenantMs - derniereSortie > 4500) { derniereSortie = maintenantMs; depart(o); annoncer(`${hh(t)} · ${objets[l.m].data.nom} part en leçon avec ${l.eleve} (${v.nom})`); } }
+      if (!l && o.mode === 'dehors' && (instant || maintenantMs - dernierRetour > 4500)) { dernierRetour = maintenantMs; retour(o); annoncer(`${hh(t)} · ${v.nom} rentre au parking`); }
+    } else {
+      if (l && o.mode === 'gare') { o.mode = 'piste'; if (!instant) annoncer(`${hh(t)} · ${objets[l.m].data.nom} commence le plateau moto avec ${l.eleve}`); }
+      if (!l && o.mode === 'piste') { o.mode = 'gare'; o.obj.position.copy(PLACES_MOTO[o.place]); o.obj.rotation.set(0, 0, 0); }
+    }
+  }
+  MONITEURS.forEach((m, i) => {
+    const l = enCours((x) => x.m === m.id), o = objets[m.id].obj;
+    if (l && l.veh.startsWith('mo')) { montrer(o, true); o.position.set(-3.6, 0.13, -12.2); o.rotation.y = 1.2; }
+    else { montrer(o, !l); if (!l) { o.position.copy(POSTES[i]); o.rotation.y = 0.4 - i * 0.5; } }
+  });
+  const prochains = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).length;
+  const arrivants = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).sort((a, b) => a.debut - b.debut);
+  attente.forEach((p, i) => { montrer(p, i < prochains); p.userData.nom = arrivants[i]?.eleve || ''; p.userData.role = arrivants[i] ? `élève · leçon à ${hTxt(arrivants[i].debut)}` : ''; });
+  elevesCode.forEach((p, i) => { montrer(p, i < nbCode()); });
+}
+
+// ================= Étiquettes =================
+const couche = document.getElementById('etiquettes');
+const etiquettes = [];
+function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn }); }
+const point = (c) => `<i style="background:${c}"></i>`;
+const libresParking = () => NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
+etiquette('parking', () => new THREE.Vector3(10, 2.6, -8.6), () => `${point('#15803d')}Parking <small>${libresParking()}/${NB_PLACES} libres</small>`);
+etiquette('code', () => new THREE.Vector3(-13, 2.9, -2.5), () => `${point('#1d4ed8')}Salle de code <small>${nbCode()}/12</small>`);
+etiquette('plateau', () => new THREE.Vector3(4, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
+etiquette('accueil', () => new THREE.Vector3(-12, 3.1, 5), () => { const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => dispo(m)).length; return `${point(d ? '#15803d' : '#c2410c')}Accueil <small>${d} dispo · ${n} en attente</small>`; });
+// Badges « prénom nom » au-dessus de chaque personne de l'agence, affichés dès qu'on zoome (clic dans l'agence ou molette).
+const badges = [];
+function badge(obj, nom, role) { const el = document.createElement('div'); el.className = 'badge'; couche.appendChild(el); badges.push({ el, obj, nom, role }); }
+MONITEURS.forEach((m) => badge(objets[m.id].obj, () => m.nom, () => (dispo(m) ? 'moniteur · dispo' : 'moniteur · plateau moto')));
+badge(secretaire, () => secretaire.userData.nom, () => secretaire.userData.role);
+elevesCode.forEach((o) => badge(o, () => o.userData.nom, () => o.userData.role));
+attente.forEach((o) => badge(o, () => o.userData.nom, () => o.userData.role));
+function placerBadges(r) {
+  const vu = camera.zoom >= 1.6;
+  for (const b of badges) {
+    if (!vu || !b.obj.visible || !b.nom()) { b.el.style.display = 'none'; continue; }
+    const html = `${b.nom()}<small>${b.role()}</small>`;
+    if (b.el.innerHTML !== html) b.el.innerHTML = html;
+    v3.copy(b.obj.position).add(new THREE.Vector3(0, 2.05, 0)).project(camera);
+    const x = ((v3.x + 1) / 2) * r.width, y = ((1 - v3.y) / 2) * r.height;
+    if (x < 0 || x > r.width || y < 0 || y > r.height) { b.el.style.display = 'none'; continue; }
+    b.el.style.display = ''; b.el.style.left = x + 'px'; b.el.style.top = y + 'px';
+  }
+}
+const v3 = new THREE.Vector3();
+function placerEtiquettes() {
+  const r = renderer.domElement.getBoundingClientRect();
+  for (const e of etiquettes) {
+    const html = e.fn();
+    if (!html) { e.el.style.display = 'none'; continue; }
+    if (e.el.innerHTML !== html) e.el.innerHTML = html;
+    v3.copy(e.pos()).project(camera);
+    e.el.style.display = '';
+    e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px';
+    e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px';
+  }
+  placerBadges(r);
+}
+let minuteur;
+function annoncer(txt) { const a = document.getElementById('annonce'); a.textContent = txt; a.classList.add('vu'); clearTimeout(minuteur); minuteur = setTimeout(() => a.classList.remove('vu'), 3500); }
+
+// ================= Chiffres et panneau =================
+const $ = (id) => document.getElementById(id);
+function majKpis() {
+  const faits = PLANNING.filter((l) => l.fin <= t);
+  const caJour = faits.reduce((s, l) => s + l.prix, 0);
+  const hFaites = faits.reduce((s, l) => s + l.duree, 0) + PLANNING.filter((l) => l.debut <= t && t < l.fin).reduce((s, l) => s + (t - l.debut), 0);
+  const hPrevues = PLANNING.reduce((s, l) => s + l.duree, 0);
+  $('k-jour').textContent = euros(caJour);
+  $('k-jour-d').textContent = `${faits.length} leçons terminées sur ${PLANNING.length}`;
+  const mois = CA_MOIS_AVANT + caJour;
+  $('k-mois').textContent = euros(mois);
+  $('k-mois-t').textContent = 'Encaissé en ' + new Date().toLocaleDateString('fr-FR', { month: 'long' });
+  $('k-mois-j').style.width = Math.min(100, (mois / OBJECTIF_MOIS) * 100) + '%';
+  $('k-heures').textContent = `${String(Math.round(hFaites * 10) / 10).replace('.', ',')} / ${String(hPrevues).replace('.', ',')} h`;
+  const r = Math.round((hPrevues / H_DISPO) * 100);
+  $('k-rempl').textContent = r + ' %';
+  $('k-rempl-j').style.width = r + '%';
+  const vDispo = VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
+  $('k-veh').textContent = `${vDispo} / ${VOITURES.length}`;
+  $('k-veh-d').textContent = `voitures · ${MOTOS.filter((m) => objets[m.id].mode === 'gare').length} / ${MOTOS.length} motos`;
+  const dus = Object.entries(ELEVES).filter(([, e]) => e[2] > 0);
+  $('k-solde').textContent = euros(dus.reduce((s, [, e]) => s + e[2], 0));
+  $('k-solde-d').textContent = `${dus.length} élèves à relancer`;
+}
+const pct = (h) => ((h - OUVERTURE) / (FERMETURE - OUVERTURE)) * 100;
+const statutTxt = { fait: 'Terminée', occupe: 'En cours', avenir: 'À venir' };
+let onglet = 'planning', selection = null;
+function rendrePanneau() {
+  const c = $('contenu');
+  if (onglet === 'planning') {
+    const H = 44, haut = (FERMETURE - OUVERTURE) * H, y = (h) => (h - OUVERTURE) * H;
+    const graduations = [], traits = [];
+    for (let h = OUVERTURE; h <= FERMETURE; h++) { graduations.push(`<span style="top:${y(h)}px">${h}h</span>`); traits.push(`<div class="trait" style="top:${y(h)}px"></div>`); }
+    const tt = Math.min(Math.max(t, OUVERTURE), FERMETURE);
+    c.innerHTML = `<h2>Planning du jour</h2><div class="agenda"><div></div>${MONITEURS.map((m) => { const l = enCours((x) => x.m === m.id); return `<div class="tete" data-cle="${m.id}">${m.nom}<small class="${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</small></div>`; }).join('')}
+      <div class="grille" style="height:${haut}px">${traits.join('')}<div class="graduation">${graduations.join('')}</div>${MONITEURS.map((m) => `<div class="colonne">${PLANNING.filter((x) => x.m === m.id).map((x) => `<div class="bloc ${statut(x)} ${selection === x.id ? 'sel' : ''}" data-cle="${x.id}" style="top:${y(x.debut) + 1}px;height:${x.duree * H - 3}px" title="${hTxt(x.debut)} – ${hTxt(x.fin)} · ${x.eleve} · ${x.type}">${x.eleve.split(' ')[0]}<small>${x.veh.startsWith('mo') ? 'moto' : x.type.startsWith('Examen') ? 'examen' : hTxt(x.debut)}</small></div>`).join('')}</div>`).join('')}
+      <div class="maintenant" style="top:${y(tt)}px"></div></div></div>
+    <div class="legende"><span><i style="background:#eef0f3"></i>terminée</span><span><i style="background:var(--orange-doux);border:1px solid #fdba74"></i>en cours</span><span><i style="background:var(--accent-doux)"></i>à venir</span><span><i style="background:#dc2626"></i>maintenant</span></div>
+    <div class="bloc-txt"><h2>Prochaines leçons</h2><table><tbody>${PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 5).map((l) => `<tr class="clic" data-cle="${l.id}"><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td><td class="num">${euros(l.prix)}</td></tr>`).join('') || '<tr><td>Plus de leçon aujourd\'hui</td></tr>'}</tbody></table></div>`;
+  } else if (onglet === 'moniteurs') {
+    c.innerHTML = `<h2>Moniteurs</h2><table><thead><tr><th>Moniteur</th><th>Statut</th><th class="num">Heures</th><th class="num">CA du jour</th></tr></thead><tbody>${MONITEURS.map((m) => {
+      const ls = PLANNING.filter((x) => x.m === m.id), l = enCours((x) => x.m === m.id), h = ls.reduce((s, x) => s + x.duree, 0);
+      return `<tr class="clic" data-cle="${m.id}"><td><b>${m.nom}</b><br><small style="color:var(--doux)">permis ${m.permis}</small></td><td><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</span></td><td class="num">${h} / 10 h<br><span class="mini"><i style="width:${h * 10}%"></i></span></td><td class="num">${euros(ls.reduce((s, x) => s + x.prix, 0))}</td></tr>`;
+    }).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">CA du jour = leçons prévues aujourd'hui.</p>`;
+  } else if (onglet === 'vehicules') {
+    c.innerHTML = `<h2>Véhicules</h2><table><thead><tr><th>Véhicule</th><th>Statut</th><th class="num">Utilisation</th><th>Entretien</th></tr></thead><tbody>${[...VOITURES, ...MOTOS].map((v) => {
+      const o = objets[v.id], h = PLANNING.filter((x) => x.veh === v.id).reduce((s, x) => s + x.duree, 0), dehors = o.mode !== 'gare';
+      return `<tr class="clic" data-cle="${v.id}"><td><b>${v.nom}</b><br><small style="color:var(--doux)">${v.modele}</small></td><td><span class="statut ${dehors ? 'occupe' : 'dispo'}">${dehors ? 'en leçon' : 'dispo'}</span></td><td class="num">${String(h).replace('.', ',')} h<br><span class="mini"><i style="width:${Math.min(100, h * 10)}%"></i></span></td><td>${v.entretien}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  } else {
+    const noms = [...new Set(PLANNING.map((l) => l.eleve))];
+    c.innerHTML = `<h2>Élèves du jour</h2><table><thead><tr><th>Élève</th><th>Heure</th><th class="num">Forfait</th><th class="num">Reste à payer</th></tr></thead><tbody>${noms.map((n) => {
+      const e = ELEVES[n], l = PLANNING.filter((x) => x.eleve === n).sort((a, b) => a.debut - b.debut)[0];
+      return `<tr class="clic" data-cle="${l.id}"><td><b>${n}</b></td><td>${hTxt(l.debut)}</td><td class="num">${e[0]} / ${e[1]} h<br><span class="mini"><i style="width:${Math.min(100, (e[0] / e[1]) * 100)}%"></i></span></td><td class="num" style="color:${e[2] ? 'var(--orange)' : 'var(--vert)'}">${e[2] ? euros(e[2]) : 'à jour'}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  }
+}
+$('contenu').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
+document.querySelectorAll('[data-onglet]').forEach((b) => b.onclick = () => { onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendrePanneau(); });
+
+const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
+function rendreFiche() {
+  const f = $('fiche'), c = $('fiche-c'), s = selection;
+  if (!s) { f.classList.remove('vu'); return; }
+  f.classList.add('vu');
+  if (/^l\d/.test(s)) {
+    const l = PLANNING.find((x) => x.id === s), e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data;
+    c.innerHTML = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span><ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}</ul>`;
+  } else if (s === 'agence') {
+    const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => dispo(m)).length;
+    c.innerHTML = `<h3>L'agence</h3><p class="sous">Accueil, salle d'attente, salle de code (12 postes), bureau du gérant</p><ul class="lignes">${li('Secrétaire', 'Julie Moreau')}${li('Moniteurs à l\'agence', MONITEURS.filter((m) => dispo(m)).map((m) => m.nom).join(', ') || 'aucun')}${li('Élèves en attente', n)}${li('En salle de code', `${nbCode()} / 12`)}${li('Prochaine leçon', (() => { const l = PLANNING.filter((x) => x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return l ? `${hTxt(l.debut)} · ${l.eleve}` : 'aucune'; })())}</ul>`;
+  } else if (s === 'code') {
+    c.innerHTML = `<h3>Salle de code</h3><p class="sous">12 postes · séries sur écran</p><span class="statut dispo">${nbCode()} élève${nbCode() > 1 ? 's' : ''} présent${nbCode() > 1 ? 's' : ''}</span><ul class="lignes">${elevesCode.filter((o) => o.visible).map((o, i) => li('Poste ' + (elevesCode.indexOf(o) + 1), o.userData.nom)).join('')}${li('Postes libres', 12 - nbCode())}${li('Séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
+  } else if (s === 'plateau') {
+    const l = enCours((x) => x.veh.startsWith('mo'));
+    c.innerHTML = `<h3>Plateau moto</h3><p class="sous">Piste de maniabilité, 9 plots</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'Occupé' : 'Libre'}</span><ul class="lignes">${l ? li('Élève', l.eleve) + li('Moniteur', objets[l.m].data.nom) + li('Jusqu\'à', hTxt(l.fin)) : li('Prochain créneau', (() => { const p = PLANNING.filter((x) => x.veh.startsWith('mo') && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return p ? `${hTxt(p.debut)}, ${objets[p.m].data.nom}` : 'aucun aujourd\'hui'; })())}</ul>`;
+  } else if (s === 'accueil') {
+    const p = PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 4);
+    const presents = MONITEURS.filter((m) => dispo(m)).map((m) => m.nom).join(', ') || 'aucun';
+    c.innerHTML = `<h3>Accueil</h3><p class="sous">Secrétariat ouvert de 8h à 19h</p><ul class="lignes">${li('Secrétaire', 'Julie Moreau')}${li('Moniteurs dispo', presents)}${attente.filter((o) => o.visible).map((o) => li('En attente', `${o.userData.nom} (${o.userData.role.replace('élève · ', '')})`)).join('')}${p.map((l) => li(hTxt(l.debut), `${l.eleve} avec ${objets[l.m].data.nom}`)).join('') || li('Prochaines arrivées', 'aucune')}</ul>`;
+  } else if (s === 'parking') {
+    const dehors = VOITURES.filter((v) => objets[v.id].mode !== 'gare');
+    c.innerHTML = `<h3>Parking</h3><p class="sous">7 places · borne de recharge sur la place 7</p><span class="statut ${libresParking() ? 'dispo' : 'occupe'}">${libresParking()} places libres sur ${NB_PLACES}</span><ul class="lignes">${li('Voitures au parking', `${VOITURES.length - dehors.length} sur ${VOITURES.length}`)}${dehors.map((v) => { const l = enCours((x) => x.veh === v.id); return li(v.nom, l ? `en leçon, retour ${hTxt(l.fin)}` : 'revient au parking'); }).join('')}</ul>`;
+  } else if (s.startsWith('place')) {
+    const i = +s.slice(5), v = VOITURES.find((x) => objets[x.id].place === i), occ = v && objets[v.id].mode === 'gare', l = v && enCours((x) => x.veh === v.id);
+    c.innerHTML = `<h3>Place ${i + 1}</h3><p class="sous">Parking de l'agence${i === 6 ? ' · borne de recharge' : ''}</p><span class="statut ${occ ? 'occupe' : 'dispo'}">${occ ? 'Occupée' : 'Libre'}</span><ul class="lignes">${li('Réservée à', v ? v.nom : 'visiteurs')}${l ? li('Retour prévu', hTxt(l.fin)) : ''}${li('Places libres maintenant', `${libresParking()} sur ${NB_PLACES}`)}</ul>`;
+  } else {
+    const o = objets[s];
+    if (o.type === 'moniteur') {
+      const m = o.data, ls = PLANNING.filter((x) => x.m === m.id), l = enCours((x) => x.m === m.id);
+      c.innerHTML = `<h3>${m.nom}</h3><p class="sous">Moniteur · permis ${m.permis}</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'En leçon avec ' + l.eleve : 'Disponible'}</span><ul class="lignes">${ls.map((x) => li(`${hTxt(x.debut)} · ${x.type}`, `${x.eleve}${statut(x) === 'fait' ? ' ✓' : ''}`)).join('')}${li('CA du jour', euros(ls.reduce((a, x) => a + x.prix, 0)))}</ul>`;
+    } else {
+      const v = o.data, l = enCours((x) => x.veh === v.id), h = PLANNING.filter((x) => x.veh === v.id).reduce((a, x) => a + x.duree, 0);
+      const st = l ? 'En leçon' : o.mode === 'gare' ? (o.type === 'voiture' ? 'Au parking, place ' + (o.place + 1) : 'Disponible') : 'Revient au parking';
+      c.innerHTML = `<h3>${v.nom}</h3><p class="sous">${v.modele}${v.plaque ? ' · ' + v.plaque : ''}</p><span class="statut ${o.mode !== 'gare' ? 'occupe' : 'dispo'}">${st}</span><ul class="lignes">${l ? li('Moniteur', objets[l.m].data.nom) + li('Élève', l.eleve) + li('Retour prévu', hTxt(l.fin)) : ''}${v.km ? li('Kilométrage', v.km.toLocaleString('fr-FR') + ' km') : ''}${li('Utilisation aujourd\'hui', String(h).replace('.', ',') + ' h')}${li('Prochain entretien', v.entretien)}</ul>`;
+    }
+  }
+}
+// Zoom : un clic dans la maquette (ou dans le panneau) rapproche la caméra de l'élément choisi.
+const ZOOMS = { parking: 1.9, agence: 2, accueil: 2.4, code: 2.4, plateau: 1.8, moniteur: 2.6, voiture: 2.4, moto: 2.4, place: 2.4 };
+let vise = null;
+function viser(cible, zoom) {
+  const vers = cible.clone().setY(0);
+  if (MOBILE && zoom > 1.2) vers.add(new THREE.Vector3(5, 0, 5).divideScalar(zoom)); // sur téléphone, la fiche est en bas : l'élément remonte dans le haut de l'écran
+  vise = { de: controls.target.clone(), vers, z0: camera.zoom, z1: zoom, k: 0 };
+}
+function zoomPour(cle) {
+  if (!cle) return null;
+  if (cle === 'agence') return [new THREE.Vector3(-16, 0, 2), ZOOMS.agence];
+  if (cle.startsWith('place')) return [PLACES[+cle.slice(5)], ZOOMS.place];
+  const p = positionSelection(); if (!p) return null;
+  const o = objets[/^l\d/.test(cle) ? PLANNING.find((x) => x.id === cle).veh : cle];
+  return [p[0], (ZOOMS[cle] || ZOOMS[o?.type] || 2.4) * (MOBILE ? 1.5 : 1)];
+}
+function choisir(cle) { selection = cle; rendreFiche(); if (onglet === 'planning') rendrePanneau(); const z = zoomPour(cle); if (z) viser(z[0], z[1]); }
+$('fermer').onclick = () => choisir(null);
+function positionSelection() {
+  const s = selection; if (!s) return null;
+  if (s === 'code') return [new THREE.Vector3(-13, 0.25, -1), 2.2];
+  if (s === 'plateau') return [new THREE.Vector3(9, 0.15, -14.5), 4];
+  if (s === 'accueil') return [new THREE.Vector3(-11.5, 0.25, 5), 1.4];
+  if (s === 'agence') return [new THREE.Vector3(-16, 0.25, 2), 3.6];
+  if (s === 'parking') return [new THREE.Vector3(10.5, 0.2, -4.6), 3.6];
+  if (s.startsWith('place')) return [PLACES[+s.slice(5)], 1];
+  const k = /^l\d/.test(s) ? PLANNING.find((x) => x.id === s).veh : s;
+  const o = objets[k]; return o && o.obj.visible ? [o.obj.position, o.type === 'moniteur' ? 0.4 : 1] : null;
+}
+
+const ray = new THREE.Raycaster(), souris = new THREE.Vector2(); let appui = null;
+renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(souris, camera);
+  const visibles = cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; });
+  const hit = ray.intersectObjects(visibles, false)[0];
+  choisir(hit ? hit.object.userData.cle : null);
+});
+$('recentrer').onclick = () => { choisir(null); viser(CIBLE, 1); };
+$('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
+
+function taille() {
+  const w = conteneur.clientWidth, h = conteneur.clientHeight;
+  renderer.setSize(w, h, false);
+  const a = w / h, s = a < 1.1 ? 29 / a : 19.5;
+  Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix();
+}
+addEventListener('resize', taille); taille();
+
+// ================= Boucle =================
+let avant = performance.now(), dernierRendu = -1;
+function animer(now) {
+  const ecoule = Math.min(1, (now - avant) / 1000), dt = Math.min(0.05, ecoule); avant = now;
+  if (!pause) {
+    t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
+    if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
+    synchroniser();
+  }
+  for (const o of Object.values(objets)) {
+    if (o.type === 'voiture') {
+      if (o.mode === 'sortie' && avancer(o, dt)) { o.mode = 'dehors'; o.obj.visible = false; }
+      else if (o.mode === 'retour' && avancer(o, dt)) { o.mode = 'gare'; }
+    } else if (o.type === 'moto' && o.mode === 'piste') {
+      o.a += dt * 0.6;
+      const x = 9 + Math.sin(o.a) * 10, z = -14.5 + Math.sin(o.a * 2) * 2.4, x2 = 9 + Math.sin(o.a + 0.01) * 10, z2 = -14.5 + Math.sin((o.a + 0.01) * 2) * 2.4;
+      o.obj.position.set(x, 0.13, z); o.obj.rotation.y = Math.atan2(x2 - x, z2 - z);
+    }
+  }
+  for (const c of trafic) { c.o.position.x += c.sens * c.v * dt; if (c.o.position.x > 44) c.o.position.x = -44; if (c.o.position.x < -44) c.o.position.x = 44; c.o.visible = Math.abs(c.o.position.x) < 33.5; }
+  fondus(dt);
+  const ps = positionSelection(); anneau.visible = !!ps;
+  if (ps) { anneau.position.set(ps[0].x, 0.2, ps[0].z); anneau.scale.setScalar(ps[1] * (1 + Math.sin(now / 300) * 0.04)); }
+  if (vise) {
+    vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); // en temps réel : même durée sur un appareil lent
+    const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv);
+    camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix();
+    if (vise.k >= 1) vise = null;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  window.maquetteOk = true;
+  placerEtiquettes();
+  const minute = Math.floor(t * 60);
+  if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
+  requestAnimationFrame(animer);
+}
+window.demo = { objets, temps: () => t }; // pour les tests automatiques de VERA
+synchroniser(true);
+requestAnimationFrame(animer);
+</script>
+</body>
+</html>
