@@ -61,6 +61,7 @@
   .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
   .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis; }
   .annonce.vu { opacity: .92; }
+  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--texte); text-align: center; }
   .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; }
   .fiche.vu { display: block; }
   .fiche h3 { margin: 0; font-size: 16px; }
@@ -82,7 +83,18 @@
   .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
   .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
 
-  .gantt { position: relative; }
+  .agenda { display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)); gap: 0 4px; }
+  .agenda .tete { font-size: 12px; font-weight: 600; text-align: center; padding-bottom: 6px; cursor: pointer; line-height: 1.2; }
+  .agenda .tete small { display: block; font-weight: 500; font-size: 11px; color: var(--doux); }
+  .agenda .tete small.dispo { color: var(--vert); }
+  .agenda .tete small.occupe { color: var(--orange); }
+  .grille { grid-column: 1 / -1; display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)); gap: 0 4px; position: relative; }
+  .colonne { position: relative; border-left: 1px solid var(--ligne); }
+  .graduation { position: relative; }
+  .graduation span { position: absolute; right: 4px; transform: translateY(-50%); font-size: 10.5px; color: var(--doux); font-variant-numeric: tabular-nums; }
+  .trait { position: absolute; left: 38px; right: 0; border-top: 1px solid var(--ligne); }
+  .agenda .bloc { left: 2px; right: 2px; top: auto; bottom: auto; font-size: 11.5px; padding: 3px 5px; white-space: normal; }
+  .agenda .bloc small { font-size: 10.5px; }
   .heures, .rangee { display: grid; grid-template-columns: 84px 1fr; align-items: center; }
   .heures div:last-child { position: relative; height: 18px; }
   .heures span { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--doux); font-variant-numeric: tabular-nums; }
@@ -96,8 +108,8 @@
   .bloc.occupe { background: var(--orange-doux); color: var(--orange); border-color: #fdba74; }
   .bloc.avenir { background: var(--accent-doux); color: var(--accent); }
   .bloc.sel { outline: 2px solid var(--texte); }
-  .maintenant { position: absolute; top: 18px; bottom: 0; width: 2px; background: #dc2626; pointer-events: none; }
-  .maintenant::before { content: ""; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
+  .maintenant { position: absolute; left: 38px; right: 0; height: 2px; background: #dc2626; pointer-events: none; z-index: 2; }
+  .maintenant::before { content: ""; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
   .legende { display: flex; gap: 12px; margin-top: 10px; font-size: 11.5px; color: var(--doux); flex-wrap: wrap; }
   .legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
 
@@ -117,13 +129,13 @@
     .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto; height: auto; }
     aside { border-left: 0; border-top: 1px solid var(--ligne); }
     .contenu { overflow: visible; }
+    .scene canvas { touch-action: pan-y; }
     .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .kpi { padding: 10px 14px; }
     .kpi b { font-size: 19px; }
     header { flex-wrap: wrap; padding: 12px 14px; }
     .horloge { margin-left: 0; text-align: left; width: 100%; }
     .et { font-size: 10px; padding: 2px 6px; }
-    .et small { display: none; }
     .fiche { width: auto; right: 14px; left: 10px; bottom: 10px; max-height: 48%; overflow-y: auto; padding: 10px 12px; }
     .fiche h3 { font-size: 15px; }
     .lignes li { font-size: 12px; padding: 4px 0; }
@@ -131,10 +143,13 @@
   }
 </style>
 <script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-} }
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script>
+  // Si la maquette 3D ne démarre pas (navigateur trop ancien, WebGL coupé, fichier bloqué), on le dit clairement.
+  addEventListener('error', (e) => { if (!window.maquetteOk) setTimeout(() => window.montrerErreur && window.montrerErreur(), 0); });
+  window.montrerErreur = () => { const el = document.getElementById('erreur'); if (el) el.hidden = false; };
+  setTimeout(() => { if (!window.maquetteOk) window.montrerErreur(); }, 10000);
 </script>
 </head>
 <body>
@@ -161,6 +176,7 @@
       <button class="bouton" id="pause">Pause</button>
     </div>
     <div class="annonce" id="annonce"></div>
+    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Le planning et les chiffres à droite restent à jour. Essayez avec un navigateur récent (Chrome, Safari, Firefox).</div>
     <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
   </main>
 
@@ -178,7 +194,7 @@
 
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OrbitControls } from './vendor/OrbitControls.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
@@ -212,9 +228,9 @@ const PLANNING = [
   ['m2', 8, 2, 'Inès T.', 'Conduite 2 h', 'v2'], ['m2', 10, 1, 'Chloé R.', 'Conduite 1 h', 'v2'], ['m2', 11.5, 1, 'Sarah N.', 'Conduite 1 h', 'v2'],
   ['m2', 13.5, 1, 'Emma V.', 'Conduite 1 h', 'v2'], ['m2', 14.5, 2, 'Yanis P.', 'Conduite 2 h', 'v2'], ['m2', 17, 1, 'Lina A.', 'Conduite 1 h', 'v2'],
   ['m3', 8.5, 1, 'Lucas G.', 'Conduite 1 h', 'v3'], ['m3', 10, 1.5, 'Noah C.', 'Examen permis B', 'v3'], ['m3', 13.5, 2, 'Tom H.', 'Conduite 2 h', 'v3'],
-  ['m3', 15.5, 1, 'Chloé R.', 'Conduite 1 h', 'v3'], ['m3', 16.5, 1, 'Enzo M.', 'Conduite 1 h', 'v3'],
+  ['m3', 15.5, 1, 'Chloé R.', 'Conduite 1 h', 'v3'], ['m3', 16.5, 1, 'Léa M.', 'Conduite 1 h', 'v3'],
   ['m4', 9, 1, 'Jade L.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 10.5, 1, 'Emma V.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 11.5, 1, 'Tom H.', 'Conduite boîte auto 1 h', 'v5'],
-  ['m4', 14, 1, 'Sarah N.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo M.', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Lina A.', 'Conduite boîte auto 1 h', 'v5'],
+  ['m4', 14, 1, 'Sarah N.', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo M.', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Hugo D.', 'Conduite boîte auto 1 h', 'v5'],
 ].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
 const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
 const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000;
@@ -245,13 +261,16 @@ const VUE = new THREE.Vector3(48, 52, 58);
 camera.position.copy(VUE);
 const controls = new OrbitControls(camera, renderer.domElement);
 Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.3, maxPolarAngle: 1.2, minZoom: 0.8, maxZoom: 4, enablePan: true, screenSpacePanning: false });
-controls.target.set(-2, 0, -1);
+const MOBILE = matchMedia('(max-width: 900px)').matches;
+const CIBLE = MOBILE ? new THREE.Vector3(-1, 0, -3) : new THREE.Vector3(-2, 0, -1);
+controls.target.copy(CIBLE);
+if (MOBILE) renderer.domElement.style.touchAction = 'pan-y'; // un doigt fait défiler la page, deux doigts zooment
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
 const soleil = new THREE.DirectionalLight(0xfff6ea, 2.4);
 soleil.position.set(-30, 60, 25);
 soleil.castShadow = true;
-soleil.shadow.mapSize.set(4096, 4096);
+soleil.shadow.mapSize.set(2048, 2048);
 Object.assign(soleil.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 160 });
 soleil.shadow.bias = -0.0003;
 soleil.shadow.normalBias = 0.02;
@@ -443,19 +462,26 @@ function avancer(v, dt, vitesse = 7) {
   let d = cible - v.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); v.rot += d * Math.min(1, dt * 8); v.obj.rotation.y = v.rot;
   return false;
 }
+const dispo = (m) => !enCours((x) => x.m === m.id);
 const nbCode = () => (t < 9 || t > 18.5 ? 0 : Math.max(0, Math.round(5 + 3 * Math.sin(t * 1.3) + 2 * Math.sin(t * 3.1))));
+let derniereSortie = -1e9, dernierRetour = -1e9;
 function synchroniser(instant = false) {
+  const maintenantMs = performance.now();
   for (const v of [...VOITURES, ...MOTOS]) {
     const o = objets[v.id], l = enCours((x) => x.veh === v.id);
     if (o.type === 'voiture') {
-      if (l && o.mode === 'gare') { if (instant) { o.mode = 'dehors'; o.obj.visible = false; } else { depart(o); annoncer(`${hh(t)} · ${objets[l.m].data.nom} part en leçon avec ${l.eleve} (${v.nom})`); } }
-      if (!l && o.mode === 'dehors') { retour(o); annoncer(`${hh(t)} · ${v.nom} rentre au parking`); }
+      if (l && o.mode === 'gare') { if (instant) { o.mode = 'dehors'; o.obj.visible = false; } else if (maintenantMs - derniereSortie > 4500) { derniereSortie = maintenantMs; depart(o); annoncer(`${hh(t)} · ${objets[l.m].data.nom} part en leçon avec ${l.eleve} (${v.nom})`); } }
+      if (!l && o.mode === 'dehors' && (instant || maintenantMs - dernierRetour > 4500)) { dernierRetour = maintenantMs; retour(o); annoncer(`${hh(t)} · ${v.nom} rentre au parking`); }
     } else {
       if (l && o.mode === 'gare') { o.mode = 'piste'; if (!instant) annoncer(`${hh(t)} · ${objets[l.m].data.nom} commence le plateau moto avec ${l.eleve}`); }
       if (!l && o.mode === 'piste') { o.mode = 'gare'; o.obj.position.copy(PLACES_MOTO[o.place]); o.obj.rotation.set(0, 0, 0); }
     }
   }
-  for (const m of MONITEURS) objets[m.id].obj.visible = !enCours((x) => x.m === m.id);
+  MONITEURS.forEach((m, i) => {
+    const l = enCours((x) => x.m === m.id), o = objets[m.id].obj;
+    if (l && l.veh.startsWith('mo')) { o.visible = true; o.position.set(-3.6, 0.13, -12.2); o.rotation.y = 1.2; }
+    else { o.visible = !l; o.position.copy(POSTES[i]); o.rotation.y = 0.4 - i * 0.5; }
+  });
   const prochains = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).length;
   attente.forEach((p, i) => { p.visible = i < prochains; });
   elevesCode.forEach((p, i) => { p.visible = i < nbCode(); });
@@ -467,10 +493,10 @@ const etiquettes = [];
 function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn }); }
 const point = (c) => `<i style="background:${c}"></i>`;
 const libresParking = () => NB_PLACES - VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
-etiquette('place4', () => new THREE.Vector3(10, 2.6, -8.6), () => `${point('#15803d')}Parking <small>${libresParking()}/${NB_PLACES} places libres</small>`);
+etiquette('parking', () => new THREE.Vector3(10, 2.6, -8.6), () => `${point('#15803d')}Parking <small>${libresParking()}/${NB_PLACES} libres</small>`);
 etiquette('code', () => new THREE.Vector3(-13, 2.9, -2.5), () => `${point('#1d4ed8')}Salle de code <small>${nbCode()}/12</small>`);
-etiquette('plateau', () => new THREE.Vector3(4, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve} avec ${objets[l.m].data.nom}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
-etiquette('accueil', () => new THREE.Vector3(-12, 3.1, 5), () => { const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => objets[m.id].obj.visible).length; return `${point(d ? '#15803d' : '#c2410c')}Accueil <small>${d} moniteur${d > 1 ? 's' : ''} dispo · ${n ? n + ' en attente' : 'personne en attente'}</small>`; });
+etiquette('plateau', () => new THREE.Vector3(4, 1.6, -18.8), () => { const l = enCours((x) => x.veh.startsWith('mo')); return l ? `${point('#c2410c')}Plateau moto <small>${l.eleve}</small>` : `${point('#15803d')}Plateau moto <small>libre</small>`; });
+etiquette('accueil', () => new THREE.Vector3(-12, 3.1, 5), () => { const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => dispo(m)).length; return `${point(d ? '#15803d' : '#c2410c')}Accueil <small>${d} dispo · ${n} en attente</small>`; });
 const v3 = new THREE.Vector3();
 function placerEtiquettes() {
   const r = renderer.domElement.getBoundingClientRect();
@@ -517,12 +543,13 @@ let onglet = 'planning', selection = null;
 function rendrePanneau() {
   const c = $('contenu');
   if (onglet === 'planning') {
-    const heures = []; for (let h = OUVERTURE; h <= FERMETURE; h += 2) heures.push(`<span style="left:${pct(h)}%">${h}h</span>`);
+    const H = 44, haut = (FERMETURE - OUVERTURE) * H, y = (h) => (h - OUVERTURE) * H;
+    const graduations = [], traits = [];
+    for (let h = OUVERTURE; h <= FERMETURE; h++) { graduations.push(`<span style="top:${y(h)}px">${h}h</span>`); traits.push(`<div class="trait" style="top:${y(h)}px"></div>`); }
     const tt = Math.min(Math.max(t, OUVERTURE), FERMETURE);
-    c.innerHTML = `<h2>Planning du jour</h2><div class="gantt"><div class="heures"><div></div><div>${heures.join('')}</div></div>${MONITEURS.map((m) => {
-      const l = enCours((x) => x.m === m.id);
-      return `<div class="rangee"><b data-cle="${m.id}">${m.nom}<small>${l ? 'en leçon' : 'dispo'}</small></b><div class="piste">${PLANNING.filter((x) => x.m === m.id).map((x) => `<div class="bloc ${statut(x)} ${selection === x.id ? 'sel' : ''}" data-cle="${x.id}" style="left:${pct(x.debut)}%;width:calc(${(x.duree / (FERMETURE - OUVERTURE)) * 100}% - 2px)" title="${hTxt(x.debut)} · ${x.eleve} · ${x.type}">${x.eleve.split(' ')[0]}<small>${x.veh.startsWith('mo') ? 'moto' : x.type.startsWith('Examen') ? 'examen' : hTxt(x.debut)}</small></div>`).join('')}</div></div>`;
-    }).join('')}<div class="maintenant" style="left:calc(84px + (100% - 84px) * ${pct(tt) / 100})"></div></div>
+    c.innerHTML = `<h2>Planning du jour</h2><div class="agenda"><div></div>${MONITEURS.map((m) => { const l = enCours((x) => x.m === m.id); return `<div class="tete" data-cle="${m.id}">${m.nom}<small class="${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</small></div>`; }).join('')}
+      <div class="grille" style="height:${haut}px">${traits.join('')}<div class="graduation">${graduations.join('')}</div>${MONITEURS.map((m) => `<div class="colonne">${PLANNING.filter((x) => x.m === m.id).map((x) => `<div class="bloc ${statut(x)} ${selection === x.id ? 'sel' : ''}" data-cle="${x.id}" style="top:${y(x.debut) + 1}px;height:${x.duree * H - 3}px" title="${hTxt(x.debut)} – ${hTxt(x.fin)} · ${x.eleve} · ${x.type}">${x.eleve.split(' ')[0]}<small>${x.veh.startsWith('mo') ? 'moto' : x.type.startsWith('Examen') ? 'examen' : hTxt(x.debut)}</small></div>`).join('')}</div>`).join('')}
+      <div class="maintenant" style="top:${y(tt)}px"></div></div></div>
     <div class="legende"><span><i style="background:#eef0f3"></i>terminée</span><span><i style="background:var(--orange-doux);border:1px solid #fdba74"></i>en cours</span><span><i style="background:var(--accent-doux)"></i>à venir</span><span><i style="background:#dc2626"></i>maintenant</span></div>
     <div class="bloc-txt"><h2>Prochaines leçons</h2><table><tbody>${PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 5).map((l) => `<tr class="clic" data-cle="${l.id}"><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td><td class="num">${euros(l.prix)}</td></tr>`).join('') || '<tr><td>Plus de leçon aujourd\'hui</td></tr>'}</tbody></table></div>`;
   } else if (onglet === 'moniteurs') {
@@ -555,17 +582,20 @@ function rendreFiche() {
     const l = PLANNING.find((x) => x.id === s), e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data;
     c.innerHTML = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span><ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}</ul>`;
   } else if (s === 'agence') {
-    const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => objets[m.id].obj.visible).length;
+    const n = attente.filter((p) => p.visible).length, d = MONITEURS.filter((m) => dispo(m)).length;
     c.innerHTML = `<h3>L'agence</h3><p class="sous">Accueil, salle d'attente, salle de code (12 postes), bureau du gérant</p><ul class="lignes">${li('Moniteurs à l\'agence', `${d} sur ${MONITEURS.length}`)}${li('Élèves en attente', n)}${li('En salle de code', `${nbCode()} / 12`)}${li('Prochaine leçon', (() => { const l = PLANNING.filter((x) => x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return l ? `${hTxt(l.debut)} · ${l.eleve}` : 'aucune'; })())}</ul>`;
   } else if (s === 'code') {
-    c.innerHTML = `<h3>Salle de code</h3><p class="sous">12 postes · séries sur écran</p><span class="statut dispo">${nbCode()} élèves présents</span><ul class="lignes">${li('Postes libres', 12 - nbCode())}${li('Séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
+    c.innerHTML = `<h3>Salle de code</h3><p class="sous">12 postes · séries sur écran</p><span class="statut dispo">${nbCode()} élève${nbCode() > 1 ? 's' : ''} présent${nbCode() > 1 ? 's' : ''}</span><ul class="lignes">${li('Postes libres', 12 - nbCode())}${li('Séance encadrée', '17h30')}${li('Examens du code cette semaine', '9 inscrits')}</ul>`;
   } else if (s === 'plateau') {
     const l = enCours((x) => x.veh.startsWith('mo'));
-    c.innerHTML = `<h3>Plateau moto</h3><p class="sous">Piste de maniabilité, 9 plots</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'Occupé' : 'Libre'}</span><ul class="lignes">${l ? li('Élève', l.eleve) + li('Moniteur', objets[l.m].data.nom) + li('Jusqu\'à', hTxt(l.fin)) : li('Prochain créneau', '14h, Karim B.')}</ul>`;
+    c.innerHTML = `<h3>Plateau moto</h3><p class="sous">Piste de maniabilité, 9 plots</p><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'Occupé' : 'Libre'}</span><ul class="lignes">${l ? li('Élève', l.eleve) + li('Moniteur', objets[l.m].data.nom) + li('Jusqu\'à', hTxt(l.fin)) : li('Prochain créneau', (() => { const p = PLANNING.filter((x) => x.veh.startsWith('mo') && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return p ? `${hTxt(p.debut)}, ${objets[p.m].data.nom}` : 'aucun aujourd\'hui'; })())}</ul>`;
   } else if (s === 'accueil') {
     const p = PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 4);
-    const dispo = MONITEURS.filter((m) => objets[m.id].obj.visible).map((m) => m.nom).join(', ') || 'aucun';
-    c.innerHTML = `<h3>Accueil</h3><p class="sous">Secrétariat ouvert de 8h à 19h</p><ul class="lignes">${li('Moniteurs dispo', dispo)}${p.map((l) => li(hTxt(l.debut), `${l.eleve} avec ${objets[l.m].data.nom}`)).join('') || li('Prochaines arrivées', 'aucune')}</ul>`;
+    const presents = MONITEURS.filter((m) => dispo(m)).map((m) => m.nom).join(', ') || 'aucun';
+    c.innerHTML = `<h3>Accueil</h3><p class="sous">Secrétariat ouvert de 8h à 19h</p><ul class="lignes">${li('Moniteurs dispo', presents)}${p.map((l) => li(hTxt(l.debut), `${l.eleve} avec ${objets[l.m].data.nom}`)).join('') || li('Prochaines arrivées', 'aucune')}</ul>`;
+  } else if (s === 'parking') {
+    const dehors = VOITURES.filter((v) => objets[v.id].mode !== 'gare');
+    c.innerHTML = `<h3>Parking</h3><p class="sous">7 places · borne de recharge sur la place 7</p><span class="statut ${libresParking() ? 'dispo' : 'occupe'}">${libresParking()} places libres sur ${NB_PLACES}</span><ul class="lignes">${li('Voitures au parking', `${VOITURES.length - dehors.length} sur ${VOITURES.length}`)}${dehors.map((v) => { const l = enCours((x) => x.veh === v.id); return li(v.nom, l ? `en leçon, retour ${hTxt(l.fin)}` : 'revient au parking'); }).join('')}</ul>`;
   } else if (s.startsWith('place')) {
     const i = +s.slice(5), v = VOITURES.find((x) => objets[x.id].place === i), occ = v && objets[v.id].mode === 'gare', l = v && enCours((x) => x.veh === v.id);
     c.innerHTML = `<h3>Place ${i + 1}</h3><p class="sous">Parking de l'agence${i === 6 ? ' · borne de recharge' : ''}</p><span class="statut ${occ ? 'occupe' : 'dispo'}">${occ ? 'Occupée' : 'Libre'}</span><ul class="lignes">${li('Réservée à', v ? v.nom : 'visiteurs')}${l ? li('Retour prévu', hTxt(l.fin)) : ''}${li('Places libres maintenant', `${libresParking()} sur ${NB_PLACES}`)}</ul>`;
@@ -582,7 +612,7 @@ function rendreFiche() {
   }
 }
 // Zoom : un clic dans la maquette (ou dans le panneau) rapproche la caméra de l'élément choisi.
-const ZOOMS = { agence: 2, accueil: 2.4, code: 2.4, plateau: 1.8, moniteur: 2.6, voiture: 2.4, moto: 2.4, place: 2.4 };
+const ZOOMS = { parking: 1.9, agence: 2, accueil: 2.4, code: 2.4, plateau: 1.8, moniteur: 2.6, voiture: 2.4, moto: 2.4, place: 2.4 };
 let vise = null;
 function viser(cible, zoom) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0 }; }
 function zoomPour(cle) {
@@ -601,6 +631,7 @@ function positionSelection() {
   if (s === 'plateau') return [new THREE.Vector3(9, 0.15, -14.5), 4];
   if (s === 'accueil') return [new THREE.Vector3(-11.5, 0.25, 5), 1.4];
   if (s === 'agence') return [new THREE.Vector3(-16, 0.25, 2), 3.6];
+  if (s === 'parking') return [new THREE.Vector3(10.5, 0.2, -4.6), 3.6];
   if (s.startsWith('place')) return [PLACES[+s.slice(5)], 1];
   const k = /^l\d/.test(s) ? PLANNING.find((x) => x.id === s).veh : s;
   const o = objets[k]; return o && o.obj.visible ? [o.obj.position, o.type === 'moniteur' ? 0.4 : 1] : null;
@@ -617,13 +648,13 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   const hit = ray.intersectObjects(visibles, false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
-$('recentrer').onclick = () => { choisir(null); viser(new THREE.Vector3(-2, 0, -1), 1); };
+$('recentrer').onclick = () => { choisir(null); viser(CIBLE, 1); };
 $('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
 
 function taille() {
   const w = conteneur.clientWidth, h = conteneur.clientHeight;
   renderer.setSize(w, h, false);
-  const a = w / h, s = a < 1.1 ? 24 / a : 19.5;
+  const a = w / h, s = a < 1.1 ? 29 / a : 19.5;
   Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix();
 }
 addEventListener('resize', taille); taille();
@@ -631,9 +662,9 @@ addEventListener('resize', taille); taille();
 // ================= Boucle =================
 let avant = performance.now(), dernierRendu = -1;
 function animer(now) {
-  const dt = Math.min(0.05, (now - avant) / 1000); avant = now;
+  const ecoule = Math.min(1, (now - avant) / 1000), dt = Math.min(0.05, ecoule); avant = now;
   if (!pause) {
-    t += dt / 60; // 1 s réelle = 1 min de la journée
+    t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
     if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
     synchroniser();
   }
@@ -658,6 +689,7 @@ function animer(now) {
   }
   controls.update();
   renderer.render(scene, camera);
+  window.maquetteOk = true;
   placerEtiquettes();
   const minute = Math.floor(t * 60);
   if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
