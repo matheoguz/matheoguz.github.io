@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%23a33d1c%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27Georgia,serif%27 font-size=%2738%27 font-weight=%27700%27 fill=%27%23fff%27 text-anchor=%27middle%27%3EC%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%234a1526%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27Georgia,serif%27 font-size=%2738%27 font-weight=%27700%27 fill=%27%23f4b23c%27 text-anchor=%27middle%27%3EC%3C/text%3E%3C/svg%3E">
 <title>Exemple de carte Cartio : Restaurant exemple (fictif)</title>
 <meta name="description" content="Carte d'exemple fictive faite avec Cartio : plats, prix et les 14 allergènes, avec un filtre par allergène.">
 <meta name="robots" content="noindex">
 <meta name="color-scheme" content="light dark">
 <style>
 :root{
-  --bg:#f7f0e6;--surface:#fffaf3;--ink:#2b1d14;--muted:#6e5646;--line:rgba(43,29,20,.13);
-  --accent:#a33d1c;--on-accent:#fff;--soft:rgba(163,61,28,.08);--warn:#8a5a00;--warn-bg:#fff4d6;
+  --bg:#fff6ea;--surface:#ffffff;--ink:#2a1a12;--muted:#6b4a3a;--line:rgba(42,26,18,.14);
+  --accent:#b8321a;--on-accent:#fff;--soft:rgba(184,50,26,.09);--band:#4a1526;--on-band:#fff4e6;--band-muted:#f0c9a8;--sun:#f4b23c;--on-sun:#2a1606;--warn:#8a5a00;--warn-bg:#fff4d6;
   --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#1b1410;--surface:#261b15;--ink:#f4eadf;--muted:#c4ab98;--line:rgba(244,234,223,.13);
-  --accent:#f0976d;--on-accent:#2b1208;--soft:rgba(240,151,109,.12);--warn:#ffd27a;--warn-bg:#3a2c0c}
+  :root{--bg:#170f0c;--surface:#24170f;--ink:#f6ebdf;--muted:#d2b49d;--line:rgba(246,235,223,.14);
+  --accent:#ff7d5e;--on-accent:#2a0d05;--soft:rgba(255,125,94,.12);--band:#3a0f1d;--on-band:#fff4e6;--band-muted:#e6c0a0;--sun:#f5c04f;--on-sun:#2a1606;--warn:#ffd27a;--warn-bg:#3a2c0c}
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
@@ -55,10 +55,17 @@ h3.rubrique{font:700 1.4rem var(--head);margin:28px 0 10px}
 .note{font-size:.9rem;color:var(--muted);margin-top:14px}
 footer{padding:28px 0 40px;font-size:.92rem;color:var(--muted);text-align:center}
 @media (min-width:820px){.filtre{position:sticky;top:0;z-index:5}.legende ul{grid-template-columns:repeat(3,1fr)}}
+/* Identité Cartio */
+.bandeau{background:var(--sun);color:var(--on-sun);border-bottom:0}
+header{background:var(--band);color:var(--on-band);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax);padding:26px 0 22px}
+header h1{color:var(--on-band)}
+header p{color:var(--band-muted)}
+h3.rubrique{color:var(--accent);border-bottom:3px solid var(--sun);display:inline-block;padding-bottom:2px}
+.puce[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 </style>
 </head>
 <body>
-<div class="bandeau">EXEMPLE : restaurant fictif, plats et allergènes inventés pour la démonstration. <a href="../">Découvrir Cartio</a></div>
+<div class="bandeau">EXEMPLE : restaurant fictif, plats et allergènes inventés pour la démonstration. <a href="../index.html">Découvrir Cartio</a></div>
 <div class="wrap">
   <header>
     <h1>Restaurant exemple</h1>
@@ -79,7 +86,7 @@ footer{padding:28px 0 40px;font-size:.92rem;color:var(--muted);text-align:center
     <p class="note">Les allergènes sont fournis et validés par écrit par le restaurateur. En cas de doute, demandez au personnel.</p>
   </section>
 
-  <footer>Carte d'exemple faite avec <a href="../">Cartio</a>, au Creusot.</footer>
+  <footer>Carte d'exemple faite avec <a href="../index.html">Cartio</a>, au Creusot.</footer>
 </div>
 
 <script>
