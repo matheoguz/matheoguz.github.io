@@ -58,6 +58,19 @@
   .statut.att { color: var(--orange); background: var(--orange-doux); }
   .statut.ko { color: var(--accent); background: var(--accent-doux); }
   .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
+  .connecte { border: 1px solid #bbf7d0; background: var(--vert-doux); border-radius: 8px; padding: 9px 11px; margin: 0 0 12px; font-size: 12px; line-height: 1.45; }
+  .connecte b { color: var(--vert); }
+  .connecte p { margin: 4px 0 0; color: var(--texte); }
+  .connecte small { color: var(--doux); }
+  .synchro { font-size: 11.5px; color: var(--vert); margin: 6px 0 0; }
+  .commande { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--ligne); }
+  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .commande .ligne b { min-width: 74px; text-align: center; font-size: 13px; }
+  .commande button { border: 1px solid var(--ligne); background: var(--carte); font: inherit; font-size: 13px; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .commande button.go { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; margin-left: auto; }
+  .commande button:disabled { opacity: .45; cursor: default; }
+  .commande small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 5px; }
+  .commande .fait { color: var(--vert); font-weight: 600; font-size: 12px; margin-top: 5px; }
   .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
   .lignes li span:first-child { color: var(--doux); }
   .lignes li b { font-weight: 600; text-align: right; }
@@ -82,7 +95,7 @@
   small.d { color: var(--doux); }
   @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto; height: auto; }
+    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto auto; height: auto; }
     aside { border-left: 0; border-top: 1px solid var(--ligne); }
     .contenu { overflow: visible; }
     .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -93,7 +106,7 @@
     .et { font-size: 10px; padding: 2px 6px; }
     .badge { font-size: 9.5px; padding: 1px 5px; }
     .badge small { display: none; }
-    .fiche { width: auto; right: 10px; left: 10px; bottom: 10px; max-height: none; overflow: visible; padding: 10px 12px; }
+    .fiche { position: static; width: auto; max-width: none; max-height: none; overflow: visible; margin: 10px 12px 0; padding: 12px 14px; box-shadow: none; } /* sous la maquette, pour ne pas la cacher */
     .annonce { display: none; }
     .scene canvas { touch-action: pan-y; }
     .service { width: 80px; }
@@ -193,6 +206,8 @@ const LIVRAISONS = [
   { id: 'd3', heure: 14.75, fourn: 'Maraîcher local (fictif)', palettes: 6, rayon: 'r0' },
   { id: 'd4', heure: 17, fourn: 'Plateforme frais (fictive)', palettes: 12, rayon: 'r3' },
 ];
+const FOURNISSEURS = { r0: 'Maraîcher local (fictif)', r1: 'Grossiste épicerie (fictif)', r2: 'Boissons du Centre (fictif)', r3: 'Plateforme frais (fictive)', r4: 'Droguerie Centrale (fictive)', r5: 'Bazar Distribution (fictif)' };
+const PAR_PALETTE = 0.01; // part du rayon remplie par une palette reçue
 const NB_CAISSES = 8, PANIER = 41.6;
 
 // ================= Horloge de démo =================
@@ -212,7 +227,7 @@ const CA_HIER = Math.round(caDuJour(FERMETURE) * 1.04 / 10) * 10;
 const caissiers = () => EQUIPE.filter((e) => e.zone.startsWith('c') && present(e));
 const caisseDe = (e) => +e.zone.slice(1, 2);
 const caissesOuvertes = () => [...new Set(caissiers().map(caisseDe))].sort();
-const stockDe = (r) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, t - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= t && d.heure >= OUVERTURE).length * 0.18));
+const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE));
 const rupturesDe = (r) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r)) * 20));
 const coutJour = () => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout, 0);
 const statutLiv = (d) => (t < d.heure - 0.05 ? 'prévue' : t < d.heure + 0.75 ? 'au quai' : 'déchargée');
@@ -437,18 +452,44 @@ function rendrePanneau() {
   if (onglet === 'equipe') {
     c.innerHTML = `<h2>Équipe du jour (horaires de 6h à 21h)</h2><table><thead><tr><th>Personne</th><th>Service</th><th class="num">Coût</th></tr></thead><tbody>${EQUIPE.map((e) => `<tr class="clic" data-cle="${e.id}"><td><b>${e.nom}</b><br><small class="d">${e.poste} · ${hTxt(e.debut)}-${hTxt(e.fin)}</small></td><td>${service(e)}<br><small class="d">${present(e) ? 'présent·e' : t < e.debut ? 'arrive à ' + hTxt(e.debut) : 'parti·e'}</small></td><td class="num">${euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout)}</td></tr>`).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">Coût = heures faites aujourd'hui × coût horaire chargé (montants fictifs).</p>`;
   } else if (onglet === 'rayons') {
-    c.innerHTML = `<h2>Stock par rayon</h2><table><thead><tr><th>Rayon</th><th>Stock</th><th class="num">Ruptures</th></tr></thead><tbody>${RAYONS.map((r) => { const s = stockDe(r), col = s < 0.5 ? '#b91c1c' : s < 0.7 ? '#c2410c' : '#15803d'; return `<tr class="clic" data-cle="${r.id}"><td><b>${r.nom}</b><br><small class="d">${r.refs.toLocaleString('fr-FR')} produits</small></td><td><span class="mini"><i style="width:${s * 100}%;background:${col}"></i></span> ${Math.round(s * 100)} %</td><td class="num" style="color:${rupturesDe(r) > 5 ? 'var(--accent)' : 'inherit'}">${rupturesDe(r)}</td></tr>`; }).join('')}</tbody></table>`;
+    c.innerHTML = `${encartLogiciel()}<h2>Stock par rayon</h2><table><thead><tr><th>Rayon</th><th>Stock</th><th class="num">Ruptures</th></tr></thead><tbody>${RAYONS.map((r) => { const s = stockDe(r), col = s < 0.5 ? '#b91c1c' : s < 0.7 ? '#c2410c' : '#15803d'; return `<tr class="clic" data-cle="${r.id}"><td><b>${r.nom}</b><br><small class="d">${r.refs.toLocaleString('fr-FR')} produits</small></td><td><span class="mini"><i style="width:${s * 100}%;background:${col}"></i></span> ${Math.round(s * 100)} %</td><td class="num" style="color:${rupturesDe(r) > 5 ? 'var(--accent)' : 'inherit'}">${rupturesDe(r)}</td></tr>`; }).join('')}</tbody></table>`;
   } else if (onglet === 'caisses') {
     const ouv = caissesOuvertes();
     c.innerHTML = `<h2>Caisses</h2><table><thead><tr><th>Caisse</th><th>Hôte ou hôtesse</th><th class="num">File</th></tr></thead><tbody>${CAISSES.map((_, i) => { const e = caissiers().find((x) => caisseDe(x) === i); const f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length; return `<tr class="clic" data-cle="c${i}"><td><b>Caisse ${i + 1}</b></td><td>${e ? e.nom : '<small class="d">fermée</small>'}</td><td class="num">${ouv.includes(i) ? f + ' client' + (f > 1 ? 's' : '') : '-'}</td></tr>`; }).join('')}</tbody></table>`;
   } else {
-    c.innerHTML = `<h2>Livraisons du jour</h2><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span></td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table>`;
+    c.innerHTML = `<h2>Livraisons du jour</h2><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commandée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table>`;
   }
 }
 $('contenu').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
 document.querySelectorAll('[data-onglet]').forEach((b) => (b.onclick = () => { onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendrePanneau(); }));
 const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
 const RAYON_DE = (id) => RAYONS.find((r) => r.id === id);
+// Lien (fictif) avec le logiciel de caisse et de stock du magasin : synchro toutes les 5 minutes de démo
+const derniereSynchro = () => Math.floor(t * 12) / 12;
+const unites = (r) => Math.round(stockDe(r, derniereSynchro()) * r.refs * 14); // le stock exact vient de la dernière synchro
+const encartLogiciel = () => `<div class="connecte"><b>● Connecté à votre logiciel de caisse et de stock</b> <small>(exemple fictif)</small><p>Chaque vente en caisse retire l'article du stock, chaque réception au quai l'ajoute : vous voyez le stock exact sans recompter.</p><small>Synchronisé à ${hh(derniereSynchro())}, toutes les 5 minutes</small></div>`;
+// Commandes de réassort passées depuis la démo
+const quantites = {}, commandees = {};
+const enAttente = (r) => LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 > t).reduce((n, d) => n + d.palettes, 0);
+const suggestion = (r) => Math.min(30, Math.max(2, Math.ceil((0.92 - stockDe(r) - enAttente(r) * PAR_PALETTE) / PAR_PALETTE / 2) * 2));
+const quart = (h) => Math.ceil(h * 4) / 4;
+const livraisonPrevue = () => quart(t + 1.5);
+let numCommande = 0;
+function commander(rid) {
+  const h = livraisonPrevue();
+  if (h > FERMETURE - 0.5) return;
+  const d = { id: 'k' + ++numCommande, heure: h, fourn: FOURNISSEURS[rid], palettes: quantites[rid] ?? suggestion(RAYON_DE(rid)), rayon: rid, commande: true, passee: t };
+  LIVRAISONS.push(d); LIVRAISONS.sort((a, b) => a.heure - b.heure);
+  commandees[rid] = d; delete quantites[rid];
+  annoncer(`Commande envoyée : ${d.palettes} palettes, livraison à ${hTxt(h)}`);
+  rendreFiche(); rendrePanneau();
+}
+function oublierCommandes() { for (let i = LIVRAISONS.length - 1; i >= 0; i--) if (LIVRAISONS[i].commande) LIVRAISONS.splice(i, 1); for (const k in commandees) delete commandees[k]; }
+function blocCommande(r) {
+  const q = quantites[r.id] ?? suggestion(r), h = livraisonPrevue(), d = commandees[r.id];
+  const ferme = h > FERMETURE - 0.5;
+  return `<div class="commande"><h2>Commander du réassort</h2><div class="ligne"><button data-act="moins" aria-label="Moins">−</button><b>${q} palettes</b><button data-act="plus" aria-label="Plus">+</button><button class="go" data-act="commander" ${ferme ? 'disabled' : ''}>Commander</button></div><small>${ferme ? 'Plus de livraison possible aujourd\'hui (dernière à 19h30).' : `${FOURNISSEURS[r.id]} · livraison prévue à ${hTxt(h)} · le stock monte à la réception`}</small>${d ? `<div class="fait">✓ Commande de ${d.palettes} palettes envoyée à ${hh(d.passee)}, ${statutLiv(d) === 'déchargée' ? 'reçue' : 'livraison à ' + hTxt(d.heure)}</div>` : ''}</div>`;
+}
 function rendreFiche() {
   const f = $('fiche'), c = $('fiche-c'), s = selection;
   if (!s) { f.classList.remove('vu'); return; }
@@ -459,13 +500,13 @@ function rendreFiche() {
   } else if (/^r\d/.test(s)) {
     const r = RAYON_DE(s), st = stockDe(r), resp = EQUIPE.filter((e) => e.zone === s && present(e)).map((e) => e.nom).join(', ') || 'personne en ce moment';
     const liv = LIVRAISONS.filter((d) => d.rayon === s && d.heure > t)[0];
-    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul>`;
+    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}`;
   } else if (/^c\d/.test(s)) {
     const i = +s.slice(1), e = caissiers().find((x) => caisseDe(x) === i), f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length;
     c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom) + li('Jusqu\'à', hTxt(e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
   } else if (/^d\d/.test(s) || s === 'quai') {
     const d = s === 'quai' ? LIVRAISONS.find((x) => statutLiv(x) === 'au quai') || LIVRAISONS.find((x) => x.heure > t) : LIVRAISONS.find((x) => x.id === s);
-    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${li('Palettes', d.palettes)}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
+    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
   } else {
     const T = {
       caisses: () => `<h3>Ligne de caisses</h3><p class="sous">${NB_CAISSES} caisses</p><ul class="lignes">${li('Ouvertes', caissesOuvertes().map((i) => i + 1).join(', ') || 'aucune')}${li('Hôtes et hôtesses en caisse', caissiers().map((e) => e.nom).join(', ') || 'personne')}</ul>`,
@@ -495,11 +536,19 @@ function positionDe(s) {
 function choisir(cle) {
   selection = cle; rendreFiche(); const p = positionDe(cle); if (!p) return;
   const z = p[1] * (MOBILE ? 1.3 : 1), v = p[0].clone();
-  // sur téléphone la fiche couvre le bas : on vise un peu plus près de la caméra pour garder l'élément au-dessus
-  if (MOBILE && cle) { const k = (0.45 * camera.top) / z / 0.57; v.x += 0.64 * k; v.z += 0.77 * k; }
   viser(v, z);
+  if (MOBILE && cle) $('fiche').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
+if (MOBILE) $('scene').after($('fiche')); // sur téléphone la fiche s'affiche sous la maquette
 $('fermer').onclick = () => choisir(null);
+$('fiche-c').onclick = (ev) => {
+  const b = ev.target.closest('[data-act]'); if (!b || !/^r\d/.test(selection || '')) return;
+  const r = RAYON_DE(selection), q = quantites[r.id] ?? suggestion(r);
+  if (b.dataset.act === 'plus') quantites[r.id] = Math.min(40, q + 2);
+  else if (b.dataset.act === 'moins') quantites[r.id] = Math.max(2, q - 2);
+  else if (b.dataset.act === 'commander') return commander(r.id);
+  rendreFiche();
+};
 const ray = new THREE.Raycaster(), souris = new THREE.Vector2(); let appui = null;
 renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
 renderer.domElement.addEventListener('pointerup', (e) => {
@@ -519,7 +568,7 @@ addEventListener('resize', taille); taille();
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
-  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) t = OUVERTURE; synchroniser(); }
+  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
   for (const c of clients) {
     if (!c.o.visible) continue;
@@ -550,7 +599,7 @@ function animer(now) {
   requestAnimationFrame(animer);
 }
 synchroniser(true);
-window.demo = { temps: () => t, camera, controls, scene, THREE, regler: (h) => { t = h; synchroniser(); } };
+window.demo = { temps: () => t, camera, controls, scene, THREE, regler: (h) => { t = h; oublierCommandes(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
 requestAnimationFrame(animer);
 </script>
 </body>
