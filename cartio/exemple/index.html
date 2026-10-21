@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%234a1526%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27Georgia,serif%27 font-size=%2738%27 font-weight=%27700%27 fill=%27%23f4b23c%27 text-anchor=%27middle%27%3EC%3C/text%3E%3C/svg%3E">
+<title>Exemple de carte Cartio : Restaurant exemple (fictif)</title>
+<meta name="description" content="Carte d'exemple fictive faite avec Cartio : plats, prix et les 14 allergènes, avec un filtre par allergène.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#fff6ea;--surface:#ffffff;--ink:#2a1a12;--muted:#6b4a3a;--line:rgba(42,26,18,.14);
+  --accent:#b8321a;--on-accent:#fff;--soft:rgba(184,50,26,.09);--band:#4a1526;--on-band:#fff4e6;--band-muted:#f0c9a8;--sun:#f4b23c;--on-sun:#2a1606;--warn:#8a5a00;--warn-bg:#fff4d6;
+  --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#170f0c;--surface:#24170f;--ink:#f6ebdf;--muted:#d2b49d;--line:rgba(246,235,223,.14);
+  --accent:#ff7d5e;--on-accent:#2a0d05;--soft:rgba(255,125,94,.12);--band:#3a0f1d;--on-band:#fff4e6;--band-muted:#e6c0a0;--sun:#f5c04f;--on-sun:#2a1606;--warn:#ffd27a;--warn-bg:#3a2c0c}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body)}
+a{color:var(--accent)}
+.bandeau{background:var(--warn-bg);color:var(--warn);text-align:center;font-weight:700;padding:10px 16px;font-size:.95rem;border-bottom:1px solid var(--line)}
+.bandeau a{color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px}
+header{padding:26px 0 8px}
+h1{font:700 clamp(1.8rem,7vw,2.5rem)/1.15 var(--head)}
+header p{color:var(--muted);margin-top:6px}
+.filtre{background:var(--bg);padding:14px 0 12px;border-bottom:1px solid var(--line)}
+.filtre h2{font:700 1rem var(--body);margin-bottom:8px}
+.puces{display:flex;flex-wrap:wrap;gap:8px}
+.puce{font:600 .88rem var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:99px;cursor:pointer;min-height:36px}
+.puce[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.etat{font-size:.9rem;color:var(--muted);margin-top:8px;min-height:1.4em}
+.etat button{font:600 .9rem var(--body);background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0 0 0 6px}
+h3.rubrique{font:700 1.4rem var(--head);margin:28px 0 10px}
+.plat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.plat[hidden]{display:none}
+.ligne{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.nom{font-weight:700;font-size:1.05rem}
+.prix{font-weight:700;color:var(--accent);white-space:nowrap}
+.desc{color:var(--muted);font-size:.95rem;margin-top:2px}
+.allergenes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.al{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;font-weight:600;background:var(--soft);color:var(--ink);padding:3px 9px 3px 4px;border-radius:99px}
+.al i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:.68rem;font-weight:800}
+.aucun{font-size:.85rem;color:var(--muted);margin-top:8px}
+.vide{display:none;background:var(--surface);border:1px dashed var(--muted);border-radius:14px;padding:16px;color:var(--muted);margin-bottom:10px}
+.legende{margin:34px 0 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.legende h2{font:700 1.1rem var(--head);margin-bottom:10px}
+.legende ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.88rem}
+.legende li{display:flex;gap:6px;align-items:center}
+.legende i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;flex:0 0 22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:.7rem;font-weight:800}
+.note{font-size:.9rem;color:var(--muted);margin-top:14px}
+footer{padding:28px 0 40px;font-size:.92rem;color:var(--muted);text-align:center}
+@media (min-width:820px){.filtre{position:sticky;top:0;z-index:5}.legende ul{grid-template-columns:repeat(3,1fr)}}
+/* Identité Cartio */
+.bandeau{background:var(--sun);color:var(--on-sun);border-bottom:0}
+header{background:var(--band);color:var(--on-band);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax);padding:26px 0 22px}
+header h1{color:var(--on-band)}
+header p{color:var(--band-muted)}
+h3.rubrique{color:var(--accent);border-bottom:3px solid var(--sun);display:inline-block;padding-bottom:2px}
+.puce[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="bandeau">EXEMPLE : restaurant fictif, plats et allergènes inventés pour la démonstration. <a href="../index.html">Découvrir Cartio</a></div>
+<div class="wrap">
+  <header>
+    <h1>Restaurant exemple</h1>
+    <p>La carte. Touchez un allergène pour masquer les plats qui en contiennent.</p>
+  </header>
+
+  <div class="filtre">
+    <h2>Je dois éviter :</h2>
+    <div class="puces" id="puces"></div>
+    <p class="etat" id="etat" aria-live="polite"></p>
+  </div>
+
+  <main id="carte"></main>
+
+  <section class="legende">
+    <h2>Les 14 allergènes</h2>
+    <ul id="legende"></ul>
+    <p class="note">Les allergènes sont fournis et validés par écrit par le restaurateur. En cas de doute, demandez au personnel.</p>
+  </section>
+
+  <footer>Carte d'exemple faite avec <a href="../index.html">Cartio</a>, au Creusot.</footer>
+</div>
+
+<script>
+const ALLERGENES = {
+  gluten:   ['Gl', 'Gluten'],
+  crustaces:['Cr', 'Crustacés'],
+  oeufs:    ['Oe', 'Œufs'],
+  poissons: ['Po', 'Poissons'],
+  arachides:['Ar', 'Arachides'],
+  soja:     ['So', 'Soja'],
+  lait:     ['La', 'Lait'],
+  fruits:   ['Fc', 'Fruits à coque'],
+  celeri:   ['Ce', 'Céleri'],
+  moutarde: ['Mo', 'Moutarde'],
+  sesame:   ['Se', 'Sésame'],
+  sulfites: ['Su', 'Sulfites'],
+  lupin:    ['Lu', 'Lupin'],
+  mollusques:['Ml','Mollusques'],
+};
+
+const CARTE = [
+  { titre: 'Entrées', plats: [
+    { nom: 'Œuf meurette', desc: 'Œuf poché, sauce au vin rouge, croûtons', prix: '8,50 €', al: ['oeufs','gluten','sulfites','celeri','lait'] },
+    { nom: 'Salade de chèvre chaud', desc: 'Toast de chèvre, noix, salade verte', prix: '9,00 €', al: ['lait','gluten','fruits','moutarde'] },
+    { nom: 'Velouté de légumes', desc: 'Légumes de saison', prix: '6,50 €', al: ['celeri'] },
+  ]},
+  { titre: 'Plats', plats: [
+    { nom: 'Bœuf bourguignon', desc: 'Mijoté au vin rouge, pommes vapeur', prix: '16,50 €', al: ['sulfites','celeri','gluten'] },
+    { nom: 'Filet de truite', desc: 'Beurre blanc, riz', prix: '15,00 €', al: ['poissons','lait','sulfites'] },
+    { nom: 'Moules marinières', desc: 'Vin blanc, échalotes, frites', prix: '14,00 €', al: ['mollusques','sulfites','celeri'] },
+    { nom: 'Assiette végétarienne', desc: 'Légumes rôtis, houmous, graines', prix: '13,00 €', al: ['sesame'] },
+  ]},
+  { titre: 'Desserts', plats: [
+    { nom: 'Tarte aux poires', desc: 'Pâte sablée, crème d’amande', prix: '6,50 €', al: ['gluten','oeufs','lait','fruits'] },
+    { nom: 'Salade de fruits frais', desc: 'Fruits de saison', prix: '5,50 €', al: [] },
+    { nom: 'Mousse au chocolat', desc: 'Chocolat noir', prix: '6,00 €', al: ['oeufs','lait','soja'] },
+  ]},
+];
+
+const exclus = new Set();
+const $ = id => document.getElementById(id);
+
+function pastille(k){ const [c,n] = ALLERGENES[k]; return `<span class="al"><i aria-hidden="true">${c}</i>${n}</span>`; }
+
+function rendreCarte(){
+  $('carte').innerHTML = CARTE.map((r, i) => `
+    <h3 class="rubrique">${r.titre}</h3>
+    ${r.plats.map(p => `
+      <article class="plat" data-al="${p.al.join(' ')}">
+        <div class="ligne"><span class="nom">${p.nom}</span><span class="prix">${p.prix}</span></div>
+        <p class="desc">${p.desc}</p>
+        ${p.al.length ? `<div class="allergenes" aria-label="Allergènes">${p.al.map(pastille).join('')}</div>`
+                      : `<p class="aucun">Aucun des 14 allergènes</p>`}
+      </article>`).join('')}
+    <p class="vide" data-rubrique="${i}">Aucun plat de cette rubrique ne convient à votre choix.</p>`).join('');
+}
+
+function rendrePuces(){
+  $('puces').innerHTML = Object.entries(ALLERGENES).map(([k,[,n]]) =>
+    `<button type="button" class="puce" data-k="${k}" aria-pressed="false">${n}</button>`).join('');
+  $('puces').addEventListener('click', e => {
+    const b = e.target.closest('.puce'); if (!b) return;
+    const k = b.dataset.k;
+    exclus.has(k) ? exclus.delete(k) : exclus.add(k);
+    b.setAttribute('aria-pressed', exclus.has(k));
+    filtrer();
+  });
+}
+
+function filtrer(){
+  let caches = 0;
+  document.querySelectorAll('.plat').forEach(el => {
+    const al = el.dataset.al ? el.dataset.al.split(' ') : [];
+    const cacher = al.some(a => exclus.has(a));
+    el.hidden = cacher; if (cacher) caches++;
+  });
+  document.querySelectorAll('.vide').forEach(v => {
+    let el = v.previousElementSibling, visible = false;
+    while (el && el.classList.contains('plat')) { if (!el.hidden) visible = true; el = el.previousElementSibling; }
+    v.style.display = visible ? 'none' : 'block';
+  });
+  const etat = $('etat');
+  if (!exclus.size) { etat.textContent = ''; return; }
+  etat.innerHTML = `${caches} plat${caches > 1 ? 's' : ''} masqué${caches > 1 ? 's' : ''}.<button type="button" id="raz">Tout afficher</button>`;
+  $('raz').onclick = () => { exclus.clear(); document.querySelectorAll('.puce').forEach(b => b.setAttribute('aria-pressed','false')); filtrer(); };
+}
+
+$('legende').innerHTML = Object.values(ALLERGENES).map(([c,n]) => `<li><i aria-hidden="true">${c}</i>${n}</li>`).join('');
+rendreCarte(); rendrePuces(); filtrer();
+</script>
+</body>
+</html>

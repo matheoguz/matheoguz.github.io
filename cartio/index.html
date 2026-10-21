@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%234a1526%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27Georgia,serif%27 font-size=%2738%27 font-weight=%27700%27 fill=%27%23f4b23c%27 text-anchor=%27middle%27%3EC%3C/text%3E%3C/svg%3E">
+<title>Cartio : votre carte de restaurant sur téléphone, avec les allergènes</title>
+<meta name="description" content="Cartio met votre carte en ligne, lisible sur téléphone, avec les 14 allergènes par plat, un QR code pour vos tables et le lien dans votre fiche Google. 49 €, payé une fois. Fait sur place au Creusot.">
+<link rel="canonical" href="https://matheoguz.github.io/cartio/">
+<meta property="og:title" content="Cartio : votre carte sur téléphone, avec les allergènes">
+<meta property="og:description" content="Carte en ligne, 14 allergènes, QR code et lien Google. 49 €, payé une fois. Fait sur place au Creusot.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://matheoguz.github.io/cartio/">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#fff6ea;--surface:#ffffff;--ink:#2a1a12;--muted:#6b4a3a;--line:rgba(42,26,18,.14);
+  --accent:#b8321a;--on-accent:#fff;--soft:rgba(184,50,26,.09);--band:#4a1526;--on-band:#fff4e6;--band-muted:#f0c9a8;--sun:#f4b23c;--on-sun:#2a1606;--err:#b3261e;--err-bg:#fdecea;
+  --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#170f0c;--surface:#24170f;--ink:#f6ebdf;--muted:#d2b49d;--line:rgba(246,235,223,.14);
+  --accent:#ff7d5e;--on-accent:#2a0d05;--soft:rgba(255,125,94,.12);--band:#3a0f1d;--on-band:#fff4e6;--band-muted:#e6c0a0;--sun:#f5c04f;--on-sun:#2a1606;--err:#ff8a80;--err-bg:#3a1714}
+  .qr img{background:#fff}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{font:700 1.45rem var(--head);color:var(--ink);text-decoration:none}
+.logo span{color:var(--accent)}
+header.top a.lien{font-size:.95rem;font-weight:600}
+h1,h2,h3{font-family:var(--head);line-height:1.2;font-weight:700}
+h1{font-size:clamp(2rem,7vw,3.3rem);max-width:15ch}
+h2{font-size:clamp(1.5rem,4.5vw,2.1rem);margin-bottom:14px}
+h3{font-size:1.15rem;margin-bottom:6px}
+.hero{padding:28px 0 44px;display:grid;gap:32px}
+.hero p.accroche{font-size:1.12rem;color:var(--muted);margin:18px 0 26px;max-width:52ch}
+.lieu{display:inline-block;font-size:.92rem;font-weight:600;color:var(--accent);background:var(--soft);padding:5px 12px;border-radius:99px;margin-bottom:16px}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:700;padding:15px 24px;border-radius:12px;font-size:1.02rem;text-align:center}
+.btn.second{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.adresse{margin-top:12px;font-size:.95rem;color:var(--muted)}
+.adresse strong{color:var(--ink);white-space:nowrap}
+@media (max-width:819px){.actions .btn{flex:1 1 100%}}
+.apercu{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;gap:20px;align-items:center}
+.apercu .qr{flex:0 0 132px}
+.qr img{display:block;width:132px;height:132px;border-radius:10px;border:1px solid var(--line)}
+.apercu p{color:var(--muted);font-size:.97rem}
+.apercu p strong{color:var(--ink);display:block;font-size:1.05rem;margin-bottom:4px}
+section{padding:44px 0;border-top:1px solid var(--line)}
+.inclus{list-style:none;display:grid;gap:14px;margin-top:8px}
+.inclus li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px 16px 50px;position:relative}
+.inclus li::before{content:"";position:absolute;left:18px;top:21px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.inclus li::after{content:"";position:absolute;left:25px;top:25px;width:5px;height:9px;border:solid var(--on-accent);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.inclus li span{display:block;color:var(--muted);font-size:.95rem}
+.prix{display:grid;gap:18px}
+.offre{background:var(--surface);border:2px solid var(--accent);border-radius:20px;padding:26px}
+.offre .montant{font:700 3rem/1 var(--head);color:var(--accent)}
+.offre .montant small{font:600 1rem var(--body);color:var(--muted)}
+.offre p{margin-top:10px}
+.option{background:var(--surface);border:1px dashed var(--muted);border-radius:20px;padding:22px}
+.etiquette{display:inline-block;font-size:.8rem;font-weight:700;border:1px solid var(--muted);color:var(--muted);padding:2px 10px;border-radius:99px;margin-bottom:10px}
+.option .montant{font:700 1.8rem/1.1 var(--head)}
+.option p{color:var(--muted);font-size:.97rem;margin-top:8px}
+.petit{font-size:.9rem;color:var(--muted);margin-top:14px}
+.avertissement{background:var(--soft);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;font-weight:600;margin-top:18px}
+.etapes{list-style:none;counter-reset:e;display:grid;gap:18px}
+.etapes li{counter-increment:e;display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+.etapes li::before{content:counter(e);width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:700;display:grid;place-items:center}
+.etapes p{color:var(--muted)}
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px}
+.contact p{color:var(--muted);margin-bottom:20px;max-width:56ch}
+.formulaire{margin-top:6px}
+.champs{display:grid;gap:14px;margin-bottom:16px}
+.champs label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.95rem}
+.facultatif{font-weight:400;color:var(--muted);display:inline}
+.champs label .lib{display:block}
+.champs input,.champs textarea,.pret textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+.champs input:focus,.champs textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.champs input[aria-invalid="true"]{border-color:var(--err);border-width:2px}
+.contact .erreur{color:var(--err);background:var(--err-bg);border-left:4px solid var(--err);border-radius:8px;padding:10px 12px;font-weight:600;margin-bottom:14px;max-width:none}
+.contact .erreur::before{content:"⚠ "}
+button.btn{border:0;cursor:pointer;font-family:inherit}
+.pret{margin-top:6px}
+.pret h3{margin-bottom:8px}
+.pret textarea{font-size:.92rem;margin:4px 0 14px;resize:vertical}
+.contact .rgpd{font-size:.82rem;color:var(--muted);margin:22px 0 0;max-width:none;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:819px){.contact .btn{width:100%}}
+@media (min-width:820px){.champs{grid-template-columns:1fr 1fr}.champs .large{grid-column:1/-1}}
+footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+@media (min-width:820px){
+  body{font-size:18px}
+  .hero{grid-template-columns:1.25fr 1fr;align-items:center;padding:56px 0 64px}
+  .apercu{flex-direction:column;text-align:center;padding:30px}
+  .apercu .qr{flex-basis:auto}
+  .qr img{width:180px;height:180px}
+  .inclus{grid-template-columns:1fr 1fr}
+  .prix{grid-template-columns:1.3fr 1fr;align-items:stretch}
+  .etapes{grid-template-columns:repeat(4,1fr)}
+  .etapes li{grid-template-columns:1fr}
+}
+/* Identité Cartio : bandeau bordeaux, safran, rouge tomate */
+.bande,header.top,.hero{background:var(--band);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax)}
+header.top .logo{color:var(--on-band)}
+header.top .logo span,header.top a.lien{color:var(--sun)}
+.hero{color:var(--on-band)}
+.hero h1{color:var(--on-band)}
+.hero p.accroche,.hero .adresse{color:var(--band-muted)}
+.hero .adresse strong{color:var(--on-band)}
+.hero .lieu{background:var(--sun);color:var(--on-sun)}
+.hero .btn{background:var(--sun);color:var(--on-sun)}
+.hero .btn.second{background:transparent;color:var(--on-band);border-color:var(--on-band)}
+.hero .apercu{border:0;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.hero .apercu p{color:var(--muted)}
+.hero .apercu p strong{color:var(--ink)}
+.hero .apercu a{color:var(--accent)}
+#prix{background:var(--soft);box-shadow:0 0 0 100vmax var(--soft);clip-path:inset(0 -100vmax)}
+.offre{border-color:var(--accent);box-shadow:0 10px 0 -2px var(--sun)}
+.etapes li::before{background:var(--sun);color:var(--on-sun)}
+.inclus li::before{background:var(--accent)}
+.contact{border-top:6px solid var(--sun)}
+footer{background:var(--band);color:var(--band-muted);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax);border-top:0}
+footer a{color:var(--sun)}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Service",
+  "name":"Cartio",
+  "description":"Carte de restaurant en ligne, lisible sur téléphone, avec les 14 allergènes par plat, un QR code et le lien dans la fiche Google.",
+  "areaServed":"Le Creusot",
+  "url":"https://matheoguz.github.io/cartio/",
+  "offers":{"@type":"Offer","price":"49","priceCurrency":"EUR"}
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="index.html">Cart<span>io</span></a>
+    <a class="lien" href="exemple/index.html">Voir un exemple</a>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <span class="lieu">Fait sur place au Creusot</span>
+        <h1>Votre carte sur téléphone, avec les allergènes.</h1>
+        <p class="accroche">Votre carte en ligne avec les 14 allergènes par plat, un QR code pour vos tables et votre vitrine, et le lien posé dans votre fiche Google. 49 €, payé une fois, sans abonnement.</p>
+        <div class="actions">
+          <a class="btn" href="#ma-carte">Je veux ma carte</a>
+          <a class="btn second" href="exemple/index.html">Voir la carte d'exemple</a>
+        </div>
+        <p class="adresse">Laissez vos coordonnées en 1 minute, ou écrivez à <strong>matheoguzzi11@gmail.com</strong></p>
+      </div>
+      <aside class="apercu">
+        <div class="qr"><img src="qr-exemple.svg" alt="QR code qui ouvre la carte d'exemple" width="180" height="180"></div>
+        <p><strong>Essayez avec votre téléphone</strong>Scannez ce QR code&nbsp;: il ouvre une carte d'exemple, comme celle que vos clients verraient à table. Déjà sur votre téléphone&nbsp;? <a href="exemple/index.html">Ouvrez-la ici</a>.</p>
+      </aside>
+    </div>
+
+    <section id="inclus">
+      <h2>Ce qui est inclus</h2>
+      <ul class="inclus">
+        <li>Votre carte sur téléphone<span>Lisible sans zoomer, jusqu'à 40 plats environ, avec vos prix.</span></li>
+        <li>Les 14 allergènes par plat<span>Affichés sous chaque plat, avec un filtre pour vos clients (par exemple « sans gluten »).</span></li>
+        <li>Un QR code prêt à imprimer<span>Pour vos tables, votre comptoir ou votre vitrine. On vous donne le fichier, l'impression reste à votre charge.</span></li>
+        <li>Le lien dans votre fiche Google<span>On le pose avec vous (ou on vous montre où) dans « Lien vers le menu ».</span></li>
+        <li>L'hébergement, sans abonnement<span>Votre carte reste en ligne, sans frais tous les mois.</span></li>
+        <li>Une série de corrections<span>Et les petites mises à jour gratuites pendant 30 jours.</span></li>
+      </ul>
+      <p class="avertissement">Les allergènes sont fournis et validés par écrit par le restaurateur.</p>
+      <p class="petit">On saisit ce que vous nous donnez, et vous relisez et validez la liste par mail avant la mise en ligne. Le QR code complète votre carte papier, il ne la remplace pas.</p>
+    </section>
+
+    <section id="prix">
+      <h2>Le prix</h2>
+      <div class="prix">
+        <div class="offre">
+          <div class="montant">49 € <small>payé une fois</small></div>
+          <p>Tout ce qui est inclus ci-dessus, sans abonnement. Mises à jour gratuites le premier mois.</p>
+        </div>
+        <div class="option">
+          <span class="etiquette">En option, pas obligatoire</span>
+          <div class="montant">15 € par mois</div>
+          <p>Après le premier mois, si vous voulez qu'on s'occupe des changements de prix et de plats. Sans engagement, vous arrêtez quand vous voulez.</p>
+        </div>
+      </div>
+      <p class="petit">Une nouvelle carte complète (changement de toute la carte) compte comme une nouvelle carte.</p>
+    </section>
+
+    <section id="comment">
+      <h2>Comment ça se passe</h2>
+      <ol class="etapes">
+        <li><div><h3>Vous laissez vos coordonnées</h3><p>Le formulaire en bas de page, ou un simple mail avec le nom de votre restaurant.</p></div></li>
+        <li><div><h3>On récupère la carte</h3><p>Sur place au Creusot ou par mail : la carte papier et la liste de vos allergènes.</p></div></li>
+        <li><div><h3>Vous validez</h3><p>Vous relisez la carte et les allergènes, puis vous validez par écrit.</p></div></li>
+        <li><div><h3>C'est en ligne</h3><p>Vous recevez le lien, le QR code à imprimer, et le lien est posé sur Google.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="ma-carte">
+      <div class="contact">
+        <h2>Je veux ma carte</h2>
+        <p>Vous avez un restaurant, un snack ou une pizzeria ? Laissez vos coordonnées : on vous répond pour en parler, sans engagement. Rien n'est à payer pour l'instant.</p>
+        <form id="form-carte" class="formulaire" novalidate>
+          <div class="champs">
+            <label>Prénom<input name="prenom" autocomplete="given-name" required></label>
+            <label>Nom<input name="nom" autocomplete="family-name" required></label>
+            <label class="large">Nom du restaurant<input name="restaurant" autocomplete="organization" required></label>
+            <label>Mail<input name="mail" type="email" autocomplete="email" inputmode="email" required></label>
+            <label>Téléphone<input name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+            <label class="large"><span class="lib">Message <span class="facultatif">(facultatif)</span></span><textarea name="message" rows="3" placeholder="Par exemple : le meilleur moment pour vous appeler"></textarea></label>
+          </div>
+          <p class="erreur" id="erreur" role="alert" hidden></p>
+          <button class="btn" type="submit">Préparer mon mail</button>
+          <p class="petit">Le bouton ouvre votre messagerie avec un mail déjà rempli, adressé à <strong>matheoguzzi11@gmail.com</strong> : il ne reste qu'à l'envoyer.</p>
+        </form>
+        <div class="pret" id="pret" hidden>
+          <h3>Votre mail est prêt</h3>
+          <p>Votre messagerie s'est ouverte avec le mail rempli : envoyez-le. Elle ne s'est pas ouverte ? Copiez le texte ci-dessous et envoyez-le à <strong>matheoguzzi11@gmail.com</strong>.</p>
+          <textarea id="texte-mail" rows="9" readonly></textarea>
+          <div class="actions">
+            <button class="btn" type="button" id="copier">Copier le texte</button>
+            <a class="btn second" id="rouvrir" href="mailto:matheoguzzi11@gmail.com">Rouvrir le mail</a>
+          </div>
+          <p class="petit" id="copie-ok" role="status"></p>
+        </div>
+        <p class="rgpd">Vos informations servent uniquement à vous recontacter au sujet de Cartio. Ce site n'enregistre rien : elles partent seulement dans le mail que vous envoyez vous-même à Matheo Guzzi. Elles sont gardées le temps de notre échange, et 3 ans au plus après notre dernier contact si vous ne devenez pas client. Vous pouvez demander à tout moment à les voir, les corriger ou les supprimer en écrivant à matheoguzzi11@gmail.com.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Cartio, par Matheo Guzzi, au Creusot (71200). <a href="exemple/index.html">Carte d'exemple</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var f=document.getElementById('form-carte'),err=document.getElementById('erreur'),pret=document.getElementById('pret');
+  var A='matheoguzzi11@gmail.com';
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var v={},manque=[];
+    ['prenom','nom','restaurant','mail','tel','message'].forEach(function(k){v[k]=f.elements[k].value.trim();});
+    var noms={prenom:'votre prénom',nom:'votre nom',restaurant:'le nom du restaurant',mail:'votre mail',tel:'votre téléphone'};
+    Object.keys(noms).forEach(function(k){var ok=!!v[k];if(k==='mail'&&ok)ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v[k]);if(k==='tel'&&ok)ok=v[k].replace(/\D/g,'').length>=9;f.elements[k].setAttribute('aria-invalid',ok?'false':'true');if(!ok)manque.push(noms[k]);});
+    if(manque.length){err.textContent='Il manque ou il faut corriger : '+manque.join(', ')+'.';err.hidden=false;f.querySelector('[aria-invalid="true"]').focus();return;}
+    err.hidden=true;
+    var sujet='Cartio : je veux ma carte ('+v.restaurant+')';
+    var corps='Bonjour,\n\nJe veux ma carte Cartio.\n\nPrénom : '+v.prenom+'\nNom : '+v.nom+'\nRestaurant : '+v.restaurant+'\nMail : '+v.mail+'\nTéléphone : '+v.tel+(v.message?'\n\nMessage : '+v.message:'')+'\n\nMerci de me recontacter.';
+    var lien='mailto:'+A+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
+    document.getElementById('texte-mail').value='À : '+A+'\nObjet : '+sujet+'\n\n'+corps;
+    document.getElementById('rouvrir').href=lien;
+    f.hidden=true;pret.hidden=false;pret.scrollIntoView({block:'start'});
+    window.location.href=lien;
+  });
+  document.getElementById('copier').addEventListener('click',function(){
+    var t=document.getElementById('texte-mail'),ok=document.getElementById('copie-ok');
+    var fini=function(r){ok.textContent=r?'Texte copié. Collez-le dans un mail à '+A+'.':'La copie automatique ne marche pas ici : le texte est sélectionné, copiez-le à la main.';};
+    var secours=function(){t.focus();t.select();var r=false;try{r=document.execCommand('copy');}catch(e){}fini(r);};
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t.value).then(function(){fini(true);},secours);}
+    else{secours();}
+  });
+})();
+</script>
+</body>
+</html>
