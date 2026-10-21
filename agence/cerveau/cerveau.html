@@ -597,6 +597,15 @@ a.lien{font-weight:500}
 .valid-corps{display:grid;gap:8px;align-content:start;min-width:0}
 .valid-corps h3{font-size:16px}
 .valid-corr{display:grid;gap:8px}
+.tache .oui-non{display:flex;gap:6px;flex:none}
+.tache .oui-non .btn{padding:4px 10px;font-size:12.5px}
+.tache.refusee b{text-decoration:line-through;color:var(--muted)}
+.tache .raison{display:block;font-size:12.5px;color:var(--muted)}
+.rows li.refus-li{display:block;padding-top:0}
+.refus-form{display:grid;gap:8px;padding-left:34px;width:100%;box-sizing:border-box}
+.refus-form textarea{width:100%;box-sizing:border-box}
+.refus-form .btn{justify-self:start}
+@media (max-width:600px){.tache{flex-wrap:wrap}.tache .info{flex:1 1 60%;min-width:0}.tache .oui-non{flex-basis:100%;justify-content:flex-end}.refus-form{padding-left:0}}
 .valid-corr textarea{font:inherit;font-size:14px;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;background:var(--panel);color:var(--ink)}
 .bandeau-valider{display:flex;gap:12px;align-items:center;padding:14px 16px;text-decoration:none;border-color:#f97316}
 .bandeau-valider>div{flex:1;min-width:0;display:grid}
@@ -822,7 +831,7 @@ function cockpit() {
 const STATUTS = ['actif', 'en ligne', 'en pause', 'idée', 'terminé'];
 const STATUT_TAG = { actif: 'live', 'en ligne': 'ok', 'en pause': '', 'idée': 'warn', 'terminé': '' };
 const projetsDe = () => S.notes.filter((n) => (n.tags || []).includes('projet'));
-const ouvertes = () => S.taches.filter((t) => t.statut !== 'fait');
+const ouvertes = () => S.taches.filter((t) => t.statut !== 'fait' && t.statut !== 'refuse');
 const tachesDe = (titre) => ouvertes().filter((t) => cle(t.projet) === cle(titre));
 function dernierRapport() { return [...S.rapports].sort((a, b) => String(b.id || b.date).localeCompare(String(a.id || a.date)))[0]; }
 const estSoir = (r) => /-soir$/.test(r?.id || '') || r?.moment === 'soir';
@@ -844,10 +853,13 @@ function echeanceTache(t) {
   if (d <= 1) return `<span class="tag warn"><i data-lucide="clock"></i>${d === 0 ? "Aujourd'hui" : 'Demain'}</span>`;
   return `<span class="tag"><i data-lucide="calendar"></i>${esc(dateFr(t.echeance))}</span>`;
 }
+// Chaque tâche ouverte : Oui (je la fais / je suis d'accord) ou Non, avec le pourquoi, que le chef reçoit pour trouver une autre façon.
 function ligneTache(t, avecProjet = true) {
   const fait = t.statut === 'fait';
+  if (t.statut === 'refuse') return `<li class="tache refusee"><i data-lucide="circle-x" style="color:var(--bad)"></i><div class="info"><b>${esc(t.titre)}</b><span class="raison">Non : ${esc(t.raison || '')}${t.refuse_le ? ' · ' + quand(t.refuse_le) : ''}</span></div><button type="button" class="btn" data-tache-rouvrir="${esc(t.id)}">Rouvrir</button></li>`;
+  const ouverte = !fait;
   return `<li class="tache${fait ? ' faite' : ''}"><button type="button" class="coche" data-tache="${esc(t.id)}" aria-pressed="${fait}" aria-label="${fait ? 'Rouvrir' : 'Marquer comme faite'} : ${esc(t.titre)}">${fait ? '<i data-lucide="check"></i>' : ''}</button>
-    <div class="info"><b>${esc(t.titre)}</b>${avecProjet && t.projet ? `<small><button type="button" class="lien" data-projet="${esc(t.projet)}">${esc(t.projet)}</button></small>` : ''}</div>${echeanceTache(t)}</li>`;
+    <div class="info"><b>${esc(t.titre)}</b>${avecProjet && t.projet ? `<small><button type="button" class="lien" data-projet="${esc(t.projet)}">${esc(t.projet)}</button></small>` : ''}</div>${echeanceTache(t)}${ouverte ? `<span class="oui-non"><button type="button" class="btn" data-tache-oui="${esc(t.id)}" aria-label="Oui : ${esc(t.titre)}"><i data-lucide="check"></i>Oui</button><button type="button" class="btn" data-tache-non="${esc(t.id)}" aria-label="Non : ${esc(t.titre)}"><i data-lucide="x"></i>Non</button></span>` : ''}</li>${ouverte && S.refus === t.id ? `<li class="refus-li"><form class="refus-form" data-form-refus="${esc(t.id)}"><textarea name="r" rows="2" required placeholder="Pourquoi non ? Comment tu le voudrais à la place ?" aria-label="Pourquoi non"></textarea><button class="btn primary" type="submit"><i data-lucide="send"></i>Dire non au chef</button></form></li>` : ''}`;
 }
 const triTaches = (a, b) => String(a.echeance || '9999').localeCompare(String(b.echeance || '9999')) || String(b.date || '').localeCompare(String(a.date || ''));
 function formTache(projet = '') {
@@ -915,12 +927,14 @@ function projets() {
 }
 function taches() {
   const toutes = S.taches.filter((t) => match([t.titre, t.projet].join(' ')));
-  const ouv = toutes.filter((t) => t.statut !== 'fait').sort(triTaches);
+  const ouv = toutes.filter((t) => t.statut !== 'fait' && t.statut !== 'refuse').sort(triTaches);
+  const refusees = toutes.filter((t) => t.statut === 'refuse').sort((a, b) => String(b.refuse_le || '').localeCompare(String(a.refuse_le || ''))).slice(0, 20);
   const faites = toutes.filter((t) => t.statut === 'fait').sort((a, b) => String(b.fait_le || '').localeCompare(String(a.fait_le || ''))).slice(0, 30);
   const parProjet = [...new Set(ouv.map((t) => t.projet || ''))].sort((a, b) => (a ? 0 : 1) - (b ? 0 : 1) || a.localeCompare(b, 'fr'));
   return `<section class="card"><header><h2>Nouvelle tâche</h2></header><div class="pad">${formTache()}</div></section>
   ${parProjet.map((pr) => `<section class="card"><header><h2>${pr ? `<button type="button" class="lien" data-projet="${esc(pr)}">${esc(pr)}</button>` : 'Sans projet'}</h2><span class="c">${ouv.filter((t) => (t.projet || '') === pr).length}</span></header>
     <ul class="rows taches">${ouv.filter((t) => (t.projet || '') === pr).map((t) => ligneTache(t, false)).join('')}</ul></section>`).join('') || '<section class="card pad muted">Aucune tâche en attente.</section>'}
+  ${refusees.length ? `<details class="card"><summary class="pad" style="cursor:pointer;font-weight:600">Refusées (${refusees.length})</summary><ul class="rows taches">${refusees.map((t) => ligneTache(t)).join('')}</ul></details>` : ''}
   ${faites.length ? `<details class="card"><summary class="pad" style="cursor:pointer;font-weight:600">Faites récemment (${faites.length})</summary><ul class="rows taches">${faites.map((t) => ligneTache(t)).join('')}</ul></details>` : ''}`;
 }
 async function ajouterTache(t) {
@@ -928,6 +942,20 @@ async function ajouterTache(t) {
   const ref = S.db.collection('taches').doc();
   await ref.set({ titre: t.titre, projet: t.projet || '', echeance: t.echeance || '', statut: 'a_faire', date: new Date().toISOString(), source: t.source || 'Matheo' });
   return ref.id;
+}
+async function repondreTache(id, oui, raison, el) {
+  const t = S.taches.find((x) => x.id === id);
+  if (!t || !S.db) return toast('Base indisponible ici : impossible d\'enregistrer.');
+  const now = new Date().toISOString();
+  try {
+    if (oui) { await S.db.doc('taches/' + id).update({ statut: 'fait', reponse: 'oui', fait_le: now.slice(0, 10) }); toast('Oui : c\'est noté'); return; }
+    await S.db.doc('taches/' + id).update({ statut: 'refuse', reponse: 'non', raison, refuse_le: now });
+    render();
+    // Le non part au chef, qui redistribue le travail à l'équipe pour l'atteindre autrement.
+    toast('Non : le chef cherche une autre façon avec l\'équipe');
+    S.agentSel = '__chef';
+    await parlerAuChef(`Je dis NON à la tâche « ${t.titre} »${t.projet ? ` (projet ${t.projet})` : ''}. Pourquoi : ${raison}. Je ne veux pas que ça se passe comme ça : propose une autre façon d'atteindre l'objectif, comme je le veux, et donne le travail à l'équipe.`);
+  } catch { toast('Enregistrement impossible, réessaie.'); }
 }
 async function basculerTache(id, bouton) {
   const t = S.taches.find((x) => x.id === id);
@@ -2588,6 +2616,12 @@ document.addEventListener('click', (ev) => {
   const t = ev.target;
   const cm = t.closest('[data-copy-msg]');
   if (cm) { const m = S.messages.find((x) => x.id === cm.dataset.copyMsg); if (m) copier(m.texte, cm); return; }
+  const to = t.closest('[data-tache-oui]');
+  if (to) return repondreTache(to.dataset.tacheOui, true, '', to);
+  const tn = t.closest('[data-tache-non]');
+  if (tn) { S.refus = S.refus === tn.dataset.tacheNon ? null : tn.dataset.tacheNon; render(); setTimeout(() => document.querySelector('[data-form-refus] textarea')?.focus(), 50); return; }
+  const tr = t.closest('[data-tache-rouvrir]');
+  if (tr) { S.db?.doc('taches/' + tr.dataset.tacheRouvrir).update({ statut: 'a_faire' }).catch(() => {}); return; }
   const ta = t.closest('[data-tache]');
   if (ta) return basculerTache(ta.dataset.tache, ta);
   const pj = t.closest('[data-projet]');
@@ -2653,6 +2687,7 @@ document.addEventListener('keydown', (ev) => {
 $('#scrim').addEventListener('click', fermer);
 $('#d-close').addEventListener('click', fermer);
 document.addEventListener('submit', async (ev) => {
+  if (ev.target.matches?.('[data-form-refus]')) { ev.preventDefault(); const r = String(new FormData(ev.target).get('r') || '').trim(); if (!r) return; S.refus = null; return repondreTache(ev.target.dataset.formRefus, false, r.slice(0, 1200), ev.target); }
   if (ev.target.matches?.('[data-form-corr]')) { ev.preventDefault(); const c = String(new FormData(ev.target).get('c') || '').trim(); if (!c) return; const id = ev.target.dataset.formCorr; S.corriger = null; return repondreValidation(id, { statut: 'a_corriger', commentaire: c.slice(0, 1500) }, ev.target.closest('.card') || ev.target); }
   if (ev.target.id === 'f-chef') { ev.preventDefault(); const q = $('#chef-q'); const v = q.value; q.value = ''; return parlerAuChef(v); }
   if (ev.target.id === 'f-tache') {
