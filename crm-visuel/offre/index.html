@@ -60,7 +60,7 @@
   .grille4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 12px; padding: 22px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
   .carte:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(17,24,39,.08); border-color: #c7d2fe; }
-  .carte .ico { font-size: 22px; display: inline-block; margin-bottom: 8px; transition: transform .3s ease; }
+  .carte .ico { display: block; color: var(--accent); margin-bottom: 10px; transition: transform .3s ease; }
   .carte:hover .ico { transform: scale(1.2) rotate(-6deg); }
   .chiffres { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
   .chiffre { text-align: center; padding: 18px 10px; border-radius: 12px; background: linear-gradient(180deg, #eef2ff, #fff); border: 1px solid #e0e7ff; }
@@ -138,7 +138,7 @@
   <div class="apercu">
     <div class="ecran" id="ecran">
       <span class="direct"><i></i>En direct</span>
-      <button class="essayer" id="essayer" type="button">▶ Essayer ici</button>
+      <button class="essayer" id="essayer" type="button"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;margin-right:4px"><path d="M7 4l13 8-13 8z"/></svg>Essayer ici</button>
       <img class="vu" src="demo-auto-ecole.jpg" alt="Démo : une auto-école fictive en maquette 3D, avec le planning du jour et les chiffres clés" width="1200" height="750">
       <img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" width="1200" height="750" loading="lazy">
       <img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" width="1200" height="750" loading="lazy">
@@ -153,10 +153,10 @@
   <h2>Clair, précis, facile, rentable.</h2>
   <p class="chapo">Pensé pour les gérants qui veulent voir leur journée en un coup d'œil, sans apprendre un logiciel.</p>
   <div class="grille4">
-    <div class="carte apparait"><span class="ico">👀</span><h3>Clair</h3><p>Vos locaux dessinés comme une maquette. Vert, c'est libre ; orange, c'est occupé.</p></div>
-    <div class="carte apparait"><span class="ico">🎯</span><h3>Précis</h3><p>Le planning du jour heure par heure, avec un trait « maintenant ». Le prénom et le nom de chaque personne.</p></div>
-    <div class="carte apparait"><span class="ico">👆</span><h3>Facile</h3><p>Un clic sur un élément zoome dessus et ouvre sa fiche. Sur ordinateur, tablette ou téléphone.</p></div>
-    <div class="carte apparait"><span class="ico">📈</span><h3>Rentable</h3><p>En haut de l'écran : encaissé du jour et du mois, remplissage de l'équipe, ce qui reste à encaisser.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><h3>Clair</h3><p>Vos locaux dessinés comme une maquette. Vert, c'est libre ; orange, c'est occupé.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><h3>Précis</h3><p>Le planning du jour heure par heure, avec un trait « maintenant ». Le prénom et le nom de chaque personne.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 9a2 2 0 0 1 4 0v3"/><path d="M17 11a2 2 0 0 1 4 0v4a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-2.7L4.6 15a2 2 0 0 1 3.2-2.4L9 14"/></svg><h3>Facile</h3><p>Un clic sur un élément zoome dessus et ouvre sa fiche. Sur ordinateur, tablette ou téléphone.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><h3>Rentable</h3><p>En haut de l'écran : encaissé du jour et du mois, remplissage de l'équipe, ce qui reste à encaisser.</p></div>
   </div>
   <div class="chiffres apparait">
     <div class="chiffre"><b data-compte="20">20</b><span>personnes suivies</span></div>
@@ -172,7 +172,7 @@
   <p class="chapo">Les deux démos tournent toutes seules, avec des noms et des chiffres inventés. Votre version reprend vos locaux, votre équipe et vos chiffres.</p>
   <div class="exemples">
     <div class="exemple apparait"><div class="vignette"><img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" loading="lazy"><img src="demo-auto-ecole.jpg" alt="" loading="lazy"></div><div><h3>Une auto-école</h3><p>Voitures en leçon ou au parking, moniteurs disponibles, élèves de la salle de code, planning de chaque moniteur, élèves à relancer.</p><a class="btn" href="../">Ouvrir la démo</a></div></div>
-    <div class="exemple apparait"><div class="vignette"><img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" loading="lazy"><img src="demo-commande.jpg" alt="" loading="lazy"></div><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock exact de chaque rayon et ruptures, commande de réassort en un clic, équipe présente et coût de la journée, livraisons au quai.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a></div></div>
+    <div class="exemple apparait"><div class="vignette"><img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" loading="lazy"><img src="demo-commande.jpg" alt="" loading="lazy"></div><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock exact de chaque rayon et ruptures, commande de réassort en un clic, équipe présente, pauses et coût de la journée, livraisons au quai, locaux du personnel.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a></div></div>
   </div>
 </div></section>
 
