@@ -448,30 +448,63 @@ anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
 
 // ================= Mouvements, calés sur le planning =================
 const VOIE = 15.9;
+// Trajets lissés : une courbe continue (virages arrondis), parcourue à vitesse constante,
+// avec un démarrage et un freinage doux ; l'orientation suit la tangente de la courbe.
+const V3 = (x, z) => new THREE.Vector3(x, 0.13, z);
+function courbe(points) { const c = new THREE.CatmullRomCurve3(points, false, 'centripetal'); return { c, L: c.getLength(), s: 0 }; }
 function depart(v) {
   const p = PLACES[v.place];
-  v.chemin = [p.clone(), new THREE.Vector3(p.x, 0.13, 0.6), new THREE.Vector3(22, 0.13, 0.6), new THREE.Vector3(22, 0.13, 10.5), new THREE.Vector3(24.5, 0.13, VOIE), new THREE.Vector3(36, 0.13, VOIE)];
-  v.k = 0; v.u = 0; v.mode = 'sortie';
+  // marche arrière pour sortir de la place, en tournant vers la sortie, puis départ en avant
+  v.recul = { de: p.clone(), vers: V3(p.x + 1.2, 0.4), r0: Math.PI, r1: Math.PI / 2, k: 0 };
+  v.trajet = courbe([V3(p.x + 1.2, 0.4), V3(p.x + 4, 0.7), V3(19.5, 0.7), V3(22, 2.8), V3(22, 9.5), V3(23.6, 14.4), V3(27, VOIE), V3(42, VOIE)]);
+  v.freine = false; v.mode = 'sortie';
 }
 function retour(v) {
   const p = PLACES[v.place];
-  v.chemin = [new THREE.Vector3(-36, 0.13, VOIE), new THREE.Vector3(19.5, 0.13, VOIE), new THREE.Vector3(22, 0.13, 10.5), new THREE.Vector3(22, 0.13, 0.6), new THREE.Vector3(p.x, 0.13, 0.6), p.clone()];
-  v.k = 0; v.u = 0; v.mode = 'retour'; v.obj.visible = true; v.obj.position.copy(v.chemin[0]); v.rot = Math.PI / 2;
+  v.recul = null;
+  v.trajet = courbe([V3(-42, VOIE), V3(17.5, VOIE), V3(20.8, 14.2), V3(22, 10.5), V3(22, 3), V3(19.5, 0.7), V3(p.x + 3, 0.7), V3(p.x + 0.4, -1.4), p.clone()]);
+  v.freine = true; v.mode = 'retour'; v.obj.visible = true;
+  v.obj.position.copy(v.trajet.c.getPointAt(0)); v.rot = Math.PI / 2;
 }
-function avancer(v, dt, vitesse = 7) {
-  const a = v.chemin[v.k], b = v.chemin[v.k + 1];
-  v.u += (vitesse * dt) / Math.max(a.distanceTo(b), 0.01);
-  if (v.u >= 1) { v.u = 0; v.k++; if (v.k >= v.chemin.length - 1) return true; }
-  const a2 = v.chemin[v.k], b2 = v.chemin[v.k + 1];
-  v.obj.position.lerpVectors(a2, b2, v.u);
-  const cible = Math.atan2(b2.x - a2.x, b2.z - a2.z);
-  let d = cible - v.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); v.rot += d * Math.min(1, dt * 8); v.obj.rotation.y = v.rot;
-  return false;
+const doux = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+function avancer(v, dt, vmax = 7.5) {
+  if (v.recul) { // marche arrière : 1,6 s, départ et arrêt en douceur
+    const r = v.recul; r.k = Math.min(1, r.k + dt / 1.6); const e = doux(r.k);
+    v.obj.position.lerpVectors(r.de, r.vers, e); v.rot = r.r0 + (r.r1 - r.r0) * e; v.obj.rotation.y = v.rot;
+    if (r.k >= 1) v.recul = null;
+    return false;
+  }
+  const tj = v.trajet;
+  const reste = tj.L - tj.s;
+  const vit = vmax * Math.min(1, 0.2 + tj.s / 5, v.freine ? 0.15 + reste / 6 : 1); // accélère sur 5 m, freine sur 6 m
+  tj.s = Math.min(tj.L, tj.s + vit * dt);
+  const u = tj.s / tj.L;
+  v.obj.position.copy(tj.c.getPointAt(u));
+  v.obj.visible = Math.abs(v.obj.position.x) < 33.5; // hors du socle : on ne la voit plus
+  const tg = tj.c.getTangentAt(Math.min(u, 0.999));
+  let d = Math.atan2(tg.x, tg.z) - v.rot; d = Math.atan2(Math.sin(d), Math.cos(d));
+  v.rot += d * Math.min(1, dt * 12); v.obj.rotation.y = v.rot;
+  return tj.s >= tj.L;
+}
+// Apparition et disparition des personnes en fondu (pas de saut)
+let instantane = false;
+function montrer(o, oui) {
+  o.userData.cible = oui ? 1 : 0;
+  if (instantane) { o.userData.s = oui ? 1 : 0; o.scale.setScalar(oui ? 1 : 0.001); o.visible = oui; return; }
+  if (oui && !o.visible) { o.visible = true; o.userData.s = 0.001; o.scale.setScalar(0.001); }
+}
+function fondus(dt) {
+  for (const o of [...MONITEURS.map((m) => objets[m.id].obj), ...elevesCode, ...attente]) {
+    if (o.userData.cible === undefined) continue;
+    const s0 = o.userData.s ?? (o.visible ? 1 : 0), s1 = s0 + (o.userData.cible - s0) * Math.min(1, dt * 7);
+    o.userData.s = s1; o.scale.setScalar(Math.max(s1, 0.001)); o.visible = s1 > 0.02;
+  }
 }
 const dispo = (m) => !enCours((x) => x.m === m.id);
 const nbCode = () => (t < 9 || t > 18.5 ? 0 : Math.min(12, Math.max(4, Math.round(8 + 2 * Math.sin(t * 1.3) + 2 * Math.sin(t * 3.1)))));
 let derniereSortie = -1e9, dernierRetour = -1e9;
 function synchroniser(instant = false) {
+  instantane = instant;
   const maintenantMs = performance.now();
   for (const v of [...VOITURES, ...MOTOS]) {
     const o = objets[v.id], l = enCours((x) => x.veh === v.id);
@@ -485,13 +518,13 @@ function synchroniser(instant = false) {
   }
   MONITEURS.forEach((m, i) => {
     const l = enCours((x) => x.m === m.id), o = objets[m.id].obj;
-    if (l && l.veh.startsWith('mo')) { o.visible = true; o.position.set(-3.6, 0.13, -12.2); o.rotation.y = 1.2; }
-    else { o.visible = !l; o.position.copy(POSTES[i]); o.rotation.y = 0.4 - i * 0.5; }
+    if (l && l.veh.startsWith('mo')) { montrer(o, true); o.position.set(-3.6, 0.13, -12.2); o.rotation.y = 1.2; }
+    else { montrer(o, !l); if (!l) { o.position.copy(POSTES[i]); o.rotation.y = 0.4 - i * 0.5; } }
   });
   const prochains = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).length;
   const arrivants = PLANNING.filter((l) => l.debut > t && l.debut - t <= 0.25).sort((a, b) => a.debut - b.debut);
-  attente.forEach((p, i) => { p.visible = i < prochains; p.userData.nom = arrivants[i]?.eleve || ''; p.userData.role = arrivants[i] ? `élève · leçon à ${hTxt(arrivants[i].debut)}` : ''; });
-  elevesCode.forEach((p, i) => { p.visible = i < nbCode(); });
+  attente.forEach((p, i) => { montrer(p, i < prochains); p.userData.nom = arrivants[i]?.eleve || ''; p.userData.role = arrivants[i] ? `élève · leçon à ${hTxt(arrivants[i].debut)}` : ''; });
+  elevesCode.forEach((p, i) => { montrer(p, i < nbCode()); });
 }
 
 // ================= Étiquettes =================
@@ -696,24 +729,25 @@ function animer(now) {
   const ecoule = Math.min(1, (now - avant) / 1000), dt = Math.min(0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
-    if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
+    if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
     synchroniser();
   }
   for (const o of Object.values(objets)) {
     if (o.type === 'voiture') {
       if (o.mode === 'sortie' && avancer(o, dt)) { o.mode = 'dehors'; o.obj.visible = false; }
-      else if (o.mode === 'retour' && avancer(o, dt)) { o.mode = 'gare'; o.obj.position.copy(PLACES[o.place]); }
+      else if (o.mode === 'retour' && avancer(o, dt)) { o.mode = 'gare'; }
     } else if (o.type === 'moto' && o.mode === 'piste') {
       o.a += dt * 0.6;
       const x = 9 + Math.sin(o.a) * 10, z = -14.5 + Math.sin(o.a * 2) * 2.4, x2 = 9 + Math.sin(o.a + 0.01) * 10, z2 = -14.5 + Math.sin((o.a + 0.01) * 2) * 2.4;
       o.obj.position.set(x, 0.13, z); o.obj.rotation.y = Math.atan2(x2 - x, z2 - z);
     }
   }
-  for (const c of trafic) { c.o.position.x += c.sens * c.v * dt; if (c.o.position.x > 34) c.o.position.x = -34; if (c.o.position.x < -34) c.o.position.x = 34; }
+  for (const c of trafic) { c.o.position.x += c.sens * c.v * dt; if (c.o.position.x > 44) c.o.position.x = -44; if (c.o.position.x < -44) c.o.position.x = 44; c.o.visible = Math.abs(c.o.position.x) < 33.5; }
+  fondus(dt);
   const ps = positionSelection(); anneau.visible = !!ps;
   if (ps) { anneau.position.set(ps[0].x, 0.2, ps[0].z); anneau.scale.setScalar(ps[1] * (1 + Math.sin(now / 300) * 0.04)); }
   if (vise) {
-    vise.k = Math.min(1, vise.k + dt * 1.8); const e = 1 - Math.pow(1 - vise.k, 3);
+    vise.k = Math.min(1, vise.k + dt / 0.9); const e = doux(vise.k);
     const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv);
     camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix();
     if (vise.k >= 1) vise = null;
@@ -726,6 +760,7 @@ function animer(now) {
   if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
   requestAnimationFrame(animer);
 }
+window.demo = { objets, temps: () => t }; // pour les tests automatiques de VERA
 synchroniser(true);
 requestAnimationFrame(animer);
 </script>
