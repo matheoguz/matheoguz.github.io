@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%23a33d1c%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27Georgia,serif%27 font-size=%2738%27 font-weight=%27700%27 fill=%27%23fff%27 text-anchor=%27middle%27%3EC%3C/text%3E%3C/svg%3E">
 <title>Cartio : votre carte de restaurant sur téléphone, avec les allergènes</title>
 <meta name="description" content="Cartio met votre carte en ligne, lisible sur téléphone, avec les 14 allergènes par plat, un QR code pour vos tables et le lien dans votre fiche Google. 49 €, payé une fois. Fait sur place au Creusot.">
 <link rel="canonical" href="https://matheoguz.github.io/cartio/">
@@ -14,12 +15,12 @@
 <style>
 :root{
   --bg:#f7f0e6;--surface:#fffaf3;--ink:#2b1d14;--muted:#6e5646;--line:rgba(43,29,20,.13);
-  --accent:#a33d1c;--on-accent:#fff;--soft:rgba(163,61,28,.08);
+  --accent:#a33d1c;--on-accent:#fff;--soft:rgba(163,61,28,.08);--err:#b3261e;--err-bg:#fdecea;
   --head:Georgia,'Times New Roman',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){
   :root{--bg:#1b1410;--surface:#261b15;--ink:#f4eadf;--muted:#c4ab98;--line:rgba(244,234,223,.13);
-  --accent:#f0976d;--on-accent:#2b1208;--soft:rgba(240,151,109,.12)}
+  --accent:#f0976d;--on-accent:#2b1208;--soft:rgba(240,151,109,.12);--err:#ff8a80;--err-bg:#3a1714}
   .qr img{background:#fff}
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -80,8 +81,9 @@ section{padding:44px 0;border-top:1px solid var(--line)}
 .champs label .lib{display:block}
 .champs input,.champs textarea,.pret textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
 .champs input:focus,.champs textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
-.champs input[aria-invalid="true"]{border-color:#b3261e}
-.erreur{color:#b3261e;font-weight:600;margin-bottom:14px}
+.champs input[aria-invalid="true"]{border-color:var(--err);border-width:2px}
+.contact .erreur{color:var(--err);background:var(--err-bg);border-left:4px solid var(--err);border-radius:8px;padding:10px 12px;font-weight:600;margin-bottom:14px;max-width:none}
+.contact .erreur::before{content:"⚠ "}
 button.btn{border:0;cursor:pointer;font-family:inherit}
 .pret{margin-top:6px}
 .pret h3{margin-bottom:8px}
