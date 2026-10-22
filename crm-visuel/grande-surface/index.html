@@ -145,6 +145,7 @@
     <div class="etiquettes" id="etiquettes"></div>
     <div class="outils">
       <button class="bouton" id="recentrer">Vue d'ensemble</button>
+      <button class="bouton actif" id="etage">Étage</button>
       <button class="bouton" id="pause">Pause</button>
       <a class="bouton" href="../offre/">L'offre</a>
     </div>
@@ -168,6 +169,9 @@
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from '../vendor/OrbitControls.js';
+import { construireRayon } from './rayons.js';
+import { construireEtage } from './etage.js';
+import { creerTrafic } from './trafic.js';
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
@@ -193,6 +197,8 @@ const EQUIPE = [
   ['Chloé Vasseur', 'Hôtesse de caisse', 16, 20, 16, 'c6'],
   ['Antoine Brun', 'Hôte de caisse', 17, 20, 16, 'c7'],
   ['Manon Riviere', 'Hôtesse de caisse', 11.5, 14.5, 16, 'c4b'],
+  ['Sophie Marchand', 'Responsable RH', 9, 17, 30, 'etage-rh'],
+  ['Marc Lemoine', 'Comptable', 8.5, 16.5, 26, 'etage-compta'],
 ].map(([nom, poste, debut, fin, cout, zone], i) => ({ id: 'e' + i, nom, poste, debut, fin, cout, zone }));
 const RAYONS = [
   { id: 'r0', nom: 'Fruits et légumes', couleur: 0x65a30d, refs: 310, stock: 0.82, ruptures: 2, conso: 0.035 },
@@ -220,7 +226,7 @@ const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60))
 const euros = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
 const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
-const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
+const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
 const enPause = (e) => { const d = debutPause(e); return d !== null && present(e) && t >= d && t < d + 0.5; };
 const auRepos = (e) => enPause(e) && !objets[e.id]?.job; // la pause commence une fois la tâche en cours finie
 const SIEGES = [[12.3, -6.95, 0], [13.5, -5.05, Math.PI], [14.7, -6.95, 0], [12.3, -5.05, Math.PI], [14.7, -5.05, Math.PI], [13.5, -6.95, 0]];
@@ -312,21 +318,9 @@ enseigne.position.set(-12, 3.2, BZ1 + 0.4); enseigne.castShadow = true; scene.ad
 for (const x of [-18.5, -5.5]) boite(0.15, 2.4, 0.15, 0x6b7280, x, 0, BZ1 + 0.4);
 zone(BX1 - BX0, BZ1 - BZ0, (BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 'magasin', 0.12);
 
-// Rayons : 6 gondoles, la hauteur des produits suit le niveau de stock
+// Rayons : vraies gondoles (étagères, produits, têtes de gondole, vitrines), le remplissage suit le stock (rayons.js)
 const gondoles = {};
-RAYONS.forEach((r, i) => {
-  const z = -26 + i * 4.2, x0 = -37, l = 30;
-  const g = new THREE.Group(); scene.add(g);
-  boite(l, 0.5, 1.4, 0xf1f1ee, x0 + l / 2, 0.2, z, g);
-  boite(l, 0.06, 1.5, 0xd4d4d0, x0 + l / 2, 1.9, z, g);
-  const produits = new THREE.Mesh(new THREE.BoxGeometry(l - 0.4, 1, 1.2), mat(r.couleur, { roughness: 0.6 }));
-  produits.position.set(x0 + l / 2, 0.7, z); produits.castShadow = true; g.add(produits);
-  const panneau = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.9, 0.08), [mat(r.couleur), mat(r.couleur), mat(r.couleur), mat(r.couleur), new THREE.MeshStandardMaterial({ map: texte(r.nom.toUpperCase(), { fond: '#' + r.couleur.toString(16).padStart(6, '0'), couleur: '#fff', taille: 54 }) }), mat(r.couleur)]);
-  panneau.position.set(x0 + 4, 3.2, z); g.add(panneau);
-  boite(0.06, 1.3, 0.06, 0x9ca3af, x0 + 4, 1.95, z, g);
-  clic(g, r.id);
-  gondoles[r.id] = { g, produits, z, x0, l };
-});
+RAYONS.forEach((r, i) => { gondoles[r.id] = construireRayon({ THREE, scene, boite, mat, texte, clic }, r, i); });
 // Caisses (devant l'entrée)
 const CAISSES = [];
 for (let i = 0; i < NB_CAISSES; i++) {
@@ -369,11 +363,9 @@ boite(2.6, 0.4, 0.4, BOIS, 11.2, 0.2, 2.6);
 // sanitaires : deux cabines et lavabos
 for (const x of [14.9, 16.8]) { boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, x - 0.95, 0.2, 4.8); boite(0.45, 0.45, 0.6, 0xffffff, x, 0.2, 5.4); }
 boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, 17.75, 0.2, 4.8); boite(2.4, 0.85, 0.5, 0xffffff, 15.8, 0.2, 0);
-// escalier vers l'étage (10 marches) et palier
-const ESC = [];
-for (let k = 0; k < 10; k++) { const h = 0.28 * (k + 1); ESC.push(boite(1.6, h, 0.46, 0xd6d3d1, 3.4, 0.2, 5.3 - k * 0.46)); }
-boite(1.6, 0.12, 1.6, 0xd6d3d1, 3.4, 2.98, -0.06); boite(0.06, 0.9, 5.2, GRIS, 4.25, 1.2, 2.7, scene, false);
-for (let k = 0; k < 6; k++) boite(0.05, 0.9, 0.05, GRIS, 4.25, 0.2 + 0.28 * (k * 2 + 1), 5.3 - k * 0.92, scene, false);
+// le vrai 1er étage et son escalier (etage.js)
+const ETAGE = construireEtage({ THREE, scene, boite, mat, texte, clic, zone });
+let etageVu = true;
 panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
 zone(7, 7, 5.5, -6.5, 'bureau', 0.22); zone(9, 9, 13.5, -5.5, 'pause', 0.22); zone(7, 7, 5.5, 2.5, 'escalier', 0.22); zone(9, 7, 13.5, 2.5, 'vestiaires', 0.22);
 // ================= Réserve : racks à palettes =================
@@ -435,7 +427,7 @@ function personne(couleur, taille = 1) {
 function posteDe(e, i) {
   if (e.zone.startsWith('c')) { const c = CAISSES[caisseDe(e)]; return new THREE.Vector3(c.x - 0.9, 0.2, c.z - 0.2); }
   if (/^r\d/.test(e.zone)) { const g = gondoles[e.zone]; return new THREE.Vector3(g.x0 + 8 + (i % 3) * 7, 0.2, g.z + 1.4); }
-  return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(9 + (i % 2) * 3, 0.2, -18.2), accueil: new THREE.Vector3(-2, 0.2, 2.6) }[e.zone].clone();
+  return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(9 + (i % 2) * 3, 0.2, -18.2), accueil: new THREE.Vector3(-2, 0.2, 2.6), 'etage-rh': ETAGE.postes.rh, 'etage-compta': ETAGE.postes.compta1 }[e.zone].clone();
 }
 const COULEUR_POSTE = (e) => (e.zone.startsWith('c') ? 0xb91c1c : /^r\d/.test(e.zone) ? 0x15803d : e.zone === 'reserve' ? 0xd97706 : 0x1e3a8a);
 const objets = {};
@@ -530,18 +522,18 @@ for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = per
 // Voitures des clients sur le parking
 function voiture(couleur) { const g = new THREE.Group(); const W = 1.76; const s = new THREE.Shape(); [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v))); const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2); const c = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); c.castShadow = true; g.add(c); const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v))); const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2); g.add(new THREE.Mesh(vg, mat(0x1f2a37, { roughness: 0.15 }))); const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 14); for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); g.add(r); } return g; }
 const COULEURS_AUTO = [0xf1f1ee, 0x374151, 0x9ca3af, 0xb91c1c, 0x1e3a8a, 0x0f766e, 0xe5e7eb, 0x78350f];
-const autos = PLACES.map((p, i) => { const o = voiture(COULEURS_AUTO[i % 8]); o.position.copy(p); o.rotation.y = i < 22 ? 0 : Math.PI; o.visible = false; o.userData.s = 0; scene.add(o); return { o, ordre: (i * 0.618) % 1 }; });
+const trafic = creerTrafic({ THREE, scene, PLACES, voiture, couleurs: COULEURS_AUTO }); // arrivées, départs en marche arrière, circulation (trafic.js)
 const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0xb91c1c, transparent: true, opacity: 0.9, side: THREE.DoubleSide })); anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
 
 // ================= Mise à jour de la maquette =================
 let instantane = false;
 function montrer(o, oui) { o.userData.cible = oui ? 1 : 0; if (instantane) { o.userData.s = oui ? 1 : 0; o.scale.setScalar(oui ? 1 : 0.001); o.visible = oui; return; } if (oui && !o.visible) { o.visible = true; o.userData.s = 0.001; o.scale.setScalar(0.001); } }
-const fondables = () => [...Object.values(objets).map((x) => x.obj), ...clients.map((c) => c.o), ...attenteCaisse.map((a) => a.o), ...autos.map((a) => a.o)];
+const fondables = () => [...Object.values(objets).map((x) => x.obj), ...clients.map((c) => c.o), ...attenteCaisse.map((a) => a.o)];
 function fondus(dt) { for (const o of fondables()) { if (o.userData.cible === undefined) continue; const s = o.userData.s + (o.userData.cible - o.userData.s) * Math.min(1, dt * 6); o.userData.s = s; o.scale.setScalar(Math.max(s, 0.001)); o.visible = s > 0.02; } }
 let dernierCamion = null;
 function synchroniser(instant = false) {
   instantane = instant;
-  for (const x of Object.values(objets)) montrer(x.obj, present(x.e));
+  for (const x of Object.values(objets)) montrer(x.obj, present(x.e) && (etageVu || !x.e.zone.startsWith('etage')));
   const a = affluence(), n = Math.round(CLIENTS_MAX * a);
   clients.forEach((c, i) => montrer(c.o, i < n));
   const ouvertes = caissesOuvertes();
@@ -549,8 +541,8 @@ function synchroniser(instant = false) {
   const file = Math.min(4, Math.max(0, Math.round((a * 10) / Math.max(1, ouvertes.length) * 1.4)));
   attenteCaisse.forEach((x) => montrer(x.o, ouvertes.includes(x.c) && x.k < file - (x.c % 2)));
   const occ = Math.round(PLACES.length * Math.min(0.95, 0.2 + 0.85 * a));
-  autos.forEach((x) => montrer(x.o, x.ordre < occ / PLACES.length));
-  for (const r of RAYONS) { const s = stockDe(r), g = gondoles[r.id]; g.produits.scale.y = 0.15 + 0.85 * s; g.produits.position.y = 0.7 - (1 - (0.15 + 0.85 * s)) * 0.5; }
+  if (instant) trafic.placerDirect(occ); else trafic.viser(occ);
+  for (const r of RAYONS) gondoles[r.id].majStock(stockDe(r));
   const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai');
   if (d && dernierCamion !== d.id && !instant) annoncer(`${hh(t)} · Livraison au quai : ${d.fourn}, ${d.palettes} palettes`);
   if (d) { if (!camionAnim || camionAnim.id !== d.id) camionAnim = { id: d.id, k: instant ? 1 : 0, sens: 1 }; } else if (camionAnim && camionAnim.sens === 1) camionAnim.sens = -1;
@@ -562,23 +554,23 @@ const doux = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 // ================= Étiquettes et badges =================
 const couche = document.getElementById('etiquettes');
 const etiquettes = [], badges = [];
-function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn }); }
+function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn, cle }); }
 const point = (c) => `<i style="background:${c}"></i>`;
 etiquette('caisses', () => new THREE.Vector3(-21, 3.6, 0.5), () => { const o = caissesOuvertes().length; return `${point(o >= 4 ? '#15803d' : '#c2410c')}Caisses <small>${o}/${NB_CAISSES} ouvertes</small>`; });
 etiquette('rayons', () => new THREE.Vector3(-22, 4.4, -13), () => { const n = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); return `${point(n > 20 ? '#c2410c' : '#15803d')}Rayons <small>${n} ruptures</small>`; });
 etiquette('pause', () => new THREE.Vector3(16, 2.6, -8.6), () => { const n = EQUIPE.filter(auRepos).length; return `${point(n ? '#d97706' : '#15803d')}Salle de pause <small>${n ? n + ' en pause' : 'libre'}</small>`; });
 etiquette('reserve', () => new THREE.Vector3(10, 3.2, -20), () => `${point('#d97706')}Réserve <small>${slotsPleins()} palettes</small>`);
 etiquette('quai', () => new THREE.Vector3(22, 4.5, -20), () => { const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai'); return d ? `${point('#c2410c')}Quai <small>livraison</small>` : `${point('#15803d')}Quai <small>libre</small>`; });
-etiquette('parking', () => new THREE.Vector3(-6, 2.2, 15.5), () => { const n = autos.filter((a) => a.o.userData.cible === 1).length; return `${point(n < PLACES.length - 4 ? '#15803d' : '#c2410c')}Parking <small>${PLACES.length - n}/${PLACES.length} libres</small>`; });
+etiquette('parking', () => new THREE.Vector3(-6, 2.2, 15.5), () => { const n = trafic.occupees(); return `${point(n < PLACES.length - 4 ? '#15803d' : '#c2410c')}Parking <small>${PLACES.length - n}/${PLACES.length} libres</small>`; });
 EQUIPE.forEach((e) => { const el = document.createElement('div'); el.className = 'badge'; couche.appendChild(el); badges.push({ el, e }); });
 const v3 = new THREE.Vector3();
 function placer() {
   const r = renderer.domElement.getBoundingClientRect();
-  for (const e of etiquettes) { const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
+  for (const e of etiquettes) { e.el.style.display = etageVu && e.cle === 'pause' ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
   const vu = camera.zoom >= 1.7;
   for (const b of badges) {
     const o = objets[b.e.id].obj;
-    if (!vu || !o.visible) { b.el.style.display = 'none'; continue; }
+    if (!vu || !o.visible || (etageVu && !b.e.zone.startsWith('etage') && o.position.x > 2 && o.position.x < 18 && o.position.z > -10 && o.position.z < 6)) { b.el.style.display = 'none'; continue; }
     const html = `${b.e.nom}<small>${b.e.poste}</small>`; if (b.el.innerHTML !== html) b.el.innerHTML = html;
     v3.copy(o.position).add(new THREE.Vector3(0, 2.05, 0)).project(camera);
     const x = ((v3.x + 1) / 2) * r.width, y = ((1 - v3.y) / 2) * r.height;
@@ -668,8 +660,11 @@ function rendreFiche() {
       caisses: () => `<h3>Ligne de caisses</h3><p class="sous">${NB_CAISSES} caisses</p><ul class="lignes">${li('Ouvertes', caissesOuvertes().map((i) => i + 1).join(', ') || 'aucune')}${li('Hôtes et hôtesses en caisse', caissiers().map((e) => e.nom).join(', ') || 'personne')}</ul>`,
       rayons: () => `<h3>Rayons</h3><p class="sous">6 rayons</p><ul class="lignes">${RAYONS.map((r) => li(r.nom, `${Math.round(stockDe(r) * 100)} % · ${rupturesDe(r)} rupture${rupturesDe(r) > 1 ? "s" : ""}`)).join('')}</ul>`,
       reserve: () => `<h3>Réserve</h3><p class="sous">Racks à palettes : réception du camion, puis mise en rayon</p><ul class="lignes">${li('Palettes en rack', `${SLOTS.filter((sl) => sl.rayon && sl.rangee < 2).length} sur 30`)}${li('Palettes au sol', SLOTS.filter((sl) => sl.rayon && sl.rangee === 2).length)}${li('En ce moment', Object.values(objets).filter((x) => x.job).map((x) => `${x.e.nom.split(' ')[0]} : ${x.job.court}`).join(', ') || 'calme')}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
-      parking: () => { const n = autos.filter((a) => a.o.userData.cible === 1).length; return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
+      parking: () => { const n = trafic.occupees(); return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
       accueil: () => `<h3>Accueil</h3><p class="sous">Point d'accueil et service client</p><ul class="lignes">${li('À l\'accueil', EQUIPE.filter((e) => e.zone === 'accueil' && present(e)).map((e) => e.nom).join(', ') || 'personne')}${li('Clients dans le magasin', clientsMagasin())}</ul>`,
+      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretiens aujourd\'hui', typeof RH !== 'undefined' ? RH.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun' : '-')}</ul><p class="synchro">Le détail est dans l'onglet RH, à droite.</p>`; },
+      'etage-compta': () => { const e = EQUIPE.find((x) => x.zone === 'etage-compta'); return `<h3>Comptabilité</h3><p class="sous">1er étage · factures fournisseurs, caisse, paie</p><ul class="lignes">${li('Comptable', e ? e.nom + (present(e) ? '' : ' (absent)') : '-')}${li('Chiffre d\'affaires du jour', euros(caDuJour()))}${li('Livraisons à rapprocher', LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée').length)}</ul>`; },
+      'etage-reunion': () => `<h3>Salle de réunion</h3><p class="sous">1er étage · table de 8, écran</p><ul class="lignes">${li('Prochaine réunion', t < 15 ? '15h, point hebdomadaire des chefs de rayon' : 'aucune aujourd\'hui')}</ul>`,
       pause: () => { const n = EQUIPE.filter(auRepos), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
       escalier: () => `<h3>Escalier du personnel</h3><p class="sous">Vers l'étage : bureaux administratifs et salle de réunion</p><ul class="lignes">${li('Accès', 'couloir du personnel, derrière l\'accueil')}${li('À l\'étage', 'non dessiné dans la démo')}</ul>`,
       vestiaires: () => `<h3>Vestiaires et sanitaires</h3><p class="sous">Réservés au personnel</p><ul class="lignes">${li('Casiers', 8)}${li('Équipe dans le magasin', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
@@ -680,7 +675,7 @@ function rendreFiche() {
   }
 }
 // Zoom au clic
-const ZOOMS = { magasin: 1.7, caisses: 2.2, rayons: 1.9, reserve: 2.4, quai: 2.4, parking: 1.7, accueil: 3, bureau: 3.4, pause: 3.2, escalier: 3.4, vestiaires: 3.4 };
+const ZOOMS = { magasin: 1.7, caisses: 2.2, rayons: 1.9, reserve: 2.4, quai: 2.4, parking: 1.7, accueil: 3, bureau: 3.4, pause: 3.2, escalier: 3.4, vestiaires: 3.4, 'etage-rh': 3.4, 'etage-compta': 3.4, 'etage-reunion': 3.2 };
 let vise = null;
 function viser(cible, zoom) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0 }; }
 function positionDe(s) {
@@ -689,7 +684,7 @@ function positionDe(s) {
   if (/^r\d/.test(s)) { const g = gondoles[s]; return [new THREE.Vector3(g.x0 + g.l / 2, 0, g.z), 2.4]; }
   if (/^c\d/.test(s)) { const c = CAISSES[+s.slice(1)]; return [new THREE.Vector3(c.x, 0, c.z), 3]; }
   if (/^d\d/.test(s)) return [new THREE.Vector3(22, 0, -20), 2.4];
-  const P = { magasin: [-11, -12], caisses: [-21, 0.5], rayons: [-22, -14], reserve: [10, -20], quai: [27, -20], parking: [-6, 15.5], accueil: [-2, 3.5], bureau: [5.5, -6.5], pause: [13.5, -5.5], escalier: [5.5, 2.5], vestiaires: [13.5, 2.5] }[s];
+  const P = { magasin: [-11, -12], caisses: [-21, 0.5], rayons: [-22, -14], reserve: [10, -20], quai: [27, -20], parking: [-6, 15.5], accueil: [-2, 3.5], bureau: [5.5, -6.5], pause: [13.5, -5.5], escalier: [5.5, 2.5], vestiaires: [13.5, 2.5], ...ETAGE.zones }[s];
   return P ? [new THREE.Vector3(P[0], 0, P[1]), ZOOMS[s]] : null;
 }
 function choisir(cle) {
@@ -718,6 +713,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
+$('etage').onclick = (e) => { etageVu = !etageVu; ETAGE.montrer(etageVu); e.target.classList.toggle('actif', etageVu); e.target.textContent = etageVu ? 'Étage' : 'Rez-de-chaussée'; synchroniser(true); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
 $('recentrer').onclick = () => { choisir(null); viser(CIBLE, 1); };
 $('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
 function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); }
@@ -757,6 +753,7 @@ function animer(now) {
     truck.position.set(32 + (1 - e) * 13, 0.1, -20); truck.rotation.y = Math.PI / 2;
     if (camionAnim.k <= 0 && camionAnim.sens === -1) camionAnim = null;
   }
+  if (!pause) trafic.maj(Math.min(ecoule, 0.25));
   fondus(dt);
   if (vise) { vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv); camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix(); if (vise.k >= 1) vise = null; }
   const ps = selection && positionDe(selection);
