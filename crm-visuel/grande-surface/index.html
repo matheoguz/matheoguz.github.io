@@ -222,6 +222,7 @@ const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
 const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
 const enPause = (e) => { const d = debutPause(e); return d !== null && present(e) && t >= d && t < d + 0.5; };
+const auRepos = (e) => enPause(e) && !objets[e.id]?.job; // la pause commence une fois la tâche en cours finie
 const SIEGES = [[12.3, -6.95, 0], [13.5, -5.05, Math.PI], [14.7, -6.95, 0], [12.3, -5.05, Math.PI], [14.7, -5.05, Math.PI], [13.5, -6.95, 0]];
 // Affluence de 0 à 1 : creux le matin, pic à midi et en fin d'après-midi
 const affluence = (h = t) => (h < OUVERTURE || h > FERMETURE ? 0 : Math.min(1, 0.25 + 0.55 * Math.exp(-((h - 12.3) ** 2) / 1.2) + 0.75 * Math.exp(-((h - 18) ** 2) / 1.6)));
@@ -234,7 +235,7 @@ const CA_HIER = Math.round(caDuJour(FERMETURE) * 1.04 / 10) * 10;
 const caissiers = () => EQUIPE.filter((e) => e.zone.startsWith('c') && present(e));
 const caisseDe = (e) => +e.zone.slice(1, 2);
 const caissesOuvertes = () => [...new Set(caissiers().map(caisseDe))].sort();
-const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE));
+const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER[r.id] || 0) * PAR_PALETTE));
 const rupturesDe = (r) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r)) * 20));
 const coutJour = () => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout, 0);
 const statutLiv = (d) => (t < d.heure - 0.05 ? 'prévue' : t < d.heure + 0.75 ? 'au quai' : 'déchargée');
@@ -299,7 +300,7 @@ boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) /
 boite(42, 0.02, 30, 0xe7e5df, -19, 0.2, -12, scene, false);   // surface de vente
 boite(16, 0.02, 20, 0xcfccc4, 10, 0.2, -20, scene, false);    // réserve
 const mur = (l, p, x, z) => boite(l, HM, p, MUR, x, 0.2, z);
-mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0); mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2); mur(EM, BZ1 - BZ0, BX1, (BZ0 + BZ1) / 2);
+mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0); mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2); mur(EM, 8.5, BX1, -25.75); mur(EM, 24.5, BX1, -6.25); // porte de quai entre z -21,5 et -18,5
 mur(24, EM, -28, BZ1); mur(22, EM, 7, BZ1); // façade, entrée au milieu
 mur(EM, 13, 2, -23.5); mur(EM, 4.5, 2, -12.25); // cloison réserve, portes battantes entre les deux
 mur(EM, 7, 2, -6.5); mur(EM, 7, 2, 2.5);          // cloison des locaux du personnel, entrée du couloir entre z -3 et -1
@@ -375,12 +376,40 @@ boite(1.6, 0.12, 1.6, 0xd6d3d1, 3.4, 2.98, -0.06); boite(0.06, 0.9, 5.2, GRIS, 4
 for (let k = 0; k < 6; k++) boite(0.05, 0.9, 0.05, GRIS, 4.25, 0.2 + 0.28 * (k * 2 + 1), 5.3 - k * 0.92, scene, false);
 panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
 zone(7, 7, 5.5, -6.5, 'bureau', 0.22); zone(9, 9, 13.5, -5.5, 'pause', 0.22); zone(7, 7, 5.5, 2.5, 'escalier', 0.22); zone(9, 7, 13.5, 2.5, 'vestiaires', 0.22);
-// Réserve : palettes dont la hauteur suit les livraisons
-const palettes = [];
-for (let r = 0; r < 4; r++) for (let c = 0; c < 5; c++) { const p = boite(1.2, 1, 1, 0xc2a878, 4.5 + c * 2.6, 0.2, -27 + r * 3.6); palettes.push(p); }
+// ================= Réserve : racks à palettes =================
+// 2 rangées de racks (5 travées × 3 niveaux) + 5 emplacements au sol près de la porte, couleur de la palette = rayon
+const COULEUR_RAYON = Object.fromEntries(RAYONS.map((r) => [r.id, r.couleur]));
+const NIVEAUX = [0.2, 1.55, 2.9];
+const RACKS = [{ z: -28.6, acces: -26.7 }, { z: -24, acces: -22.3 }];
+const SLOTS = [];
+RACKS.forEach((rk, ri) => {
+  for (let b = 0; b <= 5; b++) for (const dz of [-0.55, 0.55]) boite(0.1, 4.1, 0.1, 0x1d4ed8, 3.3 + b * 2.4, 0.2, rk.z + dz);
+  for (const y of NIVEAUX.slice(1)) for (const dz of [-0.55, 0.55]) boite(12.1, 0.12, 0.08, 0xea580c, 9.3, y - 0.12, rk.z + dz);
+  for (let b = 0; b < 5; b++) for (let n = 0; n < 3; n++) SLOTS.push({ x: 4.5 + b * 2.4, y: NIVEAUX[n], z: rk.z, acces: rk.acces, rangee: ri, rayon: null, mesh: null, pris: false });
+});
+for (let b = 0; b < 5; b++) SLOTS.push({ x: 6 + b * 2.4, y: 0.2, z: -14, acces: -12.4, rangee: 2, rayon: null, mesh: null, pris: false });
+for (let b = 0; b < 5; b++) boite(1.4, 0.015, 1.2, 0xfde68a, 6 + b * 2.4, 0.21, -14, scene, false); // emplacements au sol marqués
+function palette(rid) {
+  const g = new THREE.Group();
+  boite(1.1, 0.14, 0.9, 0xb08d64, 0, 0, 0, g);
+  const charge = boite(1, 0.75, 0.82, COULEUR_RAYON[rid], 0, 0.14, 0, g); g.userData.charge = charge;
+  boite(1.02, 0.02, 0.84, 0xf1f5f9, 0, 0.89, 0, g, false);
+  return g;
+}
+function remplir(sl, rid) { sl.rayon = rid; sl.mesh = palette(rid); sl.mesh.position.set(sl.x, sl.y, sl.z); scene.add(sl.mesh); }
+function vider(sl) { const rid = sl.rayon; if (sl.mesh) scene.remove(sl.mesh); sl.mesh = null; sl.rayon = null; return rid; }
+const slotsPleins = () => SLOTS.filter((sl) => sl.rayon).length;
+const MER = {}; // palettes mises en rayon aujourd'hui, par rayon
+function initReserve() {
+  SLOTS.forEach((sl) => { vider(sl); sl.pris = false; });
+  SLOTS.forEach((sl, i) => { if (sl.rangee < 2 && (i * 7) % 10 < 6) remplir(sl, RAYONS[(i * 5) % 6].id); });
+  for (const k in MER) delete MER[k];
+  LIVRAISONS.forEach((d) => { d.dechargees = statutLiv(d) === 'déchargée' ? d.palettes : 0; });
+}
 zone(16, 20, 10, -20, 'reserve', 0.22);
 // Quai de livraison + camion
-boite(8, 1, 10, 0x9ca3af, 22, 0, -20); zone(8, 10, 22, -20, 'quai', 1.02);
+boite(8, 0.2, 10, 0x9ca3af, 22, 0, -20); zone(8, 10, 22, -20, 'quai', 0.24);
+boite(EM, 0.5, 3.4, 0x6b7280, BX1, 2.4, -20); for (const z of [-21.6, -18.4]) boite(8, 0.02, 0.18, 0xfacc15, 22, 0.21, z, scene, false); // linteau de la porte, bandes de sécurité
 boite(19, 0.08, 4.6, 0x6b7079, 35.5, 0.05, -20);          // voie des camions, à l'écart du parking
 function camion() {
   const g = new THREE.Group();
@@ -406,11 +435,89 @@ function personne(couleur, taille = 1) {
 function posteDe(e, i) {
   if (e.zone.startsWith('c')) { const c = CAISSES[caisseDe(e)]; return new THREE.Vector3(c.x - 0.9, 0.2, c.z - 0.2); }
   if (/^r\d/.test(e.zone)) { const g = gondoles[e.zone]; return new THREE.Vector3(g.x0 + 8 + (i % 3) * 7, 0.2, g.z + 1.4); }
-  return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(8 + (i % 2) * 4, 0.2, -14), accueil: new THREE.Vector3(-2, 0.2, 2.6) }[e.zone].clone();
+  return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(9 + (i % 2) * 3, 0.2, -18.2), accueil: new THREE.Vector3(-2, 0.2, 2.6) }[e.zone].clone();
 }
 const COULEUR_POSTE = (e) => (e.zone.startsWith('c') ? 0xb91c1c : /^r\d/.test(e.zone) ? 0x15803d : e.zone === 'reserve' ? 0xd97706 : 0x1e3a8a);
 const objets = {};
 EQUIPE.forEach((e, i) => { const o = personne(COULEUR_POSTE(e)); o.position.copy(posteDe(e, i)); o.visible = false; o.userData.s = 0; scene.add(o); clic(o, e.id); objets[e.id] = { e, obj: o, base: o.position.clone(), phase: i * 1.7 }; });
+// ================= Logistique : déchargement du camion, rangement en rack, mise en rayon =================
+// Chaque employé de la réserve a un gerbeur (jaune), chaque employé de rayon un transpalette (gris).
+for (const x of Object.values(objets)) {
+  const g = new THREE.Group(), coul = x.e.zone === 'reserve' ? 0xfacc15 : 0x374151;
+  boite(0.55, 0.07, 1.05, 0x111827, 0, 0.05, 0.95, g);           // fourches
+  boite(0.6, 0.35, 0.3, coul, 0, 0.05, 0.3, g);                   // corps
+  boite(0.06, 1.05, 0.06, coul, 0, 0.35, 0.3, g, false);          // timon
+  if (x.e.zone === 'reserve') for (const dx of [-0.3, 0.3]) boite(0.06, 2.2, 0.06, 0x6b7280, dx, 0.05, 0.42, g, false); // mât du gerbeur
+  g.visible = false; x.obj.add(g); x.engin = g;
+}
+const PORTE_VENTE = [0.3, -15.75], PORTE_RESERVE = [3.6, -15.75], HUB = [16.6, -19.6], QUAI_PRISE = [23.6, -20];
+const pt = ([px, pz]) => new THREE.Vector3(px, 0.2, pz);
+const versSlot = (sl) => sl.rangee === 0 ? [HUB, [16.6, sl.acces], [sl.x, sl.acces]] : sl.rangee === 1 ? [HUB, [sl.x, -20], [sl.x, sl.acces]] : [[sl.x, -16.6], [sl.x, sl.acces]];
+const depuisSlot = (sl) => sl.rangee === 0 ? [[16.6, sl.acces], HUB] : sl.rangee === 1 ? [[sl.x, -20], HUB] : [[sl.x, -16.6]];
+const allee = (x) => { const g = gondoles[x.e.zone]; return g.z + 2.1; };
+const lotDe = (d) => Math.max(1, Math.ceil(d.palettes / 6)); // une palette dessinée = un lot de palettes du camion
+let horloge = 0;
+function porter(x, rid) { if (x.colis) { x.engin.remove(x.colis); x.colis = null; } if (rid) { x.colis = palette(rid); x.colis.position.set(0, 0.12, 0.95); x.engin.add(x.colis); } }
+function lancer(x, etapes, texte, court) { x.job = { etapes, texte, court }; x.engin.visible = true; }
+function slotLibre() { return SLOTS.filter((sl) => !sl.rayon && !sl.pris).sort((a, b) => a.rangee - b.rangee || a.y - b.y || a.x - b.x)[0]; }
+function slotAPrendre(rid) { const ok = SLOTS.filter((sl) => sl.rayon && !sl.pris); return ok.find((sl) => sl.rangee === 2 && sl.rayon === rid) || ok.filter((sl) => sl.rayon === rid).sort((a, b) => a.y - b.y)[0] || ok.find((sl) => sl.rangee === 2) || ok.sort((a, b) => a.y - b.y)[0]; }
+function receptionner(x, d) {
+  const p = x.obj.position, dedans = p.x < BX1 - 0.5;
+  lancer(x, [...(dedans ? [HUB] : []), QUAI_PRISE].map((q) => ({ aller: pt(q) })).concat([{ duree: 1.2, fin: () => {
+    d.dechargees = Math.min(d.palettes, (d.dechargees || 0) + lotDe(d)); porter(x, d.rayon);
+    const sl = slotLibre();
+    if (!sl) { x.job.etapes.push({ aller: pt(HUB) }, { duree: 0.5, fin: () => { porter(x, null); } }); return; }
+    sl.pris = true; x.job.texte = `range une palette ${RAYON_DE(d.rayon).nom.toLowerCase()} en rack`; x.job.court = 'range en rack';
+    x.job.etapes.push(...versSlot(sl).map((q) => ({ aller: pt(q) })), { duree: 1.4, leve: sl.y, fin: () => { porter(x, null); remplir(sl, d.rayon); sl.pris = false; } }, ...depuisSlot(sl).map((q) => ({ aller: pt(q) })));
+  } }]), `décharge le camion (${d.fourn})`, 'décharge le camion');
+}
+function mettreEnRayon(x) {
+  const rid = x.e.zone, sl = slotAPrendre(rid); if (!sl) return false;
+  sl.pris = true;
+  const g = gondoles[rid], az = allee(x), bx = x.base.x;
+  const aller = [[bx, az], [-4.5, az], [-4.5, PORTE_VENTE[1]], PORTE_VENTE, PORTE_RESERVE, ...versSlot(sl)];
+  const retour = [...depuisSlot(sl), PORTE_RESERVE, PORTE_VENTE, [-4.5, PORTE_VENTE[1]], [-4.5, az], [bx, az], [bx, g.z + 1.3]];
+  let pris = rid;
+  lancer(x, [...aller.map((q) => ({ aller: pt(q) })), { duree: 1.2, fin: () => { pris = vider(sl); sl.pris = false; porter(x, pris); x.job.texte = `apporte une palette ${RAYON_DE(pris).nom.toLowerCase()} en rayon`; x.job.court = 'apporte en rayon'; } },
+    ...retour.map((q) => ({ aller: pt(q) })),
+    { duree: 0.01, fin: () => { x.job.texte = `met en rayon (${RAYON_DE(pris).nom.toLowerCase()})`; x.job.court = 'met en rayon'; } },
+    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; porter(x, null); } },
+    { aller: x.base.clone() }], 'va chercher une palette en réserve', 'va en réserve');
+  return true;
+}
+function annulerJob(x) {
+  if (!x.job) return;
+  SLOTS.forEach((sl) => { if (sl.pris && !sl.rayon) sl.pris = false; });
+  porter(x, null); x.job = null; x.engin.visible = false; x.obj.position.copy(x.base);
+}
+function logistique(dt) {
+  horloge += dt;
+  // un camion qui repart avant la fin : le reste est déposé au sol (au plus ce qui tient)
+  for (const d of LIVRAISONS) if (statutLiv(d) === 'déchargée' && (d.dechargees || 0) < d.palettes) { while ((d.dechargees || 0) < d.palettes) { d.dechargees = (d.dechargees || 0) + lotDe(d); const sl = slotLibre(); if (sl) remplir(sl, d.rayon); } }
+  const quai = LIVRAISONS.find((d) => statutLiv(d) === 'au quai' && (d.dechargees || 0) < d.palettes);
+  for (const x of Object.values(objets)) {
+    const dispo = present(x.e) && !enPause(x.e);
+    if (x.job && !present(x.e)) { annulerJob(x); continue; }
+    if (!x.job && dispo) {
+      if (x.e.zone === 'reserve' && quai) receptionner(x, quai);
+      else if (/^r\d/.test(x.e.zone) && horloge > (x.prochain ?? (x.prochain = 4 + (x.phase * 7) % 20))) { if (!mettreEnRayon(x)) x.prochain = horloge + 10; }
+    }
+    const j = x.job; if (!j) continue;
+    const et = j.etapes[0];
+    if (!et) { x.job = null; x.engin.visible = false; x.prochain = horloge + 25 + (x.phase * 13) % 30; continue; }
+    if (et.aller) {
+      const v = x.e.zone === 'reserve' ? 4.6 : 3, p = x.obj.position, dx = et.aller.x - p.x, dz = et.aller.z - p.z, dist = Math.hypot(dx, dz);
+      if (dist > 0.01) { const pas = Math.min(dist, v * dt); p.x += (dx / dist) * pas; p.z += (dz / dist) * pas; const cible = Math.atan2(dx, dz); let a = cible - x.obj.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); x.obj.rotation.y += a * Math.min(1, dt * 10); }
+      p.y = p.x > BX1 ? 0.2 : 0.2;
+      if (dist <= 0.05) j.etapes.shift();
+    } else {
+      et.t = (et.t || 0) + dt; const k = Math.min(1, et.t / et.duree);
+      if (et.leve !== undefined && x.colis) x.colis.position.y = 0.12 + (et.leve - 0.2) * Math.sin(k * Math.PI / 2);
+      if (et.vide && x.colis) x.colis.userData.charge.scale.y = Math.max(0.05, 1 - k);
+      if (k >= 1) { j.etapes.shift(); et.fin?.(); }
+    }
+  }
+}
 // Clients qui circulent dans les allées (boucles lissées), en nombre selon l'affluence
 const CLIENTS_MAX = 46;
 const boucles = [];
@@ -444,8 +551,6 @@ function synchroniser(instant = false) {
   const occ = Math.round(PLACES.length * Math.min(0.95, 0.2 + 0.85 * a));
   autos.forEach((x) => montrer(x.o, x.ordre < occ / PLACES.length));
   for (const r of RAYONS) { const s = stockDe(r), g = gondoles[r.id]; g.produits.scale.y = 0.15 + 0.85 * s; g.produits.position.y = 0.7 - (1 - (0.15 + 0.85 * s)) * 0.5; }
-  const pal = Math.round(palettes.length * (0.35 + 0.5 * LIVRAISONS.filter((d) => d.heure + 0.75 <= t).length / LIVRAISONS.length));
-  palettes.forEach((p, i) => { p.visible = i < pal; });
   const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai');
   if (d && dernierCamion !== d.id && !instant) annoncer(`${hh(t)} · Livraison au quai : ${d.fourn}, ${d.palettes} palettes`);
   if (d) { if (!camionAnim || camionAnim.id !== d.id) camionAnim = { id: d.id, k: instant ? 1 : 0, sens: 1 }; } else if (camionAnim && camionAnim.sens === 1) camionAnim.sens = -1;
@@ -461,8 +566,8 @@ function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.
 const point = (c) => `<i style="background:${c}"></i>`;
 etiquette('caisses', () => new THREE.Vector3(-21, 3.6, 0.5), () => { const o = caissesOuvertes().length; return `${point(o >= 4 ? '#15803d' : '#c2410c')}Caisses <small>${o}/${NB_CAISSES} ouvertes</small>`; });
 etiquette('rayons', () => new THREE.Vector3(-22, 4.4, -13), () => { const n = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); return `${point(n > 20 ? '#c2410c' : '#15803d')}Rayons <small>${n} ruptures</small>`; });
-etiquette('pause', () => new THREE.Vector3(16, 2.6, -8.6), () => { const n = EQUIPE.filter(enPause).length; return `${point(n ? '#d97706' : '#15803d')}Salle de pause <small>${n ? n + ' en pause' : 'libre'}</small>`; });
-etiquette('reserve', () => new THREE.Vector3(10, 3.2, -20), () => `${point('#d97706')}Réserve <small>${palettes.filter((p) => p.visible).length} palettes</small>`);
+etiquette('pause', () => new THREE.Vector3(16, 2.6, -8.6), () => { const n = EQUIPE.filter(auRepos).length; return `${point(n ? '#d97706' : '#15803d')}Salle de pause <small>${n ? n + ' en pause' : 'libre'}</small>`; });
+etiquette('reserve', () => new THREE.Vector3(10, 3.2, -20), () => `${point('#d97706')}Réserve <small>${slotsPleins()} palettes</small>`);
 etiquette('quai', () => new THREE.Vector3(22, 4.5, -20), () => { const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai'); return d ? `${point('#c2410c')}Quai <small>livraison</small>` : `${point('#15803d')}Quai <small>libre</small>`; });
 etiquette('parking', () => new THREE.Vector3(-6, 2.2, 15.5), () => { const n = autos.filter((a) => a.o.userData.cible === 1).length; return `${point(n < PLACES.length - 4 ? '#15803d' : '#c2410c')}Parking <small>${PLACES.length - n}/${PLACES.length} libres</small>`; });
 EQUIPE.forEach((e) => { const el = document.createElement('div'); el.className = 'badge'; couche.appendChild(el); badges.push({ el, e }); });
@@ -493,7 +598,7 @@ function majKpis() {
   const o = caissesOuvertes().length, att = Math.max(1, Math.round((affluence() * 9) / Math.max(1, o) * 2));
   $('k-caisses').textContent = `${o} / ${NB_CAISSES}`; $('k-caisses-d').textContent = `attente moyenne ${att} min`;
   const rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); $('k-ruptures').textContent = rup; $('k-ruptures-d').textContent = `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits`;
-  const pres = EQUIPE.filter(present).length; $('k-equipe').textContent = `${pres} / ${EQUIPE.length}`; const pz = EQUIPE.filter(enPause).length; $('k-equipe-d').textContent = `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`;
+  const pres = EQUIPE.filter(present).length; $('k-equipe').textContent = `${pres} / ${EQUIPE.length}`; const pz = EQUIPE.filter(auRepos).length; $('k-equipe-d').textContent = `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`;
   $('k-salaires').textContent = euros(cout); const p = ca ? (cout / ca) * 100 : 0; $('k-salaires-d').textContent = `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; $('k-salaires-j').style.width = Math.min(100, p * 5) + '%';
 }
 let onglet = 'equipe', selection = null;
@@ -547,28 +652,28 @@ function rendreFiche() {
   f.classList.add('vu');
   if (/^e\d/.test(s)) {
     const e = EQUIPE.find((x) => x.id === s), p = present(e);
-    c.innerHTML = `<h3>${e.nom}</h3><p class="sous">${e.poste}</p><span class="statut ${enPause(e) ? 'att' : p ? 'ok' : ''}">${enPause(e) ? 'En pause' : p ? 'Présent·e' : t < e.debut ? 'Arrive à ' + hTxt(e.debut) : 'Service terminé'}</span><ul class="lignes">${li('Horaires', `${hTxt(e.debut)} – ${hTxt(e.fin)}`)}${debutPause(e) !== null ? li('Pause', `${hTxt(debutPause(e))} – ${hTxt(debutPause(e) + 0.5)}`) : ''}${li('Heures aujourd\'hui', String(Math.round(Math.max(0, Math.min(t, e.fin) - e.debut) * 10) / 10).replace('.', ',') + ' h')}${li('Coût horaire chargé', euros(e.cout))}${li('Coût du jour', euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout))}</ul>`;
+    c.innerHTML = `<h3>${e.nom}</h3><p class="sous">${e.poste}</p><span class="statut ${auRepos(e) ? 'att' : p ? 'ok' : ''}">${auRepos(e) ? 'En pause' : p ? 'Présent·e' : t < e.debut ? 'Arrive à ' + hTxt(e.debut) : 'Service terminé'}</span><ul class="lignes">${li('Horaires', `${hTxt(e.debut)} – ${hTxt(e.fin)}`)}${debutPause(e) !== null ? li('Pause', `${hTxt(debutPause(e))} – ${hTxt(debutPause(e) + 0.5)}`) : ''}${objets[e.id].job ? li('En ce moment', objets[e.id].job.texte) : ''}${li('Heures aujourd\'hui', String(Math.round(Math.max(0, Math.min(t, e.fin) - e.debut) * 10) / 10).replace('.', ',') + ' h')}${li('Coût horaire chargé', euros(e.cout))}${li('Coût du jour', euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout))}</ul>`;
   } else if (/^r\d/.test(s)) {
     const r = RAYON_DE(s), st = stockDe(r), resp = EQUIPE.filter((e) => e.zone === s && present(e)).map((e) => e.nom).join(', ') || 'personne en ce moment';
     const liv = LIVRAISONS.filter((d) => d.rayon === s && d.heure > t)[0];
-    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}`;
+    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}`;
   } else if (/^c\d/.test(s)) {
     const i = +s.slice(1), e = caissiers().find((x) => caisseDe(x) === i), f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length;
     c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom) + li('Jusqu\'à', hTxt(e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
   } else if (/^d\d/.test(s) || s === 'quai') {
     const d = s === 'quai' ? LIVRAISONS.find((x) => statutLiv(x) === 'au quai') || LIVRAISONS.find((x) => x.heure > t) : LIVRAISONS.find((x) => x.id === s);
-    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
+    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${statutLiv(d) !== 'prévue' ? li('Déchargées', `${Math.min(d.palettes, d.dechargees || 0)} sur ${d.palettes}`) : ''}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
   } else {
     const T = {
       caisses: () => `<h3>Ligne de caisses</h3><p class="sous">${NB_CAISSES} caisses</p><ul class="lignes">${li('Ouvertes', caissesOuvertes().map((i) => i + 1).join(', ') || 'aucune')}${li('Hôtes et hôtesses en caisse', caissiers().map((e) => e.nom).join(', ') || 'personne')}</ul>`,
       rayons: () => `<h3>Rayons</h3><p class="sous">6 rayons</p><ul class="lignes">${RAYONS.map((r) => li(r.nom, `${Math.round(stockDe(r) * 100)} % · ${rupturesDe(r)} rupture${rupturesDe(r) > 1 ? "s" : ""}`)).join('')}</ul>`,
-      reserve: () => `<h3>Réserve</h3><p class="sous">Palettes en attente de mise en rayon</p><ul class="lignes">${li('Palettes', palettes.filter((p) => p.visible).length)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
+      reserve: () => `<h3>Réserve</h3><p class="sous">Racks à palettes : réception du camion, puis mise en rayon</p><ul class="lignes">${li('Palettes en rack', `${SLOTS.filter((sl) => sl.rayon && sl.rangee < 2).length} sur 30`)}${li('Palettes au sol', SLOTS.filter((sl) => sl.rayon && sl.rangee === 2).length)}${li('En ce moment', Object.values(objets).filter((x) => x.job).map((x) => `${x.e.nom.split(' ')[0]} : ${x.job.court}`).join(', ') || 'calme')}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
       parking: () => { const n = autos.filter((a) => a.o.userData.cible === 1).length; return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
       accueil: () => `<h3>Accueil</h3><p class="sous">Point d'accueil et service client</p><ul class="lignes">${li('À l\'accueil', EQUIPE.filter((e) => e.zone === 'accueil' && present(e)).map((e) => e.nom).join(', ') || 'personne')}${li('Clients dans le magasin', clientsMagasin())}</ul>`,
-      pause: () => { const n = EQUIPE.filter(enPause), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
+      pause: () => { const n = EQUIPE.filter(auRepos), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
       escalier: () => `<h3>Escalier du personnel</h3><p class="sous">Vers l'étage : bureaux administratifs et salle de réunion</p><ul class="lignes">${li('Accès', 'couloir du personnel, derrière l\'accueil')}${li('À l\'étage', 'non dessiné dans la démo')}</ul>`,
       vestiaires: () => `<h3>Vestiaires et sanitaires</h3><p class="sous">Réservés au personnel</p><ul class="lignes">${li('Casiers', 8)}${li('Équipe dans le magasin', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
-      bureau: () => `<h3>Bureau de la direction</h3><p class="sous">Bureau, armoire, table de réunion</p><ul class="lignes">${li('Direction', EQUIPE.filter((e) => e.zone === 'bureau' && present(e)).map((e) => e.nom + (enPause(e) ? ' (en pause)' : '')).join(', ') || 'absente')}${li('Équipe présente', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
+      bureau: () => `<h3>Bureau de la direction</h3><p class="sous">Bureau, armoire, table de réunion</p><ul class="lignes">${li('Direction', EQUIPE.filter((e) => e.zone === 'bureau' && present(e)).map((e) => e.nom + (auRepos(e) ? ' (en pause)' : '')).join(', ') || 'absente')}${li('Équipe présente', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
       magasin: () => `<h3>Le magasin</h3><p class="sous">Hyper Modèle, grande surface imaginaire</p><ul class="lignes">${li('Clients dans le magasin', clientsMagasin())}${li('Caisses ouvertes', `${caissesOuvertes().length} sur ${NB_CAISSES}`)}${li('Équipe présente', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}${li('Chiffre d\'affaires', euros(caDuJour()))}</ul>`,
     };
     c.innerHTML = (T[s] || T.magasin)();
@@ -622,7 +727,7 @@ addEventListener('resize', taille); taille();
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
-  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); } synchroniser(); }
+  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
   for (const c of clients) {
     if (!c.o.visible) continue;
@@ -631,9 +736,11 @@ function animer(now) {
     const tg = c.boucle.getTangentAt(c.u); let d = Math.atan2(tg.x, tg.z) - c.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); c.rot += d * Math.min(1, dt * 8); c.o.rotation.y = c.rot;
   }
   // l'équipe en rayon fait de petits va-et-vient
+  if (!pause) logistique(Math.min(ecoule, 0.25));
   // pause : la personne rejoint la salle de pause puis revient à son poste ; en rayon, petits va-et-vient
   let siege = 0;
   for (const x of Object.values(objets)) {
+    if (x.job) continue;
     const p = enPause(x.e), [sx, sz, sr] = SIEGES[siege % SIEGES.length]; if (p) siege++;
     const rayon = /^r\d/.test(x.e.zone) && !p;
     if (rayon && !x.retour && x.obj.visible) x.phase += dt * 0.35;
@@ -663,8 +770,9 @@ function animer(now) {
   if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
   requestAnimationFrame(animer);
 }
+initReserve();
 synchroniser(true);
-window.demo = { temps: () => t, camera, controls, scene, THREE, choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
+window.demo = { temps: () => t, camera, controls, scene, THREE, choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
 requestAnimationFrame(animer);
 </script>
 </body>
