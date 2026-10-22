@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CRM visuel 3D · votre entreprise en 3D, en direct</title>
 <link rel="icon" href="data:,">
-<meta name="description" content="Toute votre entreprise sur un seul écran : une maquette 3D en direct de vos locaux, de vos équipes, de vos véhicules et de vos stocks, avec vos chiffres clés. 490 € de mise en place, 99 € par mois.">
+<meta name="description" content="Toute votre entreprise sur un seul écran : une maquette 3D en direct de vos locaux, de vos équipes, de vos véhicules et de vos stocks, avec vos chiffres clés. Prix sur devis selon la taille de votre structure.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -90,6 +90,9 @@
   .tarif .ligne:last-of-type { border-bottom: 0; }
   .tarif b { font-size: 30px; letter-spacing: -.01em; white-space: nowrap; }
   .tarif small { display: block; color: var(--doux); font-size: 14px; }
+  .tarif .ligne b small { display: inline; font-size: 14px; font-weight: 500; color: var(--doux); }
+  .tarif .ligne b small:first-child { display: block; text-align: right; }
+  .tarif .devis { font-size: 14px; color: var(--doux); margin: 12px 0 0; }
   .tarif ul { margin: 16px 0 22px; padding-left: 20px; color: var(--doux); font-size: 15px; }
   .conditions { background: var(--carte); border: 1px solid var(--ligne); border-radius: 14px; padding: 8px 24px; }
   details { border-bottom: 1px solid var(--ligne); padding: 14px 0; }
@@ -188,11 +191,13 @@
 
 <section id="tarifs"><div class="large">
   <h2>Tarifs</h2>
-  <p class="chapo">Un prix simple, le même pour tous les métiers.</p>
+  <p class="chapo">Sur devis : le prix dépend de la taille de votre structure. Un petit magasin ou une agence ne paie pas comme un centre commercial.</p>
   <div class="prix">
     <div class="tarif apparait">
-      <div class="ligne"><span>Mise en place<small>une seule fois, par établissement</small></span><b>490 €</b></div>
-      <div class="ligne"><span>Abonnement<small>par établissement</small></span><b>99 € / mois</b></div>
+      <div class="ligne"><span>Petite structure<small>une agence, un magasin de proximité</small></span><b><small>à partir de</small>490 € <small>+ 99 € / mois</small></b></div>
+      <div class="ligne"><span>Plusieurs sites, grande surface<small>supermarché, plusieurs agences, entrepôt</small></span><b>Sur devis</b></div>
+      <div class="ligne"><span>Centre commercial, grand groupe<small>plusieurs bâtiments, beaucoup de personnel</small></span><b>Sur devis</b></div>
+      <p class="devis">Le devis tient compte de la taille des locaux à dessiner, du nombre de personnes, de véhicules ou de rayons suivis, et des branchements à vos logiciels. On l'établit après la démo, gratuitement.</p>
       <ul>
         <li>la maquette 3D de vos locaux, dessinée pour vous</li>
         <li>le planning, l'équipe, les véhicules ou les stocks, en direct</li>
@@ -201,7 +206,7 @@
         <li>les mises à jour et l'aide par mail</li>
         <li>en option, sur devis : le branchement à votre logiciel de caisse ou de stock</li>
       </ul>
-      <a class="btn" href="#contact">Réserver ma démo</a>
+      <a class="btn" href="#contact">Demander mon devis</a>
     </div>
     <div class="conditions" id="conditions">
       <details open><summary>Quand est-ce que je paie ?</summary><p>Rien maintenant. Nous sommes en lancement : vous réservez une démo ou une place, sans engagement et sans paiement. Le paiement commence au démarrage de votre écran, sur devis.</p></details>
