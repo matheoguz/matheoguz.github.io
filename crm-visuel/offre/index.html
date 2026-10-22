@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRM visuel 3D · votre entreprise en 3D, en direct</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Toute votre entreprise sur un seul écran : une maquette 3D en direct de vos locaux, de vos équipes, de vos véhicules et de vos stocks, avec vos chiffres clés. Prix sur devis selon la taille de votre structure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --fond: #f6f7f9; --carte: #fff; --texte: #111827; --doux: #5b6472; --ligne: #e5e7eb; --accent: #1d4ed8; --accent-doux: #e0e7ff; --vert: #15803d; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); }
+  .large { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  nav { background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  nav .large { display: flex; align-items: center; gap: 18px; height: 64px; }
+  .marque { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--texte); text-decoration: none; }
+  .marque i { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-style: normal; font-size: 14px; }
+  nav .liens { margin-left: auto; display: flex; gap: 22px; font-size: 14.5px; }
+  nav .liens a { color: var(--doux); text-decoration: none; font-weight: 500; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 8px; font-size: 15px; }
+  .btn.clair { background: var(--carte); color: var(--texte); border: 1px solid var(--ligne); }
+  .btn { transition: transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+  .btn:hover { filter: brightness(1.06); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(29,78,216,.25); }
+  .btn.clair:hover { box-shadow: 0 8px 20px rgba(17,24,39,.08); }
+  header.une { padding: 64px 0 40px; position: relative; overflow: hidden; }
+  header.une::before, header.une::after { content: ""; position: absolute; border-radius: 50%; filter: blur(60px); opacity: .45; z-index: -1; animation: flotte 18s ease-in-out infinite alternate; }
+  header.une::before { width: 420px; height: 420px; background: #bfdbfe; top: -120px; left: -80px; }
+  header.une::after { width: 360px; height: 360px; background: #bbf7d0; bottom: -140px; right: 6%; animation-delay: -9s; }
+  @keyframes flotte { to { transform: translate(60px, 40px) scale(1.1); } }
+  .une .large { display: grid; grid-template-columns: 1fr 1.15fr; gap: 48px; align-items: center; }
+  .pastille { display: inline-block; font-size: 13px; font-weight: 600; color: var(--vert); background: #dcfce7; padding: 4px 10px; border-radius: 99px; margin-bottom: 14px; }
+  h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 16px; }
+  .une p { font-size: 18px; color: var(--doux); margin: 0 0 26px; max-width: 520px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .apercu { border-radius: 12px; overflow: hidden; border: 1px solid var(--ligne); box-shadow: 0 20px 50px rgba(17,24,39,.12); background: var(--carte); transition: transform .3s ease, box-shadow .3s ease; }
+  .apercu:hover { transform: translateY(-4px) rotate(-.3deg); box-shadow: 0 28px 60px rgba(17,24,39,.16); }
+  .ecran { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #e9ebe6; }
+  .ecran img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
+  .ecran iframe { position: absolute; top: 0; left: 0; width: 1200px; height: 750px; border: 0; transform-origin: 0 0; }
+  .ecran img { opacity: 0; transition: opacity 1.2s ease; transform-origin: 30% 40%; }
+  .ecran img.vu { opacity: 1; animation: kenburns 9s ease-in-out forwards; }
+  @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.07) translate(-1%, 1%); } }
+  .direct { position: absolute; top: 10px; left: 10px; z-index: 2; background: rgba(255,255,255,.94); border: 1px solid var(--ligne); border-radius: 99px; padding: 3px 10px 3px 8px; font-size: 12px; font-weight: 600; color: var(--vert); display: flex; align-items: center; gap: 6px; }
+  .direct i { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pouls 1.6s ease-in-out infinite; }
+  @keyframes pouls { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+  .fil { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 2; background: rgba(17,24,39,.86); color: #fff; border-radius: 8px; padding: 7px 11px; font-size: 12.5px; min-height: 33px; display: flex; gap: 8px; align-items: center; }
+  .fil b { color: #93c5fd; font-variant-numeric: tabular-nums; }
+  .fil span { transition: opacity .35s ease, transform .35s ease; }
+  .fil span.sort { opacity: 0; transform: translateY(6px); }
+  .essayer { position: absolute; top: 10px; right: 10px; z-index: 2; border: 0; background: var(--accent); color: #fff; font: inherit; font-size: 12.5px; font-weight: 600; border-radius: 99px; padding: 5px 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(29,78,216,.3); }
+  .apercu .legende { display: block; font-size: 12.5px; color: var(--doux); padding: 8px 12px; border-top: 1px solid var(--ligne); }
+  section { padding: 56px 0; }
+  h2 { font-size: 32px; letter-spacing: -.015em; margin: 0 0 10px; line-height: 1.2; }
+  .chapo { color: var(--doux); margin: 0 0 32px; max-width: 640px; }
+  .grille4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 12px; padding: 22px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  .carte:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(17,24,39,.08); border-color: #c7d2fe; }
+  .carte .ico { display: block; color: var(--accent); margin-bottom: 10px; transition: transform .3s ease; }
+  .carte:hover .ico { transform: scale(1.2) rotate(-6deg); }
+  .chiffres { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+  .chiffre { text-align: center; padding: 18px 10px; border-radius: 12px; background: linear-gradient(180deg, #eef2ff, #fff); border: 1px solid #e0e7ff; }
+  .chiffre b { display: block; font-size: 34px; letter-spacing: -.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .chiffre span { font-size: 14px; color: var(--doux); }
+  .note-chiffres { font-size: 12.5px; color: var(--doux); margin: 10px 0 0; text-align: center; }
+  .apparait { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .apparait.vu { opacity: 1; transform: none; }
+  .carte h3 { margin: 0 0 6px; font-size: 18px; }
+  .carte p { margin: 0; color: var(--doux); font-size: 15px; }
+  .etapes { counter-reset: e; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .etapes .carte::before { counter-increment: e; content: counter(e); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-doux); color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+  .exemples { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .exemple { background: var(--carte); border: 1px solid var(--ligne); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
+  .exemple:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(17,24,39,.1); }
+  .exemple .vignette { flex: none; padding: 0; display: block; position: relative; height: 230px; overflow: hidden; border-bottom: 1px solid var(--ligne); }
+  .vignette img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; transition: opacity 1s ease; animation: balaye 14s ease-in-out infinite alternate; }
+  .vignette img + img { opacity: 0; }
+  .vignette.alterne img + img { opacity: 1; }
+  @keyframes balaye { from { transform: scale(1.02); object-position: 0% 0%; } to { transform: scale(1.12); object-position: 40% 60%; } }
+  .exemple div { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  .exemple h3 { margin: 0 0 6px; }
+  .exemple p { margin: 0 0 16px; color: var(--doux); font-size: 15px; flex: 1; }
+  .prix { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: start; }
+  .tarif { background: var(--carte); border: 2px solid var(--accent); border-radius: 14px; padding: 28px; }
+  .tarif .ligne { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--ligne); gap: 12px; }
+  .tarif .ligne:last-of-type { border-bottom: 0; }
+  .tarif b { font-size: 30px; letter-spacing: -.01em; white-space: nowrap; }
+  .tarif small { display: block; color: var(--doux); font-size: 14px; }
+  .tarif .ligne b small { display: inline; font-size: 14px; font-weight: 500; color: var(--doux); }
+  .tarif .ligne b small:first-child { display: block; text-align: right; }
+  .tarif .devis { font-size: 14px; color: var(--doux); margin: 12px 0 0; }
+  .tarif ul { margin: 16px 0 22px; padding-left: 20px; color: var(--doux); font-size: 15px; }
+  .conditions { background: var(--carte); border: 1px solid var(--ligne); border-radius: 14px; padding: 8px 24px; }
+  details { border-bottom: 1px solid var(--ligne); padding: 14px 0; }
+  details:last-child { border-bottom: 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  details p { color: var(--doux); margin: 8px 0 0; font-size: 15px; }
+  .contact { background: var(--texte); color: #fff; border-radius: 16px; padding: 40px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; align-items: center; }
+  .contact h2 { color: #fff; }
+  .contact p { color: #cbd5e1; margin: 0; }
+  .contact .btn { background: #fff; color: var(--texte); }
+  footer { padding: 32px 0 48px; color: var(--doux); font-size: 13.5px; }
+  footer h4 { color: var(--texte); margin: 0 0 6px; font-size: 14px; }
+  @media (max-width: 900px) {
+    nav .liens { display: none; }
+    .une .large, .prix, .exemples, .contact { grid-template-columns: 1fr; }
+    .grille4 { grid-template-columns: 1fr 1fr; }
+    .etapes { grid-template-columns: 1fr; }
+    h1 { font-size: 34px; }
+    header.une { padding: 36px 0 20px; }
+    section { padding: 40px 0; }
+    .contact { padding: 28px; }
+  }
+  @media (max-width: 520px) { .grille4 { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .chiffres { grid-template-columns: 1fr 1fr; } .chiffre b { font-size: 28px; } .fil { font-size: 11.5px; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .apparait { opacity: 1; transform: none; }
+    .ecran img.vu { transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+<nav><div class="large">
+  <a class="marque" href="#"><i>3D</i>CRM visuel 3D</a>
+  <div class="liens"><a href="#exemples">Exemples</a><a href="#tarifs">Tarifs</a><a href="#conditions">Conditions</a><a href="#contact">Contact</a></div>
+</div></nav>
+
+<header class="une"><div class="large">
+  <div>
+    <span class="pastille">Lancement : démos et réservations ouvertes</span>
+    <h1>Toute votre entreprise sur un seul écran.</h1>
+    <p>Vos locaux en maquette 3D, en direct : qui travaille, ce qui est libre, ce qui est en stock, et vos chiffres clés juste à côté. Un clic sur une personne, un véhicule ou un rayon ouvre sa fiche.</p>
+    <div class="actions"><a class="btn" href="../">Voir la démo auto-école</a><a class="btn clair" href="#contact">Réserver une démo de 10 minutes</a></div>
+  </div>
+  <div class="apercu">
+    <div class="ecran" id="ecran">
+      <span class="direct"><i></i>En direct</span>
+      <button class="essayer" id="essayer" type="button"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;margin-right:4px"><path d="M7 4l13 8-13 8z"/></svg>Essayer ici</button>
+      <img class="vu" src="demo-auto-ecole.jpg" alt="Démo : une auto-école fictive en maquette 3D, avec le planning du jour et les chiffres clés" width="1200" height="750">
+      <img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" width="1200" height="750" loading="lazy">
+      <img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" width="1200" height="750" loading="lazy">
+      <img src="demo-commande.jpg" alt="Commande de réassort depuis un rayon de la grande surface fictive" width="1200" height="750" loading="lazy">
+      <div class="fil" aria-live="off"><b id="fil-h">10:42</b><span id="fil-t">Sophie L. part en leçon avec la voiture 2</span></div>
+    </div>
+    <span class="legende">Démos avec des données inventées : « Auto-école Modèle » et « Hyper Modèle »</span>
+  </div>
+</div></header>
+
+<section><div class="large">
+  <h2>Clair, précis, facile, rentable.</h2>
+  <p class="chapo">Pensé pour les gérants qui veulent voir leur journée en un coup d'œil, sans apprendre un logiciel.</p>
+  <div class="grille4">
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><h3>Clair</h3><p>Vos locaux dessinés comme une maquette. Vert, c'est libre ; orange, c'est occupé.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><h3>Précis</h3><p>Le planning du jour heure par heure, avec un trait « maintenant ». Le prénom et le nom de chaque personne.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 9a2 2 0 0 1 4 0v3"/><path d="M17 11a2 2 0 0 1 4 0v4a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-2.7L4.6 15a2 2 0 0 1 3.2-2.4L9 14"/></svg><h3>Facile</h3><p>Un clic sur un élément zoome dessus et ouvre sa fiche. Sur ordinateur, tablette ou téléphone.</p></div>
+    <div class="carte apparait"><svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><h3>Rentable</h3><p>En haut de l'écran : encaissé du jour et du mois, remplissage de l'équipe, ce qui reste à encaisser.</p></div>
+  </div>
+  <div class="chiffres apparait">
+    <div class="chiffre"><b data-compte="22">22</b><span>personnes suivies</span></div>
+    <div class="chiffre"><b data-compte="8">8</b><span>caisses en direct</span></div>
+    <div class="chiffre"><b data-compte="6">6</b><span>rayons avec leur stock</span></div>
+    <div class="chiffre"><b data-compte="1">1</b><span>clic pour commander</span></div>
+  </div>
+  <p class="note-chiffres">Ce que montre la démo grande surface, avec des données inventées.</p>
+</div></section>
+
+<section id="exemples" style="background:var(--carte);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne)"><div class="large">
+  <h2>Deux exemples à ouvrir</h2>
+  <p class="chapo">Les deux démos tournent toutes seules, avec des noms et des chiffres inventés. Votre version reprend vos locaux, votre équipe et vos chiffres.</p>
+  <div class="exemples">
+    <div class="exemple apparait"><div class="vignette"><img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" loading="lazy"><img src="demo-auto-ecole.jpg" alt="" loading="lazy"></div><div><h3>Une auto-école</h3><p>Voitures en leçon ou au parking, moniteurs disponibles, élèves de la salle de code, planning de chaque moniteur, élèves à relancer.</p><a class="btn" href="../">Ouvrir la démo</a></div></div>
+    <div class="exemple apparait"><div class="vignette"><img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" loading="lazy"><img src="demo-commande.jpg" alt="" loading="lazy"></div><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock exact de chaque rayon et ruptures, commande de réassort en un clic, équipe présente, pauses et coût de la journée, livraisons au quai, et un côté RH : recrutement, CV, entretiens, dossiers du personnel.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a></div></div>
+  </div>
+</div></section>
+
+<section><div class="large">
+  <h2>Comment ça se passe</h2>
+  <p class="chapo">Vous n'avez rien à installer.</p>
+  <div class="etapes">
+    <div class="carte apparait"><h3>Une démo de 10 minutes</h3><p>À votre agence ou en visio. On regarde ensemble ce que vous voulez voir sur l'écran.</p></div>
+    <div class="carte apparait"><h3>La maquette de vos locaux</h3><p>On dessine vos locaux, vos véhicules, vos postes et vos rayons, puis on importe votre planning et vos chiffres de départ.</p></div>
+    <div class="carte apparait"><h3>Votre écran en direct</h3><p>Accès en ligne pour vous et votre équipe. Les mises à jour sont comprises dans l'abonnement.</p></div>
+  </div>
+</div></section>
+
+<section id="tarifs"><div class="large">
+  <h2>Tarifs</h2>
+  <p class="chapo">Sur devis : le prix dépend de la taille de votre structure. Un petit magasin ou une agence ne paie pas comme un centre commercial.</p>
+  <div class="prix">
+    <div class="tarif apparait">
+      <div class="ligne"><span>Petite structure<small>une agence, un magasin de proximité</small></span><b><small>à partir de</small>490 € <small>+ 99 € / mois</small></b></div>
+      <div class="ligne"><span>Plusieurs sites, grande surface<small>supermarché, plusieurs agences, entrepôt</small></span><b>Sur devis</b></div>
+      <div class="ligne"><span>Centre commercial, grand groupe<small>plusieurs bâtiments, beaucoup de personnel</small></span><b>Sur devis</b></div>
+      <p class="devis">Le devis tient compte de la taille des locaux à dessiner, du nombre de personnes, de véhicules ou de rayons suivis, et des branchements à vos logiciels. On l'établit après la démo, gratuitement.</p>
+      <ul>
+        <li>la maquette 3D de vos locaux, dessinée pour vous</li>
+        <li>le planning, l'équipe, les véhicules ou les stocks, en direct</li>
+        <li>les chiffres clés et les fiches au clic</li>
+        <li>l'accès sur ordinateur, tablette et téléphone</li>
+        <li>les mises à jour et l'aide par mail</li>
+        <li>en option, sur devis : le branchement à votre logiciel de caisse ou de stock</li>
+      </ul>
+      <a class="btn" href="#contact">Demander mon devis</a>
+    </div>
+    <div class="conditions" id="conditions">
+      <details open><summary>Quand est-ce que je paie ?</summary><p>Rien maintenant. Nous sommes en lancement : vous réservez une démo ou une place, sans engagement et sans paiement. Le paiement commence au démarrage de votre écran, sur devis.</p></details>
+      <details><summary>Est-ce que je suis engagé ?</summary><p>Non. L'abonnement est mensuel, sans engagement, et se résilie chaque mois.</p></details>
+      <details><summary>Et la TVA ?</summary><p>Le régime de TVA est précisé sur le devis.</p></details>
+      <details><summary>Mes données restent-elles à moi ?</summary><p>Oui. Les données de votre établissement restent les vôtres : un contrat de traitement des données (RGPD) est signé avec l'abonnement, et vous pouvez tout récupérer ou tout faire supprimer à la fin.</p></details>
+      <details><summary>Faut-il un GPS dans les véhicules ?</summary><p>Non. Les statuts (en leçon, disponible, en pause) viennent de votre planning ou se mettent en un clic. Aucun suivi de trajet.</p></details>
+      <details><summary>J'ai déjà un logiciel de gestion.</summary><p>L'écran 3D peut reprendre votre planning existant (export iCal ou Google Agenda) pour éviter de tout saisir deux fois. On regarde ça ensemble pendant la démo.</p></details>
+      <details><summary>Et mon logiciel de caisse ou de stock ?</summary><p>Le branchement à votre logiciel actuel (caisse, stock, commandes) est possible, sur devis. On regarde d'abord ce que votre logiciel permet (export de fichiers, accès prévu par l'éditeur), puis on vous dit ce qui est faisable et à quel prix. Rien n'est promis avant cette étude.</p></details>
+    </div>
+  </div>
+</div></section>
+
+<section id="contact"><div class="large">
+  <div class="contact apparait">
+    <div><h2>Une démo de 10 minutes ?</h2><p>Écrivez-moi votre métier, votre ville et le nombre de personnes dans l'équipe. Je vous réponds sous 24 h avec deux créneaux.</p></div>
+    <div><a class="btn" href="mailto:matheoguzzi11@gmail.com?subject=D%C3%A9mo%20CRM%20visuel%203D&amp;body=Bonjour%2C%0A%0AM%C3%A9tier%20%3A%20%0AVille%20%3A%20%0APersonnes%20dans%20l'%C3%A9quipe%20%3A%20%0A">Demander une démo par mail</a><p style="margin-top:12px;font-size:14px">matheoguzzi11@gmail.com</p></div>
+  </div>
+</div></section>
+
+<footer><div class="large">
+  <h4>Mentions légales</h4>
+  <p>Éditeur : Matheo Guzzi, entrepreneur individuel, immatriculation en cours. Contact : matheoguzzi11@gmail.com. Adresse communiquée sur demande.<br>
+  Hébergeur : GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis (GitHub Pages).<br>
+  Cette page n'utilise ni cookie ni mesure d'audience. Le lien de contact ouvre simplement votre messagerie. Les démos utilisent des données inventées.</p>
+</div></footer>
+<script>
+(() => {
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // apparitions douces au défilement
+  const vus = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('vu'); vus.unobserve(e.target); if (e.target.classList.contains('chiffres')) compter(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.apparait').forEach((el) => calme ? el.classList.add('vu') : vus.observe(el));
+  // chiffres qui montent
+  function compter(bloc) {
+    if (calme) return;
+    bloc.querySelectorAll('[data-compte]').forEach((b) => { const fin = +b.dataset.compte, t0 = performance.now(); const pas = (n) => { const k = Math.min(1, (n - t0) / 1100); b.textContent = Math.round(fin * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(pas); }; requestAnimationFrame(pas); });
+  }
+  if (calme) document.querySelectorAll('.chiffres').forEach((b) => b.classList.add('vu'));
+  // aperçu : captures qui défilent et fil d'événements de la démo (inventés)
+  const ecran = document.getElementById('ecran'), imgs = [...ecran.querySelectorAll('img')];
+  const FIL = [['10:42', 'Sophie L. part en leçon avec la voiture 2'], ['10:43', 'Caisse 5 ouverte par Emma L.'], ['10:45', 'Salle de code : 6 élèves'], ['10:46', 'Surgelés : commande de 18 palettes'], ['10:48', 'Voiture 3 de retour au parking'], ['10:50', 'Livraison Boissons au quai']];
+  let i = 0, f = 0;
+  const h = document.getElementById('fil-h'), tx = document.getElementById('fil-t');
+  if (!calme) {
+    setInterval(() => { if (ecran.dataset.live) return; imgs[i].classList.remove('vu'); i = (i + 1) % imgs.length; imgs[i].classList.add('vu'); }, 5000);
+    setInterval(() => { tx.classList.add('sort'); setTimeout(() => { f = (f + 1) % FIL.length; h.textContent = FIL[f][0]; tx.textContent = FIL[f][1]; tx.classList.remove('sort'); }, 350); }, 2600);
+    document.querySelectorAll('.vignette').forEach((v, n) => setInterval(() => v.classList.toggle('alterne'), 4500 + n * 900));
+  }
+  // essayer la vraie démo dans l'aperçu (chargée seulement au clic)
+  // (affichée en taille ordinateur puis réduite ; sur téléphone, on ouvre la démo en plein écran)
+  document.getElementById('essayer').onclick = (ev) => {
+    if (innerWidth < 700) { location.href = '../'; return; }
+    const fr = document.createElement('iframe'); fr.src = '../'; fr.title = 'Démo auto-école en direct (données inventées)';
+    const ajuster = () => { fr.style.transform = `scale(${ecran.clientWidth / 1200})`; };
+    ecran.dataset.live = '1'; ecran.querySelectorAll('img, .fil').forEach((x) => x.remove()); ecran.appendChild(fr); ajuster(); addEventListener('resize', ajuster); ev.currentTarget.remove();
+  };
+})();
+</script>
+</body>
+</html>

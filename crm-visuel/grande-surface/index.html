@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyper Modèle · tableau de bord 3D (démo)</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Démo avec des données fictives : une grande surface en maquette 3D, en direct. Caisses, rayons et stocks, équipe et coût de la journée, livraisons, en un clic.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --fond: #f3f4f6; --carte: #fff; --texte: #111827; --doux: #6b7280; --ligne: #e5e7eb; --accent: #b91c1c; --accent-doux: #fee2e2; --vert: #15803d; --vert-doux: #dcfce7; --orange: #c2410c; --orange-doux: #ffedd5; --gris-doux: #f3f4f6; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 430px; grid-template-rows: auto auto minmax(0, 1fr); height: 100vh; }
+  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  .logo { width: 36px; height: 36px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .titre b { display: block; font-size: 15px; }
+  .titre span { color: var(--doux); font-size: 12.5px; }
+  .demo { font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; margin-left: 6px; }
+  .horloge { margin-left: auto; text-align: right; }
+  .horloge b { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .horloge span { display: block; color: var(--doux); font-size: 11.5px; }
+  .direct { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert) !important; margin-right: 8px; }
+  .direct i { width: 7px; height: 7px; border-radius: 50%; background: var(--vert); animation: pouls 2s infinite; }
+  @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--ligne); border-bottom: 1px solid var(--ligne); }
+  .kpi { background: var(--carte); padding: 12px 18px; }
+  .kpi span { color: var(--doux); font-size: 12px; }
+  .kpi b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin: 1px 0; }
+  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
+  .jauge { height: 4px; border-radius: 4px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
+  .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 4px; }
+  .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
+  .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  .scene canvas:active { cursor: grabbing; }
+  .aide { position: absolute; right: 12px; top: 14px; background: rgba(255,255,255,.9); border: 1px solid var(--ligne); border-radius: 7px; padding: 5px 9px; font-size: 11.5px; color: var(--doux); pointer-events: none; transition: opacity .6s; }
+  .aide.cache { opacity: 0; }
+  @media (max-width: 900px) { .aide { top: auto; bottom: 10px; right: 10px; } }
+  .etiquettes { position: absolute; inset: 0; pointer-events: none; }
+  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
+  .et small { font-weight: 500; color: var(--doux); }
+  .et i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(17,24,39,.86); color: #fff; border-radius: 5px; padding: 2px 6px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
+  .badge small { display: block; font-weight: 500; font-size: 9.5px; opacity: .8; }
+  .outils { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; }
+  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 7px; cursor: pointer; text-decoration: none; }
+  .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
+  .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+  .annonce.vu { opacity: .92; }
+  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; padding: 14px 16px; font-size: 13px; text-align: center; }
+  .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; max-height: 70%; overflow-y: auto; }
+  .fiche.vu { display: block; }
+  .fiche h3 { margin: 0; font-size: 16px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 8px; }
+  .fermer { position: absolute; right: 10px; top: 8px; border: 0; background: none; font-size: 18px; color: var(--doux); cursor: pointer; }
+  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .statut.ok { color: var(--vert); background: var(--vert-doux); }
+  .statut.att { color: var(--orange); background: var(--orange-doux); }
+  .statut.ko { color: var(--accent); background: var(--accent-doux); }
+  .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
+  .connecte { border: 1px solid #bbf7d0; background: var(--vert-doux); border-radius: 8px; padding: 9px 11px; margin: 0 0 12px; font-size: 12px; line-height: 1.45; }
+  .connecte b { color: var(--vert); }
+  .connecte p { margin: 4px 0 0; color: var(--texte); }
+  .connecte small { color: var(--doux); }
+  .synchro { font-size: 11.5px; color: var(--vert); margin: 6px 0 0; }
+  .commande { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--ligne); }
+  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .commande .ligne b { min-width: 74px; text-align: center; font-size: 13px; }
+  .commande button { border: 1px solid var(--ligne); background: var(--carte); font: inherit; font-size: 13px; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .commande button.go { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; margin-left: auto; }
+  .commande button:disabled { opacity: .45; cursor: default; }
+  .commande small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 5px; }
+  .commande .fait { color: var(--vert); font-weight: 600; font-size: 12px; margin-top: 5px; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  .lignes li span:first-child { color: var(--doux); }
+  .lignes li b { font-weight: 600; text-align: right; }
+  aside { background: var(--carte); border-left: 1px solid var(--ligne); display: flex; flex-direction: column; min-height: 0; }
+  .onglets { display: flex; border-bottom: 1px solid var(--ligne); padding: 0 12px; }
+  .onglets button { flex: 1; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--doux); padding: 12px 4px 10px; border-bottom: 2px solid transparent; cursor: pointer; }
+  .onglets button.actif { color: var(--accent); border-color: var(--accent); }
+  .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid var(--ligne); }
+  td { padding: 7px 4px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+  tr.clic { cursor: pointer; }
+  tr.clic:hover td { background: var(--gris-doux); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mini { height: 6px; border-radius: 6px; background: var(--gris-doux); width: 90px; display: inline-block; vertical-align: middle; overflow: hidden; }
+  .mini i { display: block; height: 100%; }
+  .service { position: relative; height: 8px; background: var(--gris-doux); border-radius: 4px; width: 120px; display: inline-block; vertical-align: middle; }
+  .service i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: #93c5fd; }
+  .service b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #dc2626; }
+  small.d { color: var(--doux); }
+  @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto auto; height: auto; }
+    aside { border-left: 0; border-top: 1px solid var(--ligne); }
+    .contenu { overflow: visible; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi { padding: 10px 14px; }
+    .kpi b { font-size: 19px; }
+    header { flex-wrap: wrap; padding: 12px 14px; }
+    .horloge { margin-left: 0; text-align: left; width: 100%; }
+    .et { font-size: 10px; padding: 2px 6px; }
+    .badge { font-size: 9.5px; padding: 1px 5px; }
+    .badge small { display: none; }
+    .fiche { position: static; width: auto; max-width: none; max-height: none; overflow: visible; margin: 10px 12px 0; padding: 12px 14px; box-shadow: none; } /* sous la maquette, pour ne pas la cacher */
+    .annonce { display: none; }
+    .service { width: 80px; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "../vendor/three.module.min.js" } }
+</script>
+<script>
+  addEventListener('error', () => { if (!window.maquetteOk) setTimeout(() => window.montrerErreur && window.montrerErreur(), 0); });
+  window.montrerErreur = () => { const el = document.getElementById('erreur'); if (el) el.hidden = false; };
+  setTimeout(() => { if (!window.maquetteOk) window.montrerErreur(); }, 10000);
+</script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">H</div>
+    <div class="titre"><b>Hyper Modèle <span class="demo">Démo · données fictives</span></b><span>Grande surface imaginaire · tableau de bord du magasin, en direct</span></div>
+    <div class="horloge"><span class="direct"><i></i>En direct</span><b id="heure">--:--</b><span>journée accélérée pour la démo (1 s = 1 min)</span></div>
+  </header>
+
+  <section class="kpis" aria-label="Chiffres clés">
+    <div class="kpi"><span>Chiffre d'affaires aujourd'hui</span><b id="k-ca">-</b><em id="k-ca-d"></em></div>
+    <div class="kpi"><span>Clients dans le magasin</span><b id="k-clients">-</b><em id="k-clients-d"></em></div>
+    <div class="kpi"><span>Caisses ouvertes</span><b id="k-caisses">-</b><em id="k-caisses-d"></em></div>
+    <div class="kpi"><span>Ruptures de stock</span><b id="k-ruptures">-</b><em id="k-ruptures-d"></em></div>
+    <div class="kpi"><span>Équipe présente</span><b id="k-equipe">-</b><em id="k-equipe-d"></em></div>
+    <div class="kpi"><span>Coût de l'équipe aujourd'hui</span><b id="k-salaires">-</b><em id="k-salaires-d"></em><div class="jauge"><i id="k-salaires-j"></i></div></div>
+  </section>
+
+  <main class="scene" id="scene">
+    <div class="etiquettes" id="etiquettes"></div>
+    <div class="outils">
+      <button class="bouton" id="recentrer">Vue d'ensemble</button>
+      <button class="bouton actif" id="etage">Étage</button>
+      <button class="bouton" id="pause">Pause</button>
+      <a class="bouton" href="../offre/">L'offre</a>
+    </div>
+    <div class="annonce" id="annonce"></div>
+    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Les chiffres et les onglets à droite restent à jour. Essayez avec un navigateur récent.</div>
+    <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
+  </main>
+
+  <aside>
+    <nav class="onglets" role="tablist">
+      <button class="actif" data-onglet="equipe">Équipe</button>
+      <button data-onglet="rayons">Rayons</button>
+      <button data-onglet="caisses">Caisses</button>
+      <button data-onglet="livraisons">Livraisons</button>
+      <button data-onglet="rh">RH</button>
+    </nav>
+    <div class="contenu" id="contenu"></div>
+    <p class="note">Démo avec des données inventées : magasin, enseigne, personnes, salaires et chiffres sont imaginaires. Un clic sur un élément de la maquette ou d'une liste ouvre sa fiche.</p>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from '../vendor/OrbitControls.js';
+import { construireRayon } from './rayons.js';
+import { construireEtage } from './etage.js';
+import { creerTrafic } from './trafic.js';
+import { installerRH } from './rh.js';
+
+// ================= Données fictives =================
+const OUVERTURE = 8.5, FERMETURE = 20;
+// [nom, poste, début, fin, coût horaire chargé (fictif), zone]
+const EQUIPE = [
+  ['Claire Dumont', 'Directrice du magasin', 8, 18, 38, 'bureau'],
+  ['Mehdi Larbi', 'Chef de rayon frais', 6, 14, 24, 'r3'],
+  ['Laura Pineau', 'Cheffe de rayon épicerie', 9, 17, 24, 'r1'],
+  ['Kevin Moulin', 'Employé libre-service', 6, 13, 16, 'r1'],
+  ['Sarah Benoit', 'Employée libre-service', 12, 20, 16, 'r2'],
+  ['Hugo Lefort', 'Employé libre-service', 8, 15, 16, 'r4'],
+  ['Inès Haddad', 'Employée libre-service', 13, 20, 16, 'r5'],
+  ['Paul Garnier', 'Réceptionnaire', 6, 13, 18, 'reserve'],
+  ['Yasmine Diallo', 'Réceptionnaire', 12, 19, 18, 'reserve'],
+  ['Nathalie Roy', 'Hôtesse d\'accueil', 8.5, 16, 17, 'accueil'],
+  ['Julien Faivre', 'Hôte d\'accueil', 13, 20, 17, 'accueil'],
+  ['Amandine Petit', 'Hôtesse de caisse', 8.5, 14, 16, 'c0'],
+  ['Thomas Morel', 'Hôte de caisse', 8.5, 13, 16, 'c1'],
+  ['Léa Bonnet', 'Hôtesse de caisse', 10, 17, 16, 'c2'],
+  ['Sofiane Kaci', 'Hôte de caisse', 11, 19, 16, 'c3'],
+  ['Emma Lucas', 'Hôtesse de caisse', 12, 20, 16, 'c4'],
+  ['Romain Gilles', 'Hôte de caisse', 14, 20, 16, 'c5'],
+  ['Chloé Vasseur', 'Hôtesse de caisse', 16, 20, 16, 'c6'],
+  ['Antoine Brun', 'Hôte de caisse', 17, 20, 16, 'c7'],
+  ['Manon Riviere', 'Hôtesse de caisse', 11.5, 14.5, 16, 'c4b'],
+  ['Sophie Marchand', 'Responsable RH', 9, 17, 30, 'etage-rh'],
+  ['Marc Lemoine', 'Comptable', 8.5, 16.5, 26, 'etage-compta'],
+].map(([nom, poste, debut, fin, cout, zone], i) => ({ id: 'e' + i, nom, poste, debut, fin, cout, zone }));
+const RAYONS = [
+  { id: 'r0', nom: 'Fruits et légumes', couleur: 0x65a30d, refs: 310, stock: 0.82, ruptures: 2, conso: 0.035 },
+  { id: 'r1', nom: 'Épicerie', couleur: 0xd97706, refs: 1840, stock: 0.9, ruptures: 5, conso: 0.012 },
+  { id: 'r2', nom: 'Boissons', couleur: 0x2563eb, refs: 620, stock: 0.76, ruptures: 3, conso: 0.02 },
+  { id: 'r3', nom: 'Frais et surgelés', couleur: 0x0891b2, refs: 980, stock: 0.71, ruptures: 6, conso: 0.025 },
+  { id: 'r4', nom: 'Hygiène et entretien', couleur: 0x9333ea, refs: 870, stock: 0.88, ruptures: 1, conso: 0.008 },
+  { id: 'r5', nom: 'Maison et bazar', couleur: 0x64748b, refs: 1250, stock: 0.93, ruptures: 0, conso: 0.005 },
+];
+const LIVRAISONS = [
+  { id: 'd0', heure: 6.5, fourn: 'Plateforme frais (fictive)', palettes: 14, rayon: 'r3' },
+  { id: 'd1', heure: 9.5, fourn: 'Grossiste épicerie (fictif)', palettes: 22, rayon: 'r1' },
+  { id: 'd2', heure: 12.25, fourn: 'Boissons du Centre (fictif)', palettes: 18, rayon: 'r2' },
+  { id: 'd3', heure: 14.75, fourn: 'Maraîcher local (fictif)', palettes: 6, rayon: 'r0' },
+  { id: 'd4', heure: 17, fourn: 'Plateforme frais (fictive)', palettes: 12, rayon: 'r3' },
+];
+const FOURNISSEURS = { r0: 'Maraîcher local (fictif)', r1: 'Grossiste épicerie (fictif)', r2: 'Boissons du Centre (fictif)', r3: 'Plateforme frais (fictive)', r4: 'Droguerie Centrale (fictive)', r5: 'Bazar Distribution (fictif)' };
+const PAR_PALETTE = 0.01; // part du rayon remplie par une palette reçue
+const NB_CAISSES = 8, PANIER = 41.6;
+
+// ================= Horloge de démo =================
+let t = 11.7, pause = false;
+const hh = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60 + 1e-6)).padStart(2, '0')}`;
+const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60)).padStart(2, '0') : ''}`;
+const euros = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+const present = (e) => e.debut <= t && t < e.fin;
+// Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
+const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
+const enPause = (e) => { const d = debutPause(e); return d !== null && present(e) && t >= d && t < d + 0.5; };
+const auRepos = (e) => enPause(e) && !objets[e.id]?.job; // la pause commence une fois la tâche en cours finie
+const SIEGES = [[12.3, -6.95, 0], [13.5, -5.05, Math.PI], [14.7, -6.95, 0], [12.3, -5.05, Math.PI], [14.7, -5.05, Math.PI], [13.5, -6.95, 0]];
+// Affluence de 0 à 1 : creux le matin, pic à midi et en fin d'après-midi
+const affluence = (h = t) => (h < OUVERTURE || h > FERMETURE ? 0 : Math.min(1, 0.25 + 0.55 * Math.exp(-((h - 12.3) ** 2) / 1.2) + 0.75 * Math.exp(-((h - 18) ** 2) / 1.6)));
+const clientsEn = (h) => 20 + 180 * affluence(h);
+const clientsMagasin = () => Math.round(clientsEn(t));
+// CA cumulé depuis l'ouverture (intégrale de l'affluence)
+// un client reste environ 50 min : passages en caisse par heure ≈ clients présents × 1,2
+function caDuJour(h = t) { let s = 0; for (let x = OUVERTURE; x < Math.min(h, FERMETURE); x += 0.05) s += clientsEn(x) * 1.2 * 0.05 * PANIER; return s; }
+const CA_HIER = Math.round(caDuJour(FERMETURE) * 1.04 / 10) * 10;
+const caissiers = () => EQUIPE.filter((e) => e.zone.startsWith('c') && present(e));
+const caisseDe = (e) => +e.zone.slice(1, 2);
+const caissesOuvertes = () => [...new Set(caissiers().map(caisseDe))].sort();
+const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER[r.id] || 0) * PAR_PALETTE));
+const rupturesDe = (r) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r)) * 20));
+const coutJour = () => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout, 0);
+const statutLiv = (d) => (t < d.heure - 0.05 ? 'prévue' : t < d.heure + 0.75 ? 'au quai' : 'déchargée');
+
+// ================= Scène =================
+const conteneur = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+conteneur.prepend(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xe9ebe6);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 500);
+const VUE = new THREE.Vector3(70, 76, 84); camera.position.copy(VUE);
+const controls = new OrbitControls(camera, renderer.domElement);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.3, maxPolarAngle: 1.2, minZoom: 0.8, maxZoom: 5, enablePan: true, screenSpacePanning: false });
+const MOBILE = matchMedia('(max-width: 900px)').matches;
+const CIBLE = MOBILE ? new THREE.Vector3(-4, 0, -2) : new THREE.Vector3(-6, 0, -2);
+controls.target.copy(CIBLE);
+// Glisser (souris ou un doigt) déplace la vue ; clic droit ou deux doigts tournent et zooment ; flèches du clavier aussi
+controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
+controls.keyPanSpeed = 20; controls.listenToKeyEvents(window);
+controls.addEventListener('start', () => { vise = null; });
+const aide = document.createElement('div'); aide.className = 'aide';
+aide.textContent = MOBILE ? 'Un doigt : se déplacer · deux doigts : zoomer et tourner' : 'Glisser : se déplacer · clic droit : tourner · molette : zoomer';
+conteneur.appendChild(aide); controls.addEventListener('start', () => setTimeout(() => aide.classList.add('cache'), 2500), { once: true }); // on reprend la main : le zoom automatique s'arrête
+// on ne sort pas de la maquette
+controls.addEventListener('change', () => { const t = controls.target, x = Math.max(-45, Math.min(45, t.x)) - t.x, z = Math.max(-34, Math.min(32, t.z)) - t.z; if (x || z) { t.x += x; t.z += z; camera.position.x += x; camera.position.z += z; } });
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
+const soleil = new THREE.DirectionalLight(0xfff6ea, 2.3); soleil.position.set(-40, 80, 30); soleil.castShadow = true;
+soleil.shadow.mapSize.set(2048, 2048); Object.assign(soleil.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, near: 1, far: 220 }); soleil.shadow.bias = -0.0003; soleil.shadow.normalBias = 0.03;
+scene.add(soleil);
+
+const mats = new Map();
+const mat = (c, o = {}) => { const k = c + JSON.stringify(o); if (!mats.has(k)) mats.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, ...o })); return mats.get(k); };
+function boite(l, h, p, m, x, y, z, parent = scene, ombre = true) { const b = new THREE.Mesh(new THREE.BoxGeometry(l, h, p), typeof m === 'number' ? mat(m) : m); b.position.set(x, y + h / 2, z); b.castShadow = ombre; b.receiveShadow = true; parent.add(b); return b; }
+function texte(txt, { w = 1024, h = 128, fond = '#fff', couleur = '#111827', taille = 64 } = {}) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = fond; g.fillRect(0, 0, w, h); g.fillStyle = couleur; g.font = `700 ${taille}px Inter, Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, w / 2, h / 2 + 4); const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; return tx; }
+const cliquables = [];
+const clic = (obj, cle) => obj.traverse((o) => { if (o.isMesh) { o.userData.cle = cle; cliquables.push(o); } });
+const zone = (l, p, x, z, cle, y = 0.14) => { const b = boite(l, 0.05, p, new THREE.MeshBasicMaterial({ visible: false }), x, y, z, scene, false); b.userData.cle = cle; cliquables.push(b); return b; };
+
+// Terrain, rue, parking
+boite(92, 1.5, 70, 0xd6d3cb, 0, -1.5, 0);
+boite(90, 0.05, 68, 0xc9d8b8, 0, 0, 0);
+boite(90, 0.12, 8, 0x50555e, 0, 0, 29);
+for (let x = -42; x <= 42; x += 4) boite(2, 0.02, 0.15, 0xf5f5f0, x, 0.12, 29, scene, false);
+boite(90, 0.2, 1.6, 0xc8c6c0, 0, 0, 24.2);
+boite(66, 0.08, 15, 0x6b7079, -6, 0.05, 15.5);          // parking clients
+boite(6, 0.08, 6, 0x6b7079, 30, 0.05, 21);               // entrée parking
+const PLACES = [];
+for (let rangee = 0; rangee < 2; rangee++) for (let i = 0; i < 22; i++) {
+  const x = -36.5 + i * 2.7, z = rangee ? 19.6 : 11.4;
+  PLACES.push(new THREE.Vector3(x + 1.35, 0.13, z));
+  boite(0.1, 0.02, 4.6, 0xf5f5f0, x, 0.13, z, scene, false);
+}
+zone(66, 15, -6, 15.5, 'parking');
+
+// Bâtiment (coupe à 1,4 m)
+const BX0 = -40, BX1 = 18, BZ0 = -30, BZ1 = 6, HM = 1.4, EM = 0.3, MUR = 0xfafaf8;
+boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) / 2);
+boite(42, 0.02, 30, 0xe7e5df, -19, 0.2, -12, scene, false);   // surface de vente
+boite(16, 0.02, 20, 0xcfccc4, 10, 0.2, -20, scene, false);    // réserve
+const mur = (l, p, x, z) => boite(l, HM, p, MUR, x, 0.2, z);
+mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0); mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2); mur(EM, 8.5, BX1, -25.75); mur(EM, 24.5, BX1, -6.25); // porte de quai entre z -21,5 et -18,5
+mur(24, EM, -28, BZ1); mur(22, EM, 7, BZ1); // façade, entrée au milieu
+mur(EM, 13, 2, -23.5); mur(EM, 4.5, 2, -12.25); // cloison réserve, portes battantes entre les deux
+mur(EM, 7, 2, -6.5); mur(EM, 7, 2, 2.5);          // cloison des locaux du personnel, entrée du couloir entre z -3 et -1
+mur(16, EM, 10, -10);
+const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.45, roughness: 0.1 });
+boite(8, 1.2, 0.08, verre, -12, 0.2, BZ1, scene, false);
+const enseigne = new THREE.Mesh(new THREE.BoxGeometry(14, 1.8, 0.2), [mat(0xb91c1c), mat(0xb91c1c), mat(0xb91c1c), mat(0xb91c1c), new THREE.MeshStandardMaterial({ map: texte('HYPER MODÈLE', { fond: '#b91c1c', couleur: '#fff', taille: 70 }) }), mat(0xb91c1c)]);
+enseigne.position.set(-12, 3.2, BZ1 + 0.4); enseigne.castShadow = true; scene.add(enseigne);
+for (const x of [-18.5, -5.5]) boite(0.15, 2.4, 0.15, 0x6b7280, x, 0, BZ1 + 0.4);
+zone(BX1 - BX0, BZ1 - BZ0, (BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 'magasin', 0.12);
+
+// Rayons : vraies gondoles (étagères, produits, têtes de gondole, vitrines), le remplissage suit le stock (rayons.js)
+const gondoles = {};
+RAYONS.forEach((r, i) => { gondoles[r.id] = construireRayon({ THREE, scene, boite, mat, texte, clic }, r, i); });
+// Caisses (devant l'entrée)
+const CAISSES = [];
+for (let i = 0; i < NB_CAISSES; i++) {
+  const x = -34 + i * 3.6, z = 0.5;
+  const g = new THREE.Group(); scene.add(g);
+  boite(0.9, 0.9, 2.6, 0xe5e7eb, x, 0.2, z, g); boite(0.5, 0.35, 0.05, 0x111827, x, 1.1, z - 0.6, g);
+  const lampe = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.5, 12), mat(0x9ca3af, { emissive: 0x000000 }));
+  lampe.position.set(x, 2.2, z + 1.1); g.add(lampe); boite(0.06, 1.8, 0.06, 0x9ca3af, x, 0.2, z + 1.1, g);
+  const num = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.5), new THREE.MeshBasicMaterial({ map: texte(String(i + 1), { w: 128, h: 80, fond: '#111827', couleur: '#fff', taille: 60 }) }));
+  num.position.set(x, 2.75, z + 1.1); g.add(num);
+  clic(g, 'c' + i);
+  CAISSES.push({ x, z, lampe, file: [] });
+}
+// Accueil et bureaux
+boite(4, 1.05, 1, 0xf8fafc, -2, 0.2, 3.5); boite(4, 0.05, 1.05, 0xb91c1c, -2, 1.25, 3.5, scene, false); zone(6, 4, -2, 3.5, 'accueil', 0.22);
+// Locaux du personnel (derrière l'accueil) : bureau de la direction, salle de pause, couloir, vestiaires, sanitaires, escalier
+const BOIS = 0x8b6b4a, GRIS = 0x9ca3af, FONCE = 0x374151, BLANC = 0xf8fafc;
+const porte = (x, z, rot, l = 1.1) => { const g = new THREE.Group(); boite(l, 1.25, 0.06, 0xb08d64, l / 2, 0.2, 0, g); g.position.set(x, 0, z); g.rotation.y = rot; scene.add(g); };
+const panneauTexte = (txt, x, y, z, rot = 0, fond = '#1e3a8a', l = 2.4) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(l, 0.45), new THREE.MeshBasicMaterial({ map: texte(txt, { w: 512, h: 96, fond, couleur: '#fff', taille: 44 }), side: THREE.DoubleSide })); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m); };
+mur(EM, 7, 9, -6.5);                         // direction | pause
+mur(4.5, EM, 4.25, -3); mur(1.3, EM, 8.35, -3); // direction | couloir (porte en x 6.5-7.7)
+mur(9, EM, 13.5, -1);                        // pause | vestiaires
+mur(EM, 5.6, 9, 3.2); mur(EM, 5.6, 13.5, 3.2); // escalier | vestiaires | sanitaires (portes côté couloir)
+porte(9, -3, -Math.PI / 2 + 0.5); porte(6.5, -3, 0.9); porte(9, -1, 0.6); porte(13.5, -1, 0.6);
+porte(2, -17, -Math.PI / 2 + 0.9, 1.25); porte(2, -14.5, Math.PI / 2 - 0.9, 1.25);
+panneauTexte('PERSONNEL', 2.2, 2.1, -2, Math.PI / 2, '#374151', 1.8);
+panneauTexte('SORTIE DE SECOURS', 0, 2.1, -29.8, 0, '#15803d', 2.6);
+// bureau de la direction
+boite(2.4, 0.75, 1.1, BOIS, 5.5, 0.2, -7.6); boite(0.9, 0.5, 0.05, 0x111827, 5.5, 0.95, -7.9); boite(0.6, 0.5, 0.6, FONCE, 5.5, 0.2, -6.6);
+boite(5, 1.25, 0.45, 0xe5e7eb, 5.5, 0.2, -9.6); for (let k = 0; k < 4; k++) boite(1.05, 0.3, 0.35, [0x1e3a8a, 0xb91c1c, 0x15803d, 0xd97706][k], 3.7 + k * 1.2, 1.1, -9.6, scene, false);
+const tableRonde = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.06, 24), mat(BLANC)); tableRonde.position.set(4, 0.95, -4.6); scene.add(tableRonde); boite(0.1, 0.75, 0.1, GRIS, 4, 0.2, -4.6);
+// salle de pause : table et chaises, coin cuisine, canapé
+boite(3.2, 0.75, 1.4, BLANC, 13.5, 0.2, -6); for (const x of [12.3, 13.5, 14.7]) for (const z of [-7.5, -4.5]) boite(0.5, 0.45, 0.5, 0x0f766e, x, 0.2, z);
+boite(7, 0.9, 0.7, 0xe5e7eb, 13.5, 0.2, -9.5); boite(0.7, 0.05, 0.5, GRIS, 11.2, 1.1, -9.5, scene, false); boite(0.35, 0.45, 0.35, 0x111827, 15.5, 1.1, -9.5);
+boite(0.8, 1.35, 0.7, BLANC, 17.3, 0.2, -9.4); boite(0.5, 0.5, 0.4, 0x6b7280, 16.4, 1.1, -9.5);
+boite(0.8, 0.45, 2.6, 0x64748b, 17.4, 0.2, -4.6); boite(0.25, 0.7, 2.6, 0x475569, 17.75, 0.2, -4.6);
+// vestiaires : casiers et banc
+for (let k = 0; k < 8; k++) boite(0.5, 1.3, 0.45, k % 2 ? 0x60a5fa : 0x93c5fd, 9.55 + k * 0.5, 0.2, 5.5);
+boite(2.6, 0.4, 0.4, BOIS, 11.2, 0.2, 2.6);
+// sanitaires : deux cabines et lavabos
+for (const x of [14.9, 16.8]) { boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, x - 0.95, 0.2, 4.8); boite(0.45, 0.45, 0.6, 0xffffff, x, 0.2, 5.4); }
+boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, 17.75, 0.2, 4.8); boite(2.4, 0.85, 0.5, 0xffffff, 15.8, 0.2, 0);
+// le vrai 1er étage et son escalier (etage.js)
+const ETAGE = construireEtage({ THREE, scene, boite, mat, texte, clic, zone });
+let etageVu = true;
+// candidat en entretien, assis dans le bureau RH (voir rh.js)
+const visiteur = personne(0x7c3aed); visiteur.position.copy(ETAGE.postes.rhVisiteur); visiteur.rotation.y = Math.PI; visiteur.visible = false; visiteur.userData.s = 0; scene.add(visiteur); clic(visiteur, 'etage-rh');
+panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
+zone(7, 7, 5.5, -6.5, 'bureau', 0.22); zone(9, 9, 13.5, -5.5, 'pause', 0.22); zone(7, 7, 5.5, 2.5, 'escalier', 0.22); zone(9, 7, 13.5, 2.5, 'vestiaires', 0.22);
+// ================= Réserve : racks à palettes =================
+// 2 rangées de racks (5 travées × 3 niveaux) + 5 emplacements au sol près de la porte, couleur de la palette = rayon
+const COULEUR_RAYON = Object.fromEntries(RAYONS.map((r) => [r.id, r.couleur]));
+const NIVEAUX = [0.2, 1.55, 2.9];
+const RACKS = [{ z: -28.6, acces: -26.7 }, { z: -24, acces: -22.3 }];
+const SLOTS = [];
+RACKS.forEach((rk, ri) => {
+  for (let b = 0; b <= 5; b++) for (const dz of [-0.55, 0.55]) boite(0.1, 4.1, 0.1, 0x1d4ed8, 3.3 + b * 2.4, 0.2, rk.z + dz);
+  for (const y of NIVEAUX.slice(1)) for (const dz of [-0.55, 0.55]) boite(12.1, 0.12, 0.08, 0xea580c, 9.3, y - 0.12, rk.z + dz);
+  for (let b = 0; b < 5; b++) for (let n = 0; n < 3; n++) SLOTS.push({ x: 4.5 + b * 2.4, y: NIVEAUX[n], z: rk.z, acces: rk.acces, rangee: ri, rayon: null, mesh: null, pris: false });
+});
+for (let b = 0; b < 5; b++) SLOTS.push({ x: 6 + b * 2.4, y: 0.2, z: -14, acces: -12.4, rangee: 2, rayon: null, mesh: null, pris: false });
+for (let b = 0; b < 5; b++) boite(1.4, 0.015, 1.2, 0xfde68a, 6 + b * 2.4, 0.21, -14, scene, false); // emplacements au sol marqués
+function palette(rid) {
+  const g = new THREE.Group();
+  boite(1.1, 0.14, 0.9, 0xb08d64, 0, 0, 0, g);
+  const charge = boite(1, 0.75, 0.82, COULEUR_RAYON[rid], 0, 0.14, 0, g); g.userData.charge = charge;
+  boite(1.02, 0.02, 0.84, 0xf1f5f9, 0, 0.89, 0, g, false);
+  return g;
+}
+function remplir(sl, rid) { sl.rayon = rid; sl.mesh = palette(rid); sl.mesh.position.set(sl.x, sl.y, sl.z); scene.add(sl.mesh); }
+function vider(sl) { const rid = sl.rayon; if (sl.mesh) scene.remove(sl.mesh); sl.mesh = null; sl.rayon = null; return rid; }
+const slotsPleins = () => SLOTS.filter((sl) => sl.rayon).length;
+const MER = {}; // palettes mises en rayon aujourd'hui, par rayon
+function initReserve() {
+  SLOTS.forEach((sl) => { vider(sl); sl.pris = false; });
+  SLOTS.forEach((sl, i) => { if (sl.rangee < 2 && (i * 7) % 10 < 6) remplir(sl, RAYONS[(i * 5) % 6].id); });
+  for (const k in MER) delete MER[k];
+  LIVRAISONS.forEach((d) => { d.dechargees = statutLiv(d) === 'déchargée' ? d.palettes : 0; });
+}
+zone(16, 20, 10, -20, 'reserve', 0.22);
+// Quai de livraison + camion
+boite(8, 0.2, 10, 0x9ca3af, 22, 0, -20); zone(8, 10, 22, -20, 'quai', 0.24);
+boite(EM, 0.5, 3.4, 0x6b7280, BX1, 2.4, -20); for (const z of [-21.6, -18.4]) boite(8, 0.02, 0.18, 0xfacc15, 22, 0.21, z, scene, false); // linteau de la porte, bandes de sécurité
+boite(19, 0.08, 4.6, 0x6b7079, 35.5, 0.05, -20);          // voie des camions, à l'écart du parking
+function camion() {
+  const g = new THREE.Group();
+  boite(2.5, 3, 9, 0xf3f4f6, 0, 0.6, -1.5, g); boite(2.5, 2.2, 2.4, 0x1e3a8a, 0, 0.6, 4.2, g); boite(2.3, 0.7, 0.1, 0x1f2a37, 0, 2, 5.45, g, false);
+  const roue = new THREE.CylinderGeometry(0.55, 0.55, 0.4, 16);
+  for (const [x, z] of [[-1.2, 4], [1.2, 4], [-1.2, -3], [1.2, -3], [-1.2, -4.6], [1.2, -4.6]]) { const w = new THREE.Mesh(roue, mat(0x18181b)); w.rotation.z = Math.PI / 2; w.position.set(x, 0.55, z); w.castShadow = true; g.add(w); }
+  return g;
+}
+const truck = camion(); truck.visible = false; scene.add(truck); clic(truck, 'quai');
+// Arbres
+function arbre(x, z, s = 1) { const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.16 * s, 0.22 * s, 1.8 * s, 8), mat(0x7c5a3c)); tr.position.set(x, 0.9 * s, z); tr.castShadow = true; scene.add(tr); const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5 * s, 1), mat(0x5f8f55, { flatShading: true })); f.position.set(x, 2.6 * s, z); f.castShadow = true; scene.add(f); }
+[[-43, -30], [-43, -10], [-43, 10], [42, -30], [42, 5], [38, 15], [-40, 22.5], [20, 22.5], [5, 22.5], [-15, 22.5]].forEach(([x, z]) => arbre(x, z));
+
+// Personnes
+function personne(couleur, taille = 1) {
+  const g = new THREE.Group();
+  for (const x of [-0.1, 0.1]) boite(0.13 * taille, 0.8 * taille, 0.16 * taille, 0x1f2937, x * taille, 0, 0, g);
+  const torse = new THREE.Mesh(new THREE.CapsuleGeometry(0.2 * taille, 0.42 * taille, 4, 12), mat(couleur)); torse.position.y = 1.12 * taille; torse.castShadow = true; g.add(torse);
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.14 * taille, 16, 12), mat(0xdcb08a)); tete.position.y = 1.62 * taille; g.add(tete);
+  return g;
+}
+// Postes de l'équipe dans la maquette
+function posteDe(e, i) {
+  if (e.zone.startsWith('c')) { const c = CAISSES[caisseDe(e)]; return new THREE.Vector3(c.x - 0.9, 0.2, c.z - 0.2); }
+  if (/^r\d/.test(e.zone)) { const g = gondoles[e.zone]; return new THREE.Vector3(g.x0 + 8 + (i % 3) * 7, 0.2, g.z + 1.4); }
+  return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(9 + (i % 2) * 3, 0.2, -18.2), accueil: new THREE.Vector3(-2, 0.2, 2.6), 'etage-rh': ETAGE.postes.rh, 'etage-compta': ETAGE.postes.compta1 }[e.zone].clone();
+}
+const COULEUR_POSTE = (e) => (e.zone.startsWith('c') ? 0xb91c1c : /^r\d/.test(e.zone) ? 0x15803d : e.zone === 'reserve' ? 0xd97706 : 0x1e3a8a);
+const objets = {};
+EQUIPE.forEach((e, i) => { const o = personne(COULEUR_POSTE(e)); o.position.copy(posteDe(e, i)); o.visible = false; o.userData.s = 0; scene.add(o); clic(o, e.id); objets[e.id] = { e, obj: o, base: o.position.clone(), phase: i * 1.7 }; });
+// ================= Logistique : déchargement du camion, rangement en rack, mise en rayon =================
+// Chaque employé de la réserve a un gerbeur (jaune), chaque employé de rayon un transpalette (gris).
+for (const x of Object.values(objets)) {
+  const g = new THREE.Group(), coul = x.e.zone === 'reserve' ? 0xfacc15 : 0x374151;
+  boite(0.55, 0.07, 1.05, 0x111827, 0, 0.05, 0.95, g);           // fourches
+  boite(0.6, 0.35, 0.3, coul, 0, 0.05, 0.3, g);                   // corps
+  boite(0.06, 1.05, 0.06, coul, 0, 0.35, 0.3, g, false);          // timon
+  if (x.e.zone === 'reserve') for (const dx of [-0.3, 0.3]) boite(0.06, 2.2, 0.06, 0x6b7280, dx, 0.05, 0.42, g, false); // mât du gerbeur
+  g.visible = false; x.obj.add(g); x.engin = g;
+}
+const PORTE_VENTE = [0.3, -15.75], PORTE_RESERVE = [3.6, -15.75], HUB = [16.6, -19.6], QUAI_PRISE = [23.6, -20];
+const pt = ([px, pz]) => new THREE.Vector3(px, 0.2, pz);
+const versSlot = (sl) => sl.rangee === 0 ? [HUB, [16.6, sl.acces], [sl.x, sl.acces]] : sl.rangee === 1 ? [HUB, [sl.x, -20], [sl.x, sl.acces]] : [[sl.x, -16.6], [sl.x, sl.acces]];
+const depuisSlot = (sl) => sl.rangee === 0 ? [[16.6, sl.acces], HUB] : sl.rangee === 1 ? [[sl.x, -20], HUB] : [[sl.x, -16.6]];
+const allee = (x) => { const g = gondoles[x.e.zone]; return g.z + 2.1; };
+const lotDe = (d) => Math.max(1, Math.ceil(d.palettes / 6)); // une palette dessinée = un lot de palettes du camion
+let horloge = 0;
+function porter(x, rid) { if (x.colis) { x.engin.remove(x.colis); x.colis = null; } if (rid) { x.colis = palette(rid); x.colis.position.set(0, 0.12, 0.95); x.engin.add(x.colis); } }
+function lancer(x, etapes, texte, court) { x.job = { etapes, texte, court }; x.engin.visible = true; }
+function slotLibre() { return SLOTS.filter((sl) => !sl.rayon && !sl.pris).sort((a, b) => a.rangee - b.rangee || a.y - b.y || a.x - b.x)[0]; }
+function slotAPrendre(rid) { const ok = SLOTS.filter((sl) => sl.rayon && !sl.pris); return ok.find((sl) => sl.rangee === 2 && sl.rayon === rid) || ok.filter((sl) => sl.rayon === rid).sort((a, b) => a.y - b.y)[0] || ok.find((sl) => sl.rangee === 2) || ok.sort((a, b) => a.y - b.y)[0]; }
+function receptionner(x, d) {
+  const p = x.obj.position, dedans = p.x < BX1 - 0.5;
+  lancer(x, [...(dedans ? [HUB] : []), QUAI_PRISE].map((q) => ({ aller: pt(q) })).concat([{ duree: 1.2, fin: () => {
+    d.dechargees = Math.min(d.palettes, (d.dechargees || 0) + lotDe(d)); porter(x, d.rayon);
+    const sl = slotLibre();
+    if (!sl) { x.job.etapes.push({ aller: pt(HUB) }, { duree: 0.5, fin: () => { porter(x, null); } }); return; }
+    sl.pris = true; x.job.texte = `range une palette ${RAYON_DE(d.rayon).nom.toLowerCase()} en rack`; x.job.court = 'range en rack';
+    x.job.etapes.push(...versSlot(sl).map((q) => ({ aller: pt(q) })), { duree: 1.4, leve: sl.y, fin: () => { porter(x, null); remplir(sl, d.rayon); sl.pris = false; } }, ...depuisSlot(sl).map((q) => ({ aller: pt(q) })));
+  } }]), `décharge le camion (${d.fourn})`, 'décharge le camion');
+}
+function mettreEnRayon(x) {
+  const rid = x.e.zone, sl = slotAPrendre(rid); if (!sl) return false;
+  sl.pris = true;
+  const g = gondoles[rid], az = allee(x), bx = x.base.x;
+  const aller = [[bx, az], [-4.5, az], [-4.5, PORTE_VENTE[1]], PORTE_VENTE, PORTE_RESERVE, ...versSlot(sl)];
+  const retour = [...depuisSlot(sl), PORTE_RESERVE, PORTE_VENTE, [-4.5, PORTE_VENTE[1]], [-4.5, az], [bx, az], [bx, g.z + 1.3]];
+  let pris = rid;
+  lancer(x, [...aller.map((q) => ({ aller: pt(q) })), { duree: 1.2, fin: () => { pris = vider(sl); sl.pris = false; porter(x, pris); x.job.texte = `apporte une palette ${RAYON_DE(pris).nom.toLowerCase()} en rayon`; x.job.court = 'apporte en rayon'; } },
+    ...retour.map((q) => ({ aller: pt(q) })),
+    { duree: 0.01, fin: () => { x.job.texte = `met en rayon (${RAYON_DE(pris).nom.toLowerCase()})`; x.job.court = 'met en rayon'; } },
+    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; porter(x, null); } },
+    { aller: x.base.clone() }], 'va chercher une palette en réserve', 'va en réserve');
+  return true;
+}
+function annulerJob(x) {
+  if (!x.job) return;
+  SLOTS.forEach((sl) => { if (sl.pris && !sl.rayon) sl.pris = false; });
+  porter(x, null); x.job = null; x.engin.visible = false; x.obj.position.copy(x.base);
+}
+function logistique(dt) {
+  horloge += dt;
+  // un camion qui repart avant la fin : le reste est déposé au sol (au plus ce qui tient)
+  for (const d of LIVRAISONS) if (statutLiv(d) === 'déchargée' && (d.dechargees || 0) < d.palettes) { while ((d.dechargees || 0) < d.palettes) { d.dechargees = (d.dechargees || 0) + lotDe(d); const sl = slotLibre(); if (sl) remplir(sl, d.rayon); } }
+  const quai = LIVRAISONS.find((d) => statutLiv(d) === 'au quai' && (d.dechargees || 0) < d.palettes);
+  for (const x of Object.values(objets)) {
+    const dispo = present(x.e) && !enPause(x.e);
+    if (x.job && !present(x.e)) { annulerJob(x); continue; }
+    if (!x.job && dispo) {
+      if (x.e.zone === 'reserve' && quai) receptionner(x, quai);
+      else if (/^r\d/.test(x.e.zone) && horloge > (x.prochain ?? (x.prochain = 4 + (x.phase * 7) % 20))) { if (!mettreEnRayon(x)) x.prochain = horloge + 10; }
+    }
+    const j = x.job; if (!j) continue;
+    const et = j.etapes[0];
+    if (!et) { x.job = null; x.engin.visible = false; x.prochain = horloge + 25 + (x.phase * 13) % 30; continue; }
+    if (et.aller) {
+      const v = x.e.zone === 'reserve' ? 4.6 : 3, p = x.obj.position, dx = et.aller.x - p.x, dz = et.aller.z - p.z, dist = Math.hypot(dx, dz);
+      if (dist > 0.01) { const pas = Math.min(dist, v * dt); p.x += (dx / dist) * pas; p.z += (dz / dist) * pas; const cible = Math.atan2(dx, dz); let a = cible - x.obj.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); x.obj.rotation.y += a * Math.min(1, dt * 10); }
+      p.y = p.x > BX1 ? 0.2 : 0.2;
+      if (dist <= 0.05) j.etapes.shift();
+    } else {
+      et.t = (et.t || 0) + dt; const k = Math.min(1, et.t / et.duree);
+      if (et.leve !== undefined && x.colis) x.colis.position.y = 0.12 + (et.leve - 0.2) * Math.sin(k * Math.PI / 2);
+      if (et.vide && x.colis) x.colis.userData.charge.scale.y = Math.max(0.05, 1 - k);
+      if (k >= 1) { j.etapes.shift(); et.fin?.(); }
+    }
+  }
+}
+// Clients qui circulent dans les allées (boucles lissées), en nombre selon l'affluence
+const CLIENTS_MAX = 46;
+const boucles = [];
+for (let i = 0; i < 6; i++) { const z = -23.9 + i * 4.2; boucles.push(new THREE.CatmullRomCurve3([new THREE.Vector3(-38, 0.2, z), new THREE.Vector3(-22, 0.2, z + 0.2), new THREE.Vector3(-6, 0.2, z), new THREE.Vector3(-5, 0.2, z - 2.1), new THREE.Vector3(-22, 0.2, z - 2.3), new THREE.Vector3(-38.5, 0.2, z - 2.1)], true, 'centripetal')); }
+const clients = [];
+for (let i = 0; i < CLIENTS_MAX; i++) { const o = personne([0x94a3b8, 0x64748b, 0xa8a29e, 0x78716c][i % 4], 0.92); o.visible = false; o.userData.s = 0; scene.add(o); clients.push({ o, boucle: boucles[i % 6], u: (i * 0.137) % 1, v: 0.9 + (i % 5) * 0.12, rot: 0 }); }
+// Files d'attente aux caisses
+const attenteCaisse = [];
+for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = personne(0x94a3b8, 0.92); o.position.set(CAISSES[c].x + 0.9, 0.2, CAISSES[c].z - 2.2 - k * 1.1); o.visible = false; o.userData.s = 0; scene.add(o); attenteCaisse.push({ o, c, k }); }
+// Voitures des clients sur le parking
+function voiture(couleur) { const g = new THREE.Group(); const W = 1.76; const s = new THREE.Shape(); [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v))); const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2); const c = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); c.castShadow = true; g.add(c); const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v))); const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2); g.add(new THREE.Mesh(vg, mat(0x1f2a37, { roughness: 0.15 }))); const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 14); for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); g.add(r); } return g; }
+const COULEURS_AUTO = [0xf1f1ee, 0x374151, 0x9ca3af, 0xb91c1c, 0x1e3a8a, 0x0f766e, 0xe5e7eb, 0x78350f];
+const trafic = creerTrafic({ THREE, scene, PLACES, voiture, couleurs: COULEURS_AUTO }); // arrivées, départs en marche arrière, circulation (trafic.js)
+const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0xb91c1c, transparent: true, opacity: 0.9, side: THREE.DoubleSide })); anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
+
+// ================= Mise à jour de la maquette =================
+let instantane = false;
+function montrer(o, oui) { o.userData.cible = oui ? 1 : 0; if (instantane) { o.userData.s = oui ? 1 : 0; o.scale.setScalar(oui ? 1 : 0.001); o.visible = oui; return; } if (oui && !o.visible) { o.visible = true; o.userData.s = 0.001; o.scale.setScalar(0.001); } }
+const fondables = () => [...Object.values(objets).map((x) => x.obj), visiteur, ...clients.map((c) => c.o), ...attenteCaisse.map((a) => a.o)];
+function fondus(dt) { for (const o of fondables()) { if (o.userData.cible === undefined) continue; const s = o.userData.s + (o.userData.cible - o.userData.s) * Math.min(1, dt * 6); o.userData.s = s; o.scale.setScalar(Math.max(s, 0.001)); o.visible = s > 0.02; } }
+let dernierCamion = null;
+function synchroniser(instant = false) {
+  instantane = instant;
+  for (const x of Object.values(objets)) montrer(x.obj, present(x.e) && (etageVu || !x.e.zone.startsWith('etage')));
+  montrer(visiteur, etageVu && !!entretienEnCours());
+  const a = affluence(), n = Math.round(CLIENTS_MAX * a);
+  clients.forEach((c, i) => montrer(c.o, i < n));
+  const ouvertes = caissesOuvertes();
+  CAISSES.forEach((c, i) => { const ouv = ouvertes.includes(i); c.lampe.material = mat(ouv ? 0x22c55e : 0x9ca3af, { emissive: ouv ? 0x16a34a : 0x000000, emissiveIntensity: ouv ? 0.6 : 0 }); });
+  const file = Math.min(4, Math.max(0, Math.round((a * 10) / Math.max(1, ouvertes.length) * 1.4)));
+  attenteCaisse.forEach((x) => montrer(x.o, ouvertes.includes(x.c) && x.k < file - (x.c % 2)));
+  const occ = Math.round(PLACES.length * Math.min(0.95, 0.2 + 0.85 * a));
+  if (instant) trafic.placerDirect(occ); else trafic.viser(occ);
+  for (const r of RAYONS) gondoles[r.id].majStock(stockDe(r));
+  const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai');
+  if (d && dernierCamion !== d.id && !instant) annoncer(`${hh(t)} · Livraison au quai : ${d.fourn}, ${d.palettes} palettes`);
+  if (d) { if (!camionAnim || camionAnim.id !== d.id) camionAnim = { id: d.id, k: instant ? 1 : 0, sens: 1 }; } else if (camionAnim && camionAnim.sens === 1) camionAnim.sens = -1;
+  dernierCamion = d ? d.id : dernierCamion;
+}
+let camionAnim = null;
+const doux = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+
+// ================= Étiquettes et badges =================
+const couche = document.getElementById('etiquettes');
+const etiquettes = [], badges = [];
+function etiquette(cle, pos, fn) { const el = document.createElement('div'); el.className = 'et'; el.onclick = () => choisir(cle); couche.appendChild(el); etiquettes.push({ el, pos, fn, cle }); }
+const point = (c) => `<i style="background:${c}"></i>`;
+etiquette('caisses', () => new THREE.Vector3(-21, 3.6, 0.5), () => { const o = caissesOuvertes().length; return `${point(o >= 4 ? '#15803d' : '#c2410c')}Caisses <small>${o}/${NB_CAISSES} ouvertes</small>`; });
+etiquette('rayons', () => new THREE.Vector3(-22, 4.4, -13), () => { const n = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); return `${point(n > 20 ? '#c2410c' : '#15803d')}Rayons <small>${n} ruptures</small>`; });
+etiquette('pause', () => new THREE.Vector3(16, 2.6, -8.6), () => { const n = EQUIPE.filter(auRepos).length; return `${point(n ? '#d97706' : '#15803d')}Salle de pause <small>${n ? n + ' en pause' : 'libre'}</small>`; });
+etiquette('reserve', () => new THREE.Vector3(10, 3.2, -20), () => `${point('#d97706')}Réserve <small>${slotsPleins()} palettes</small>`);
+etiquette('quai', () => new THREE.Vector3(22, 4.5, -20), () => { const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai'); return d ? `${point('#c2410c')}Quai <small>livraison</small>` : `${point('#15803d')}Quai <small>libre</small>`; });
+etiquette('parking', () => new THREE.Vector3(-6, 2.2, 15.5), () => { const n = trafic.occupees(); return `${point(n < PLACES.length - 4 ? '#15803d' : '#c2410c')}Parking <small>${PLACES.length - n}/${PLACES.length} libres</small>`; });
+EQUIPE.forEach((e) => { const el = document.createElement('div'); el.className = 'badge'; couche.appendChild(el); badges.push({ el, e }); });
+const v3 = new THREE.Vector3();
+function placer() {
+  const r = renderer.domElement.getBoundingClientRect();
+  for (const e of etiquettes) { e.el.style.display = etageVu && e.cle === 'pause' ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
+  const vu = camera.zoom >= 1.7;
+  for (const b of badges) {
+    const o = objets[b.e.id].obj;
+    if (!vu || !o.visible || (etageVu && !b.e.zone.startsWith('etage') && o.position.x > 2 && o.position.x < 18 && o.position.z > -10 && o.position.z < 6)) { b.el.style.display = 'none'; continue; }
+    const html = `${b.e.nom}<small>${b.e.poste}</small>`; if (b.el.innerHTML !== html) b.el.innerHTML = html;
+    v3.copy(o.position).add(new THREE.Vector3(0, 2.05, 0)).project(camera);
+    const x = ((v3.x + 1) / 2) * r.width, y = ((1 - v3.y) / 2) * r.height;
+    if (x < 0 || x > r.width || y < 0 || y > r.height) { b.el.style.display = 'none'; continue; }
+    b.el.style.display = ''; b.el.style.left = x + 'px'; b.el.style.top = y + 'px';
+  }
+}
+let minuteur;
+function annoncer(txt) { const a = document.getElementById('annonce'); a.textContent = txt; a.classList.add('vu'); clearTimeout(minuteur); minuteur = setTimeout(() => a.classList.remove('vu'), 3500); }
+
+// ================= Chiffres et panneau =================
+const $ = (id) => document.getElementById(id);
+function majKpis() {
+  const ca = caDuJour(), cout = coutJour();
+  $('k-ca').textContent = euros(ca); $('k-ca-d').textContent = `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}`;
+  $('k-clients').textContent = clientsMagasin(); $('k-clients-d').textContent = affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme';
+  const o = caissesOuvertes().length, att = Math.max(1, Math.round((affluence() * 9) / Math.max(1, o) * 2));
+  $('k-caisses').textContent = `${o} / ${NB_CAISSES}`; $('k-caisses-d').textContent = `attente moyenne ${att} min`;
+  const rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); $('k-ruptures').textContent = rup; $('k-ruptures-d').textContent = `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits`;
+  const pres = EQUIPE.filter(present).length; $('k-equipe').textContent = `${pres} / ${EQUIPE.length}`; const pz = EQUIPE.filter(auRepos).length; $('k-equipe-d').textContent = `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`;
+  $('k-salaires').textContent = euros(cout); const p = ca ? (cout / ca) * 100 : 0; $('k-salaires-d').textContent = `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; $('k-salaires-j').style.width = Math.min(100, p * 5) + '%';
+}
+let onglet = 'equipe', selection = null;
+const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
+function rendrePanneau() {
+  const c = $('contenu');
+  if (onglet === 'rh') return rh.rendre(c);
+  if (onglet === 'equipe') {
+    c.innerHTML = `<h2>Équipe du jour (horaires de 6h à 21h)</h2><table><thead><tr><th>Personne</th><th>Service</th><th class="num">Coût</th></tr></thead><tbody>${EQUIPE.map((e) => `<tr class="clic" data-cle="${e.id}"><td><b>${e.nom}</b><br><small class="d">${e.poste} · ${hTxt(e.debut)}-${hTxt(e.fin)}</small></td><td>${service(e)}<br><small class="d">${present(e) ? 'présent·e' : t < e.debut ? 'arrive à ' + hTxt(e.debut) : 'parti·e'}</small></td><td class="num">${euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout)}</td></tr>`).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">Coût = heures faites aujourd'hui × coût horaire chargé (montants fictifs).</p>`;
+  } else if (onglet === 'rayons') {
+    c.innerHTML = `${encartLogiciel()}<h2>Stock par rayon</h2><table><thead><tr><th>Rayon</th><th>Stock</th><th class="num">Ruptures</th></tr></thead><tbody>${RAYONS.map((r) => { const s = stockDe(r), col = s < 0.5 ? '#b91c1c' : s < 0.7 ? '#c2410c' : '#15803d'; return `<tr class="clic" data-cle="${r.id}"><td><b>${r.nom}</b><br><small class="d">${r.refs.toLocaleString('fr-FR')} produits</small></td><td><span class="mini"><i style="width:${s * 100}%;background:${col}"></i></span> ${Math.round(s * 100)} %</td><td class="num" style="color:${rupturesDe(r) > 5 ? 'var(--accent)' : 'inherit'}">${rupturesDe(r)}</td></tr>`; }).join('')}</tbody></table>`;
+  } else if (onglet === 'caisses') {
+    const ouv = caissesOuvertes();
+    c.innerHTML = `<h2>Caisses</h2><table><thead><tr><th>Caisse</th><th>Hôte ou hôtesse</th><th class="num">File</th></tr></thead><tbody>${CAISSES.map((_, i) => { const e = caissiers().find((x) => caisseDe(x) === i); const f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length; return `<tr class="clic" data-cle="c${i}"><td><b>Caisse ${i + 1}</b></td><td>${e ? e.nom : '<small class="d">fermée</small>'}</td><td class="num">${ouv.includes(i) ? f + ' client' + (f > 1 ? 's' : '') : '-'}</td></tr>`; }).join('')}</tbody></table>`;
+  } else {
+    c.innerHTML = `<h2>Livraisons du jour</h2><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commandée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table>`;
+  }
+}
+$('contenu').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
+document.querySelectorAll('[data-onglet]').forEach((b) => (b.onclick = () => { onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendrePanneau(); }));
+const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
+const RAYON_DE = (id) => RAYONS.find((r) => r.id === id);
+// Lien (fictif) avec le logiciel de caisse et de stock du magasin : synchro toutes les 5 minutes de démo
+const derniereSynchro = () => Math.floor(t * 12) / 12;
+const unites = (r) => Math.round(stockDe(r, derniereSynchro()) * r.refs * 14); // le stock exact vient de la dernière synchro
+const encartLogiciel = () => `<div class="connecte"><b>● Connecté à votre logiciel de caisse et de stock</b> <small>(exemple fictif)</small><p>Chaque vente en caisse retire l'article du stock, chaque réception au quai l'ajoute : vous voyez le stock exact sans recompter.</p><small>Synchronisé à ${hh(derniereSynchro())}, toutes les 5 minutes</small></div>`;
+// Commandes de réassort passées depuis la démo
+const quantites = {}, commandees = {};
+const enAttente = (r) => LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 > t).reduce((n, d) => n + d.palettes, 0);
+const suggestion = (r) => Math.min(30, Math.max(2, Math.ceil((0.92 - stockDe(r) - enAttente(r) * PAR_PALETTE) / PAR_PALETTE / 2) * 2));
+const quart = (h) => Math.ceil(h * 4) / 4;
+const livraisonPrevue = () => quart(t + 1.5);
+let numCommande = 0;
+function commander(rid) {
+  const h = livraisonPrevue();
+  if (h > FERMETURE - 0.5) return;
+  const d = { id: 'k' + ++numCommande, heure: h, fourn: FOURNISSEURS[rid], palettes: quantites[rid] ?? suggestion(RAYON_DE(rid)), rayon: rid, commande: true, passee: t };
+  LIVRAISONS.push(d); LIVRAISONS.sort((a, b) => a.heure - b.heure);
+  commandees[rid] = d; delete quantites[rid];
+  annoncer(`Commande envoyée : ${d.palettes} palettes, livraison à ${hTxt(h)}`);
+  rendreFiche(); rendrePanneau();
+}
+function oublierCommandes() { for (let i = LIVRAISONS.length - 1; i >= 0; i--) if (LIVRAISONS[i].commande) LIVRAISONS.splice(i, 1); for (const k in commandees) delete commandees[k]; }
+function blocCommande(r) {
+  const q = quantites[r.id] ?? suggestion(r), h = livraisonPrevue(), d = commandees[r.id];
+  const ferme = h > FERMETURE - 0.5;
+  return `<div class="commande"><h2>Commander du réassort</h2><div class="ligne"><button data-act="moins" aria-label="Moins">−</button><b>${q} palettes</b><button data-act="plus" aria-label="Plus">+</button><button class="go" data-act="commander" ${ferme ? 'disabled' : ''}>Commander</button></div><small>${ferme ? 'Plus de livraison possible aujourd\'hui (dernière à 19h30).' : `${FOURNISSEURS[r.id]} · livraison prévue à ${hTxt(h)} · le stock monte à la réception`}</small>${d ? `<div class="fait">✓ Commande de ${d.palettes} palettes envoyée à ${hh(d.passee)}, ${statutLiv(d) === 'déchargée' ? 'reçue' : 'livraison à ' + hTxt(d.heure)}</div>` : ''}</div>`;
+}
+function rendreFiche() {
+  const f = $('fiche'), c = $('fiche-c'), s = selection;
+  if (!s) { f.classList.remove('vu'); return; }
+  f.classList.add('vu');
+  if (/^e\d/.test(s)) {
+    const e = EQUIPE.find((x) => x.id === s), p = present(e);
+    c.innerHTML = `<h3>${e.nom}</h3><p class="sous">${e.poste}</p><span class="statut ${auRepos(e) ? 'att' : p ? 'ok' : ''}">${auRepos(e) ? 'En pause' : p ? 'Présent·e' : t < e.debut ? 'Arrive à ' + hTxt(e.debut) : 'Service terminé'}</span><ul class="lignes">${li('Horaires', `${hTxt(e.debut)} – ${hTxt(e.fin)}`)}${debutPause(e) !== null ? li('Pause', `${hTxt(debutPause(e))} – ${hTxt(debutPause(e) + 0.5)}`) : ''}${objets[e.id].job ? li('En ce moment', objets[e.id].job.texte) : ''}${li('Heures aujourd\'hui', String(Math.round(Math.max(0, Math.min(t, e.fin) - e.debut) * 10) / 10).replace('.', ',') + ' h')}${li('Coût horaire chargé', euros(e.cout))}${li('Coût du jour', euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout))}</ul>`;
+  } else if (/^r\d/.test(s)) {
+    const r = RAYON_DE(s), st = stockDe(r), resp = EQUIPE.filter((e) => e.zone === s && present(e)).map((e) => e.nom).join(', ') || 'personne en ce moment';
+    const liv = LIVRAISONS.filter((d) => d.rayon === s && d.heure > t)[0];
+    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}`;
+  } else if (/^c\d/.test(s)) {
+    const i = +s.slice(1), e = caissiers().find((x) => caisseDe(x) === i), f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length;
+    c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom) + li('Jusqu\'à', hTxt(e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
+  } else if (/^d\d/.test(s) || s === 'quai') {
+    const d = s === 'quai' ? LIVRAISONS.find((x) => statutLiv(x) === 'au quai') || LIVRAISONS.find((x) => x.heure > t) : LIVRAISONS.find((x) => x.id === s);
+    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${statutLiv(d) !== 'prévue' ? li('Déchargées', `${Math.min(d.palettes, d.dechargees || 0)} sur ${d.palettes}`) : ''}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
+  } else {
+    const T = {
+      caisses: () => `<h3>Ligne de caisses</h3><p class="sous">${NB_CAISSES} caisses</p><ul class="lignes">${li('Ouvertes', caissesOuvertes().map((i) => i + 1).join(', ') || 'aucune')}${li('Hôtes et hôtesses en caisse', caissiers().map((e) => e.nom).join(', ') || 'personne')}</ul>`,
+      rayons: () => `<h3>Rayons</h3><p class="sous">6 rayons</p><ul class="lignes">${RAYONS.map((r) => li(r.nom, `${Math.round(stockDe(r) * 100)} % · ${rupturesDe(r)} rupture${rupturesDe(r) > 1 ? "s" : ""}`)).join('')}</ul>`,
+      reserve: () => `<h3>Réserve</h3><p class="sous">Racks à palettes : réception du camion, puis mise en rayon</p><ul class="lignes">${li('Palettes en rack', `${SLOTS.filter((sl) => sl.rayon && sl.rangee < 2).length} sur 30`)}${li('Palettes au sol', SLOTS.filter((sl) => sl.rayon && sl.rangee === 2).length)}${li('En ce moment', Object.values(objets).filter((x) => x.job).map((x) => `${x.e.nom.split(' ')[0]} : ${x.job.court}`).join(', ') || 'calme')}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
+      parking: () => { const n = trafic.occupees(); return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
+      accueil: () => `<h3>Accueil</h3><p class="sous">Point d'accueil et service client</p><ul class="lignes">${li('À l\'accueil', EQUIPE.filter((e) => e.zone === 'accueil' && present(e)).map((e) => e.nom).join(', ') || 'personne')}${li('Clients dans le magasin', clientsMagasin())}</ul>`,
+      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretien en cours', entretienEnCours() ? `${entretienEnCours().nom} (${entretienEnCours().poste})` : 'aucun')}${li('Entretiens aujourd\'hui', rh.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun')}</ul><p class="synchro">Le détail est dans l'onglet RH, à droite.</p>`; },
+      'etage-compta': () => { const e = EQUIPE.find((x) => x.zone === 'etage-compta'); return `<h3>Comptabilité</h3><p class="sous">1er étage · factures fournisseurs, caisse, paie</p><ul class="lignes">${li('Comptable', e ? e.nom + (present(e) ? '' : ' (absent)') : '-')}${li('Chiffre d\'affaires du jour', euros(caDuJour()))}${li('Livraisons à rapprocher', LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée').length)}</ul>`; },
+      'etage-reunion': () => `<h3>Salle de réunion</h3><p class="sous">1er étage · table de 8, écran</p><ul class="lignes">${li('Prochaine réunion', t < 15 ? '15h, point hebdomadaire des chefs de rayon' : 'aucune aujourd\'hui')}</ul>`,
+      pause: () => { const n = EQUIPE.filter(auRepos), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
+      escalier: () => `<h3>Escalier du personnel</h3><p class="sous">Vers l'étage : bureaux administratifs et salle de réunion</p><ul class="lignes">${li('Accès', 'couloir du personnel, derrière l\'accueil')}${li('À l\'étage', 'non dessiné dans la démo')}</ul>`,
+      vestiaires: () => `<h3>Vestiaires et sanitaires</h3><p class="sous">Réservés au personnel</p><ul class="lignes">${li('Casiers', 8)}${li('Équipe dans le magasin', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
+      bureau: () => `<h3>Bureau de la direction</h3><p class="sous">Bureau, armoire, table de réunion</p><ul class="lignes">${li('Direction', EQUIPE.filter((e) => e.zone === 'bureau' && present(e)).map((e) => e.nom + (auRepos(e) ? ' (en pause)' : '')).join(', ') || 'absente')}${li('Équipe présente', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}</ul>`,
+      magasin: () => `<h3>Le magasin</h3><p class="sous">Hyper Modèle, grande surface imaginaire</p><ul class="lignes">${li('Clients dans le magasin', clientsMagasin())}${li('Caisses ouvertes', `${caissesOuvertes().length} sur ${NB_CAISSES}`)}${li('Équipe présente', `${EQUIPE.filter(present).length} sur ${EQUIPE.length}`)}${li('Chiffre d\'affaires', euros(caDuJour()))}</ul>`,
+    };
+    c.innerHTML = (T[s] || T.magasin)();
+  }
+}
+// Zoom au clic
+const ZOOMS = { magasin: 1.7, caisses: 2.2, rayons: 1.9, reserve: 2.4, quai: 2.4, parking: 1.7, accueil: 3, bureau: 3.4, pause: 3.2, escalier: 3.4, vestiaires: 3.4, 'etage-rh': 3.4, 'etage-compta': 3.4, 'etage-reunion': 3.2 };
+let vise = null;
+function viser(cible, zoom) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0 }; }
+function positionDe(s) {
+  if (!s) return null;
+  if (/^e\d/.test(s)) { const o = objets[s].obj; return o.visible ? [o.position, 3] : null; }
+  if (/^r\d/.test(s)) { const g = gondoles[s]; return [new THREE.Vector3(g.x0 + g.l / 2, 0, g.z), 2.4]; }
+  if (/^c\d/.test(s)) { const c = CAISSES[+s.slice(1)]; return [new THREE.Vector3(c.x, 0, c.z), 3]; }
+  if (/^d\d/.test(s)) return [new THREE.Vector3(22, 0, -20), 2.4];
+  const P = { magasin: [-11, -12], caisses: [-21, 0.5], rayons: [-22, -14], reserve: [10, -20], quai: [27, -20], parking: [-6, 15.5], accueil: [-2, 3.5], bureau: [5.5, -6.5], pause: [13.5, -5.5], escalier: [5.5, 2.5], vestiaires: [13.5, 2.5], ...ETAGE.zones }[s];
+  return P ? [new THREE.Vector3(P[0], 0, P[1]), ZOOMS[s]] : null;
+}
+function choisir(cle) {
+  selection = cle; rendreFiche(); const p = positionDe(cle); if (!p) return;
+  const z = p[1] * (MOBILE ? 1.3 : 1), v = p[0].clone();
+  viser(v, z);
+  if (MOBILE && cle) $('fiche').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+if (MOBILE) $('scene').after($('fiche')); // sur téléphone la fiche s'affiche sous la maquette
+$('fermer').onclick = () => choisir(null);
+$('fiche-c').onclick = (ev) => {
+  const b = ev.target.closest('[data-act]'); if (!b || !/^r\d/.test(selection || '')) return;
+  const r = RAYON_DE(selection), q = quantites[r.id] ?? suggestion(r);
+  if (b.dataset.act === 'plus') quantites[r.id] = Math.min(40, q + 2);
+  else if (b.dataset.act === 'moins') quantites[r.id] = Math.max(2, q - 2);
+  else if (b.dataset.act === 'commander') return commander(r.id);
+  rendreFiche();
+};
+const ray = new THREE.Raycaster(), souris = new THREE.Vector2(); let appui = null;
+renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(souris, camera);
+  const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
+  choisir(hit ? hit.object.userData.cle : null);
+});
+$('etage').onclick = (e) => { etageVu = !etageVu; ETAGE.montrer(etageVu); e.target.classList.toggle('actif', etageVu); e.target.textContent = etageVu ? 'Étage' : 'Rez-de-chaussée'; synchroniser(true); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
+$('recentrer').onclick = () => { choisir(null); viser(CIBLE, 1); };
+$('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
+function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); }
+addEventListener('resize', taille); taille();
+
+// ================= Boucle =================
+let avant = performance.now(), derniereMinute = -1;
+function animer(now) {
+  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
+  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); } synchroniser(); }
+  // clients : marche continue sur des boucles lissées, orientation sur la tangente
+  for (const c of clients) {
+    if (!c.o.visible) continue;
+    c.u = (c.u + (c.v * dt) / 70) % 1;
+    c.o.position.copy(c.boucle.getPointAt(c.u));
+    const tg = c.boucle.getTangentAt(c.u); let d = Math.atan2(tg.x, tg.z) - c.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); c.rot += d * Math.min(1, dt * 8); c.o.rotation.y = c.rot;
+  }
+  // l'équipe en rayon fait de petits va-et-vient
+  if (!pause) logistique(Math.min(ecoule, 0.25));
+  // pause : la personne rejoint la salle de pause puis revient à son poste ; en rayon, petits va-et-vient
+  let siege = 0;
+  for (const x of Object.values(objets)) {
+    if (x.job) continue;
+    const p = enPause(x.e), [sx, sz, sr] = SIEGES[siege % SIEGES.length]; if (p) siege++;
+    const rayon = /^r\d/.test(x.e.zone) && !p;
+    if (rayon && !x.retour && x.obj.visible) x.phase += dt * 0.35;
+    const cible = p ? new THREE.Vector3(sx, 0.2, sz) : x.base.clone().setX(x.base.x + (rayon ? Math.sin(x.phase) * 2.5 : 0));
+    const d = x.obj.position.distanceTo(cible);
+    x.retour = d > 0.4;
+    if (x.retour || !x.obj.visible) { x.obj.position.lerp(cible, x.obj.visible ? Math.min(1, dt * 2.5) : 1); x.obj.rotation.y = Math.atan2(cible.x - x.obj.position.x, cible.z - x.obj.position.z); }
+    else { x.obj.position.copy(cible); x.obj.rotation.y = p ? sr : rayon ? (Math.cos(x.phase) > 0 ? Math.PI / 2 : -Math.PI / 2) : x.obj.rotation.y; }
+  }
+  // camion : arrive en marche arrière au quai par sa voie, repart en douceur
+  if (camionAnim) {
+    camionAnim.k = Math.max(0, Math.min(1, camionAnim.k + (camionAnim.sens * ecoule) / 6));
+    const e = doux(camionAnim.k); truck.visible = camionAnim.k > 0;
+    truck.position.set(32 + (1 - e) * 13, 0.1, -20); truck.rotation.y = Math.PI / 2;
+    if (camionAnim.k <= 0 && camionAnim.sens === -1) camionAnim = null;
+  }
+  if (!pause) trafic.maj(Math.min(ecoule, 0.25));
+  fondus(dt);
+  if (vise) { vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv); camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix(); if (vise.k >= 1) vise = null; }
+  const ps = selection && positionDe(selection);
+  anneau.visible = !!ps && !/^(magasin|parking|rayons)$/.test(selection);
+  if (anneau.visible) { anneau.position.set(ps[0].x, 0.25, ps[0].z); anneau.scale.setScalar((/^e\d/.test(selection) ? 0.4 : 1.2) * (1 + Math.sin(now / 300) * 0.04)); }
+  controls.update();
+  renderer.render(scene, camera);
+  window.maquetteOk = true;
+  placer();
+  const m = Math.floor(t * 60);
+  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
+  requestAnimationFrame(animer);
+}
+// Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
+const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: (id) => choisir(id) });
+// le candidat attendu vient au bureau RH de l'étage pendant son entretien
+const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
+initReserve();
+synchroniser(true);
+window.demo = { temps: () => t, camera, controls, scene, THREE, choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
+requestAnimationFrame(animer);
+</script>
+</body>
+</html>
