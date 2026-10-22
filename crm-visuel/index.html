@@ -52,6 +52,10 @@
   .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
   .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
   .scene canvas:active { cursor: grabbing; }
+  .aide { position: absolute; right: 12px; top: 14px; background: rgba(255,255,255,.9); border: 1px solid var(--ligne); border-radius: 7px; padding: 5px 9px; font-size: 11.5px; color: var(--doux); pointer-events: none; transition: opacity .6s; }
+  .aide.cache { opacity: 0; }
+  @media (max-width: 900px) { .aide { top: auto; bottom: 10px; right: 10px; } }
+  .scene canvas:active { cursor: grabbing; }
   .etiquettes { position: absolute; inset: 0; pointer-events: none; }
   .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
   .et small { font-weight: 500; color: var(--doux); }
@@ -132,7 +136,6 @@
     .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto; height: auto; }
     aside { border-left: 0; border-top: 1px solid var(--ligne); }
     .contenu { overflow: visible; }
-    .scene canvas { touch-action: pan-y; }
     .badge { font-size: 9.5px; padding: 1px 5px; }
     .badge small { display: none; }
     .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -269,7 +272,16 @@ Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngl
 const MOBILE = matchMedia('(max-width: 900px)').matches;
 const CIBLE = MOBILE ? new THREE.Vector3(-1, 0, -3) : new THREE.Vector3(-2, 0, -1);
 controls.target.copy(CIBLE);
-if (MOBILE) renderer.domElement.style.touchAction = 'pan-y'; // un doigt fait défiler la page, deux doigts zooment
+// Glisser (souris ou un doigt) déplace la vue ; clic droit ou deux doigts tournent et zooment ; flèches du clavier aussi
+controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
+controls.keyPanSpeed = 20; controls.listenToKeyEvents(window);
+controls.addEventListener('start', () => { vise = null; });
+const aide = document.createElement('div'); aide.className = 'aide';
+aide.textContent = MOBILE ? 'Un doigt : se déplacer · deux doigts : zoomer et tourner' : 'Glisser : se déplacer · clic droit : tourner · molette : zoomer';
+conteneur.appendChild(aide); controls.addEventListener('start', () => setTimeout(() => aide.classList.add('cache'), 2500), { once: true }); // on reprend la main : le zoom automatique s'arrête
+// on ne sort pas de la maquette
+controls.addEventListener('change', () => { const t = controls.target, x = Math.max(-32, Math.min(32, t.x)) - t.x, z = Math.max(-24, Math.min(24, t.z)) - t.z; if (x || z) { t.x += x; t.z += z; camera.position.x += x; camera.position.z += z; } });
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
 const soleil = new THREE.DirectionalLight(0xfff6ea, 2.4);
