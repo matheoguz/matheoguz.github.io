@@ -160,6 +160,7 @@
       <button data-onglet="rayons">Rayons</button>
       <button data-onglet="caisses">Caisses</button>
       <button data-onglet="livraisons">Livraisons</button>
+      <button data-onglet="rh">RH</button>
     </nav>
     <div class="contenu" id="contenu"></div>
     <p class="note">Démo avec des données inventées : magasin, enseigne, personnes, salaires et chiffres sont imaginaires. Un clic sur un élément de la maquette ou d'une liste ouvre sa fiche.</p>
@@ -172,6 +173,7 @@ import { OrbitControls } from '../vendor/OrbitControls.js';
 import { construireRayon } from './rayons.js';
 import { construireEtage } from './etage.js';
 import { creerTrafic } from './trafic.js';
+import { installerRH } from './rh.js';
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
@@ -366,6 +368,8 @@ boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, 17.75, 0.2, 4.8); boite(2.4, 0.85, 0.5, 0xff
 // le vrai 1er étage et son escalier (etage.js)
 const ETAGE = construireEtage({ THREE, scene, boite, mat, texte, clic, zone });
 let etageVu = true;
+// candidat en entretien, assis dans le bureau RH (voir rh.js)
+const visiteur = personne(0x7c3aed); visiteur.position.copy(ETAGE.postes.rhVisiteur); visiteur.rotation.y = Math.PI; visiteur.visible = false; visiteur.userData.s = 0; scene.add(visiteur); clic(visiteur, 'etage-rh');
 panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
 zone(7, 7, 5.5, -6.5, 'bureau', 0.22); zone(9, 9, 13.5, -5.5, 'pause', 0.22); zone(7, 7, 5.5, 2.5, 'escalier', 0.22); zone(9, 7, 13.5, 2.5, 'vestiaires', 0.22);
 // ================= Réserve : racks à palettes =================
@@ -528,12 +532,13 @@ const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.M
 // ================= Mise à jour de la maquette =================
 let instantane = false;
 function montrer(o, oui) { o.userData.cible = oui ? 1 : 0; if (instantane) { o.userData.s = oui ? 1 : 0; o.scale.setScalar(oui ? 1 : 0.001); o.visible = oui; return; } if (oui && !o.visible) { o.visible = true; o.userData.s = 0.001; o.scale.setScalar(0.001); } }
-const fondables = () => [...Object.values(objets).map((x) => x.obj), ...clients.map((c) => c.o), ...attenteCaisse.map((a) => a.o)];
+const fondables = () => [...Object.values(objets).map((x) => x.obj), visiteur, ...clients.map((c) => c.o), ...attenteCaisse.map((a) => a.o)];
 function fondus(dt) { for (const o of fondables()) { if (o.userData.cible === undefined) continue; const s = o.userData.s + (o.userData.cible - o.userData.s) * Math.min(1, dt * 6); o.userData.s = s; o.scale.setScalar(Math.max(s, 0.001)); o.visible = s > 0.02; } }
 let dernierCamion = null;
 function synchroniser(instant = false) {
   instantane = instant;
   for (const x of Object.values(objets)) montrer(x.obj, present(x.e) && (etageVu || !x.e.zone.startsWith('etage')));
+  montrer(visiteur, etageVu && !!entretienEnCours());
   const a = affluence(), n = Math.round(CLIENTS_MAX * a);
   clients.forEach((c, i) => montrer(c.o, i < n));
   const ouvertes = caissesOuvertes();
@@ -597,6 +602,7 @@ let onglet = 'equipe', selection = null;
 const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
 function rendrePanneau() {
   const c = $('contenu');
+  if (onglet === 'rh') return rh.rendre(c);
   if (onglet === 'equipe') {
     c.innerHTML = `<h2>Équipe du jour (horaires de 6h à 21h)</h2><table><thead><tr><th>Personne</th><th>Service</th><th class="num">Coût</th></tr></thead><tbody>${EQUIPE.map((e) => `<tr class="clic" data-cle="${e.id}"><td><b>${e.nom}</b><br><small class="d">${e.poste} · ${hTxt(e.debut)}-${hTxt(e.fin)}</small></td><td>${service(e)}<br><small class="d">${present(e) ? 'présent·e' : t < e.debut ? 'arrive à ' + hTxt(e.debut) : 'parti·e'}</small></td><td class="num">${euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout)}</td></tr>`).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">Coût = heures faites aujourd'hui × coût horaire chargé (montants fictifs).</p>`;
   } else if (onglet === 'rayons') {
@@ -662,7 +668,7 @@ function rendreFiche() {
       reserve: () => `<h3>Réserve</h3><p class="sous">Racks à palettes : réception du camion, puis mise en rayon</p><ul class="lignes">${li('Palettes en rack', `${SLOTS.filter((sl) => sl.rayon && sl.rangee < 2).length} sur 30`)}${li('Palettes au sol', SLOTS.filter((sl) => sl.rayon && sl.rangee === 2).length)}${li('En ce moment', Object.values(objets).filter((x) => x.job).map((x) => `${x.e.nom.split(' ')[0]} : ${x.job.court}`).join(', ') || 'calme')}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
       parking: () => { const n = trafic.occupees(); return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
       accueil: () => `<h3>Accueil</h3><p class="sous">Point d'accueil et service client</p><ul class="lignes">${li('À l\'accueil', EQUIPE.filter((e) => e.zone === 'accueil' && present(e)).map((e) => e.nom).join(', ') || 'personne')}${li('Clients dans le magasin', clientsMagasin())}</ul>`,
-      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretiens aujourd\'hui', typeof RH !== 'undefined' ? RH.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun' : '-')}</ul><p class="synchro">Le détail est dans l'onglet RH, à droite.</p>`; },
+      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretien en cours', entretienEnCours() ? `${entretienEnCours().nom} (${entretienEnCours().poste})` : 'aucun')}${li('Entretiens aujourd\'hui', rh.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun')}</ul><p class="synchro">Le détail est dans l'onglet RH, à droite.</p>`; },
       'etage-compta': () => { const e = EQUIPE.find((x) => x.zone === 'etage-compta'); return `<h3>Comptabilité</h3><p class="sous">1er étage · factures fournisseurs, caisse, paie</p><ul class="lignes">${li('Comptable', e ? e.nom + (present(e) ? '' : ' (absent)') : '-')}${li('Chiffre d\'affaires du jour', euros(caDuJour()))}${li('Livraisons à rapprocher', LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée').length)}</ul>`; },
       'etage-reunion': () => `<h3>Salle de réunion</h3><p class="sous">1er étage · table de 8, écran</p><ul class="lignes">${li('Prochaine réunion', t < 15 ? '15h, point hebdomadaire des chefs de rayon' : 'aucune aujourd\'hui')}</ul>`,
       pause: () => { const n = EQUIPE.filter(auRepos), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
@@ -767,6 +773,10 @@ function animer(now) {
   if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
   requestAnimationFrame(animer);
 }
+// Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
+const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: (id) => choisir(id) });
+// le candidat attendu vient au bureau RH de l'étage pendant son entretien
+const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
 synchroniser(true);
 window.demo = { temps: () => t, camera, controls, scene, THREE, choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
