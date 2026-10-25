@@ -3,7 +3,7 @@
 // construireEtage({ THREE, scene, boite, mat, texte, clic, zone }) → { groupe, montrer, postes, zones, escalier }
 export function construireEtage(ctx) {
   const { THREE, scene, boite, mat, texte, zone } = ctx;
-  const G = new THREE.Group(); G.name = 'etage'; scene.add(G);
+  const G = new THREE.Group(); G.name = 'etage'; G.userData.conteneur = true; scene.add(G); // on le cache ou le montre : ses maillages fusionnés restent dedans
   const ESC = new THREE.Group(); ESC.name = 'escalier'; scene.add(ESC);
 
   // Repères
@@ -15,6 +15,7 @@ export function construireEtage(ctx) {
   const EP = 0.3, EC = 0.12;  // mur extérieur, cloison
   const RDC = 1.6;            // haut des murs coupés du rez-de-chaussée
   const MUR = 0xfafaf8, CLOISON = 0xf1f1ee, BETON = 0xb9b6ae, BOIS = 0x8b6b4a, BOIS_C = 0xc9a77c, GRIS = 0x9ca3af, FONCE = 0x374151, NOIR = 0x111827, BLANC = 0xf8fafc;
+  const EXT = ctx.murExterieur ?? MUR; // murs de façade et de pignon (bleu nuit dans la maquette)
   const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.42, roughness: 0.08, metalness: 0.1 });
   const inox = mat(0xb8bcc2, { roughness: 0.35, metalness: 0.6 });
   const b = (l, h, p, m, x, y, z, parent = G, ombre = true) => boite(l, h, p, m, x, y, z, parent, ombre);
@@ -79,8 +80,8 @@ export function construireEtage(ctx) {
 
   // ---------- Haut des murs du rez-de-chaussée (de 1,6 m au dessous de la dalle) ----------
   const hb = YB - RDC;
-  mur('x', X0 - EP / 2, X1 + EP / 2, Z1, EP, [{ a: 6.4, b: 8.4, t: 'f' }, { a: 10, b: 12.4, t: 'f' }, { a: 14.6, b: 16.6, t: 'f' }], { y0: RDC, h: hb, etage: false });
-  mur('z', Z0, Z1, X1, EP, [{ a: -8.6, b: -5.2, t: 'f' }, { a: 2.2, b: 4.6, t: 'f' }], { y0: RDC, h: hb, etage: false });
+  mur('x', X0 - EP / 2, X1 + EP / 2, Z1, EP, [{ a: 6.4, b: 8.4, t: 'f' }, { a: 10, b: 12.4, t: 'f' }, { a: 14.6, b: 16.6, t: 'f' }], { y0: RDC, h: hb, etage: false, m: EXT });
+  mur('z', Z0, Z1, X1, EP, [{ a: -8.6, b: -5.2, t: 'f' }, { a: 2.2, b: 4.6, t: 'f' }], { y0: RDC, h: hb, etage: false, m: EXT });
   mur('z', Z0, Z1, X0, EP, [], { y0: RDC, h: hb });
   mur('x', X0, X1, Z0, EP, [], { y0: RDC, h: hb });
 
@@ -107,8 +108,8 @@ export function construireEtage(ctx) {
   for (let x = 3; x < 18; x += 1.2) b(0.01, 0.005, 2, mat(0xc4c7cb), x, Y, 0, G, false); // joints du couloir
 
   // ---------- Murs extérieurs de l'étage ----------
-  mur('x', X0 - EP / 2, X1 + EP / 2, Z1, EP, [{ a: 5.6, b: 6.9, t: 'f' }, { a: 8.4, b: 11.6, t: 'f' }, { a: 13.2, b: 17.2, t: 'f' }]); // façade (côté parking)
-  mur('z', Z0 - EP / 2, Z1 + EP / 2, X1, EP, [{ a: -9.3, b: -5.2, t: 'f' }, { a: -4, b: -1.6, t: 'f' }, { a: 1.8, b: 5.2, t: 'f' }]); // pignon est
+  mur('x', X0 - EP / 2, X1 + EP / 2, Z1, EP, [{ a: 5.6, b: 6.9, t: 'f' }, { a: 8.4, b: 11.6, t: 'f' }, { a: 13.2, b: 17.2, t: 'f' }], { m: EXT }); // façade (côté parking)
+  mur('z', Z0 - EP / 2, Z1 + EP / 2, X1, EP, [{ a: -9.3, b: -5.2, t: 'f' }, { a: -4, b: -1.6, t: 'f' }, { a: 1.8, b: 5.2, t: 'f' }], { m: EXT }); // pignon est
   mur('x', X0 - EP / 2, X1 + EP / 2, Z0, EP, [{ a: 10.5, b: 16.5, t: 'vitre' }]);  // vue sur la réserve
   mur('z', Z0 - EP / 2, Z1 + EP / 2, X0, EP, [{ a: -8.8, b: -2.4, t: 'vitre' }]); // vue sur la surface de vente
 

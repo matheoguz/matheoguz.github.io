@@ -2,14 +2,18 @@
 // têtes de gondole, étiquettes prix, vitrines réfrigérées, étals de fruits et légumes.
 // Module sans import : THREE est passé dans ctx. Tout est en InstancedMesh (une forme = un dessin, couleur par instance).
 //
-//   construireRayon(ctx, r, i) -> { g, z, x0, l, majStock(frac), instances }
+//   construireRayon(ctx, r, i, opts?) -> { g, z, x0, l, majStock(frac), instances }
+//   opts (meuble mural, ex. vitrines froides du mur du fond) : { xa, xb, z, cotes: [1], frigo: true, plan: 'r3', sansTetes, sansPanneau, nom }
+//   Les emballages viennent d'un atlas dessiné au chargement (produits.js) : une case par produit et par couleur.
 //   ctx = { THREE, scene, boite, mat, texte, clic }
 //
 // majStock(frac) (0,15 à 1) : chaque produit a un rang fixe tiré au départ (graine = id du rayon) ;
 // seuls les produits de rang < frac restent visibles, donc les trous sont stables d'un appel à l'autre.
 
+import { atlasProduits } from './produits.js';
+
 const Y0 = 0.2;                       // dessus du sol du magasin
-const XA = -36.1, XB = -7.9;          // corps de la gondole (les têtes occupent -37..-36,1 et -7,9..-7)
+const XA0 = -36.1, XB0 = -7.9;        // corps de la gondole (les têtes occupent -37..-36,1 et -7,9..-7)
 const NIV = [0.13, 0.5, 0.86, 1.22, 1.58];          // hauteur des tablettes (au-dessus de Y0)
 const PROF = [0.62, 0.56, 0.52, 0.48, 0.44];        // les tablettes du bas sont plus profondes
 const HMAX = [0.33, 0.33, 0.33, 0.33, 0.25];        // place sous la tablette du dessus (haut ≤ 2,06)
@@ -102,11 +106,11 @@ function partage(THREE) {
   const tour = (pts) => new THREE.LatheGeometry(pts.map(([x, y]) => new THREE.Vector2(x, y)), 7);
   const bouteille = tour([[0, 0], [0.5, 0], [0.5, 0.58], [0.4, 0.72], [0.18, 0.84], [0.17, 1], [0, 1]]);
   const flacon = tour([[0, 0], [0.5, 0], [0.5, 0.78], [0.3, 0.87], [0.22, 1], [0, 1]]);
-  const boule = new THREE.IcosahedronGeometry(0.5, 0);
+  const boule = new THREE.SphereGeometry(0.5, 7, 5);
   const S = (o) => new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.62, metalness: 0, ...o });
   // fond de gondole perforé
   const c = document.createElement('canvas'); c.width = c.height = 32; const k = c.getContext('2d');
-  k.fillStyle = '#eef0f1'; k.fillRect(0, 0, 32, 32); k.fillStyle = '#b9bec4';
+  k.fillStyle = '#c9ced6'; k.fillRect(0, 0, 32, 32); k.fillStyle = '#9aa1ab';
   for (const [x, y] of [[8, 8], [24, 8], [8, 24], [24, 24]]) { k.beginPath(); k.arc(x, y, 2.2, 0, 7); k.fill(); }
   // réglette porte-étiquettes : étiquettes prix jaunes (quelques promos orange), motif de 1,6 m répété
   const c2 = document.createElement('canvas'); c2.width = 512; c2.height = 16; const k2 = c2.getContext('2d');
@@ -115,8 +119,8 @@ function partage(THREE) {
   const reglette = new THREE.CanvasTexture(c2); reglette.wrapS = THREE.RepeatWrapping; reglette.colorSpace = THREE.SRGBColorSpace; reglette.anisotropy = 4;
   const perfo = new THREE.CanvasTexture(c); perfo.wrapS = perfo.wrapT = THREE.RepeatWrapping; perfo.colorSpace = THREE.SRGBColorSpace; perfo.anisotropy = 4;
   PART = {
-    THREE, box, cyl, bouteille, flacon, boule, perfo, reglette,
-    struct: S({ roughness: 0.55, metalness: 0.15 }), prod: S({}), brillant: S({ roughness: 0.3 }), fruit: S({ roughness: 0.5 }), bois: S({ roughness: 0.85 }),
+    THREE, box, cyl, bouteille, flacon, boule, perfo, reglette, atlas: atlasProduits(THREE),
+    struct: S({ roughness: 0.45, metalness: 0.2 }), prod: S({ roughness: 0.55 }), brillant: S({ roughness: 0.28 }), fruit: S({ roughness: 0.5 }), bois: S({ roughness: 0.85 }),
     froid: S({ emissive: 0x9cc8ee, emissiveIntensity: 0.12 }), // produits sous la lumière froide des vitrines
     verre: new THREE.MeshStandardMaterial({ color: 0xcfe6f7, transparent: true, opacity: 0.22, roughness: 0.05, metalness: 0.1, depthWrite: false }),
     led: new THREE.MeshBasicMaterial({ color: 0xe8f4ff }),
@@ -126,12 +130,16 @@ function partage(THREE) {
 }
 
 // ---------- le rayon ----------
-export function construireRayon(ctx, r, i) {
+export function construireRayon(ctx, r, i, opts = {}) {
   const { THREE, scene, boite, mat, texte, clic } = ctx;
   const P = partage(THREE);
-  const z = -26 + i * 4.2, x0 = -37, l = 30;
-  const g = new THREE.Group(); g.name = 'rayon-' + r.id; scene.add(g);
-  const rnd = alea(graine('rayon-' + r.id));
+  const XA = opts.xa ?? XA0, XB = opts.xb ?? XB0, COTES = opts.cotes || [1, -1], PLAN = PLANS[opts.plan || r.id];
+  const z = opts.z ?? -26 + i * 4.2, x0 = opts.xa !== undefined ? XA - 0.9 : -37, l = opts.xa !== undefined ? XB - XA + 1.8 : 30;
+  const g = new THREE.Group(); g.name = 'rayon-' + r.id + (opts.nom || ''); scene.add(g);
+  const rnd = alea(graine('rayon-' + r.id + (opts.nom || '')));
+  const blancVar = () => new THREE.Color().setScalar(0.9 + rnd() * 0.1); // emballages texturés : la couleur est dans l'atlas
+  const formeAtlas = (t) => (t.f === 'pack' ? (t.rangs ? 'film' : 'boite') : t.f);
+  const caseDe = (nom, hx) => P.atlas.case(nom, hx, formeAtlas(T[nom]), rnd() < 0.5 ? 0 : 1);
   const entre = ([a, b]) => a + (b - a) * rnd();
   const choix = (t) => t[Math.floor(rnd() * t.length)];
   const teinte = (hex, v = 0.05) => new THREE.Color(hex).offsetHSL(0, -0.12, (rnd() - 0.5) * v); // un peu désaturé : rendu maquette sobre
@@ -139,7 +147,10 @@ export function construireRayon(ctx, r, i) {
   // lots d'instances : une géométrie + une matière = un dessin
   const lots = new Map();
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), pv = new THREE.Vector3(), sv = new THREE.Vector3();
-  const lot = (cle, geo, m, ombre) => { if (!lots.has(cle)) lots.set(cle, { geo, m, ombre, items: [] }); return lots.get(cle); };
+  const lot = (cle, geo, m, ombre) => {
+    if (!lots.has(cle)) { const tex = cle !== 'etiq' && (m === P.prod || m === P.froid || m === P.brillant); lots.set(cle, { geo, m: tex ? P.atlas.materiau(m) : m, ombre, items: [], tex }); }
+    return lots.get(cle);
+  };
   const L = {
     struct: () => lot('struct', P.box, P.struct, true),
     bois: () => lot('bois', P.box, P.bois, true),
@@ -149,9 +160,10 @@ export function construireRayon(ctx, r, i) {
   };
   const formeLot = (t) => (t.f === 'cyl' ? lot('cyl', P.cyl, r.id === 'r3' ? P.froid : P.prod) : t.f === 'bouteille' ? lot('bouteille', P.bouteille, P.brillant) : t.f === 'flacon' ? lot('flacon', P.flacon, P.brillant) : lot('boite', P.box, r.id === 'r3' ? P.froid : P.prod));
   // pose une instance : position du bas, tailles, couleur, rang (-1 = toujours là), rotation éventuelle (x puis y)
+  let celCourante = null; // case d'atlas du produit en cours de pose (null = blanc uni)
   function poser(lt, x, y, zz, sx, sy, sz, couleur, rang = -1, rx = 0, ry = 0) {
     e.set(rx, ry, 0); q.setFromEuler(e); m4.compose(pv.set(x, y, zz), q, sv.set(sx, sy, sz));
-    lt.items.push({ m: m4.clone(), c: couleur instanceof THREE.Color ? couleur : new THREE.Color(couleur), r: rang });
+    lt.items.push({ m: m4.clone(), c: couleur instanceof THREE.Color ? couleur : new THREE.Color(couleur), r: rang, a: celCourante });
   }
   function poserM(lt, base, lx, ly, lz, sx, sy, sz, couleur, rang = -1) { // dans le repère d'un objet incliné (cagette)
     m4.compose(pv.set(lx, ly, lz), q.identity(), sv.set(sx, sy, sz)); m4.premultiply(base);
@@ -167,15 +179,16 @@ export function construireRayon(ctx, r, i) {
     if (boite && t.pile) h *= t.pile; // une pile de boîtes identiques = un seul bloc (moins d'instances)
     for (let p = 0; p < pile; p++) {
       const yy = y + p * h;
+      const cel = celCourante;
       if (boite) {
         poser(lt, x, yy, zf - cote * D / 2, w - 0.006, h - 0.004, D, couleur, rang);
-        if (t.f === 'pack') poser(lot('boite', P.box, P.prod), x, yy + h * 0.35, zf - cote * D / 2, w - 0.002, h * 0.28, D + 0.004, bande, rang);
+        if (t.f === 'pack') { celCourante = null; poser(lot('boite', P.box, P.prod), x, yy + h * 0.35, zf - cote * D / 2, w - 0.002, h * 0.28, D + 0.004, bande, rang); celCourante = cel; }
       } else if (t.f === 'pack') { // fardeaux : rangées de packs sous film, avec bandeau de marque
         const n = t.rangs, d = Math.min(D / n, 0.3);
         for (let k = 0; k < n; k++) {
           const zc = zf - cote * (k + 0.5) * d;
           poser(lot('boite', P.box, P.prod), x, yy, zc, w - 0.008, h - 0.006, d - 0.01, couleur, rang + k * 0.04);
-          poser(lot('boite', P.box, P.prod), x, yy + h * 0.32, zc, w - 0.004, h * 0.3, d - 0.006, bande, rang + k * 0.04);
+          celCourante = null; poser(lot('boite', P.box, P.prod), x, yy + h * 0.32, zc, w - 0.004, h * 0.3, d - 0.006, bande, rang + k * 0.04); celCourante = cel;
         }
       } else { // cylindres, bouteilles, flacons : rangées en profondeur depuis l'avant
         const n = haut ? t.rangs || 2 : 1, dia = w * 0.92, pas = dia * (t.plat || 1) + 0.01;
@@ -185,17 +198,19 @@ export function construireRayon(ctx, r, i) {
   }
   // ----- remplir une tablette entre x1 et x2 -----
   function remplir(x1, x2, y, cote, D, niveau, u) {
-    const plan = PLANS[r.id](niveau, u), zf = z + cote * (0.04 + D - 0.015); // front des produits (léger retrait)
+    const plan = PLAN(niveau, u), zf = z + cote * (0.04 + D - 0.015); // front des produits (léger retrait)
     let x = x1 + 0.015;
     for (let essai = 0; essai < 60; essai++) {
-      const t = T[choix(plan)], w = entre(t.w), pile = t.pile || 1;
+      const nom = choix(plan), t = T[nom], w = entre(t.w), pile = t.pile || 1;
       const h = Math.min(entre(t.h), (HMAX[niveau] - 0.01) / pile);
       const nf = Math.round(entre([t.n[0], t.n[1] + 0.99]) - 0.49);
       if (x + w > x2 - 0.01) break;
-      const couleur = teinte(choix(t.c)), bande = t.b ? teinte(choix(t.b)) : null, rang = rnd();
+      const hx = choix(t.c), couleur = blancVar(), bande = t.b ? teinte(choix(t.b)) : null, rang = rnd();
+      celCourante = caseDe(nom, hx);
       for (let f = 0; f < nf && x + w <= x2 - 0.01; f++) { facing(t, x + w / 2, w, h, Y0 + NIV[niveau] + 0.025, zf, D - 0.05, cote, couleur, Math.min(0.999, rang + (rnd() - 0.5) * 0.1), bande, niveau === 4); x += w + 0.004; }
-      x += 0.012;
+      x += 0.006;
     }
+    celCourante = null;
   }
 
   // ----- gondole classique double face (r1, r2, r4, r5) et vitrines réfrigérées (r3) -----
@@ -203,22 +218,22 @@ export function construireRayon(ctx, r, i) {
     const S = L.struct(), lc = XB - XA, xc = (XA + XB) / 2, nb = Math.round(lc / 1.33), bw = lc / nb;
     const regMat = new THREE.MeshStandardMaterial({ map: P.reglette.clone(), roughness: 0.6 }); regMat.map.repeat.set(lc / 1.6, 1); regMat.map.needsUpdate = true;
     const prof = frigo ? [0.56, 0.56, 0.56, 0.56, 0.56] : PROF;
-    cube(S, lc, 0.12, 2 * (0.04 + prof[0]), xc, Y0, z, 0x4b5563);                 // plinthe
+    const un = COTES.length === 1, zP = un ? z + COTES[0] * (0.04 + prof[0]) / 2 : z;
+    cube(S, lc, 0.12, (un ? 1 : 2) * (0.04 + prof[0]), xc, Y0, zP, 0x4b5563);       // plinthe
     const fond = new THREE.Mesh(P.box, new THREE.MeshStandardMaterial({ map: P.perfo.clone(), roughness: 0.7 }));
     fond.material.map.repeat.set(lc / 0.2, HAUT / 0.2); fond.material.map.needsUpdate = true;
     fond.scale.set(lc, HAUT - 0.12, 0.05); fond.position.set(xc, Y0 + 0.12, z); fond.castShadow = fond.receiveShadow = true; g.add(fond);
-    cube(S, lc + 0.04, 0.04, 0.1, xc, Y0 + HAUT - 0.02, z, 0x9ca3af);             // lisse du haut
-    for (let b = 0; b <= nb; b++) cube(S, 0.05, HAUT - 0.12, 0.09, XA + b * bw, Y0 + 0.12, z, 0x8b929b); // montants
-    for (const cote of [1, -1]) {
+    cube(S, lc + 0.04, 0.05, 0.12, xc, Y0 + HAUT - 0.03, z, 0x4b5563);             // lisse du haut (gris foncé : contour net vu de haut)
+    for (let b = 0; b <= nb; b++) cube(S, 0.05, HAUT - 0.12, 0.09, XA + b * bw, Y0 + 0.12, z, 0x8b939d); // montants
+    for (const cote of COTES) {
       for (let n = 0; n < 5; n++) {
         const D = prof[n], y = Y0 + NIV[n];
-        if (n > 0 || frigo) cube(S, lc, 0.025, D, xc, y, z + cote * (0.04 + D / 2), frigo ? 0xd9dee3 : 0xe5e7eb); // tablette
+        if (n > 0 || frigo) cube(S, lc, 0.025, D, xc, y, z + cote * (0.04 + D / 2), frigo ? 0xe2e6ea : 0xf1f3f5); // tablette
         cube(lot('reglette', P.box, regMat, false), lc, 0.045, 0.012, xc, y - 0.025, z + cote * (0.04 + D + 0.006), 0xffffff); // porte-étiquettes et prix
         for (let b = 0; b < nb; b++) remplir(XA + b * bw + 0.03, XA + (b + 1) * bw - 0.03, y, cote, D, n, (b + 0.5) / nb);
       }
       if (frigo) { // meuble froid : caisson, bandeau lumineux, portes vitrées à LED
         const zv = z + cote * 0.7, nd = Math.round(lc / 0.7), dw = lc / nd;
-        cube(S, lc, 0.02, 0.72, xc, Y0 + 1.88, z + cote * 0.36, 0xf3f4f6);                                   // toit du meuble
         cube(S, lc, 0.18, 0.04, xc, Y0 + 1.72, zv, 0xf3f4f6);                                                // bandeau haut
         cube(L.led(), lc, 0.03, 0.006, xc, Y0 + 1.75, zv + cote * 0.023, 0xe8f4ff);                          // lumière froide
         cube(S, lc, 0.08, 0.06, xc, Y0 + 0.04, zv, 0x374151);                                                // bas de caisse
@@ -229,7 +244,7 @@ export function construireRayon(ctx, r, i) {
           cube(L.led(), 0.012, 1.52, 0.006, xd, Y0 + 0.16, zv + cote * 0.017, 0xdbeafe);             // LED froide
           if (d < nd) cube(S, 0.018, 0.34, 0.03, xd + dw - 0.07, Y0 + 0.75, zv + cote * 0.03, 0xcbd5e1);    // poignée
         }
-        for (const s of [XA, XB]) cube(S, 0.04, 1.9, 1.44, s, Y0, z, 0xe5e7eb);                       // joues
+        for (const s of [XA, XB]) cube(S, 0.04, 1.9, un ? 0.72 : 1.44, s, Y0, un ? z + cote * 0.36 : z, 0xe5e7eb); // joues
       }
     }
   }
@@ -297,8 +312,8 @@ export function construireRayon(ctx, r, i) {
       cube(L.bois(), 0.8, 0.13, 1.2, xm, Y0 + 0.12, z, 0xc8a26b);
       for (let c = 0; c < 4; c++) for (let a = 0; a < 2; a++) for (let b = 0; b < 3; b++) {
         const rang = Math.min(0.999, 0.12 + c * 0.22 + rnd() * 0.2);
-        cube(lot('boite', P.box, P.prod), 0.37, 0.28, 0.38, xm + (a - 0.5) * 0.39, Y0 + 0.25 + c * 0.285, z + (b - 1) * 0.39, teinte(0xe0f2fe, 0.03), rang);
-        cube(lot('boite', P.box, P.prod), 0.374, 0.08, 0.384, xm + (a - 0.5) * 0.39, Y0 + 0.34 + c * 0.285, z + (b - 1) * 0.39, 0x2563eb, rang);
+        celCourante = caseDe('eau', 0xe0f2fe); cube(lot('boite', P.box, P.prod), 0.37, 0.28, 0.38, xm + (a - 0.5) * 0.39, Y0 + 0.25 + c * 0.285, z + (b - 1) * 0.39, blancVar(), rang);
+        celCourante = null; cube(lot('boite', P.box, P.prod), 0.374, 0.08, 0.384, xm + (a - 0.5) * 0.39, Y0 + 0.34 + c * 0.285, z + (b - 1) * 0.39, 0x2563eb, rang);
       }
       cube(S, 0.03, 1.4, 0.03, xf(0.06), Y0 + 0.12, z + 0.62, 0x6b7280); promo(Y0 + 1.58);
       etiquette(xm + sens * 0.4, Y0 + 0.17, z - 0.3, 0, true, sens);
@@ -312,14 +327,15 @@ export function construireRayon(ctx, r, i) {
       cube(L.verre(), bw - 0.04, 0.012, bp - 0.04, xm, Y0 + hb - 0.015, z, 0xffffff);
       cube(L.led(), bw - 0.12, 0.01, 0.02, xm, Y0 + hb - 0.05, z + 0.6, 0xe8f4ff);
       const t = T.glaces;
-      for (let a = 0; a < 4; a++) for (let b = 0; b < 8; b++) for (let c = 0; c < 2; c++) poser(lot('cyl', P.cyl, P.froid), xm + (a - 1.5) * 0.16, Y0 + 0.5 + c * 0.12, z + (b - 3.5) * 0.145, 0.14, 0.115, 0.14, teinte(choix(t.c)), Math.min(0.999, c * 0.4 + rnd() * 0.6));
+      for (let a = 0; a < 4; a++) for (let b = 0; b < 8; b++) for (let c = 0; c < 2; c++) { celCourante = caseDe('glaces', choix(t.c)); poser(lot('cyl', P.cyl, P.froid), xm + (a - 1.5) * 0.16, Y0 + 0.5 + c * 0.12, z + (b - 3.5) * 0.145, 0.14, 0.115, 0.14, blancVar(), Math.min(0.999, c * 0.4 + rnd() * 0.6)); }
+      celCourante = null;
       cube(S, 0.03, 0.8, 0.03, xf(0.06), Y0 + hb, z + 0.6, 0x6b7280); promo(Y0 + 1.58);
       return;
     }
     // tête classique : fond couleur du rayon, 3 tablettes remplies d'un seul produit en promo
     const fondT = new THREE.Mesh(P.box, mat(r.couleur, { roughness: 0.7 })); fondT.scale.set(0.05, HAUT - 0.12, 1.36); fondT.position.set(xi + sens * 0.025, Y0 + 0.12, z); fondT.castShadow = true; g.add(fondT);
     for (const s of [1, -1]) cube(S, pr, HAUT - 0.12, 0.03, xm, Y0 + 0.12, z + s * 0.665, 0x9ca3af);   // joues
-    const t = T[PROMO[r.id]], hs = [0.12, 0.6, 1.08], couleur = teinte(choix(t.c)), bande = t.b ? teinte(choix(t.b)) : null;
+    const t = T[PROMO[r.id]], hs = [0.12, 0.6, 1.08], couleur = blancVar(), celP = caseDe(PROMO[r.id], choix(t.c)), bande = t.b ? teinte(choix(t.b)) : null;
     for (let n = 0; n < 3; n++) {
       const y = Y0 + hs[n];
       if (n) cube(S, pr, 0.025, 1.3, xm, y, z, 0xe5e7eb);
@@ -329,23 +345,42 @@ export function construireRayon(ctx, r, i) {
       const pile = Math.max(t.pile || 1, Math.floor(0.44 / h));
       for (let a = 0; a < nx; a++) for (let b = 0; b < nz; b++) for (let c = 0; c < pile; c++) {
         const yy = y + 0.025 + c * h, xx = xi + sens * (0.08 + (a + 0.5) * dx), zz = z + (b - (nz - 1) / 2) * (w + 0.006), rang = Math.min(0.999, 0.1 + c * 0.25 + rnd() * 0.5);
-        cube(lot('boite', P.box, P.prod), dx - 0.01, h - 0.005, w, xx, yy, zz, couleur, rang);
-        if (bande) cube(lot('boite', P.box, P.prod), dx - 0.006, h * 0.28, w + 0.004, xx, yy + h * 0.35, zz, bande, rang);
+        celCourante = celP; cube(lot('boite', P.box, P.prod), dx - 0.01, h - 0.005, w, xx, yy, zz, couleur, rang);
+        celCourante = null; if (bande) cube(lot('boite', P.box, P.prod), dx - 0.006, h * 0.28, w + 0.004, xx, yy + h * 0.35, zz, bande, rang);
       }
     }
     promo(Y0 + HAUT - 0.27);
   }
 
+  // ----- îlot de bacs (palox) remplis de fruits : opts.ilots = [[x, z, sorte], ...] -----
+  const SORTES = [{ c: [0xea580c, 0xf97316, 0xc2410c], r: 0.13, a: 1.1 }, { c: [0x166534, 0x15803d], r: 0.13, a: 1.35 }, { c: [0xfacc15, 0xeab308, 0x84cc16], r: 0.09, a: 1 }, { c: [0xdc2626, 0xb91c1c, 0x16a34a], r: 0.06, a: 1 }, { c: [0xf97316, 0xfb923c], r: 0.06, a: 1 }];
+  function palox(xm, zc, so) {
+    const B = L.bois(), S = L.struct(), bw = 1.15, bp = 0.8, hb = 0.62, bois = teinte(0xb08a5a, 0.05), sorte = SORTES[so % SORTES.length];
+    cube(S, bw + 0.05, 0.1, bp + 0.05, xm, Y0, zc, 0x6b7280);                                  // socle
+    cube(B, bw - 0.06, 0.02, bp - 0.06, xm, Y0 + 0.5, zc, 0x6b4f2e);                          // faux fond (bac bien rempli)
+    for (const s of [1, -1]) { cube(B, bw, hb, 0.04, xm, Y0 + 0.1, zc + s * (bp / 2 - 0.02), bois); cube(B, 0.04, hb, bp, xm + s * (bw / 2 - 0.02), Y0 + 0.1, zc, bois); }
+    const nx = Math.floor((bw - 0.08) / (sorte.r * 2 * sorte.a)), nz = Math.floor((bp - 0.08) / (sorte.r * 2));
+    for (let c = 0; c < 3; c++) for (let a = 0; a < nx; a++) for (let b = 0; b < nz; b++) {
+      if (c > 0 && (a + b + c) % 2) continue;
+      const rr = sorte.r * (0.9 + rnd() * 0.2), col = teinte(choix(sorte.c), 0.1);
+      poser(lot('fruit', P.boule, P.fruit), xm - bw / 2 + 0.04 + (a + 0.5) * (bw - 0.08) / nx + (c % 2) * rr * 0.5, Y0 + 0.52 + c * rr * 1.2, zc - bp / 2 + 0.04 + (b + 0.5) * (bp - 0.08) / nz, rr * 2 * sorte.a, rr * 1.8, rr * 2, col, Math.min(0.999, 0.1 + c * 0.3 + rnd() * 0.3));
+    }
+    etiquette(xm, Y0 + 0.5, zc + bp / 2 + 0.005, 1, rnd() < 0.4);
+  }
+
   // ----- construction -----
-  if (r.id === 'r0') etal(); else gondole(r.id === 'r3');
-  tete(-1); tete(1);
-  // panneau suspendu du rayon (même rendu qu'avant), lisible des deux côtés
-  const hexa = '#' + r.couleur.toString(16).padStart(6, '0');
-  const face = new THREE.MeshStandardMaterial({ map: texte(r.nom.toUpperCase(), { fond: hexa, couleur: '#fff', taille: 54 }) });
-  const panneau = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.9, 0.08), [mat(r.couleur), mat(r.couleur), mat(r.couleur), mat(r.couleur), face, face]);
-  panneau.position.set(x0 + 4, 3.2, z); g.add(panneau);
-  const hautSupport = r.id === 'r0' ? 1.22 : r.id === 'r3' ? 1.9 : HAUT;
-  boite(0.06, 3.2 - 0.45 - Y0 - hautSupport, 0.06, 0x9ca3af, x0 + 4, Y0 + hautSupport, z, g);
+  if (opts.ilots) opts.ilots.forEach(([x, zz, so]) => palox(x, zz, so));
+  else if (r.id === 'r0' && !opts.plan) etal(); else gondole(opts.frigo ?? r.id === 'r3');
+  if (!opts.sansTetes && !opts.ilots) { tete(-1); tete(1); }
+  // enseigne suspendue du rayon, bleue comme en magasin, lisible des deux côtés (pastille à la couleur du rayon)
+  if (!opts.sansPanneau && !opts.ilots) {
+    const face = new THREE.MeshStandardMaterial({ map: enseigne(THREE, r.nom, r.couleur), roughness: 0.5 });
+    const bleu = mat(0x1d4ed8, { roughness: 0.5 });
+    const panneau = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.62, 0.06), [bleu, bleu, bleu, bleu, face, face]);
+    panneau.position.set(-22, 3.1, z); panneau.castShadow = true; g.add(panneau);
+    for (const dx of [-1.9, 1.9]) boite(0.03, 1.2, 0.03, 0x9ca3af, -22 + dx, 3.4, z, g, false); // suspentes
+  }
+  void texte; void x0;
 
   // InstancedMesh : produits triés par rang pour que majStock n'ait qu'à régler .count
   const stock = []; let instances = 0;
@@ -353,7 +388,13 @@ export function construireRayon(ctx, r, i) {
     if (!lt.items.length) continue;
     for (const it of lt.items) if (it.r >= 0) it.r = Math.min(0.999, it.r);
     lt.items.sort((a, b) => a.r - b.r);
-    const im = new THREE.InstancedMesh(lt.geo, lt.m, lt.items.length);
+    let geo = lt.geo;
+    if (lt.tex) { // une case d'atlas par instance
+      geo = lt.geo.clone(); const at = new Float32Array(lt.items.length * 4);
+      lt.items.forEach((it, k) => at.set(it.a || P.atlas.blanc, k * 4));
+      geo.setAttribute('aAtlas', new THREE.InstancedBufferAttribute(at, 4));
+    }
+    const im = new THREE.InstancedMesh(geo, lt.m, lt.items.length);
     lt.items.forEach((it, k) => { im.setMatrixAt(k, it.m); im.setColorAt(k, it.c); });
     im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
     im.castShadow = lt.ombre; im.receiveShadow = cle !== 'verre' && cle !== 'led';
@@ -363,7 +404,8 @@ export function construireRayon(ctx, r, i) {
     const fixes = lt.items.filter((it) => it.r < 0).length, rangs = lt.items.slice(fixes).map((it) => it.r);
     if (rangs.length) stock.push({ im, fixes, rangs });
   }
-  boite(l, 2, 1.5, P.invisible, x0 + l / 2, Y0, z, g, false);   // zone de clic
+  if (opts.ilots) opts.ilots.forEach(([x, zz]) => boite(1.7, 1, 1.2, P.invisible, x + (x < -1.4 ? 0.2 : -0.2), Y0, zz, g, false));
+  else boite(l, 2, COTES.length === 1 ? 0.8 : 1.5, P.invisible, x0 + l / 2, Y0, COTES.length === 1 ? z + COTES[0] * 0.4 : z, g, false);   // zone de clic
   clic(g, r.id);
 
   function majStock(frac) {
@@ -372,4 +414,18 @@ export function construireRayon(ctx, r, i) {
   }
   majStock(1);
   return { g, z, x0, l, majStock, instances };
+}
+
+// ---------- enseigne de rayon : fond bleu, nom en blanc, pastille couleur du rayon ----------
+function enseigne(THREE, nom, couleur) {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 144; const g = c.getContext('2d');
+  const grd = g.createLinearGradient(0, 0, 0, 144); grd.addColorStop(0, '#2563eb'); grd.addColorStop(1, '#1d4ed8');
+  g.fillStyle = grd; g.fillRect(0, 0, 1024, 144);
+  g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(0, 0, 1024, 6); g.fillRect(0, 138, 1024, 6);
+  g.font = '700 66px Inter, Arial, sans-serif'; g.textBaseline = 'middle';
+  const w = g.measureText(nom).width, x = (1024 - w - 70) / 2;
+  g.fillStyle = '#ffffff'; g.beginPath(); g.roundRect(x, 44, 56, 56, 12); g.fill();
+  g.fillStyle = '#' + couleur.toString(16).padStart(6, '0'); g.beginPath(); g.roundRect(x + 8, 52, 40, 40, 8); g.fill();
+  g.fillStyle = '#ffffff'; g.fillText(nom, x + 76, 76);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 }

@@ -6,16 +6,16 @@
 //   ch.dessiner()               // recalcule la texture (appelé quelques fois par seconde quand elle est visible)
 //   ch.montrer(oui) / ch.parcours(oui) / ch.vider()
 //   ch.zones()                  // [{ x, z, part }] : les endroits les plus fréquentés (part de la présence totale)
-// Surface couverte : la surface de vente (x de -40 à 2, z de -27 à 3), maille de 50 cm.
+// Surface couverte : la surface de vente (x de -40 à 2, z de -29,5 à 3), maille de 50 cm.
 
 export function creerChaleur({ THREE, scene, boucles }) {
-  const X0 = -40, Z0 = -27, L = 42, P = 30, PAS = 0.5, NX = L / PAS, NZ = P / PAS, FENETRE = 30;
+  const X0 = -40, Z0 = -29.5, L = 42, P = 32.5, PAS = 0.5, NX = L / PAS, NZ = P / PAS, FENETRE = 30;
   const seaux = Array.from({ length: FENETRE }, () => new Float32Array(NX * NZ));
   const somme = new Float32Array(NX * NZ);
   let courant = 0, derniere = null;
-  // noyau gaussien 7 × 7 (sigma 1,6 maille, soit 80 cm)
-  const R = 3, NOYAU = [];
-  for (let j = -R; j <= R; j++) for (let i = -R; i <= R; i++) NOYAU.push([i, j, Math.exp(-(i * i + j * j) / (2 * 1.6 * 1.6))]);
+  // noyau gaussien 11 × 11 (sigma 2,4 mailles, soit 1,2 m) : une tache douce autour de chaque client
+  const R = 5, NOYAU = [];
+  for (let j = -R; j <= R; j++) for (let i = -R; i <= R; i++) NOYAU.push([i, j, Math.exp(-(i * i + j * j) / (2 * 2.4 * 2.4))]);
 
   function ajouter(points, poids = 1, age = 0) {
     const s = seaux[(courant - Math.min(FENETRE - 1, age) + FENETRE) % FENETRE];
@@ -38,11 +38,11 @@ export function creerChaleur({ THREE, scene, boucles }) {
   }
   function vider() { for (const s of seaux) s.fill(0); somme.fill(0); derniere = null; }
 
-  // texture : bleu (faible) -> jaune -> rouge (forte), transparente là où personne ne passe
+  // texture : bleu clair (faible) -> jaune -> orange -> rouge (forte), transparente là où personne ne passe
   const toile = document.createElement('canvas'); toile.width = NX; toile.height = NZ;
   const g2 = toile.getContext('2d'), img = g2.createImageData(NX, NZ);
   const tex = new THREE.CanvasTexture(toile); tex.colorSpace = THREE.SRGBColorSpace; tex.magFilter = THREE.LinearFilter; tex.minFilter = THREE.LinearFilter;
-  const RAMPE = [[0, [37, 99, 235]], [0.35, [6, 182, 212]], [0.6, [250, 204, 21]], [0.8, [249, 115, 22]], [1, [220, 38, 38]]];
+  const RAMPE = [[0, [147, 197, 253]], [0.3, [96, 165, 250]], [0.55, [125, 211, 252]], [0.72, [253, 186, 116]], [0.87, [249, 115, 22]], [1, [220, 38, 38]]];
   function couleur(v) {
     for (let k = 1; k < RAMPE.length; k++) if (v <= RAMPE[k][0]) { const [a, ca] = RAMPE[k - 1], [b, cb] = RAMPE[k], f = (v - a) / (b - a); return ca.map((c, i) => c + (cb[i] - c) * f); }
     return RAMPE[RAMPE.length - 1][1];
@@ -53,27 +53,36 @@ export function creerChaleur({ THREE, scene, boucles }) {
     const d = img.data;
     for (let n = 0; n < somme.length; n++) {
       const v = maxi ? Math.pow(somme[n] / maxi, 0.45) : 0, [r, g, b] = couleur(v);
-      d[n * 4] = r; d[n * 4 + 1] = g; d[n * 4 + 2] = b; d[n * 4 + 3] = v < 0.05 ? (v / 0.05) * 80 : Math.min(225, 95 + v * 130);
+      d[n * 4] = r; d[n * 4 + 1] = g; d[n * 4 + 2] = b; d[n * 4 + 3] = v < 0.35 ? Math.pow(v / 0.35, 2) * 55 : Math.min(175, 55 + (v - 0.35) * 185);
     }
     g2.putImageData(img, 0, 0); tex.needsUpdate = true;
   }
   const plan = new THREE.Mesh(new THREE.PlaneGeometry(L, P), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
-  plan.rotation.x = -Math.PI / 2; plan.position.set(X0 + L / 2, 0.235, Z0 + P / 2); plan.renderOrder = 2; plan.visible = false; scene.add(plan);
+  plan.rotation.x = -Math.PI / 2; plan.position.set(X0 + L / 2, 0.235, Z0 + P / 2); plan.renderOrder = 2; plan.visible = false; plan.userData.dyn = true; scene.add(plan);
 
   // parcours : les boucles réellement suivies par les clients, en pointillés avec le sens de marche
-  const traces = new THREE.Group(); traces.visible = false; scene.add(traces);
-  const matLigne = new THREE.LineDashedMaterial({ color: 0x1e3a8a, dashSize: 0.7, gapSize: 0.45, transparent: true, opacity: 0.9, depthWrite: false });
-  const fleche = new THREE.ShapeGeometry(new THREE.Shape([new THREE.Vector2(0, 0.45), new THREE.Vector2(0.32, -0.25), new THREE.Vector2(-0.32, -0.25)]));
+  const traces = new THREE.Group(); traces.visible = false; traces.userData.dyn = true; scene.add(traces);
+  const matLigne = new THREE.LineDashedMaterial({ color: 0x2563eb, dashSize: 0.32, gapSize: 0.32, transparent: true, opacity: 0.95, depthWrite: false, toneMapped: false });
+  const fleche = new THREE.ShapeGeometry(new THREE.Shape([new THREE.Vector2(0, 0.32), new THREE.Vector2(0.22, -0.18), new THREE.Vector2(-0.22, -0.18)]));
   fleche.rotateX(-Math.PI / 2);
-  const matFleche = new THREE.MeshBasicMaterial({ color: 0x1e3a8a, side: THREE.DoubleSide, depthWrite: false });
+  const matFleche = new THREE.MeshBasicMaterial({ color: 0x2563eb, side: THREE.DoubleSide, depthWrite: false, toneMapped: false });
+  // toutes les boucles en un seul trait (segments) et toutes les flèches en un seul maillage : 2 dessins au lieu de 30
+  const segs = [], posF = [], idxF = [], o3 = new THREE.Object3D(), v = new THREE.Vector3();
+  const fp = fleche.attributes.position, fi = fleche.index ? fleche.index.array : [...Array(fp.count).keys()];
   for (const b of boucles) {
     const pts = b.getSpacedPoints(240).map((p) => new THREE.Vector3(p.x, 0.32, p.z));
-    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), matLigne); l.computeLineDistances(); l.renderOrder = 3; traces.add(l);
+    for (let k = 0; k < pts.length - 1; k++) segs.push(pts[k], pts[k + 1]);
     for (const u of [0.1, 0.35, 0.6, 0.85]) {
-      const p = b.getPointAt(u), tg = b.getTangentAt(u), m = new THREE.Mesh(fleche, matFleche);
-      m.position.set(p.x, 0.33, p.z); m.rotation.y = Math.atan2(tg.x, tg.z) + Math.PI; m.renderOrder = 3; traces.add(m);
+      const p = b.getPointAt(u), tg = b.getTangentAt(u);
+      o3.position.set(p.x, 0.33, p.z); o3.rotation.set(0, Math.atan2(tg.x, tg.z) + Math.PI, 0); o3.updateMatrix();
+      const base = posF.length / 3;
+      for (let k = 0; k < fp.count; k++) { v.fromBufferAttribute(fp, k).applyMatrix4(o3.matrix); posF.push(v.x, v.y, v.z); }
+      for (const k of fi) idxF.push(base + k);
     }
   }
+  const lignes = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segs), matLigne); lignes.computeLineDistances(); lignes.renderOrder = 3; traces.add(lignes);
+  const gF = new THREE.BufferGeometry(); gF.setAttribute('position', new THREE.Float32BufferAttribute(posF, 3)); gF.setIndex(idxF);
+  const fl = new THREE.Mesh(gF, matFleche); fl.renderOrder = 3; traces.add(fl);
 
   function zones(n = 3) {
     // les mailles les plus chargées, regroupées à 4 m près
