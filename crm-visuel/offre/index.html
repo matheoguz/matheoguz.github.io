@@ -71,6 +71,17 @@
   .apparait.vu { opacity: 1; transform: none; }
   .carte h3 { margin: 0 0 6px; font-size: 18px; }
   .carte p { margin: 0; color: var(--doux); font-size: 15px; }
+  .inclus { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0 6px; }
+  .inclus h4 { margin: 0 0 6px; font-size: 15px; }
+  .inclus ul { margin: 0; }
+  .alertes { display: grid; gap: 10px; }
+  .alerte { display: flex; gap: 12px; align-items: flex-start; background: var(--carte); border: 1px solid var(--ligne); border-left: 4px solid #ef4444; border-radius: 10px; padding: 12px 14px; }
+  .alerte.orange { border-left-color: #f59e0b; } .alerte.bleu { border-left-color: #3b82f6; }
+  .alerte b { display: block; font-size: 15px; } .alerte span { color: var(--doux); font-size: 14px; }
+  .alerte em { margin-left: auto; font-style: normal; font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+  .duo img { width: 100%; border-radius: 12px; border: 1px solid var(--ligne); box-shadow: 0 14px 30px rgba(17,24,39,.08); }
+  @media (max-width: 760px) { .inclus, .duo { grid-template-columns: 1fr; } .alerte em { display: none; } }
   .etapes { counter-reset: e; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .etapes .carte::before { counter-increment: e; content: counter(e); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-doux); color: var(--accent); font-weight: 700; margin-bottom: 12px; }
   .exemples { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -128,7 +139,7 @@
 <body>
 <nav><div class="large">
   <a class="marque" href="#"><i>3D</i>CRM visuel 3D</a>
-  <div class="liens"><a href="#exemples">Exemples</a><a href="#tarifs">Tarifs</a><a href="#conditions">Conditions</a><a href="#contact">Contact</a></div>
+  <div class="liens"><a href="#a-traiter">Alertes</a><a href="#exemples">Exemples</a><a href="#tarifs">Tarifs</a><a href="#conditions">Conditions</a><a href="#contact">Contact</a></div>
 </div></nav>
 
 <header class="une"><div class="large">
@@ -170,12 +181,37 @@
   <p class="note-chiffres">Ce que montre la démo grande surface, avec des données inventées.</p>
 </div></section>
 
+<section id="a-traiter"><div class="large">
+  <h2>L'écran vous dit quoi faire maintenant.</h2>
+  <p class="chapo">La maquette ne sert pas qu'à regarder : elle repère ce qui demande votre attention, par ordre d'urgence. Un clic sur une alerte zoome sur l'endroit, un autre la traite.</p>
+  <div class="duo">
+    <div class="alertes apparait">
+      <div class="alerte"><div><b>Ruptures : frais et surgelés</b><span>6 références vides, et c'est le rayon qui se vide le plus vite. La commande de réassort est prête.</span></div><em>Commander</em></div>
+      <div class="alerte orange"><div><b>File d'attente en caisse</b><span>Trop de clients par caisse ouverte : une hôtesse est disponible pour ouvrir la caisse 5.</span></div><em>Ouvrir</em></div>
+      <div class="alerte orange"><div><b>Livraison au quai</b><span>Palettes déchargées à mettre en rayon avant l'affluence de midi.</span></div><em>Affecter</em></div>
+      <div class="alerte bleu"><div><b>Entretien à 14 h</b><span>Le candidat au poste de caissier arrive bientôt au bureau RH.</span></div><em>Voir</em></div>
+    </div>
+    <img id="img-a-traiter" src="demo-grande-surface.jpg" alt="Démo grande surface : la liste « À traiter » et la carte de l'affluence dans le magasin" loading="lazy">
+  </div>
+  <p class="note-chiffres">Exemples tirés de la démo grande surface : les alertes y sont calculées en direct à partir de ses données inventées (stocks, files d'attente, planning, livraisons). Avec votre écran, elles le sont à partir des vôtres.</p>
+</div></section>
+
+<section id="donnees" style="background:var(--carte);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne)"><div class="large">
+  <h2>Et vos vraies données ?</h2>
+  <p class="chapo">Les démos tournent avec des chiffres inventés. Votre écran, lui, affiche les vôtres. Trois façons de les faire arriver, de la plus simple à la plus complète :</p>
+  <div class="etapes">
+    <div class="carte apparait"><h3>En un clic</h3><p>Les statuts (en pause, en caisse, en leçon, rayon vide) se changent d'un clic, depuis l'écran ou un téléphone.</p></div>
+    <div class="carte apparait"><h3>Depuis vos fichiers</h3><p>Votre planning (iCal, Google Agenda) et les exports de votre logiciel (fichier Excel ou CSV) sont repris pour ne rien saisir deux fois.</p></div>
+    <div class="carte apparait"><h3>Branché à votre logiciel</h3><p>Caisse, stock, commandes : branchement direct sur devis, après étude de ce que votre logiciel permet. Rien n'est promis avant.</p></div>
+  </div>
+</div></section>
+
 <section id="exemples" style="background:var(--carte);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne)"><div class="large">
   <h2>Deux exemples à ouvrir</h2>
   <p class="chapo">Les deux démos tournent toutes seules, avec des noms et des chiffres inventés. Votre version reprend vos locaux, votre équipe et vos chiffres.</p>
   <div class="exemples">
     <div class="exemple apparait"><div class="vignette"><img src="demo-zoom.jpg" alt="Zoom sur la salle de code de l'auto-école fictive" loading="lazy"><img src="demo-auto-ecole.jpg" alt="" loading="lazy"></div><div><h3>Une auto-école</h3><p>Voitures en leçon ou au parking, moniteurs disponibles, élèves de la salle de code, planning de chaque moniteur, élèves à relancer.</p><a class="btn" href="../">Ouvrir la démo</a></div></div>
-    <div class="exemple apparait"><div class="vignette"><img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" loading="lazy"><img src="demo-commande.jpg" alt="" loading="lazy"></div><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock exact de chaque rayon et ruptures, commande de réassort en un clic, équipe présente, pauses et coût de la journée, livraisons au quai, et un côté RH : recrutement, CV, entretiens, dossiers du personnel.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a></div></div>
+    <div class="exemple apparait"><div class="vignette"><img src="demo-grande-surface.jpg" alt="Grande surface fictive en maquette 3D" loading="lazy"><img src="demo-commande.jpg" alt="" loading="lazy"></div><div><h3>Une grande surface</h3><p>Caisses ouvertes et files d'attente, stock exact de chaque rayon et ruptures, commande de réassort en un clic, équipe présente, pauses et coût de la journée, livraisons au quai, et un côté RH : recrutement, CV, entretiens, dossiers du personnel.</p><a class="btn" href="../grande-surface/">Ouvrir la démo</a> <a class="btn clair" href="../magasin/">L'offre magasins</a></div></div>
   </div>
 </div></section>
 
@@ -198,14 +234,21 @@
       <div class="ligne"><span>Plusieurs sites, grande surface<small>supermarché, plusieurs agences, entrepôt</small></span><b>Sur devis</b></div>
       <div class="ligne"><span>Centre commercial, grand groupe<small>plusieurs bâtiments, beaucoup de personnel</small></span><b>Sur devis</b></div>
       <p class="devis">Le devis tient compte de la taille des locaux à dessiner, du nombre de personnes, de véhicules ou de rayons suivis, et des branchements à vos logiciels. On l'établit après la démo, gratuitement.</p>
-      <ul>
-        <li>la maquette 3D de vos locaux, dessinée pour vous</li>
-        <li>le planning, l'équipe, les véhicules ou les stocks, en direct</li>
-        <li>les chiffres clés et les fiches au clic</li>
-        <li>l'accès sur ordinateur, tablette et téléphone</li>
-        <li>les mises à jour et l'aide par mail</li>
-        <li>en option, sur devis : le branchement à votre logiciel de caisse ou de stock</li>
-      </ul>
+      <div class="inclus">
+        <div><h4>La mise en place (une fois)</h4><ul>
+          <li>la maquette 3D de vos locaux, dessinée pour vous</li>
+          <li>le paramétrage : votre équipe, vos véhicules ou vos rayons</li>
+          <li>l'import de votre planning et de vos chiffres de départ</li>
+          <li>une prise en main de 30 minutes avec vous</li>
+        </ul></div>
+        <div><h4>L'abonnement (chaque mois)</h4><ul>
+          <li>l'écran en direct, sur ordinateur, tablette et téléphone</li>
+          <li>les alertes « à traiter » et les fiches au clic</li>
+          <li>l'hébergement, les mises à jour et l'aide par mail</li>
+          <li>sans engagement, résiliable chaque mois</li>
+        </ul></div>
+      </div>
+      <p class="devis">En option, sur devis : le branchement direct à votre logiciel de caisse ou de stock, après étude de ce que votre logiciel permet.</p>
       <a class="btn" href="#contact">Demander mon devis</a>
     </div>
     <div class="conditions" id="conditions">
