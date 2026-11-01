@@ -427,12 +427,22 @@ form.f .act{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
   const fmtJ = d => d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
   const eur = n => n.toLocaleString('fr-FR') + ' €';
   const ago = d => {
-    const s = (now - d) / 1000;
+    const s = (Date.now() - d) / 1000;
     if (s < 90) return "à l'instant";
     if (s < 3600) return 'il y a ' + Math.round(s / 60) + ' min';
     if (same(d, now)) return "aujourd'hui " + fmtH(d);
     if (same(d, new Date(now - DAY))) return 'hier ' + fmtH(d);
     return fmtJ(d);
+  };
+  // Échéance d'une action programmée, à partir de son libellé (dans la vraie version : une date en base).
+  const dueOf = (txt, base = now) => {
+    if (!txt) return null;
+    let m;
+    if ((m = txt.match(/^dans (\d+) h$/))) return new Date(base.getTime() + m[1] * 36e5);
+    if ((m = txt.match(/^dans (\d+) jours?$/))) return new Date(base.getTime() + m[1] * DAY);
+    if ((m = txt.match(/^(?:aujourd'hui|ce soir) (\d+) h$/))) return at(0, +m[1]);
+    if ((m = txt.match(/^demain(?: (\d+) h)?$/))) return at(1, m[1] ? +m[1] : 9);
+    return null;
   };
   const ini = n => n.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
   const AVC = ['#2f5bd3', '#1b7a46', '#a2600a', '#5b40b8', '#b0365a', '#2b7a8a', '#6a5a3a'];
@@ -482,7 +492,7 @@ form.f .act{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
     { id: 'rap', on: true, titre: 'Rappel si personne n\'a appelé', sous: 'Pour ne laisser aucun client sans réponse', icon: 'phone', trig: ['Demande non traitée', 'Statut « Nouveau » ou « À rappeler »'], wait: '1 h si urgent, 3 h sinon', act: ['Rappeler à Julien', 'Notification'], sms: null },
     { id: 'dev', on: true, titre: 'Relance des devis', sous: '3 jours puis 7 jours après l\'envoi', icon: 'refresh', trig: ['Devis envoyé', 'Sans réponse du client'], wait: '3 jours', act: ['Envoyer un SMS de relance', '2e relance à 7 jours'], sms: 'Bonjour, avez-vous pu regarder notre devis ? Julien reste disponible pour en parler. Martin Plomberie' },
     { id: 'veille', on: true, titre: 'Rappel du rendez-vous', sous: 'La veille, à 18 h', icon: 'cal', trig: ['Rendez-vous demain', ''], wait: 'La veille à 18 h', act: ['Envoyer un SMS au client', 'Avec l\'heure et l\'adresse'], sms: 'Rappel : Martin Plomberie passe demain à 9 h. Un empêchement ? Répondez à ce SMS.' },
-    { id: 'avis', on: false, titre: "Demande d'avis Google", sous: 'Le soir du chantier gagné', icon: 'star', trig: ['Chantier gagné', 'Statut « Gagné »'], wait: 'Le soir à 18 h', act: ['Envoyer le lien de votre fiche Google', ''], sms: 'Merci pour votre confiance ! Un petit avis nous aide beaucoup : [lien vers la fiche Google]. Julien, Martin Plomberie' },
+    { id: 'avis', on: true, titre: "Demande d'avis Google", sous: 'Le soir du chantier gagné', icon: 'star', trig: ['Chantier gagné', 'Statut « Gagné »'], wait: 'Le soir à 18 h', act: ['Envoyer le lien de votre fiche Google', ''], sms: 'Merci pour votre confiance ! Un petit avis nous aide beaucoup : [lien vers la fiche Google]. Julien, Martin Plomberie' },
     { id: 'tel', on: false, soon: true, titre: 'Assistant téléphonique', sous: 'Répondre aux appels manqués', icon: 'phone', trig: ['Appel manqué', ''], wait: null, act: ['L\'assistant répond et prend la demande', ''], sms: null },
   ];
   let selRule = 'conf';
@@ -555,9 +565,9 @@ form.f .act{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 
     const items = [];
     rdvs.filter(r => same(r.debut, now)).forEach(r => items.push({ d: r.debut, h: `<div class="item click" data-open="${r.lead}"><div class="dot c-blue">${ic('cal')}</div><div><b>${esc(r.nom)}</b><small>${esc(r.quoi)}</small></div><div class="when">${fmtH(r.debut)}</div></div>` }));
-    leads.forEach(l => l.tl.forEach(t => { if (t[0] === 'plan' && /aujourd|dans \d+ h|ce soir/.test(t[2])) items.push({ d: now, h: `<div class="item click" data-open="${l.id}"><div class="dot c-amber">${ic('refresh')}</div><div><b>${esc(t[1])}</b><small>${esc(l.nom)}</small></div><div class="when">${esc(t[2])}</div></div>` }); }));
+    leads.forEach(l => l.tl.forEach(t => { const due = dueOf(t[2]); if (t[0] === 'plan' && due && same(due, new Date())) items.push({ d: due, h: `<div class="item click" data-open="${l.id}"><div class="dot c-amber">${ic('refresh')}</div><div><b>${esc(t[1])}</b><small>${esc(l.nom)}</small></div><div class="when">${esc(t[2])}</div></div>` }); }));
     $('#todayN').textContent = items.length + ' à faire';
-    $('#agenda').innerHTML = items.length ? items.map(x => x.h).join('') : '<div class="empty">Rien de prévu aujourd’hui.</div>';
+    $('#agenda').innerHTML = items.length ? items.sort((a, b) => a.d - b.d).map(x => x.h).join('') : '<div class="empty">Rien de prévu aujourd’hui.</div>';
   }
 
   // ---------- Demandes ----------
@@ -757,6 +767,8 @@ form.f .act{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 
   function renderAll(newId) { renderDash(); renderList(newId); renderCal(); renderAuto(); renderAvis(); renderBell(); }
   renderAll(); go();
+  // Les heures (« il y a 5 min ») se mettent à jour toutes les minutes.
+  setInterval(() => { if (!ouvert && !document.querySelector('dialog[open]')) { renderDash(); renderList(); renderBell(); } }, 60000);
 })();
 </script>
 </body>
