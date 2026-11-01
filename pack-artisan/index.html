@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Espace demandes — Martin Plomberie (démo)</title>
+<meta name="description" content="Démonstration fictive : toutes les demandes de devis d'un plombier au même endroit, avec réponse automatique, rappels et relances.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f7;--surface:#fff;--ink:#121820;--muted:#5b6674;--faint:#8a94a1;--line:#e3e6ea;--line2:#eef0f3;
+  --side:#0f1720;--sideInk:#c9d2dc;--sideMuted:#7d8a98;
+  --accent:#1e4fd1;--accentSoft:#e9effc;
+  --red:#c2322b;--redSoft:#fbeceb;--amber:#a86206;--amberSoft:#fdf3e3;--green:#1c7a46;--greenSoft:#e7f4ec;--grey:#5b6674;--greySoft:#eef0f3;
+  --radius:12px;--font:'Archivo',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh;background:linear-gradient(to right,var(--side) 232px,transparent 232px)}
+/* barre latérale */
+.side{background:var(--side);color:var(--sideInk);padding:20px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px}
+.brand .logo{width:30px;height:30px;border-radius:8px;background:#1e4fd1;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.brand b{display:block;color:#fff;font-size:14px}
+.brand small{color:var(--sideMuted);font-size:12px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-align:left;color:var(--sideInk);font-weight:500}
+.nav button:hover{background:rgba(255,255,255,.05)}
+.nav button.on{background:rgba(255,255,255,.09);color:#fff}
+.nav svg{width:17px;height:17px;flex:none;opacity:.85}
+.nav .count{margin-left:auto;font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.1);padding:1px 7px;border-radius:99px}
+.side .soon{margin-top:auto;border:1px dashed rgba(255,255,255,.18);border-radius:10px;padding:12px;font-size:12px;color:var(--sideMuted)}
+.side .soon b{color:var(--sideInk);display:block;margin-bottom:3px;font-size:12.5px}
+/* contenu */
+main{min-width:0}
+.demo{background:#fff7e6;border-bottom:1px solid #f1deb4;color:#6b4a0a;font-size:12.5px;padding:8px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.demo a{color:inherit;font-weight:600}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 28px 6px;flex-wrap:wrap}
+.top h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.top p{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:9px;font-weight:600;font-size:13px;border:1px solid var(--line);background:var(--surface)}
+.btn:hover{border-color:#cdd2d8}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn svg{width:16px;height:16px}
+.wrap{padding:16px 28px 40px;display:grid;gap:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.kpi span{color:var(--muted);font-size:12.5px}
+.kpi b{display:block;font-size:24px;font-weight:700;margin-top:2px;letter-spacing:-.01em}
+.kpi small{color:var(--faint);font-size:12px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.card h2{font-size:14px;font-weight:600;padding:14px 16px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:8px}
+.card h2 .sub{margin-left:auto;color:var(--faint);font-weight:500;font-size:12px}
+.filters{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.filters button{padding:5px 10px;border-radius:99px;font-size:12.5px;color:var(--muted);border:1px solid transparent}
+.filters button.on{background:var(--greySoft);color:var(--ink);border-color:var(--line)}
+.search{margin-left:auto;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12.5px;min-width:160px;background:var(--bg)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;color:var(--faint);font-weight:500;text-align:left;padding:9px 16px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:11px 16px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#fafbfc}
+tr.row.new td{animation:flash 2.4s ease}
+@keyframes flash{0%,40%{background:var(--accentSoft)}100%{background:transparent}}
+.who b{display:block;font-weight:600;white-space:nowrap}
+.who small{color:var(--muted)}
+.need{color:var(--ink);max-width:300px}
+.need small{display:block;color:var(--faint);font-size:12px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.t-urgent{background:var(--redSoft);color:var(--red)}
+.t-semaine{background:var(--amberSoft);color:var(--amber)}
+.t-pas{background:var(--greySoft);color:var(--grey)}
+.st{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;white-space:nowrap;border:1px solid var(--line);background:var(--surface)}
+.st-nouveau{color:var(--accent);border-color:#c9d6f6;background:var(--accentSoft)}
+.st-rappeler{color:var(--amber);border-color:#f0dcb8;background:var(--amberSoft)}
+.st-devis{color:#5a3fb8;border-color:#ddd3f7;background:#f3effd}
+.st-gagne{color:var(--green);border-color:#c7e6d3;background:var(--greenSoft)}
+.st-perdu{color:var(--grey)}
+.time{color:var(--faint);font-size:12px;white-space:nowrap;font-family:var(--mono)}
+.list{display:flex;flex-direction:column}
+.item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line2);align-items:flex-start}
+.item:last-child{border-bottom:0}
+.item .dot{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--greySoft);color:var(--muted)}
+.item .dot svg{width:15px;height:15px}
+.item b{font-weight:600;display:block}
+.item small{color:var(--muted);display:block}
+.item .when{margin-left:auto;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--faint);white-space:nowrap}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:92px;padding:14px 16px 4px}
+.bars div{flex:1;background:var(--accentSoft);border-radius:4px 4px 0 0;position:relative;min-height:4px}
+.bars div.today{background:var(--accent)}
+.bars-l{display:flex;gap:8px;padding:0 16px 12px;font-size:11px;color:var(--faint)}
+.bars-l span{flex:1;text-align:center}
+/* panneau fiche */
+.panel-bg{position:fixed;inset:0;background:rgba(15,23,32,.32);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.panel{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);z-index:21;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-12px 0 32px rgba(15,23,32,.12)}
+.open .panel-bg{opacity:1;pointer-events:auto}
+.open .panel{transform:none}
+.panel header{padding:18px 20px;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:flex-start}
+.panel header h3{font-size:18px}
+.panel header p{color:var(--muted);font-size:13px}
+.panel .x{margin-left:auto;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.panel .x:hover{background:var(--greySoft)}
+.panel .body{padding:18px 20px;overflow:auto;display:grid;gap:18px}
+.facts{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:13.5px}
+.facts dt{color:var(--muted)}
+.facts a{color:var(--accent);font-weight:600;text-decoration:none}
+.panel h4{font-size:12px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px;font-weight:500}
+.steps button.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.tl{display:flex;flex-direction:column;gap:12px;border-left:2px solid var(--line2);margin-left:6px;padding-left:16px}
+.tl div{position:relative;font-size:13px}
+.tl div::before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.tl div.auto::before{border-color:var(--green)}
+.tl div.plan::before{border-color:var(--faint);border-style:dashed}
+.tl small{display:block;color:var(--muted);font-size:12.5px}
+.msg{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink)}
+.notes{width:100%;min-height:70px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+/* formulaire de simulation */
+dialog{border:0;border-radius:14px;padding:0;width:min(520px,calc(100% - 32px));box-shadow:0 24px 60px rgba(15,23,32,.25);margin:auto}
+dialog::backdrop{background:rgba(15,23,32,.4)}
+.dlg-h{padding:18px 20px;border-bottom:1px solid var(--line2)}
+.dlg-h h3{font-size:16px}
+.dlg-h p{color:var(--muted);font-size:13px}
+form.sim{display:grid;gap:12px;padding:18px 20px}
+form.sim label{display:grid;gap:5px;font-size:12.5px;color:var(--muted);font-weight:500}
+form.sim input,form.sim select,form.sim textarea{border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:14px;color:var(--ink);background:#fff}
+form.sim .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+form.sim .act{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:40;background:var(--side);color:#fff;border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;max-width:360px;box-shadow:0 14px 34px rgba(15,23,32,.3);transform:translateY(20px);opacity:0;transition:.25s}
+.toast.show{transform:none;opacity:1}
+.toast .ic{width:30px;height:30px;border-radius:8px;background:#1e4fd1;display:grid;place-items:center;flex:none}
+.toast .ic svg{width:16px;height:16px}
+.toast small{display:block;color:#b8c3cf}
+.mob{display:none}
+@media (max-width:1100px){.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr;background:none}
+  .side{display:none}
+  .mob{display:flex;align-items:center;gap:10px;background:var(--side);color:#fff;padding:12px 16px}
+  .mob .logo{width:28px;height:28px;border-radius:8px;background:#1e4fd1;display:grid;place-items:center;font-weight:700;font-size:12px}
+  .top,.wrap{padding-left:16px;padding-right:16px}
+  .demo{padding:8px 16px}
+  .search{min-width:0;flex:1 1 100%;margin-left:0}
+  th.hide,td.hide{display:none}
+  td,th{padding:10px 12px}
+  .need{max-width:none}
+  form.sim .two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">MP</div><div><b>Martin Plomberie</b><small>Espace demandes</small></div></div>
+    <nav class="nav" aria-label="Menu">
+      <button class="on" data-go="demandes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Demandes <span class="count" id="navCount">0</span></button>
+      <button data-go="rdv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Rendez-vous</button>
+      <button data-go="relances"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>Relances</button>
+      <button data-go="avis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 4 2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.4 7.2 18.9l.9-5.4L4.2 9.7l5.4-.8z"/></svg>Avis clients</button>
+    </nav>
+    <div class="soon"><b>Bientôt : assistant téléphonique</b>Il répondra aux appels manqués et créera la demande tout seul. Pas encore disponible dans cette démo.</div>
+  </aside>
+
+  <main>
+    <div class="mob"><div class="logo">MP</div><b>Martin Plomberie</b></div>
+    <div class="demo"><b>Démonstration</b> Entreprise et clients fictifs. Rien n'est envoyé : les SMS et les mails sont simulés. <a href="../sites/artisan/">Voir le site de Martin Plomberie</a></div>
+
+    <div class="top">
+      <div><h1 id="hello">Bonjour Julien</h1><p id="today"></p></div>
+      <button class="btn primary" id="simBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Simuler une demande du site</button>
+    </div>
+
+    <div class="wrap">
+      <section class="kpis" aria-label="Chiffres de la semaine">
+        <div class="kpi"><span>Demandes cette semaine</span><b id="kWeek">0</b><small>site, mail et appels notés</small></div>
+        <div class="kpi"><span>À rappeler</span><b id="kCall">0</b><small id="kCallS">dont 0 urgente</small></div>
+        <div class="kpi"><span>Devis envoyés</span><b id="kQuote">0</b><small>en attente de réponse</small></div>
+        <div class="kpi"><span>Chantiers gagnés</span><b id="kWon">0</b><small id="kWonS">ce mois-ci</small></div>
+      </section>
+
+      <div class="grid2">
+        <section class="card" id="demandes">
+          <h2>Demandes <span class="sub" id="listSub"></span></h2>
+          <div class="filters" role="tablist">
+            <button class="on" data-f="tous">Toutes</button>
+            <button data-f="ouvert">À traiter</button>
+            <button data-f="urgent">Urgentes</button>
+            <button data-f="devis">Devis envoyés</button>
+            <button data-f="gagne">Gagnées</button>
+            <input class="search" id="q" type="search" placeholder="Chercher…" aria-label="Chercher">
+          </div>
+          <table>
+            <thead><tr><th>Client</th><th>Besoin</th><th class="hide">Urgence</th><th>Statut</th><th class="hide">Reçue</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <div class="empty" id="empty" hidden>Aucune demande ici.</div>
+        </section>
+
+        <div style="display:grid;gap:18px">
+          <section class="card" id="relances">
+            <h2>Relances automatiques <span class="sub">programmées</span></h2>
+            <div class="list" id="follow"></div>
+          </section>
+          <section class="card" id="rdv">
+            <h2>Rendez-vous <span class="sub">7 prochains jours</span></h2>
+            <div class="list" id="appts"></div>
+          </section>
+          <section class="card">
+            <h2>Demandes par jour <span class="sub">7 derniers jours</span></h2>
+            <div class="bars" id="bars"></div>
+            <div class="bars-l" id="barsL"></div>
+          </section>
+          <section class="card" id="avis">
+            <h2>Avis Google <span class="sub">après chantier</span></h2>
+            <div class="list" id="reviews"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="panelWrap">
+  <div class="panel-bg" id="panelBg"></div>
+  <aside class="panel" id="panel" aria-label="Fiche de la demande" aria-hidden="true">
+    <header><div><h3 id="pName"></h3><p id="pSub"></p></div><button class="x" id="pClose" aria-label="Fermer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <div class="body">
+      <dl class="facts" id="pFacts"></dl>
+      <div><h4>Statut</h4><div class="steps" id="pSteps"></div></div>
+      <div><h4>Message du client</h4><div class="msg" id="pMsg"></div></div>
+      <div><h4>Historique</h4><div class="tl" id="pTl"></div></div>
+      <div><h4>Notes internes</h4><textarea class="notes" id="pNotes" placeholder="Ex. : prévoir un joint de 15/21, accès par la cour."></textarea></div>
+    </div>
+  </aside>
+</div>
+
+<dialog id="sim">
+  <div class="dlg-h"><h3>Formulaire « Demander un devis »</h3><p>C'est le formulaire du site de Martin Plomberie. Remplissez-le comme un client : la demande arrive dans l'espace.</p></div>
+  <form class="sim" method="dialog" id="simForm">
+    <div class="two">
+      <label>Nom et prénom<input name="nom" required value="Camille Roussel"></label>
+      <label>Téléphone<input name="tel" required value="06 12 34 56 78"></label>
+    </div>
+    <div class="two">
+      <label>Ville<input name="ville" required value="Mâcon"></label>
+      <label>Type d'intervention
+        <select name="type"><option>Fuite d'eau</option><option selected>Chauffe-eau</option><option>Chaudière</option><option>Débouchage</option><option>Salle de bain</option><option>Autre</option></select>
+      </label>
+    </div>
+    <label>Urgence
+      <select name="urg"><option value="urgent">Urgent : aujourd'hui</option><option value="semaine" selected>Cette semaine</option><option value="pas">Pas pressé</option></select>
+    </label>
+    <label>Votre besoin<textarea name="msg" rows="3" required>Le chauffe-eau fait un bruit de claquement et l'eau est tiède depuis deux jours.</textarea></label>
+    <div class="act"><button type="button" class="btn" id="simCancel">Annuler</button><button class="btn primary" value="ok">Envoyer la demande</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg></div><div><b id="tTitle"></b><small id="tText"></small></div></div>
+
+<script>
+(() => {
+  const DAY = 86400000;
+  const now = new Date();
+  const at = (dDays, h, m) => { const d = new Date(now); d.setDate(d.getDate() + dDays); d.setHours(h, m, 0, 0); return d; };
+  const STATUTS = { nouveau: 'Nouveau', rappeler: 'À rappeler', devis: 'Devis envoyé', gagne: 'Gagné', perdu: 'Perdu' };
+  const URG = { urgent: ['t-urgent', 'Urgent'], semaine: ['t-semaine', 'Cette semaine'], pas: ['t-pas', 'Pas pressé'] };
+  const fmtH = d => d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const fmtJ = d => d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  const ago = d => {
+    const s = (now - d) / 1000;
+    if (s < 90) return "à l'instant";
+    if (s < 3600) return 'il y a ' + Math.round(s / 60) + ' min';
+    if (d.toDateString() === now.toDateString()) return "aujourd'hui " + fmtH(d);
+    if (s < 2 * 86400 && new Date(now - DAY).toDateString() === d.toDateString()) return 'hier ' + fmtH(d);
+    return fmtJ(d);
+  };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // Données fictives : noms, numéros et adresses inventés.
+  let id = 0;
+  const L = (o) => ({ id: ++id, notes: '', ...o });
+  const leads = [
+    L({ nom: 'Sophie Lambert', tel: '06 41 22 87 15', ville: 'Chalon-sur-Saône', type: "Fuite d'eau", urg: 'urgent', statut: 'rappeler', recu: at(0, 8, 12), msg: "Fuite sous l'évier de la cuisine, l'eau coule dans le meuble. J'ai coupé l'arrivée.", tl: [['auto', 'SMS envoyé au client', 'Bien reçu, Martin Plomberie vous rappelle dans la matinée.'], ['auto', 'Alerte envoyée à Julien', 'SMS + notification'], ['plan', 'Rappel à Julien si personne n\'a appelé', 'dans 1 h']] }),
+    L({ nom: 'Marc Petitjean', tel: '07 58 03 64 90', ville: 'Le Creusot', type: 'Chaudière', urg: 'semaine', statut: 'nouveau', recu: at(0, 7, 3), msg: 'Chaudière gaz qui se met en sécurité plusieurs fois par jour. Modèle de 2014.', tl: [['auto', 'SMS envoyé au client', 'Bien reçu, nous vous rappelons aujourd\'hui.'], ['auto', 'Alerte envoyée à Julien', 'SMS + notification']] }),
+    L({ nom: 'Nadia Benali', tel: '06 87 19 42 33', ville: 'Montceau-les-Mines', type: 'Salle de bain', urg: 'pas', statut: 'devis', recu: at(-3, 18, 40), msg: 'Remplacement de la baignoire par une douche à l\'italienne, environ 6 m².', tl: [['auto', 'SMS envoyé au client', 'Bien reçu.'], ['', 'Visite faite par Julien', ''], ['', 'Devis envoyé', '4 860 € TTC'], ['plan', 'Relance automatique du devis', 'dans 2 jours']] }),
+    L({ nom: 'Thierry Gauthier', tel: '06 20 55 71 08', ville: 'Autun', type: 'Débouchage', urg: 'urgent', statut: 'gagne', recu: at(-1, 21, 15), msg: 'Toilettes bouchées, impossible de tirer la chasse.', tl: [['auto', 'SMS envoyé au client', 'Reçu à 21 h 15, réponse demain 8 h.'], ['', 'Intervention faite', '180 € TTC'], ['plan', 'Demande d\'avis Google', 'demain 18 h']] }),
+    L({ nom: 'Élodie Marchand', tel: '07 66 48 12 59', ville: 'Le Creusot', type: 'Chauffe-eau', urg: 'semaine', statut: 'devis', recu: at(-5, 10, 2), msg: 'Ballon de 200 L à changer, il fuit par le bas.', tl: [['auto', 'SMS envoyé au client', 'Bien reçu.'], ['', 'Devis envoyé', '1 390 € TTC'], ['auto', '1re relance envoyée', 'il y a 2 jours'], ['plan', '2e relance', 'dans 3 jours']] }),
+    L({ nom: 'Kevin Dubreuil', tel: '06 93 27 40 81', ville: 'Torcy', type: 'Autre', urg: 'pas', statut: 'perdu', recu: at(-6, 14, 30), msg: 'Installation d\'un adoucisseur.', tl: [['', 'Devis envoyé', '1 150 € TTC'], ['', 'Le client a choisi un autre artisan', '']] }),
+    L({ nom: 'Henri Fontaine', tel: '06 05 81 36 27', ville: 'Chalon-sur-Saône', type: 'Chaudière', urg: 'semaine', statut: 'gagne', recu: at(-4, 9, 47), msg: 'Entretien annuel de la chaudière + robinet thermostatique qui ne ferme plus.', tl: [['', 'Rendez-vous pris', ''], ['', 'Intervention faite', '210 € TTC'], ['auto', 'Demande d\'avis Google envoyée', '']] }),
+    L({ nom: 'Laura Perrin', tel: '07 12 90 63 44', ville: 'Le Breuil', type: "Fuite d'eau", urg: 'semaine', statut: 'rappeler', recu: at(-1, 12, 26), msg: 'Tache d\'humidité au plafond sous la salle de bain.', tl: [['auto', 'SMS envoyé au client', 'Bien reçu.'], ['', 'Appel manqué : messagerie', 'hier 17 h 10'], ['plan', 'Rappel à Julien', 'aujourd\'hui 14 h']] }),
+  ];
+  const appts = [
+    { nom: 'Sophie Lambert', quoi: "Fuite d'eau", d: at(0, 11, 0) },
+    { nom: 'Laura Perrin', quoi: 'Recherche de fuite', d: at(1, 9, 0) },
+    { nom: 'Nadia Benali', quoi: 'Métré salle de bain', d: at(2, 15, 30) },
+    { nom: 'Marc Petitjean', quoi: 'Dépannage chaudière', d: at(3, 8, 30) },
+  ];
+  const reviews = [
+    { nom: 'Henri Fontaine', etat: 'Avis laissé : 5 étoiles', d: at(-2, 19, 4) },
+    { nom: 'Thierry Gauthier', etat: 'Demande programmée', d: at(1, 18, 0) },
+  ];
+
+  const $ = s => document.querySelector(s);
+  let filtre = 'tous', q = '', ouvert = null;
+
+  $('#today').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^./, c => c.toUpperCase());
+
+  function vis(l) {
+    if (filtre === 'ouvert' && !['nouveau', 'rappeler'].includes(l.statut)) return false;
+    if (filtre === 'urgent' && l.urg !== 'urgent') return false;
+    if (filtre === 'devis' && l.statut !== 'devis') return false;
+    if (filtre === 'gagne' && l.statut !== 'gagne') return false;
+    if (q && !(l.nom + ' ' + l.ville + ' ' + l.type).toLowerCase().includes(q)) return false;
+    return true;
+  }
+
+  function render(newId) {
+    const rows = leads.slice().sort((a, b) => b.recu - a.recu).filter(vis);
+    $('#rows').innerHTML = rows.map(l => `
+      <tr class="row${l.id === newId ? ' new' : ''}" data-id="${l.id}" tabindex="0">
+        <td class="who"><b>${esc(l.nom)}</b><small>${esc(l.ville)}</small></td>
+        <td class="need">${esc(l.type)}<small>${esc(l.msg.length > 60 ? l.msg.slice(0, 58) + '…' : l.msg)}</small></td>
+        <td class="hide"><span class="tag ${URG[l.urg][0]}">${URG[l.urg][1]}</span></td>
+        <td><span class="st st-${l.statut}">${STATUTS[l.statut]}</span></td>
+        <td class="hide time">${ago(l.recu)}</td>
+      </tr>`).join('');
+    $('#empty').hidden = rows.length > 0;
+    $('#listSub').textContent = rows.length + ' sur ' + leads.length;
+
+    const week = leads.filter(l => now - l.recu < 7 * DAY).length;
+    const call = leads.filter(l => ['nouveau', 'rappeler'].includes(l.statut));
+    const urg = call.filter(l => l.urg === 'urgent').length;
+    $('#kWeek').textContent = week;
+    $('#kCall').textContent = call.length;
+    $('#kCallS').textContent = 'dont ' + urg + (urg > 1 ? ' urgentes' : ' urgente');
+    $('#kQuote').textContent = leads.filter(l => l.statut === 'devis').length;
+    $('#kWon').textContent = leads.filter(l => l.statut === 'gagne').length;
+    $('#kWonS').textContent = 'ce mois-ci';
+    $('#navCount').textContent = call.length;
+
+    const fol = [];
+    leads.forEach(l => l.tl.forEach(t => { if (t[0] === 'plan') fol.push({ l, t }); }));
+    $('#follow').innerHTML = fol.length ? fol.map(({ l, t }) => item('M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5', t[1], l.nom + ' · ' + l.type, t[2])).join('') : '<div class="empty">Aucune relance prévue.</div>';
+    $('#appts').innerHTML = appts.slice().sort((a, b) => a.d - b.d).map(a => item('M3.5 10h17M8 3v4M16 3v4M5.5 5h13a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z', a.nom, a.quoi, fmtJ(a.d) + '<br>' + fmtH(a.d))).join('');
+    $('#reviews').innerHTML = reviews.map(r => item('m12 4 2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.4 7.2 18.9l.9-5.4L4.2 9.7l5.4-.8z', r.nom, r.etat, fmtJ(r.d))).join('');
+
+    const days = [...Array(7)].map((_, i) => at(i - 6, 0, 0));
+    const counts = days.map(d => leads.filter(l => l.recu.toDateString() === d.toDateString()).length);
+    const max = Math.max(3, ...counts);
+    $('#bars').innerHTML = counts.map((c, i) => `<div class="${i === 6 ? 'today' : ''}" style="height:${Math.max(4, c / max * 100)}%" title="${c} demande${c > 1 ? 's' : ''}"></div>`).join('');
+    $('#barsL').innerHTML = days.map(d => `<span>${d.toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3)}</span>`).join('');
+  }
+  function item(path, b, small, when) {
+    return `<div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="${path}"/></svg></div><div><b>${esc(b)}</b><small>${esc(small)}</small></div><div class="when">${when}</div></div>`;
+  }
+
+  function openLead(lid) {
+    const l = leads.find(x => x.id === lid); if (!l) return;
+    ouvert = l;
+    $('#pName').textContent = l.nom;
+    $('#pSub').textContent = l.type + ' · reçue ' + ago(l.recu);
+    $('#pFacts').innerHTML = `<dt>Téléphone</dt><dd><a href="tel:${esc(l.tel.replace(/\s/g, ''))}">${esc(l.tel)}</a></dd><dt>Ville</dt><dd>${esc(l.ville)}</dd><dt>Urgence</dt><dd><span class="tag ${URG[l.urg][0]}">${URG[l.urg][1]}</span></dd><dt>Source</dt><dd>Formulaire du site</dd>`;
+    $('#pSteps').innerHTML = Object.entries(STATUTS).map(([k, v]) => `<button data-s="${k}" class="${k === l.statut ? 'on' : ''}">${v}</button>`).join('');
+    $('#pMsg').textContent = l.msg;
+    $('#pTl').innerHTML = `<div><b>Demande reçue</b><small>${ago(l.recu)}</small></div>` + l.tl.map(t => `<div class="${t[0]}"><b>${esc(t[1])}</b>${t[2] ? `<small>${esc(t[2])}</small>` : ''}</div>`).join('');
+    $('#pNotes').value = l.notes;
+    document.body.classList.add('open');
+    $('#panel').setAttribute('aria-hidden', 'false');
+    $('#pClose').focus();
+  }
+  function closeLead() { document.body.classList.remove('open'); $('#panel').setAttribute('aria-hidden', 'true'); ouvert = null; }
+
+  $('#rows').addEventListener('click', e => { const tr = e.target.closest('tr.row'); if (tr) openLead(+tr.dataset.id); });
+  $('#rows').addEventListener('keydown', e => { if (e.key === 'Enter') { const tr = e.target.closest('tr.row'); if (tr) openLead(+tr.dataset.id); } });
+  $('#pClose').onclick = closeLead; $('#panelBg').onclick = closeLead;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ouvert) closeLead(); });
+  $('#pSteps').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || !ouvert) return;
+    const s = b.dataset.s; if (s === ouvert.statut) return;
+    ouvert.statut = s;
+    if (!['nouveau', 'rappeler'].includes(s)) ouvert.tl = ouvert.tl.filter(t => !(t[0] === 'plan' && t[1].startsWith('Rappel à Julien')));
+    if (s === 'devis') ouvert.tl.push(['plan', 'Relance automatique du devis', 'dans 3 jours']);
+    if (s === 'gagne') ouvert.tl.push(['plan', "Demande d'avis Google", 'le soir du chantier']);
+    ouvert.tl.push(['', 'Statut changé : ' + STATUTS[s], "à l'instant"]);
+    render(); openLead(ouvert.id);
+  });
+  $('#pNotes').addEventListener('input', e => { if (ouvert) ouvert.notes = e.target.value; });
+
+  document.querySelector('.filters').addEventListener('click', e => {
+    const b = e.target.closest('button[data-f]'); if (!b) return;
+    document.querySelectorAll('.filters button').forEach(x => x.classList.toggle('on', x === b));
+    filtre = b.dataset.f; render();
+  });
+  $('#q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+  document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.nav button').forEach(x => x.classList.toggle('on', x === b));
+    document.getElementById(b.dataset.go).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+
+  const dlg = $('#sim');
+  $('#simBtn').onclick = () => dlg.showModal();
+  $('#simCancel').onclick = () => dlg.close();
+  $('#simForm').addEventListener('submit', e => {
+    const f = new FormData(e.target);
+    const l = L({ nom: f.get('nom'), tel: f.get('tel'), ville: f.get('ville'), type: f.get('type'), urg: f.get('urg'), statut: 'nouveau', recu: new Date(), msg: f.get('msg'),
+      tl: [['auto', 'SMS envoyé au client (simulé)', 'Bonjour, Martin Plomberie a bien reçu votre demande. Nous vous rappelons ' + (f.get('urg') === 'urgent' ? "dans l'heure." : 'dans la journée.')],
+           ['auto', 'Alerte envoyée à Julien (simulée)', 'SMS + notification'],
+           ['plan', 'Rappel à Julien si personne n\'a appelé', f.get('urg') === 'urgent' ? 'dans 1 h' : 'dans 3 h']] });
+    leads.push(l);
+    filtre = 'tous'; q = ''; $('#q').value = '';
+    document.querySelectorAll('.filters button').forEach(x => x.classList.toggle('on', x.dataset.f === 'tous'));
+    render(l.id);
+    toast('Nouvelle demande : ' + l.type, l.nom + ' · ' + l.ville + '. Le client a reçu un SMS de confirmation.');
+  });
+  let tT;
+  function toast(t, s) { $('#tTitle').textContent = t; $('#tText').textContent = s; $('#toast').classList.add('show'); clearTimeout(tT); tT = setTimeout(() => $('#toast').classList.remove('show'), 4500); }
+
+  render();
+})();
+</script>
+</body>
+</html>
