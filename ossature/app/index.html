@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ossature — démo</title>
+  <meta name="description" content="Démo du logiciel de gestion pour artisans du bâtiment : devis, factures électroniques, chantiers, planning et fiches salariés.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0f1419">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-bar"><strong>Démo</strong> — entreprise et données fictives. Vous pouvez tout essayer, rien n'est enregistré.</div>
+  <div class="layout">
+    <aside class="side">
+      <div class="brand">
+        <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></div>
+        <span class="brand-name">Ossature</span>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-foot">
+        <img src="https://randomuser.me/api/portraits/men/46.jpg" alt="" onerror="this.style.visibility='hidden'">
+        <div class="who">Julien Martin<span>Martin Rénovation</span></div>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="top">
+        <div class="mbrand"><div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></div>Ossature</div>
+        <label class="search" id="search"></label>
+        <div class="top-actions" id="top-actions"></div>
+      </header>
+      <main class="content" id="app"></main>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav"></nav>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
