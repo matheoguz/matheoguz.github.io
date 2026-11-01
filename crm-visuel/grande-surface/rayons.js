@@ -118,7 +118,18 @@ function partage(THREE) {
   for (const [x, w, o] of [[6, 16, 0], [58, 16, 0], [97, 16, 1], [150, 16, 0], [214, 16, 0], [262, 16, 0], [301, 16, 0], [355, 16, 1], [410, 16, 0], [462, 16, 0]]) { k2.fillStyle = o ? '#f97316' : '#fde047'; k2.fillRect(x, 2, w, 12); }
   const reglette = new THREE.CanvasTexture(c2); reglette.wrapS = THREE.RepeatWrapping; reglette.colorSpace = THREE.SRGBColorSpace; reglette.anisotropy = 4;
   const perfo = new THREE.CanvasTexture(c); perfo.wrapS = perfo.wrapT = THREE.RepeatWrapping; perfo.colorSpace = THREE.SRGBColorSpace; perfo.anisotropy = 4;
+  // affiches des têtes de gondole : une seule texture, une ligne par affiche (fusionnées en un dessin)
+  const AFF = ['PROMO −30 %', '2 + 1 OFFERT', 'DE SAISON', 'LES LOTS', 'PRIX FRAIS', 'NOUVEAUTÉS', 'PETITS PRIX', 'BIO ET LOCAL'];
+  const c3 = document.createElement('canvas'); c3.width = 512; c3.height = 64 * AFF.length; const k3 = c3.getContext('2d');
+  AFF.forEach((txt, i) => {
+    const y = i * 64, jaune = i % 3 === 1;
+    k3.fillStyle = jaune ? '#facc15' : '#dc2626'; k3.fillRect(0, y, 512, 64);
+    k3.fillStyle = jaune ? '#b91c1c' : '#facc15'; k3.fillRect(0, y + 54, 512, 10);
+    k3.fillStyle = jaune ? '#991b1b' : '#ffffff'; k3.font = '800 38px Inter, Arial, sans-serif'; k3.textAlign = 'center'; k3.textBaseline = 'middle'; k3.fillText(txt, 256, y + 29);
+  });
+  const affiches = new THREE.CanvasTexture(c3); affiches.colorSpace = THREE.SRGBColorSpace; affiches.anisotropy = 8;
   PART = {
+    AFF, affiche: new THREE.MeshStandardMaterial({ map: affiches, roughness: 0.6 }),
     THREE, box, cyl, bouteille, flacon, boule, perfo, reglette, atlas: atlasProduits(THREE),
     struct: S({ roughness: 0.45, metalness: 0.2 }), prod: S({ roughness: 0.55 }), brillant: S({ roughness: 0.28 }), fruit: S({ roughness: 0.5 }), bois: S({ roughness: 0.85 }),
     froid: S({ emissive: 0x9cc8ee, emissiveIntensity: 0.12 }), // produits sous la lumière froide des vitrines
@@ -142,7 +153,7 @@ export function construireRayon(ctx, r, i, opts = {}) {
   const caseDe = (nom, hx) => P.atlas.case(nom, hx, formeAtlas(T[nom]), rnd() < 0.5 ? 0 : 1);
   const entre = ([a, b]) => a + (b - a) * rnd();
   const choix = (t) => t[Math.floor(rnd() * t.length)];
-  const teinte = (hex, v = 0.05) => new THREE.Color(hex).offsetHSL(0, -0.12, (rnd() - 0.5) * v); // un peu désaturé : rendu maquette sobre
+  const teinte = (hex, v = 0.05, sat = 0.04) => new THREE.Color(hex).offsetHSL(0, sat, (rnd() - 0.5) * v); // couleurs franches : lisibles de loin
 
   // lots d'instances : une géométrie + une matière = un dessin
   const lots = new Map();
@@ -203,7 +214,7 @@ export function construireRayon(ctx, r, i, opts = {}) {
     for (let essai = 0; essai < 60; essai++) {
       const nom = choix(plan), t = T[nom], w = entre(t.w), pile = t.pile || 1;
       const h = Math.min(entre(t.h), (HMAX[niveau] - 0.01) / pile);
-      const nf = Math.round(entre([t.n[0], t.n[1] + 0.99]) - 0.49);
+      const nf = Math.max(2, Math.round((entre([t.n[0], t.n[1] + 0.99]) - 0.49) * 0.6)); // plus de produits différents par mètre
       if (x + w > x2 - 0.01) break;
       const hx = choix(t.c), couleur = blancVar(), bande = t.b ? teinte(choix(t.b)) : null, rang = rnd();
       celCourante = caseDe(nom, hx);
@@ -275,7 +286,7 @@ export function construireRayon(ctx, r, i, opts = {}) {
         poserM(L.etiq(), base, 0, 0.03, cote * (d / 2 + 0.01), 0.07, 0.045, 0.004, rnd() < 0.15 ? ORANGE : JAUNE); // prix
         const nx = fr.nx, nz = fr.nz, px = (w - 0.03) / nx, pz = (d - 0.03) / nz, ax = fr.ax || 1;
         for (let a1 = 0; a1 < nx; a1++) for (let b1 = 0; b1 < nz; b1++) {
-          const rr = fr.r * (0.9 + rnd() * 0.2), col = teinte(choix(fr.c), 0.08);
+          const rr = fr.r * (0.9 + rnd() * 0.2), col = teinte(choix(fr.c), 0.08, 0.1);
           const lx = -w / 2 + 0.015 + (a1 + 0.5) * px + (rnd() - 0.5) * 0.01, lz = -d / 2 + 0.015 + (b1 + 0.5) * pz + (rnd() - 0.5) * 0.01;
           const sx = Math.min(rr * 2 * ax, px * 0.95), sz = Math.min(rr * 2, pz * 1.05);
           poserM(lot('fruit', P.boule, P.fruit), base, lx, 0.015 + hc * 0.55, lz, sx, rr * 1.9, sz, col, Math.min(0.999, rangF * 0.6 + rnd() * 0.4));
@@ -284,10 +295,23 @@ export function construireRayon(ctx, r, i, opts = {}) {
     }
   }
 
+  // ----- affiche tournée vers l'allée principale (face +z et -z), posée sur une tête de gondole -----
+  function affiche(txt, x, y, zz, lg = 1.15, ht = 0.4) {
+    const k = Math.max(0, P.AFF.indexOf(txt)), n = P.AFF.length, v0 = 1 - (k + 1) / n, v1 = 1 - k / n;
+    for (const s of [1, -1]) {
+      const geo = new THREE.PlaneGeometry(lg, ht), uv = geo.attributes.uv;
+      for (let j = 0; j < uv.count; j++) uv.setY(j, uv.getY(j) ? v1 : v0);
+      const m = new THREE.Mesh(geo, P.affiche); m.position.set(x, y, zz + s * 0.021); if (s < 0) m.rotation.y = Math.PI; g.add(m);
+    }
+    boite(lg + 0.04, ht + 0.04, 0.04, 0xb91c1c, x, y - ht / 2 - 0.02, zz, g, true); // cadre
+    boite(0.03, y - ht / 2 - Y0 - 1.6, 0.03, 0x6b7280, x, Y0 + 1.6, zz, g, false);  // mât
+  }
+  const AFF_RAYON = { r0: ['DE SAISON', 'BIO ET LOCAL'], r1: ['PROMO −30 %', 'PETITS PRIX'], r2: ['LES LOTS', '2 + 1 OFFERT'], r3: ['PRIX FRAIS', 'PROMO −30 %'], r4: ['2 + 1 OFFERT', 'PETITS PRIX'], r5: ['NOUVEAUTÉS', 'PROMO −30 %'] };
   // ----- têtes de gondole (deux bouts) -----
   function tete(sens) { // sens -1 = bout ouest (x -37), +1 = bout est (x -7)
     const S = L.struct(), xi = sens < 0 ? XA : XB, xe = sens < 0 ? x0 : x0 + l, xm = (xi + xe) / 2, pr = Math.abs(xe - xi) - 0.06;
     const xf = (k) => xi + sens * k; // k = distance depuis la gondole
+    affiche(AFF_RAYON[r.id][sens < 0 ? 0 : 1], xm, Y0 + 2.45, z);
     const promo = (y) => { // panneau promo en haut, texte vers l'extérieur
       const tx = new THREE.MeshStandardMaterial({ map: texte(TETES[r.id], { w: 512, h: 112, fond: '#dc2626', couleur: '#ffffff', taille: 62 }), roughness: 0.6 });
       const rouge = mat(0xdc2626), pan = new THREE.Mesh(P.box, sens > 0 ? [tx, rouge, rouge, rouge, rouge, rouge] : [rouge, tx, rouge, rouge, rouge, rouge]);
@@ -353,7 +377,11 @@ export function construireRayon(ctx, r, i, opts = {}) {
   }
 
   // ----- îlot de bacs (palox) remplis de fruits : opts.ilots = [[x, z, sorte], ...] -----
-  const SORTES = [{ c: [0xea580c, 0xf97316, 0xc2410c], r: 0.13, a: 1.1 }, { c: [0x166534, 0x15803d], r: 0.13, a: 1.35 }, { c: [0xfacc15, 0xeab308, 0x84cc16], r: 0.09, a: 1 }, { c: [0xdc2626, 0xb91c1c, 0x16a34a], r: 0.06, a: 1 }, { c: [0xf97316, 0xfb923c], r: 0.06, a: 1 }];
+  const SORTES = [ // potirons, pastèques, melons, pommes rouges, oranges, citrons, pommes vertes, aubergines
+    { c: [0xea580c, 0xf97316, 0xc2410c], r: 0.13, a: 1.1 }, { c: [0x166534, 0x15803d], r: 0.13, a: 1.35 }, { c: [0xfacc15, 0xeab308, 0x84cc16], r: 0.09, a: 1 },
+    { c: [0xdc2626, 0xb91c1c, 0xe11d48], r: 0.06, a: 1 }, { c: [0xf97316, 0xfb923c], r: 0.06, a: 1 }, { c: [0xfde047, 0xfacc15], r: 0.05, a: 1.15 },
+    { c: [0x84cc16, 0x65a30d, 0xa3e635], r: 0.06, a: 1 }, { c: [0x6d28d9, 0x581c87, 0x7c3aed], r: 0.06, a: 1.8 },
+  ];
   function palox(xm, zc, so) {
     const B = L.bois(), S = L.struct(), bw = 1.15, bp = 0.8, hb = 0.62, bois = teinte(0xb08a5a, 0.05), sorte = SORTES[so % SORTES.length];
     cube(S, bw + 0.05, 0.1, bp + 0.05, xm, Y0, zc, 0x6b7280);                                  // socle
@@ -362,7 +390,7 @@ export function construireRayon(ctx, r, i, opts = {}) {
     const nx = Math.floor((bw - 0.08) / (sorte.r * 2 * sorte.a)), nz = Math.floor((bp - 0.08) / (sorte.r * 2));
     for (let c = 0; c < 3; c++) for (let a = 0; a < nx; a++) for (let b = 0; b < nz; b++) {
       if (c > 0 && (a + b + c) % 2) continue;
-      const rr = sorte.r * (0.9 + rnd() * 0.2), col = teinte(choix(sorte.c), 0.1);
+      const rr = sorte.r * (0.9 + rnd() * 0.2), col = teinte(choix(sorte.c), 0.1, 0.1);
       poser(lot('fruit', P.boule, P.fruit), xm - bw / 2 + 0.04 + (a + 0.5) * (bw - 0.08) / nx + (c % 2) * rr * 0.5, Y0 + 0.52 + c * rr * 1.2, zc - bp / 2 + 0.04 + (b + 0.5) * (bp - 0.08) / nz, rr * 2 * sorte.a, rr * 1.8, rr * 2, col, Math.min(0.999, 0.1 + c * 0.3 + rnd() * 0.3));
     }
     etiquette(xm, Y0 + 0.5, zc + bp / 2 + 0.005, 1, rnd() < 0.4);

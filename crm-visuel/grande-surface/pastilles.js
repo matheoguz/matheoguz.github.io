@@ -3,7 +3,8 @@
 // Module ES sans import : THREE, la scène et les icônes SVG d'alertes.js sont passés en paramètre.
 //
 //   const P = creerPastilles({ THREE, scene, icones, couleurs })
-//   P.maj(alertes, positionDe, zoom)  // alertes = sortie de calculerAlertes ; positionDe(cle) -> [Vector3, zoom] | null
+//   P.maj(alertes, positionDe, zoom, temps)  // alertes = sortie de calculerAlertes ; positionDe(cle) -> [Vector3, zoom] | null
+//                                         // temps (ms) : les pastilles urgentes pulsent doucement ; null = immobiles
 //   P.toucher(raycaster) -> cle 'voir' de l'alerte touchée, ou null
 //   P.sprites                          // pour les tests
 
@@ -39,7 +40,7 @@ export function creerPastilles({ THREE, scene, icones, couleurs }) {
     return pool[k];
   }
   const HAUT = (cle) => (/^c\d|caisses/.test(cle) ? 3.4 : /^r\d/.test(cle) ? 4.1 : /^etage/.test(cle) ? 5.2 : /^e\d/.test(cle) ? 2.3 : 3.6);
-  function maj(alertes, positionDe, zoom) {
+  function maj(alertes, positionDe, zoom, temps = null) {
     const parLieu = new Map(); let k = 0;
     const taille = 2.6 / Math.pow(Math.max(0.5, zoom), 0.75);
     for (const a of alertes) {
@@ -49,7 +50,8 @@ export function creerPastilles({ THREE, scene, icones, couleurs }) {
       const t = texture(a.niveau, a.icone);
       if (s.material.map !== t) { s.material.map = t; s.material.needsUpdate = true; }
       s.position.set(p[0].x + rang * taille * 1.05, HAUT(a.voir), p[0].z);
-      s.scale.set(taille, taille, 1);
+      const pouls = temps !== null && a.niveau === 'urgent' ? 1 + 0.09 * Math.max(0, Math.sin(temps / 260)) : 1;
+      s.scale.set(taille * pouls, taille * pouls, 1);
       s.userData.voir = a.voir; s.visible = true;
     }
     for (; k < pool.length; k++) pool[k].visible = false;

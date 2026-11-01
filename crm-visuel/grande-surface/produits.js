@@ -38,13 +38,13 @@ export function atlasProduits(THREE) {
       g.fillStyle = mel(c, 0xffffff, 0.5); g.beginPath(); g.ellipse(x + w * 0.5, y + h * 0.62, w * 0.32, h * 0.2, 0, 0, 7); g.fill();
       g.fillStyle = mel(acc, 0xffffff, 0.3); g.beginPath(); g.arc(x + w * 0.5, y + h * 0.62, Math.min(w, h) * 0.14, 0, 7); g.fill();
     } else if (v === 1) { // grande vignette ronde
-      g.fillStyle = mel(c, 0xffffff, 0.55); g.beginPath(); g.arc(x + w * 0.55, y + h * 0.58, Math.min(w, h) * 0.3, 0, 7); g.fill();
+      g.fillStyle = mel(c, 0xffffff, 0.3); g.beginPath(); g.arc(x + w * 0.55, y + h * 0.58, Math.min(w, h) * 0.3, 0, 7); g.fill();
       g.fillStyle = hex(acc); g.beginPath(); g.arc(x + w * 0.55, y + h * 0.58, Math.min(w, h) * 0.17, 0, 7); g.fill();
     } else if (v === 2) { // diagonale
       g.fillStyle = hex(acc); g.beginPath(); g.moveTo(x, y + h * 0.75); g.lineTo(x + w, y + h * 0.45); g.lineTo(x + w, y + h * 0.62); g.lineTo(x, y + h * 0.92); g.fill();
       g.fillStyle = mel(c, 0xffffff, 0.7); g.fillRect(x + w * 0.15, y + h * 0.3, w * 0.7, h * 0.12);
     } else { // étiquette blanche centrale
-      g.fillStyle = mel(c, 0xffffff, 0.6); g.fillRect(x + w * 0.12, y + h * 0.3, w * 0.76, h * 0.42);
+      g.fillStyle = mel(c, 0xffffff, 0.35); g.fillRect(x + w * 0.12, y + h * 0.3, w * 0.76, h * 0.42);
       g.fillStyle = hex(acc); g.fillRect(x + w * 0.12, y + h * 0.3, w * 0.76, h * 0.1);
       g.fillStyle = mel(c, 0xffffff, 0.2); g.fillRect(x + w * 0.2, y + h * 0.48, w * 0.6, h * 0.05); g.fillRect(x + w * 0.2, y + h * 0.58, w * 0.45, h * 0.05);
     }

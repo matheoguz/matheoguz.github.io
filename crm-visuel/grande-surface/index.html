@@ -11,190 +11,275 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --fond: #f3f4f6; --carte: #fff; --texte: #111827; --doux: #6b7280; --ligne: #e5e7eb; --accent: #b91c1c; --accent-doux: #fee2e2; --vert: #15803d; --vert-doux: #dcfce7; --orange: #c2410c; --orange-doux: #ffedd5; --gris-doux: #f3f4f6; }
+  :root {
+    --fond: #f1f4f9; --carte: #fff; --texte: #0f172a; --doux: #64748b; --doux2: #94a3b8; --ligne: #e5e9f0; --ligne2: #eef1f6;
+    --bleu: #2563eb; --bleu-doux: #eff6ff; --vert: #16a34a; --vert-doux: #dcfce7; --orange: #ea580c; --orange-doux: #ffedd5; --rouge: #dc2626; --rouge-doux: #fee2e2; --gris-doux: #f1f5f9;
+    --accent: #b91c1c; --verre: rgba(255,255,255,.85); --ombre: 0 1px 2px rgba(15,23,42,.05), 0 8px 24px rgba(15,23,42,.08); --ombre-s: 0 1px 2px rgba(15,23,42,.05), 0 2px 8px rgba(15,23,42,.04); --r: 14px;
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
-  .app { display: grid; grid-template-columns: minmax(0, 1fr) 430px; grid-template-rows: auto auto auto minmax(0, 1fr); height: 100vh; }
-  .bandeau-demo { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 7px; background: #fffbeb; color: #92400e; border-bottom: 1px solid #fde68a; font-size: 12px; font-weight: 600; padding: 5px 12px; text-align: center; line-height: 1.3; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 420px; grid-template-rows: auto auto auto minmax(0, 1fr); height: 100vh; }
+  .bandeau-demo { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 6px; background: #fffbeb; color: #92400e; border-bottom: 1px solid #fde68a; font-size: 11.5px; font-weight: 600; padding: 4px 12px; text-align: center; line-height: 1.3; }
   .bandeau-demo svg { flex: none; }
   .bandeau-demo span { font-weight: 500; color: #a16207; }
-  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
-  .logo { width: 36px; height: 36px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
-  .titre b { display: block; font-size: 15px; }
-  .titre span { color: var(--doux); font-size: 12.5px; }
-  .demo { font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; margin-left: 6px; }
-  .horloge { margin-left: auto; text-align: right; }
-  .horloge b { font-size: 20px; font-variant-numeric: tabular-nums; }
-  .horloge span { display: block; color: var(--doux); font-size: 11.5px; }
-  .direct { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert) !important; margin-right: 8px; }
+
+  /* ---------- en-tête ---------- */
+  .entete { grid-column: 1 / -1; display: flex; align-items: center; gap: 24px; padding: 12px 24px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  .marque { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .logo { width: 40px; height: 40px; flex: none; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(185,28,28,.25); }
+  .marque b { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; }
+  .marque > div > span { display: block; color: var(--doux); font-size: 12.5px; white-space: nowrap; }
+  .demo { font-size: 11px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 2px 8px; border-radius: 99px; }
+  .vues { position: relative; display: inline-flex; padding: 4px; border-radius: 12px; background: #eef1f6; margin: 0 auto; }
+  .vues button { position: relative; z-index: 1; border: 0; background: none; padding: 7px 16px; border-radius: 9px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; white-space: nowrap; transition: color .2s; display: inline-flex; align-items: center; gap: 6px; }
+  .vues button svg { opacity: .7; }
+  .vues button.actif { color: var(--texte); }
+  .vues button.actif svg { opacity: 1; color: var(--bleu); }
+  .vues-curseur { position: absolute; top: 4px; bottom: 4px; left: 4px; width: 0; border-radius: 9px; background: #fff; box-shadow: 0 1px 3px rgba(15,23,42,.12), 0 1px 2px rgba(15,23,42,.06); transition: left .3s cubic-bezier(.3,.7,.3,1), width .3s cubic-bezier(.3,.7,.3,1); }
+  .droite { display: flex; align-items: center; gap: 12px; }
+  .direct { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert); background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 99px; }
   .direct i { width: 7px; height: 7px; border-radius: 50%; background: var(--vert); animation: pouls 2s infinite; }
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
-  .kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 1px; background: var(--ligne); border-bottom: 1px solid var(--ligne); }
-  .kpi { background: var(--carte); padding: 12px 16px; min-width: 0; }
-  .kpi.calc { background: #fbfcfe; }
-  .kpi.calc span::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pastille, #2563eb); margin-right: 6px; vertical-align: 1px; }
-  .kpi span { color: var(--doux); font-size: 12px; }
-  .kpi b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin: 1px 0; }
-  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
-  .jauge { height: 4px; border-radius: 4px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
-  .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 4px; }
-  .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
+  .horloge { text-align: right; line-height: 1.15; }
+  .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .horloge small { color: var(--doux); font-size: 11px; }
+  .bouton-ic { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--ligne); background: #fff; border-radius: 10px; cursor: pointer; color: #334155; }
+  .bouton-ic:hover { background: var(--gris-doux); }
+  .bouton-ic.actif { background: var(--bleu-doux); border-color: #bfdbfe; color: var(--bleu); }
+  .lien-offre { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 10px; background: var(--texte); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .lien-offre:hover { background: #1e293b; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- chiffres clés ---------- */
+  .kpis { grid-column: 1 / -1; position: relative; padding: 16px 16px 12px; }
+  .kpis-rail { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) 64px; gap: 12px; }
+  .kpi { background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); box-shadow: var(--ombre-s); padding: 12px 14px 10px; min-width: 0; }
+  .kpi-h { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .kpi-ic { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--kd); color: var(--k); transition: background .4s, color .4s; }
+  .kpi-l { color: var(--doux); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-m { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin: 6px 0 4px; }
+  .kpi-m b { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .spark { flex: none; color: var(--k); overflow: visible; }
+  .kpi-b { display: flex; align-items: center; min-width: 0; font-size: 11.5px; }
+  .kpi em { display: none; font-style: normal; color: var(--doux); font-size: 11.5px; }
+  .tend { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; color: var(--doux); min-width: 0; }
+  .tend b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tend span { color: var(--doux2); overflow: hidden; text-overflow: ellipsis; }
+  .tend.bien { color: var(--vert); } .tend.mal { color: var(--rouge); } .tend.neutre { color: #475569; }
+  .plus-b { border: 1px dashed #cbd5e1; background: rgba(255,255,255,.6); border-radius: var(--r); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #475569; font-size: 12px; font-weight: 600; }
+  .plus-b:hover, .plus-b[aria-expanded="true"] { background: #fff; border-style: solid; color: var(--texte); }
+  .plus-menu { position: absolute; right: 16px; top: calc(100% - 4px); z-index: 25; width: 300px; padding: 10px; display: grid; gap: 8px; border-radius: 16px; background: var(--verre); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid rgba(255,255,255,.8); box-shadow: 0 12px 40px rgba(15,23,42,.18); }
+  .plus-menu[hidden] { display: none; }
+  .plus-menu .kpi { box-shadow: none; }
+  .plus-menu .kpi em { display: block; margin-top: 2px; }
+  .plus-menu .jauge { height: 5px; border-radius: 5px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
+  .plus-menu .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 5px; transition: width .6s; }
+
+  /* ---------- maquette 3D ---------- */
+  .scene { position: relative; overflow: hidden; min-height: 0; background: #eef0f3; margin: 0 8px 16px 16px; border-radius: 18px; border: 1px solid var(--ligne); box-shadow: var(--ombre-s); }
   .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
   .scene canvas:active { cursor: grabbing; }
-  .aide { position: absolute; right: 12px; bottom: 12px; background: rgba(255,255,255,.9); border: 1px solid var(--ligne); border-radius: 7px; padding: 5px 9px; font-size: 11.5px; color: var(--doux); pointer-events: none; transition: opacity .6s; }
+  .verre { background: var(--verre); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); border: 1px solid rgba(255,255,255,.75); box-shadow: var(--ombre); border-radius: var(--r); }
+  .aide { position: absolute; right: 12px; bottom: 12px; padding: 6px 10px; font-size: 11.5px; color: #475569; pointer-events: none; transition: opacity .6s; border-radius: 10px; }
   .aide.cache { opacity: 0; }
-  @media (max-width: 900px) { .aide { bottom: 10px; right: 10px; } .legende:not([hidden]) ~ .aide { display: none; } #leg-parcours { display: none; } }
   .etiquettes { position: absolute; inset: 0; pointer-events: none; }
-  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
+  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(226,232,240,.9); border-radius: 99px; padding: 3px 10px 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 2px 8px rgba(15,23,42,.12); pointer-events: auto; cursor: pointer; transition: opacity .3s; }
   .et small { font-weight: 500; color: var(--doux); }
-  .et i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
-  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(17,24,39,.86); color: #fff; border-radius: 5px; padding: 2px 6px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
+  .et i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(15,23,42,.84); color: #fff; border-radius: 7px; padding: 2px 7px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
   .badge small { display: block; font-weight: 500; font-size: 9.5px; opacity: .8; }
-  .outils { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; flex-wrap: wrap; max-width: calc(100% - 28px); }
-  .bouton svg { vertical-align: -3px; margin-right: 4px; }
-  .legende { position: absolute; right: 12px; bottom: 14px; width: 230px; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 4px 16px rgba(17,24,39,.10); padding: 9px 11px; font-size: 11.5px; }
-  .legende b { display: block; font-size: 12px; margin-bottom: 5px; }
-  .legende .degrade { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #93c5fd, #60a5fa, #7dd3fc, #fdba74, #f97316, #dc2626); }
-  .legende .bornes { display: flex; justify-content: space-between; color: var(--doux); margin: 2px 0 0; }
-  .legende p { margin: 5px 0 0; color: var(--texte); }
-  .legende .trait { display: inline-block; width: 22px; border-top: 2px dotted #2563eb; vertical-align: 3px; margin-right: 6px; }
-  .legende section + section { margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--ligne); }
-  /* panneaux blancs flottants autour de la maquette (ordinateur) */
-  .tableau { position: absolute; left: 12px; top: 56px; width: 192px; max-height: calc(100% - 66px); overflow: hidden; display: flex; flex-direction: column; gap: 10px; pointer-events: none; z-index: 1; }
-  .tableau.cache { display: none; }
-  .pan { pointer-events: auto; background: rgba(255,255,255,.97); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 4px 16px rgba(17,24,39,.08); padding: 9px 11px 10px; font-size: 11.5px; }
-  .pan > button { all: unset; display: flex; width: 100%; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12px; font-weight: 700; color: #1e3a8a; }
-  .pan > button::after { content: '−'; color: var(--doux); font-weight: 500; }
-  .pan.plie > button::after { content: '+'; }
+  .outils { position: absolute; left: 12px; top: 12px; display: flex; align-items: center; gap: 2px; padding: 4px; max-width: calc(100% - 24px); flex-wrap: wrap; z-index: 2; border-radius: 12px; }
+  .outils .sep { width: 1px; height: 20px; background: var(--ligne); margin: 0 4px; }
+  .bouton { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #334155; font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 9px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s; }
+  .bouton:hover { background: rgba(241,245,249,.9); }
+  .bouton.actif { background: var(--bleu-doux); color: #1d4ed8; }
+  .bouton[hidden] { display: none; }
+  .annonce { position: absolute; left: 50%; top: 14px; transform: translate(-50%, -6px); background: rgba(15,23,42,.9); color: #fff; font-size: 12.5px; font-weight: 500; padding: 8px 14px; border-radius: 99px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; z-index: 3; box-shadow: 0 8px 24px rgba(15,23,42,.25); }
+  .annonce.vu { opacity: 1; transform: translate(-50%, 0); }
+  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); padding: 14px 16px; font-size: 13px; text-align: center; }
+  /* panneaux flottants (ordinateur) */
+  .tableau { position: absolute; left: 12px; top: 64px; width: 212px; max-height: calc(100% - 76px); overflow: hidden; display: flex; flex-direction: column; gap: 10px; pointer-events: none; z-index: 1; transition: opacity .3s; }
+  .tableau.cache, .tableau.hors-vue { display: none; }
+  .pan { pointer-events: auto; padding: 12px 14px; font-size: 12px; }
+  .pan > button { all: unset; display: flex; width: 100%; align-items: center; justify-content: space-between; cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--texte); }
+  .pan > button::after { content: ''; width: 7px; height: 7px; border-right: 1.6px solid var(--doux2); border-bottom: 1.6px solid var(--doux2); transform: rotate(45deg) translate(-2px, -2px); transition: transform .2s; }
+  .pan.plie > button::after { transform: rotate(-45deg); }
   .pan.plie .pan-c { display: none; }
-  .pan-c { margin-top: 6px; }
-  .pan-l { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 3px 0; border-top: 1px solid #f1f2f4; }
-  .pan-l:first-child { border-top: 0; }
-  .pan-l span { color: #374151; display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
-  .pan-l b { font-variant-numeric: tabular-nums; }
-  .pan-l i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-  .pan-l em { font-style: normal; font-size: 10.5px; color: var(--doux); }
-  .histo { display: flex; align-items: flex-end; gap: 2px; height: 54px; margin-top: 2px; }
-  .histo i { flex: 1; background: #bfdbfe; border-radius: 2px 2px 0 0; min-height: 2px; }
-  .histo i.passe { background: #3b82f6; }
-  .histo i.now { background: #1d4ed8; }
-  .histo-h { display: flex; justify-content: space-between; color: var(--doux); font-size: 10px; margin-top: 3px; }
-  .pan small { display: block; color: var(--doux); font-size: 10.5px; margin-top: 4px; line-height: 1.35; }
-  .tableau .legende { position: static; width: auto; pointer-events: auto; box-shadow: 0 4px 16px rgba(17,24,39,.08); padding: 9px 11px 10px; }
-  .tableau .legende b { color: #1e3a8a; }
-  .tableau .legende p { font-size: 11px; color: #374151; }
+  .pan-c { margin-top: 8px; }
+  .zl { display: grid; grid-template-columns: 1fr auto; gap: 3px 8px; align-items: center; padding: 4px 0; }
+  .zl span { color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+  .zl span i { width: 8px; height: 8px; border-radius: 3px; flex: none; }
+  .zl b { font-variant-numeric: tabular-nums; font-size: 12px; }
+  .zl .barre { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: var(--ligne2); overflow: hidden; }
+  .zl .barre i { display: block; height: 100%; border-radius: 4px; transition: width .6s; }
+  .histo { display: flex; align-items: flex-end; gap: 3px; height: 56px; margin-top: 2px; }
+  .histo i { flex: 1; background: #dbeafe; border-radius: 3px 3px 1px 1px; min-height: 2px; }
+  .histo i.passe { background: #93c5fd; }
+  .histo i.now { background: var(--bleu); }
+  .histo-h { display: flex; justify-content: space-between; color: var(--doux2); font-size: 10px; margin-top: 4px; }
+  .pan small { display: block; color: var(--doux); font-size: 11px; margin-top: 6px; line-height: 1.4; }
+  .legende { position: absolute; left: 12px; bottom: 12px; width: 220px; padding: 12px 14px; font-size: 11.5px; z-index: 1; }
+  .legende b { display: block; font-size: 12.5px; margin-bottom: 8px; }
+  .legende .degrade { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #bfdbfe, #60a5fa, #7dd3fc, #fdba74, #f97316, #dc2626); }
+  .legende .bornes { display: flex; justify-content: space-between; color: var(--doux); margin: 4px 0 0; font-size: 11px; }
+  .legende p { margin: 8px 0 0; color: #334155; font-size: 11.5px; }
+  .legende .trait { display: inline-block; width: 22px; border-top: 2px dotted var(--bleu); vertical-align: 3px; margin-right: 6px; }
+  .legende section + section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ligne2); }
+  .tableau .legende { position: static; width: auto; pointer-events: auto; }
   .tableau #leg-parcours p { display: none; }
-  .tableau .legende section + section { margin-top: 6px; padding-top: 6px; }
-  .tableau.discret .pan-c, .tableau.discret .legende p, .tableau.discret #leg-parcours { display: none; } /* vue rapprochée : les panneaux se font discrets */
+  .tableau.discret .pan-c, .tableau.discret .legende p, .tableau.discret #leg-parcours { display: none; }
   @media (max-width: 1099px) { .tableau { display: none; } }
-  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 7px; cursor: pointer; text-decoration: none; }
-  .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
-  .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
-  .annonce.vu { opacity: .92; }
-  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; padding: 14px 16px; font-size: 13px; text-align: center; }
-  .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; max-height: 70%; overflow-y: auto; }
-  .fiche.vu { display: block; }
-  .fiche h3 { margin: 0; font-size: 16px; }
-  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 8px; }
-  .fermer { position: absolute; right: 10px; top: 8px; border: 0; background: none; font-size: 18px; color: var(--doux); cursor: pointer; }
-  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
-  .statut.ok { color: var(--vert); background: var(--vert-doux); }
-  .statut.att { color: var(--orange); background: var(--orange-doux); }
-  .statut.ko { color: var(--accent); background: var(--accent-doux); }
-  .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
-  .connecte { border: 1px solid #bbf7d0; background: var(--vert-doux); border-radius: 8px; padding: 9px 11px; margin: 0 0 12px; font-size: 12px; line-height: 1.45; }
-  .connecte b { color: var(--vert); }
-  .connecte p { margin: 4px 0 0; color: var(--texte); }
-  .connecte small { color: var(--doux); }
-  .synchro { font-size: 11.5px; color: var(--vert); margin: 6px 0 0; }
-  .commande { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--ligne); }
-  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .commande .ligne b { min-width: 74px; text-align: center; font-size: 13px; }
-  .commande button { border: 1px solid var(--ligne); background: var(--carte); font: inherit; font-size: 13px; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-  .commande button.go { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; margin-left: auto; }
-  .commande button:disabled { opacity: .45; cursor: default; }
-  .commande small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 5px; }
-  .commande .fait { color: var(--vert); font-weight: 600; font-size: 12px; margin-top: 5px; }
-  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  /* fiche de l'élément choisi */
+  .fiche { position: absolute; left: 12px; bottom: 12px; width: 340px; max-width: calc(100% - 24px); padding: 16px 18px; display: none; max-height: 72%; overflow-y: auto; z-index: 4; }
+  .fiche.vu { display: block; animation: monte .28s ease-out; }
+  .fiche h3 { margin: 0; font-size: 16px; letter-spacing: -.01em; padding-right: 28px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 10px; }
+  .fermer { position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: rgba(241,245,249,.9); color: #475569; cursor: pointer; display: grid; place-items: center; }
+  .fermer:hover { background: #e2e8f0; }
+  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--gris-doux); color: #475569; }
+  .statut.ok { color: #15803d; background: var(--vert-doux); }
+  .statut.att { color: #c2410c; background: var(--orange-doux); }
+  .statut.ko { color: #b91c1c; background: var(--rouge-doux); }
+  .lignes { margin: 10px 0 0; padding: 0; list-style: none; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--ligne2); font-size: 13px; }
   .lignes li span:first-child { color: var(--doux); }
   .lignes li b { font-weight: 600; text-align: right; }
-  aside { background: var(--carte); border-left: 1px solid var(--ligne); display: flex; flex-direction: column; min-height: 0; }
-  .onglets { display: flex; border-bottom: 1px solid var(--ligne); padding: 0 8px; overflow-x: auto; scrollbar-width: none; }
+  .connecte { border: 1px solid #bbf7d0; background: #f0fdf4; border-radius: 12px; padding: 10px 12px; margin: 0 0 16px; font-size: 12px; line-height: 1.45; }
+  .connecte b { color: #15803d; }
+  .connecte p { margin: 4px 0 0; color: var(--texte); }
+  .connecte small { color: var(--doux); }
+  .synchro { font-size: 11.5px; color: #15803d; margin: 8px 0 0; }
+  .commande, .fiche .actions-fiche { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ligne2); }
+  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .commande .ligne b { min-width: 80px; text-align: center; font-size: 13px; }
+  .commande button, .fiche .actions-fiche button { height: 32px; border: 1px solid var(--ligne); background: var(--carte); font-size: 13px; font-weight: 600; border-radius: 10px; padding: 0 12px; cursor: pointer; }
+  .commande button:hover, .fiche .actions-fiche button:hover { background: var(--gris-doux); }
+  .commande button.go { background: var(--texte); border-color: var(--texte); color: #fff; margin-left: auto; }
+  .commande button:disabled, .fiche .actions-fiche button:disabled { opacity: .45; cursor: default; }
+  .commande small, .fiche .actions-fiche small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 6px; }
+  .commande .fait { color: #15803d; font-weight: 600; font-size: 12px; margin-top: 6px; }
+
+  /* ---------- colonne de droite ---------- */
+  aside { background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; margin: 0 16px 16px 8px; display: flex; flex-direction: column; min-height: 0; box-shadow: var(--ombre-s); overflow: hidden; }
+  .poignee { display: none; }
+  .onglets { display: flex; gap: 4px; padding: 12px 12px 10px; border-bottom: 1px solid var(--ligne2); overflow-x: auto; scrollbar-width: none; flex: none; }
   .onglets::-webkit-scrollbar { display: none; }
-  .onglets button { flex: 1 0 auto; border: 0; background: none; font: inherit; font-size: 12.5px; font-weight: 600; color: var(--doux); padding: 12px 6px 10px; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
-  .compteur { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 99px; background: var(--gris-doux); color: var(--doux); font-size: 11px; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; }
-  .compteur.rouge { background: #dc2626; color: #fff; }
-  .compteur.orange { background: #ea580c; color: #fff; }
+  .onglets button { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; font-size: 12.5px; font-weight: 600; color: var(--doux); padding: 6px 10px; border-radius: 99px; cursor: pointer; white-space: nowrap; transition: background .2s, color .2s; }
+  .onglets button:hover { background: var(--gris-doux); color: var(--texte); }
+  .onglets button.actif { background: var(--texte); color: #fff; }
+  .compteur { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 99px; background: var(--gris-doux); color: var(--doux); font-size: 11px; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums; }
+  .compteur.rouge { background: var(--rouge); color: #fff; }
+  .compteur.orange { background: var(--orange); color: #fff; }
+  .contenu { padding: 16px; overflow-y: auto; flex: 1; }
+  .note { color: var(--doux2); font-size: 11px; padding: 10px 16px; border-top: 1px solid var(--ligne2); margin: 0; flex: none; }
+  h2 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
   /* onglet À traiter */
   .at-resume { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 8px; }
-  .pastille { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--gris-doux); color: var(--texte); }
+  .pastille { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #f8fafc; border: 1px solid var(--ligne2); color: #334155; }
   .pastille i { width: 7px; height: 7px; border-radius: 50%; }
-  .at-note { color: var(--doux); font-size: 11.5px; margin: 0 0 12px; }
-  .alerte { background: var(--carte); border: 1px solid var(--ligne); border-left: 4px solid var(--c); border-radius: 10px; box-shadow: 0 1px 3px rgba(17,24,39,.06), 0 4px 14px rgba(17,24,39,.05); padding: 10px 12px; margin: 0 0 10px; }
-  .al-tete { display: flex; gap: 9px; align-items: flex-start; }
-  .al-ic { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--c); background: var(--cd); }
-  .al-tete b { display: block; font-size: 13.5px; line-height: 1.3; }
-  .al-tete small { color: var(--doux); font-size: 11.5px; }
-  .al-tete small em { font-style: normal; font-weight: 600; color: var(--c); }
-  .alerte ul { margin: 7px 0 0 37px; padding: 0; list-style: none; font-size: 12.5px; color: #374151; }
-  .alerte li { margin: 1px 0; }
-  .al-act { display: flex; gap: 6px; flex-wrap: wrap; margin: 9px 0 0 37px; }
-  .al-act button { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 7px; cursor: pointer; }
+  .pastille svg { width: 13px; height: 13px; color: var(--vert); }
+  .at-note { color: var(--doux2); font-size: 11.5px; margin: 0 0 16px; }
+  .alerte { background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); box-shadow: var(--ombre-s); padding: 14px; margin: 0 0 12px; transition: box-shadow .2s, border-color .2s; }
+  .alerte:hover { border-color: #d5dbe5; box-shadow: var(--ombre); }
+  .alerte.entre { animation: entree .38s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes entree { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+  @keyframes monte { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .al-tete { display: flex; gap: 12px; align-items: flex-start; }
+  .al-ic { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: var(--cd); }
+  .al-tete b { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; letter-spacing: -.005em; }
+  .al-tete small { display: flex; align-items: center; gap: 8px; margin-top: 4px; color: var(--doux); font-size: 11.5px; }
+  .prio { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 6px; border-radius: 99px; background: var(--cd); color: var(--c); font-weight: 600; }
+  .prio i { position: relative; width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .prio.urgent i::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--c); opacity: 0; animation: onde 1.8s ease-out infinite; }
+  @keyframes onde { 0% { transform: scale(.4); opacity: .7; } 100% { transform: scale(1.4); opacity: 0; } }
+  .alerte ul { margin: 10px 0 0 44px; padding: 0; list-style: none; font-size: 12.5px; color: #475569; }
+  .alerte li { margin: 2px 0; }
+  .al-act { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 0 44px; }
+  .al-act button { display: inline-flex; align-items: center; gap: 6px; height: 32px; border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font-size: 12.5px; font-weight: 600; padding: 0 12px; border-radius: 10px; cursor: pointer; transition: background .15s, transform .1s; }
   .al-act button:hover { background: var(--gris-doux); }
+  .al-act button:active { transform: scale(.97); }
   .al-act button.prim { background: var(--texte); border-color: var(--texte); color: #fff; }
-  .al-act button.prim:hover { background: #374151; }
+  .al-act button.prim:hover { background: #1e293b; }
   .al-act button:disabled { opacity: .45; cursor: default; }
   .al-act small { flex-basis: 100%; color: var(--doux); font-size: 11px; }
-  .vide { text-align: center; padding: 18px 10px; color: var(--doux); border: 1px dashed var(--ligne); border-radius: 10px; margin: 0 0 12px; }
-  .vide svg { color: var(--vert); }
-  .traites { margin-top: 14px; }
+  .vide { text-align: center; padding: 32px 16px; color: var(--doux); border: 1px dashed #d5dbe5; border-radius: var(--r); margin: 0 0 16px; background: linear-gradient(180deg, #f8fafc, #fff); }
+  .vide .rond { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; background: var(--vert-doux); color: var(--vert); }
+  .vide .rond svg { width: 22px; height: 22px; }
+  .vide b { display: block; color: var(--texte); font-size: 14px; margin-bottom: 4px; }
+  .traites { margin-top: 16px; }
   .traites ul { list-style: none; margin: 0; padding: 0; }
-  .traites li { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-top: 1px solid var(--ligne); font-size: 12.5px; }
+  .traites li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--ligne2); font-size: 12.5px; }
   .traites li svg { flex: none; color: var(--vert); margin-top: 1px; }
   .traites li small { display: block; color: var(--doux); font-size: 11.5px; }
-  .fiche .actions-fiche { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--ligne); }
-  .fiche .actions-fiche button { border: 1px solid var(--ligne); background: var(--carte); font: inherit; font-size: 13px; font-weight: 600; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
-  .fiche .actions-fiche button:disabled { opacity: .45; cursor: default; }
-  .fiche .actions-fiche small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 5px; }
-  .onglets button.actif { color: var(--accent); border-color: var(--accent); }
-  .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
-  .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
-  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid var(--ligne); }
-  td { padding: 7px 4px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 8px 6px; border-bottom: 1px solid var(--ligne); }
+  td { padding: 8px 6px; border-bottom: 1px solid var(--ligne2); vertical-align: middle; }
   tr.clic { cursor: pointer; }
-  tr.clic:hover td { background: var(--gris-doux); }
+  tr.clic:hover td { background: #f8fafc; }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .mini { height: 6px; border-radius: 6px; background: var(--gris-doux); width: 90px; display: inline-block; vertical-align: middle; overflow: hidden; }
-  .mini i { display: block; height: 100%; }
+  .mini i { display: block; height: 100%; border-radius: 6px; }
   .service { position: relative; height: 8px; background: var(--gris-doux); border-radius: 4px; width: 120px; display: inline-block; vertical-align: middle; }
   .service i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: #93c5fd; }
-  .service b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #dc2626; }
+  .service b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--rouge); }
   small.d { color: var(--doux); }
-  @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (min-width: 1151px) and (max-width: 1500px) { .kpi { padding: 10px 12px; } .kpi b { font-size: 19px; } .kpi span, .kpi em { font-size: 11px; } }
+  @media (min-width: 901px) and (max-width: 1280px) { .app { grid-template-columns: minmax(0, 1fr) 360px; } .kpis-rail { grid-template-columns: repeat(3, minmax(0, 1fr)) 64px; } .kpis-rail .kpi:nth-child(n+4) { display: none; } .entete { gap: 16px; padding: 12px 16px; } .marque > div > span { display: none; } }
+  @media (min-width: 1281px) and (max-width: 1500px) { .kpi { padding: 10px 12px 8px; } .kpi-m b { font-size: 21px; } .spark { width: 64px; } .tend span { display: none; } }
+
+  /* ---------- téléphone : maquette en haut, chiffres en carrousel, panneaux en tiroir ---------- */
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: auto auto auto 52vh auto auto; height: auto; }
-    .bandeau-demo { font-size: 11.5px; padding: 5px 10px; }
+    body { overflow: hidden; }
+    .app { --peek: 172px; display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-bottom: calc(var(--peek) - 18px); }
+    .bandeau-demo { font-size: 11px; padding: 4px 10px; }
     .bandeau-demo span { display: none; }
-    .legende { left: 10px; right: auto; bottom: 10px; width: 200px; padding: 7px 9px; font-size: 10.5px; }
-    .legende p { display: none; }
-    aside { border-left: 0; border-top: 1px solid var(--ligne); }
-    .contenu { overflow: visible; }
-    .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .kpi { padding: 8px 10px; }
-    .kpi span, .kpi em { font-size: 10.5px; line-height: 1.3; display: block; }
-    .kpi b { font-size: 16px; }
-    header { flex-wrap: wrap; padding: 12px 14px; }
-    .horloge { margin-left: 0; text-align: left; width: 100%; }
-    .et { font-size: 10px; padding: 2px 6px; }
+    .entete { flex-wrap: wrap; gap: 10px 12px; padding: 10px 14px; }
+    .marque { flex: 1; }
+    .logo { width: 34px; height: 34px; border-radius: 10px; }
+    .marque b { font-size: 15px; }
+    .marque b .demo, .marque > div > span, .lien-offre span, .horloge small { display: none; }
+    .lien-offre { width: 34px; height: 34px; padding: 0; justify-content: center; }
+    .bouton-ic { width: 34px; height: 34px; }
+    .direct { padding: 2px 8px; font-size: 11px; }
+    .horloge b { font-size: 18px; }
+    .droite { gap: 8px; }
+    .vues { order: 3; width: 100%; margin: 0; }
+    .vues button { flex: 1; justify-content: center; padding: 7px 6px; font-size: 12.5px; }
+    .kpis { padding: 10px 0 8px; flex: none; }
+    .kpis-rail { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 14px 2px; scroll-padding: 0 14px; scrollbar-width: none; }
+    .kpis-rail::-webkit-scrollbar { display: none; }
+    .kpis-rail .kpi, .kpis-rail .kpi:nth-child(n+4) { display: block; flex: 0 0 156px; scroll-snap-align: start; padding: 10px 12px 8px; }
+    .kpi-m b { font-size: 19px; }
+    .spark { width: 52px; }
+    .tend span { display: none; }
+    .plus-b { flex: 0 0 64px; scroll-snap-align: start; }
+    .plus-menu { position: fixed; left: 12px; right: 12px; top: auto; width: auto; bottom: calc(var(--peek) + 8px); }
+    .scene { flex: 1; margin: 0 12px; border-radius: 16px; min-height: 0; }
+    .outils { left: 8px; top: 8px; }
+    .bouton { padding: 6px 8px; font-size: 12px; }
+    #recentrer span { display: none; }
+    .direct { font-size: 0; gap: 0; padding: 5px; }
+    .legende { left: 8px; bottom: 8px; width: 168px; padding: 8px 10px; font-size: 10.5px; }
+    .legende b { font-size: 11.5px; margin-bottom: 6px; }
+    .legende p, #leg-parcours { display: none; }
+    .aide { display: none; }
+    .et { font-size: 10px; padding: 2px 7px 2px 6px; }
     .badge { font-size: 9.5px; padding: 1px 5px; }
     .badge small { display: none; }
-    .fiche { position: static; width: auto; max-width: none; max-height: none; overflow: visible; margin: 10px 12px 0; padding: 12px 14px; box-shadow: none; } /* sous la maquette, pour ne pas la cacher */
-    .annonce { display: none; }
+    .annonce { max-width: 86%; font-size: 12px; top: 50px; }
+    aside { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; height: 84vh; height: 84dvh; margin: 0; border-radius: 20px 20px 0 0; border-bottom: 0; box-shadow: 0 -8px 32px rgba(15,23,42,.16); transform: translateY(calc(100% - var(--peek, 172px))); transition: transform .38s cubic-bezier(.2,.8,.2,1); }
+    aside.ouvert { transform: none; }
+    .poignee { display: flex; justify-content: center; align-items: center; flex: none; height: 22px; border: 0; background: none; cursor: grab; touch-action: none; padding: 0; width: 100%; }
+    .poignee i { width: 40px; height: 5px; border-radius: 5px; background: #cbd5e1; }
+    .onglets { padding: 2px 12px 10px; }
+    .contenu { padding: 12px 14px; }
+    .fiche { position: fixed; z-index: 40; left: 8px; right: 8px; bottom: 8px; width: auto; max-width: none; max-height: 70vh; max-height: 70dvh; box-shadow: 0 -4px 32px rgba(15,23,42,.22); }
     .service { width: 80px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }
 </style>
 <script type="importmap">
@@ -208,47 +293,54 @@
 </head>
 <body>
 <div class="app">
-  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives<span>— magasin, personnes, stocks et chiffres sont inventés, les alertes sont calculées sur cette simulation</span></div>
-  <header>
-    <div class="logo">H</div>
-    <div class="titre"><b>Hyper Modèle <span class="demo">Démo · données fictives</span></b><span>Grande surface imaginaire · tableau de bord du magasin, en direct</span></div>
-    <div class="horloge"><span class="direct"><i></i>En direct</span><b id="heure">--:--</b><span>journée accélérée pour la démo (1 s = 1 min)</span></div>
+  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives<span>— magasin, personnes, stocks et chiffres sont inventés, les alertes sont calculées sur cette simulation</span></div>
+  <header class="entete">
+    <div class="marque">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7M10 20v-4h4v4"/></svg></div>
+      <div><b>Hyper Modèle <span class="demo">Démo</span></b><span>Tableau de bord du magasin, en direct · données fictives</span></div>
+    </div>
+    <div class="vues" role="tablist" aria-label="Vue de la maquette">
+      <span class="vues-curseur" aria-hidden="true"></span>
+      <button role="tab" data-vue="maquette" class="actif" aria-selected="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>Maquette</button>
+      <button role="tab" data-vue="site" aria-selected="false"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15h18M9 3v12"/></svg>Tout le site</button>
+      <button role="tab" data-vue="etage" aria-selected="false"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"/></svg>Étage</button>
+    </div>
+    <div class="droite">
+      <span class="direct"><i></i>En direct</span>
+      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <button class="bouton-ic" id="pause" aria-label="Pause" title="Mettre la journée en pause"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="ic-pause" d="M9 6v12M15 6v12"/><path class="ic-lecture" d="M8 5l11 7-11 7z" fill="currentColor" stroke="none" style="display:none"/></svg><span class="sr">Pause</span></button>
+      <a class="lien-offre" href="../offre/" aria-label="L'offre"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>L'offre</span></a>
+    </div>
   </header>
 
   <section class="kpis" aria-label="Chiffres clés">
-    <div class="kpi calc" id="k-alertes-c"><span>Alertes ouvertes</span><b id="k-alertes">-</b><em id="k-alertes-d"></em></div>
-    <div class="kpi calc" id="k-stock-c"><span>Rayons en stock</span><b id="k-stock">-</b><em id="k-stock-d"></em></div>
-    <div class="kpi calc" id="k-attente-c"><span>Taux d'attente en caisse</span><b id="k-attente">-</b><em id="k-attente-d"></em></div>
-    <div class="kpi"><span>Chiffre d'affaires aujourd'hui</span><b id="k-ca">-</b><em id="k-ca-d"></em></div>
-    <div class="kpi"><span>Clients dans le magasin</span><b id="k-clients">-</b><em id="k-clients-d"></em></div>
-    <div class="kpi"><span>Caisses ouvertes</span><b id="k-caisses">-</b><em id="k-caisses-d"></em></div>
-    <div class="kpi"><span>Ruptures de stock</span><b id="k-ruptures">-</b><em id="k-ruptures-d"></em></div>
-    <div class="kpi"><span>Équipe présente</span><b id="k-equipe">-</b><em id="k-equipe-d"></em></div>
-    <div class="kpi"><span>Coût de l'équipe aujourd'hui</span><b id="k-salaires">-</b><em id="k-salaires-d"></em><div class="jauge"><i id="k-salaires-j"></i></div></div>
+    <div class="kpis-rail" id="kpis-rail">
+      <button class="plus-b" id="plus-b" aria-expanded="false" aria-controls="plus-menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>Plus</button>
+    </div>
+    <div class="plus-menu" id="plus-menu" hidden></div>
   </section>
 
   <main class="scene" id="scene">
     <div class="etiquettes" id="etiquettes"></div>
-    <div class="outils">
-      <button class="bouton" id="recentrer">Vue d'ensemble</button>
-      <button class="bouton actif" id="etage">Étage</button>
-      <button class="bouton" id="pause">Pause</button>
+    <div class="outils verre">
       <button class="bouton actif" id="b-chaleur" aria-pressed="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10.5a6 6 0 0 1-12 0C6 10 9 8 12 3z"/></svg>Affluence</button>
-      <button class="bouton actif" id="b-parcours" aria-pressed="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" aria-hidden="true"><path d="M4 18c4-10 12 2 16-10"/></svg>Parcours clients</button>
-      <a class="bouton" href="../offre/">L'offre</a>
+      <button class="bouton actif" id="b-parcours" aria-pressed="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" aria-hidden="true"><path d="M4 18c4-10 12 2 16-10"/></svg>Parcours</button>
+      <button class="bouton" id="etage" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4"/></svg><span>Rez-de-chaussée</span></button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="bouton" id="recentrer" title="Recadrer la vue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Recadrer</span></button>
     </div>
     <div class="annonce" id="annonce"></div>
     <div class="tableau" id="tableau" aria-label="Résumé du magasin">
-      <section class="pan" id="pan-vue"><button type="button" aria-expanded="true">Vue du magasin</button><div class="pan-c" id="pan-vue-c"></div></section>
-      <section class="pan" id="pan-zones"><button type="button" aria-expanded="true">Zones · stock par rayon</button><div class="pan-c" id="pan-zones-c"></div></section>
-      <section class="pan" id="pan-aff"><button type="button" aria-expanded="true">Clients par heure</button><div class="pan-c" id="pan-aff-c"></div></section>
+      <section class="pan verre" id="pan-zones"><button type="button" aria-expanded="true">Stock par rayon</button><div class="pan-c" id="pan-zones-c"></div></section>
+      <section class="pan verre" id="pan-aff"><button type="button" aria-expanded="true">Clients par heure</button><div class="pan-c" id="pan-aff-c"></div></section>
     </div>
-    <div class="legende" id="legende" hidden><section id="leg-chaleur"><b>Affluence · 30 dernières minutes</b><div class="degrade"></div><div class="bornes"><span>Faible</span><span>Forte</span></div><p id="leg-zone">Calculée sur la position des clients simulés.</p></section><section id="leg-parcours"><b><span class="trait"></span>Parcours clients</b><p>Les 6 boucles suivies par les clients simulés, flèches dans le sens de marche.</p></section></div>
-    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Les chiffres et les onglets à droite restent à jour. Essayez avec un navigateur récent.</div>
-    <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
+    <div class="legende verre" id="legende" hidden><section id="leg-chaleur"><b>Affluence · 30 dernières minutes</b><div class="degrade"></div><div class="bornes"><span>Faible</span><span>Forte</span></div><p id="leg-zone">Calculée sur la position des clients simulés.</p></section><section id="leg-parcours"><b><span class="trait"></span>Parcours clients</b><p>Les 6 boucles suivies par les clients simulés, flèches dans le sens de marche.</p></section></div>
+    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Les chiffres et les onglets restent à jour. Essayez avec un navigateur récent.</div>
+    <div class="fiche verre" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="fiche-c"></div></div>
   </main>
 
-  <aside>
+  <aside id="tiroir">
+    <button class="poignee" id="poignee" aria-label="Ouvrir ou fermer le panneau" aria-expanded="false"><i></i></button>
     <nav class="onglets" role="tablist">
       <button class="actif" data-onglet="traiter">À traiter<span class="compteur" id="compteur">0</span></button>
       <button data-onglet="equipe">Équipe</button>
@@ -274,6 +366,9 @@ import { creerChaleur } from './chaleur.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import { fusionnerStatique, creerFoule, assembler, textureCarrelage } from './rendu.js';
 import { creerPastilles } from './pastilles.js';
+import { ombresContact, halo, creerVoile } from './decor.js';
+import { creerKpis } from './tableau.js';
+const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
@@ -343,9 +438,9 @@ const CA_HIER = Math.round(caDuJour(FERMETURE) * 1.04 / 10) * 10;
 const caissiers = () => EQUIPE.filter((e) => e.zone.startsWith('c') && present(e));
 const caisseDe = (e) => +e.zone.slice(1, 2);
 const caissesOuvertes = () => [...new Set(caissiers().map(caisseDe))].sort();
-const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER[r.id] || 0) * PAR_PALETTE));
-const rupturesDe = (r) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r)) * 20));
-const coutJour = () => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout, 0);
+const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER_H[r.id] || []).filter((x) => x <= h).length * PAR_PALETTE));
+const rupturesDe = (r, h = t) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r, h)) * 20));
+const coutJour = (h = t) => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(h, e.fin) - e.debut) * e.cout, 0);
 const statutLiv = (d) => (t < d.heure - 0.05 ? 'prévue' : t < d.heure + 0.75 ? 'au quai' : 'déchargée');
 
 // ================= Scène =================
@@ -363,6 +458,8 @@ const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 600);
 // vue d'ensemble de dessus en biais, de face (comme un plan de magasin en 3D)
 const DIR_VUE = new THREE.Vector3(Math.sin(0.2) * Math.cos(0.88), Math.sin(0.88), Math.cos(0.2) * Math.cos(0.88)).normalize();
 const CIBLE = new THREE.Vector3(-11, 0, -12);
+// vue « Maquette » : la surface de vente seule, de face et plus haut (comme un plan de magasin en perspective)
+const DIR_MAQ = new THREE.Vector3(Math.sin(0.1) * Math.cos(0.98), Math.sin(0.98), Math.cos(0.1) * Math.cos(0.98)).normalize();
 camera.position.copy(CIBLE).addScaledVector(DIR_VUE, 160);
 const controls = new OrbitControls(camera, renderer.domElement);
 Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.2, maxPolarAngle: 1.2, minZoom: 0.6, maxZoom: 6, enablePan: true, screenSpacePanning: false });
@@ -447,7 +544,7 @@ zone(66, 15, -6, 15.5, 'parking');
 
 // Bâtiment (coupe à 1,4 m)
 const BX0 = -40, BX1 = 18, BZ0 = -30, BZ1 = 6, HM = 1.4, EM = 0.3, MUR = 0xfafaf8;
-const NUIT = 0x1f2b4d, NUIT_HAUT = 0x5d6b8c, HX = 3.2, EX = 1.1; // murs extérieurs bleu nuit, épais, coupés (dessus visible)
+const NUIT = 0x1f2b4d, NUIT_HAUT = 0x8b98bb, HX = 3.6, EX = 1.1; // murs extérieurs bleu nuit, épais, coupés (dessus visible)
 boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) / 2);
 const carrelage = textureCarrelage(THREE); carrelage.repeat.set(42 / 2.4, 30 / 2.4);
 boite(42, 0.02, 30, new THREE.MeshStandardMaterial({ map: carrelage, roughness: 0.42, metalness: 0, envMapIntensity: 0.6 }), -19, 0.2, -12, scene, false);   // surface de vente : carrelage clair
@@ -480,7 +577,7 @@ RAYONS.forEach((r, i) => { gondoles[r.id] = construireRayon({ THREE, scene, boit
 // vitrines réfrigérées le long du mur du fond (rayon frais) et îlots de fruits et légumes (rayon fruits), même stock que leur rayon
 const MEUBLES = [
   ['r3', construireRayon({ THREE, scene, boite, mat, texte, clic }, RAYONS[3], 3, { xa: -39.1, xb: 1.2, z: -29.62, cotes: [1], frigo: true, sansTetes: true, sansPanneau: true, nom: '-mur' })],
-  ['r0', construireRayon({ THREE, scene, boite, mat, texte, clic }, RAYONS[0], 0, { ilots: [[-2.2, -25.4, 0], [-0.6, -25.4, 2], [-2.2, -24.3, 3], [-0.6, -24.3, 4], [-2.2, -21.6, 1], [-0.6, -21.6, 3], [-2.2, -9.6, 4], [-0.6, -9.6, 0], [-2.2, -8.5, 2], [-0.6, -8.5, 3]], nom: '-ilots' })],
+  ['r0', construireRayon({ THREE, scene, boite, mat, texte, clic }, RAYONS[0], 0, { ilots: [[-2.2, -25.4, 3], [-0.6, -25.4, 6], [-2.2, -24.3, 4], [-0.6, -24.3, 5], [-2.2, -21.6, 1], [-0.6, -21.6, 7], [-2.2, -9.6, 0], [-0.6, -9.6, 3], [-2.2, -8.5, 2], [-0.6, -8.5, 6]], nom: '-ilots' })],
 ];
 for (const [txt, x] of [['CRÈMERIE', -31], ['FROMAGES · TRAITEUR', -19], ['SURGELÉS', -7]]) panneauTexte(txt, x, 2.75, -29.26, 0, '#1d4ed8', 4.2);
 // Caisses (devant l'entrée)
@@ -535,7 +632,7 @@ for (const x of [14.9, 16.8]) { boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, x - 0.95, 0.
 boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, 17.75, 0.2, 4.8); boite(2.4, 0.85, 0.5, 0xffffff, 15.8, 0.2, 0);
 // le vrai 1er étage et son escalier (etage.js)
 const ETAGE = construireEtage({ THREE, scene, boite, mat, texte, clic, zone });
-let etageVu = true;
+let etageVu = false; // la vue Maquette (par défaut) montre le rez-de-chaussée
 // candidat en entretien, assis dans le bureau RH (voir rh.js)
 const visiteur = personne(0x7c3aed); visiteur.position.copy(ETAGE.postes.rhVisiteur); visiteur.rotation.y = Math.PI; visiteur.visible = false; visiteur.userData.s = 0; scene.add(visiteur); clic(visiteur, 'etage-rh');
 panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
@@ -569,11 +666,12 @@ function palette(rid) {
 function remplir(sl, rid) { sl.rayon = rid; sl.mesh = palette(rid); sl.mesh.position.set(sl.x, sl.y, sl.z); scene.add(sl.mesh); }
 function vider(sl) { const rid = sl.rayon; if (sl.mesh) scene.remove(sl.mesh); sl.mesh = null; sl.rayon = null; return rid; }
 const slotsPleins = () => SLOTS.filter((sl) => sl.rayon).length;
-const MER = {}, DERNIERE_MER = {}; // palettes mises en rayon aujourd'hui, par rayon ; dernière mise en rayon (heure, qui)
+const MER = {}, MER_H = {}, DERNIERE_MER = {}; // palettes mises en rayon aujourd'hui, par rayon ; dernière mise en rayon (heure, qui)
 function initReserve() {
   SLOTS.forEach((sl) => { vider(sl); sl.pris = false; });
   SLOTS.forEach((sl, i) => { if (sl.rangee < 2 && (i * 7) % 10 < 6) remplir(sl, RAYONS[(i * 5) % 6].id); });
   for (const k in MER) delete MER[k];
+  for (const k in MER_H) delete MER_H[k];
   for (const k in DERNIERE_MER) delete DERNIERE_MER[k];
   LIVRAISONS.forEach((d) => { d.dechargees = statutLiv(d) === 'déchargée' ? d.palettes : 0; });
 }
@@ -648,7 +746,7 @@ function mettreEnRayon(x, cible) {
   lancer(x, [...aller.map((q) => ({ aller: pt(q) })), { duree: 1.2, fin: () => { pris = vider(sl); sl.pris = false; porter(x, pris); x.job.texte = `apporte une palette ${RAYON_DE(pris).nom.toLowerCase()} en rayon`; x.job.court = 'apporte en rayon'; } },
     ...retour.map((q) => ({ aller: pt(q) })),
     { duree: 0.01, fin: () => { x.job.texte = `met en rayon (${RAYON_DE(pris).nom.toLowerCase()})`; x.job.court = 'met en rayon'; } },
-    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; DERNIERE_MER[pris] = { h: t, nom: x.e.nom }; porter(x, null); } },
+    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; (MER_H[pris] ||= []).push(t); DERNIERE_MER[pris] = { h: t, nom: x.e.nom }; porter(x, null); } },
     ...rentrer, { aller: x.base.clone() }], cible ? `envoyé·e chercher une palette ${RAYON_DE(rid).nom.toLowerCase()} en réserve` : 'va chercher une palette en réserve', 'va en réserve');
   return true;
 }
@@ -695,7 +793,7 @@ const TENUES = [0x60a5fa, 0xe5e7eb, 0x475569, 0xd6b48a, 0x0f766e, 0x9f1239, 0x33
 for (let i = 0; i < CLIENTS_MAX; i++) { const o = personne(TENUES[(i * 5) % TENUES.length], 0.92, i % 2 === 0); o.visible = false; o.userData.s = 0; scene.add(o); clients.push({ o, boucle: boucles[i % 6], u: (i * 0.137) % 1, v: 0.9 + (i % 5) * 0.12, rot: 0 }); }
 // Files d'attente aux caisses
 const attenteCaisse = [];
-for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = personne(TENUES[(c * 3 + k * 7) % TENUES.length], 0.92, k % 2 === 0); o.position.set(CAISSES[c].x + 0.9, 0.2, CAISSES[c].z - 2.2 - k * 1.1); o.visible = false; o.userData.s = 0; scene.add(o); attenteCaisse.push({ o, c, k }); }
+for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = personne(TENUES[(c * 3 + k * 7) % TENUES.length], 0.92, k % 2 === 0); o.position.set(CAISSES[c].x + 0.9, 0.2, CAISSES[c].z - 2.2 - k * 0.8); o.visible = false; o.userData.s = 0; scene.add(o); attenteCaisse.push({ o, c, k }); }
 // Voitures des clients sur le parking
 const GEO_VOITURE = (() => { const g = voitureMeshes(0xffffff); const morceaux = []; g.updateMatrixWorld(true); g.traverse((m) => { if (m.isMesh) { const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); m.matrixWorld.decompose(p, q, s); const e = new THREE.Euler().setFromQuaternion(q); morceaux.push({ geo: m.geometry, x: p.x, y: p.y, z: p.z, rx: e.x, ry: e.y, rz: e.z, sx: s.x, sy: s.y, sz: s.z, couleur: m.material.color.getHex() }); } }); return assembler(THREE, morceaux); })();
 foule.type('voiture', GEO_VOITURE, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.3 }), 96);
@@ -722,9 +820,33 @@ function prechauffer() {
 const NOM_ZONE = (x, z) => (z > -6 ? 'files des caisses' : x > -6 ? 'allée du fond, côté réserve' : 'allée ' + RAYONS.map((r) => [r, Math.abs(gondoles[r.id].z - z)]).sort((a, b) => a[1] - b[1])[0][0].nom.toLowerCase());
 let chaleurDessin = 0;
 const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0xb91c1c, transparent: true, opacity: 0.9, side: THREE.DoubleSide })); anneau.rotation.x = -Math.PI / 2; anneau.visible = false; anneau.userData.dyn = true; scene.add(anneau);
+// ================= Vue « Maquette » : maison de poupée =================
+// côté réserve et bureaux, la cloison devient un mur bleu nuit comme les autres (portes laissées ouvertes) ;
+// groupe « conteneur » : fusionné à part, affiché seulement dans la vue Maquette
+const murMaquette = new THREE.Group(); murMaquette.userData.conteneur = true; scene.add(murMaquette);
+for (const [z0, z1] of [[-30.55, -17.1], [-14.4, -3.1], [-0.9, 6.55]]) { boite(0.7, HX, z1 - z0, NUIT, 2.05, 0.2, (z0 + z1) / 2, murMaquette); boite(0.702, 0.03, z1 - z0 + 0.002, NUIT_HAUT, 2.05, 0.2 + HX, (z0 + z1) / 2, murMaquette, false); }
+// lumière froide des vitrines du mur du fond : trois spots discrets et une flaque bleutée au sol
+for (const x of [-31, -19, -7]) { const l = new THREE.PointLight(0xcfe6ff, 7, 9, 2); l.position.set(x, 2.3, -28.2); scene.add(l); }
+halo(THREE, scene, { x0: -39.5, x1: 1.2, z0: -29.1, z1: -26.9, couleur: '#8fc3ff', force: 0.32, taches: [0.21, 0.5, 0.79] });
+// ombres douces au pied des meubles (dessinées une fois dans une texture, un seul dessin)
+{
+  const R = [], bord = (x0, x1, z0, z1, a = 0.42, flou = 0.32, m = 0.12) => R.push({ x0: x0 - m, x1: x1 + m, z0: z0 - m, z1: z1 + m, a, flou });
+  for (const r of RAYONS) { const g = gondoles[r.id]; bord(g.x0, g.x0 + g.l, g.z - 0.72, g.z + 0.72, 0.4); }
+  bord(-39.4, 1.6, -29.7, -28.9, 0.45);                                     // vitrines froides
+  for (const [x, z] of [[-2.2, -25.4], [-0.6, -25.4], [-2.2, -24.3], [-0.6, -24.3], [-2.2, -21.6], [-0.6, -21.6], [-2.2, -9.6], [-0.6, -9.6], [-2.2, -8.5], [-0.6, -8.5]]) bord(x - 0.6, x + 0.6, z - 0.42, z + 0.42, 0.4, 0.22);
+  for (const c of CAISSES) bord(c.x - 0.45, c.x + 0.45, c.z - 1.3, c.z + 1.3, 0.38, 0.22);
+  bord(-4, 0, 3, 4, 0.35, 0.2);                                              // accueil
+  for (const rk of RACKS) bord(3.2, 15.4, rk.z - 0.6, rk.z + 0.6, 0.35, 0.3);
+  // pied des murs : léger assombrissement le long des murs extérieurs
+  bord(-40.6, 18.5, -30.6, -29.9, 0.3, 0.5, 0); bord(-40.6, -39.9, -30.6, 6.5, 0.3, 0.5, 0); bord(17.5, 18.5, -30.6, 6.5, 0.25, 0.5, 0);
+  ombresContact(THREE, scene, { x0: -41, z0: -31, l: 60, p: 38, rects: R });
+}
 // tout ce qui ne bouge pas est fusionné par matière : quelques dizaines de dessins au lieu de plusieurs milliers (rendu.js)
 const FUSION = fusionnerStatique(THREE, scene, { cliquables });
 scene.matrixWorldAutoUpdate = false; // mis à jour une fois par image dans animer(), avant de recopier les instances
+murMaquette.visible = false;
+const voile = creerVoile(THREE, scene, camera, { couleur: 0xeef0f3 }); // atténue ce qui sort de la surface de vente
+ETAGE.montrer(etageVu);
 
 // ================= Mise à jour de la maquette =================
 let instantane = false;
@@ -769,7 +891,7 @@ EQUIPE.forEach((e) => { const el = document.createElement('div'); el.className =
 const v3 = new THREE.Vector3();
 function placer() {
   const r = renderer.domElement.getBoundingClientRect();
-  for (const e of etiquettes) { e.el.style.display = etageVu && e.cle === 'pause' ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
+  for (const e of etiquettes) { e.el.style.display = (etageVu && e.cle === 'pause') || (vueCourante === 'maquette' && /^(pause|reserve|quai|parking)$/.test(e.cle)) ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
   const vu = camera.zoom >= 1.7;
   for (const b of badges) {
     const o = objets[b.e.id].obj;
@@ -787,17 +909,15 @@ function annoncer(txt) { const a = document.getElementById('annonce'); a.textCon
 // ================= Chiffres et panneau =================
 const $ = (id) => document.getElementById(id);
 // Panneaux flottants : uniquement des chiffres calculés par la simulation
+const COUL_STOCK = (st) => (st < 0.5 ? '#dc2626' : st < 0.7 ? '#ea580c' : '#16a34a');
 function majTableau() {
   if ($('tableau').offsetParent === null) return;
-  const okR = RAYONS.filter((r) => stockDe(r) >= 0.7).length, urg = alertes.filter((a) => a.niveau === 'urgent').length, o = caissesOuvertes().length, rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0);
-  const l = (a, b, c = '') => `<div class="pan-l"><span>${c ? `<i style="background:${c}"></i>` : ''}${a}</span><b>${b}</b></div>`;
-  poser($('pan-vue-c'), l('Rayons en stock', Math.round((okR / RAYONS.length) * 100) + ' %', okR === RAYONS.length ? '#15803d' : okR >= 3 ? '#ea580c' : '#dc2626') + l('Alertes ouvertes', `${alertes.length}${urg ? ` <em>(${urg} urgente${urg > 1 ? 's' : ''})</em>` : ''}`, urg ? '#dc2626' : alertes.length ? '#ea580c' : '#15803d') + l('Caisses ouvertes', `${o} / ${NB_CAISSES}`, '#2563eb') + l('Clients en magasin', clientsMagasin(), '#60a5fa') + l('Ruptures', rup, '#9ca3af'));
-  poser($('pan-zones-c'), RAYONS.map((r) => { const st = stockDe(r); return l(r.nom, Math.round(st * 100) + ' %', st < 0.5 ? '#dc2626' : st < 0.7 ? '#ea580c' : '#15803d'); }).join('') );
+  poser($('pan-zones-c'), RAYONS.map((r) => { const st = stockDe(r), c = COUL_STOCK(st); return `<div class="zl"><span><i style="background:#${r.couleur.toString(16).padStart(6, '0')}"></i>${r.nom}</span><b style="color:${st < 0.7 ? c : 'inherit'}">${Math.round(st * 100)} %</b><span class="barre"><i style="width:${Math.round(st * 100)}%;background:${c}"></i></span></div>`; }).join(''));
   const H0 = Math.floor(OUVERTURE), heures = [...Array(Math.ceil(FERMETURE) - H0).keys()].map((k) => H0 + k);
   const moy = (h) => { let s = 0, n = 0; for (let x = Math.max(h, OUVERTURE); x < Math.min(h + 1, FERMETURE); x += 0.05) { s += clientsEn(x); n++; } return n ? s / n : 0; };
   const v = heures.map(moy), max = Math.max(...v), pic = heures[v.indexOf(max)];
   queueMicrotask(ajusterTableau);
-  poser($('pan-aff-c'), `<div class="histo" role="img" aria-label="Clients présents en moyenne par heure">${heures.map((h, k) => `<i class="${Math.floor(t) === h ? 'now' : h + 1 <= t ? 'passe' : ''}" style="height:${Math.round((v[k] / max) * 100)}%" title="${h}h : ${Math.round(v[k])} clients en moyenne"></i>`).join('')}</div><div class="histo-h"><span>${H0}h</span><span>14h</span><span>${Math.ceil(FERMETURE) - 1}h</span></div><small>Clients présents par heure (simulation), en clair l'heure à venir · pic à ${pic}h, environ ${Math.round(max)}.</small>`);
+  poser($('pan-aff-c'), `<div class="histo" role="img" aria-label="Clients présents en moyenne par heure">${heures.map((h, k) => `<i class="${Math.floor(t) === h ? 'now' : h + 1 <= t ? 'passe' : ''}" style="height:${Math.round((v[k] / max) * 100)}%" title="${h}h : ${Math.round(v[k])} clients en moyenne"></i>`).join('')}</div><div class="histo-h"><span>${H0}h</span><span>14h</span><span>${Math.ceil(FERMETURE) - 1}h</span></div><small>Moyenne simulée par heure · pic à ${pic}h, environ ${Math.round(max)} clients.</small>`);
 }
 // sur ordinateur, la légende de la carte de chaleur rejoint les panneaux (elle ne couvre plus le magasin)
 const largeTableau = matchMedia('(min-width: 1100px)');
@@ -806,17 +926,51 @@ largeTableau.addEventListener('change', placerLegende); placerLegende();
 // si la colonne de panneaux dépasse la hauteur de la maquette, on replie les panneaux du bas
 function ajusterTableau() { const tb = $('tableau'); for (const id of ['pan-aff', 'pan-zones']) { if (tb.scrollHeight <= tb.clientHeight + 1) break; const p = $(id); if (!p.classList.contains('plie')) { p.classList.add('plie'); p.querySelector('button').setAttribute('aria-expanded', 'false'); } } }
 document.querySelectorAll('.pan > button').forEach((b) => (b.onclick = () => { const p = b.parentElement, plie = p.classList.toggle('plie'); b.setAttribute('aria-expanded', !plie); }));
-if (innerWidth < 1350) for (const id of ['pan-zones', 'pan-aff']) { $(id).classList.add('plie'); $(id).querySelector('button').setAttribute('aria-expanded', 'false'); }
+if (innerHeight < 820) for (const id of ['pan-aff']) { $(id).classList.add('plie'); $(id).querySelector('button').setAttribute('aria-expanded', 'false'); }
+// Chiffres clés : chaque carte sait recalculer son chiffre à n'importe quelle heure (courbe et tendance)
+const IC = (d) => `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const HIST_ALERTES = new Map(); // minute de démo -> nombre d'alertes ouvertes (relevé en direct : non recalculable après coup)
+const nb = (n) => Math.round(n).toLocaleString('fr-FR');
+const ouvertesHist = (h) => (h > t - 1e-6 ? caissesOuvertes().length : ouvertesA(h).length);
+const pctAttente = (h) => { const ouv = ouvertesA(h), f = fileA(affluence(h), ouv.length), sat = ouv.filter((c) => Math.min(4, Math.max(0, f - (c % 2))) >= 3).length; return ouv.length ? Math.round((sat / ouv.length) * 100) : 0; };
+const pctRayons = (h) => Math.round((RAYONS.filter((r) => stockDe(r, h) >= 0.7).length / RAYONS.length) * 100);
+const presentsA = (h) => EQUIPE.filter((e) => e.debut <= h && h < e.fin).length;
+const NIV_COUL = { urgent: ['#dc2626', '#fee2e2'], surveiller: ['#ea580c', '#ffedd5'], conseil: ['#2563eb', '#dbeafe'], ok: ['#16a34a', '#dcfce7'] };
+const kpis = creerKpis({
+  rangee: $('kpis-rail'), plus: $('plus-menu'), ouverture: OUVERTURE, reduit: () => REDUIT.matches, hTxt: (h) => hh(h).replace(':', 'h'),
+  cartes: [
+    { id: 'alertes', label: 'Alertes ouvertes', icone: IC('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1, pas: 1 / 12,
+      valeur: (h) => { const m = Math.floor(h * 60 + 1e-6); return HIST_ALERTES.has(m) ? HIST_ALERTES.get(m) : null; }, maintenant: () => alertes.length, format: nb,
+      detail: () => { const u = alertes.filter((a) => a.niveau === 'urgent').length; return `${u} urgente${u > 1 ? 's' : ''} · ${TRAITES.length} traitée${TRAITES.length > 1 ? 's' : ''}`; },
+      couleurDyn: () => NIV_COUL[alertes.some((a) => a.niveau === 'urgent') ? 'urgent' : alertes.some((a) => a.niveau === 'surveiller') ? 'surveiller' : alertes.length ? 'conseil' : 'ok'] },
+    { id: 'ca', label: "Chiffre d'affaires", icone: IC('<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>'), couleur: '#16a34a', doux: '#dcfce7', sens: 1,
+      valeur: (h) => caDuJour(h), format: euros, detail: () => `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}` },
+    { id: 'clients', label: 'Clients dans le magasin', icone: IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.7c1.8.8 3 2.5 3 5.3"/>'), couleur: '#2563eb', doux: '#dbeafe', sens: 0,
+      valeur: (h) => Math.round(clientsEn(h)), format: nb, detail: () => (affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme') },
+    { id: 'caisses', label: 'Caisses ouvertes', icone: IC('<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V5h10v5M7 15h4"/>'), couleur: '#7c3aed', doux: '#ede9fe', sens: 0,
+      valeur: ouvertesHist, format: (n) => `${Math.round(n)} / ${NB_CAISSES}`, ecart: nb, detail: () => `attente moyenne ${attenteMin()} min` },
+    { id: 'attente', label: "Taux d'attente en caisse", icone: IC('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1,
+      valeur: pctAttente, maintenant: () => { const fc = filesCaisses(); return fc.length ? Math.round((fc.filter((x) => x.f >= 3).length / fc.length) * 100) : 0; }, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts',
+      detail: () => { const fc = filesCaisses(), sat = fc.filter((x) => x.f >= 3).length; return `${sat} caisse${sat > 1 ? 's' : ''} sur ${fc.length} à 3 clients et plus`; } },
+    { id: 'stock', label: 'Rayons en stock', icone: IC('<path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'), couleur: '#0891b2', doux: '#cffafe', sens: 1,
+      valeur: pctRayons, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts', detail: () => `${RAYONS.filter((r) => stockDe(r) >= 0.7).length} sur ${RAYONS.length} au-dessus de 70 % de stock` },
+    { id: 'ruptures', label: 'Ruptures de stock', enPlus: true, icone: IC('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h0"/>'), couleur: '#dc2626', doux: '#fee2e2', sens: -1,
+      valeur: (h) => RAYONS.reduce((s, r) => s + rupturesDe(r, h), 0), format: nb, detail: () => `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits` },
+    { id: 'equipe', label: 'Équipe présente', enPlus: true, icone: IC('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'), couleur: '#0f766e', doux: '#ccfbf1', sens: 0,
+      valeur: presentsA, format: (n) => `${Math.round(n)} / ${EQUIPE.length}`, ecart: nb, detail: () => { const pz = EQUIPE.filter(auRepos).length; return `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`; } },
+    { id: 'salaires', label: "Coût de l'équipe aujourd'hui", enPlus: true, icone: IC('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>'), couleur: '#475569', doux: '#f1f5f9', sens: 0,
+      valeur: (h) => coutJour(h), format: euros, detail: () => { const ca = caDuJour(), p = ca ? (coutJour() / ca) * 100 : 0; return `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; } },
+  ],
+});
+$('k-salaires-c').insertAdjacentHTML('beforeend', '<div class="jauge"><i id="k-salaires-j"></i></div>');
+$('kpis-rail').appendChild($('plus-b')); // le bouton « Plus » reste en bout de rangée
+requestAnimationFrame(() => { $('kpis-rail').scrollLeft = 0; }); // le carrousel (téléphone) commence par la première carte
 function majKpis() {
-  const ca = caDuJour(), cout = coutJour();
-  $('k-ca').textContent = euros(ca); $('k-ca-d').textContent = `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}`;
-  $('k-clients').textContent = clientsMagasin(); $('k-clients-d').textContent = affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme';
-  const o = caissesOuvertes().length, att = Math.max(1, Math.round((affluence() * 9) / Math.max(1, o) * 2));
-  $('k-caisses').textContent = `${o} / ${NB_CAISSES}`; $('k-caisses-d').textContent = `attente moyenne ${att} min`;
-  const rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); $('k-ruptures').textContent = rup; $('k-ruptures-d').textContent = `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits`;
-  const pres = EQUIPE.filter(present).length; $('k-equipe').textContent = `${pres} / ${EQUIPE.length}`; const pz = EQUIPE.filter(auRepos).length; $('k-equipe-d').textContent = `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`;
-  $('k-salaires').textContent = euros(cout); const p = ca ? (cout / ca) * 100 : 0; $('k-salaires-d').textContent = `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; $('k-salaires-j').style.width = Math.min(100, p * 5) + '%';
+  kpis.maj(t);
+  const ca = caDuJour(); $('k-salaires-j').style.width = Math.min(100, (ca ? (coutJour() / ca) * 100 : 0) * 5) + '%';
 }
+$('plus-b').onclick = (ev) => { ev.stopPropagation(); const m = $('plus-menu'), o = m.hidden; m.hidden = !o; $('plus-b').setAttribute('aria-expanded', o); };
+document.addEventListener('click', (ev) => { if (!$('plus-menu').hidden && !ev.target.closest('#plus-menu, #plus-b')) { $('plus-menu').hidden = true; $('plus-b').setAttribute('aria-expanded', 'false'); } });
 let onglet = 'traiter', selection = null;
 const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
 function rendrePanneau() {
@@ -874,7 +1028,7 @@ const RENFORTS = {}; // id -> { caisse, fin, zone }
 const ZONE_NOM = (z) => (/^r\d/.test(z) ? 'rayon ' + RAYON_DE(z).nom.toLowerCase() : /^c\d/.test(z) ? 'caisse ' + (caisseDe({ zone: z }) + 1) : { reserve: 'réserve et quai', accueil: 'accueil', bureau: 'bureau de la direction', 'etage-rh': 'bureau RH (1er étage)', 'etage-compta': 'comptabilité (1er étage)' }[z] || z);
 const libre = (e) => present(e) && !enPause(e) && !objets[e.id].job && !RENFORTS[e.id];
 const PERSONNES_RAYON = () => EQUIPE.filter((e) => /^r\d/.test(e.zone));
-const ouvertesA = (h) => [...new Set(EQUIPE.filter((e) => e.zone.startsWith('c') && e.debut <= h && h < e.fin && (!RENFORTS[e.id] || RENFORTS[e.id].fin > h)).map(caisseDe))];
+const ouvertesA = (h) => [...new Set(EQUIPE.filter((e) => e.zone.startsWith('c') && e.debut <= h && h < e.fin && (!RENFORTS[e.id] || (RENFORTS[e.id].debut <= h && RENFORTS[e.id].fin > h))).map(caisseDe))];
 const fileA = (a, o) => Math.min(4, Math.max(0, Math.round((a * 10) / Math.max(1, o) * 1.4)));
 const attenteMin = () => Math.max(1, Math.round((affluence() * 9) / Math.max(1, caissesOuvertes().length) * 2));
 const filesCaisses = () => caissesOuvertes().map((i) => ({ i, f: attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length }));
@@ -891,7 +1045,7 @@ function propositionCaisse() {
 function ouvrirCaisse() {
   const { caisse, qui } = propositionCaisse(); if (caisse === null || !qui) return false;
   const fin = Math.min(qui.fin, quart(t + 1));
-  RENFORTS[qui.id] = { caisse, fin, zone: qui.zone };
+  RENFORTS[qui.id] = { caisse, fin, zone: qui.zone, debut: t };
   qui.zone = 'c' + caisse; const x = objets[qui.id]; annulerJob(x); x.base = posteDe(qui, EQUIPE.indexOf(qui));
   annoncer(`Caisse ${caisse + 1} ouverte : ${qui.nom} en renfort jusqu'à ${hTxt(fin)}`);
   synchroniser(); return { fin, caisse, qui };
@@ -941,19 +1095,12 @@ function majDecisions() {
   for (const a of alertes) VU[a.cle] ??= t;
   const urg = alertes.filter((a) => a.niveau === 'urgent').length, sur = alertes.filter((a) => a.niveau === 'surveiller').length;
   const cpt = $('compteur'); cpt.textContent = alertes.length; cpt.className = 'compteur' + (urg ? ' rouge' : sur ? ' orange' : '');
-  $('k-alertes').textContent = alertes.length; $('k-alertes-d').textContent = `${urg} urgente${urg > 1 ? 's' : ''} · ${TRAITES.length} traitée${TRAITES.length > 1 ? 's' : ''}`;
-  $('k-alertes-c').style.setProperty('--pastille', urg ? '#dc2626' : sur ? '#ea580c' : '#15803d');
-  const okR = RAYONS.filter((r) => stockDe(r) >= 0.7).length, refs = RAYONS.reduce((s, r) => s + r.refs, 0), rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0);
-  $('k-stock').textContent = Math.round((okR / RAYONS.length) * 100) + ' %'; $('k-stock-d').textContent = `${okR} sur ${RAYONS.length} au-dessus de 70 % de stock`;
-  $('k-stock-c').style.setProperty('--pastille', okR === RAYONS.length ? '#15803d' : okR >= RAYONS.length / 2 ? '#ea580c' : '#dc2626');
-  const fc = filesCaisses(), sat = fc.filter((x) => x.f >= 3).length, pct = fc.length ? Math.round((sat / fc.length) * 100) : 0;
-  $('k-attente').textContent = pct + ' %'; $('k-attente-d').textContent = `${sat} caisse${sat > 1 ? 's' : ''} sur ${fc.length} à 3 clients et plus`;
-  $('k-attente-c').style.setProperty('--pastille', pct >= 50 ? '#dc2626' : pct > 0 ? '#ea580c' : '#15803d');
+  HIST_ALERTES.set(Math.floor(t * 60 + 1e-6), alertes.length);
 }
 function traiter(cle, label, jusqua = t + 1) {
   const a = alertes.find((x) => x.cle === cle); // une action faite depuis une fiche, sans alerte ouverte, n'est pas listée
   MASQUE[cle] = jusqua; if (a) TRAITES.unshift({ cle, titre: a.titre, niveau: a.niveau, label, h: t });
-  majDecisions(); rendrePanneau();
+  majDecisions(); majKpis(); rendrePanneau();
 }
 function faire(act) {
   const [type, arg] = act.split(':');
@@ -964,7 +1111,7 @@ function faire(act) {
   else if (type === 'noter') traiter(arg, 'Marqué comme traité');
 }
 function voir(cle) {
-  if (/^etage/.test(cle) && !etageVu) $('etage').click();
+  if (/^etage/.test(cle) && vueCourante === 'etage' && !etageVu) montrerEtage(true);
   choisir(cle);
 }
 // Le panneau est rappelé chaque minute de démo : on ne remplace que ce qui a changé, pour que les boutons restent cliquables
@@ -977,15 +1124,15 @@ function rendreATraiter(c) {
   const liste = c.querySelector('.at-liste'), DOUX = { urgent: '#fee2e2', surveiller: '#ffedd5', conseil: '#dbeafe' };
   const parCle = new Map([...liste.querySelectorAll(':scope > .alerte')].map((el) => [el.dataset.k, el]));
   const vide = liste.querySelector(':scope > .vide');
-  if (!alertes.length) { if (!vide) { liste.innerHTML = `<div class="vide">${ICONES.ok}<br><b>Rien à traiter pour l'instant</b><br><small>Stock, caisses, livraisons et planning sont dans les clous.</small></div>`; } }
+  if (!alertes.length) { if (!vide) { liste.innerHTML = `<div class="vide"><span class="rond">${ICONES.ok}</span><b>Rien à traiter pour l'instant</b><small>Stock, caisses, livraisons et planning sont dans les clous.</small></div>`; } }
   else {
     if (vide) vide.remove();
     alertes.forEach((a, i) => {
       let el = parCle.get(a.cle);
-      if (!el) { el = document.createElement('article'); el.className = 'alerte'; el.dataset.k = a.cle; el.innerHTML = '<div class="al-tete"></div><ul></ul><div class="al-act"></div>'; }
+      if (!el) { el = document.createElement('article'); el.className = 'alerte entre'; el.dataset.k = a.cle; el.innerHTML = '<div class="al-tete"></div><ul></ul><div class="al-act"></div>'; el.addEventListener('animationend', () => el.classList.remove('entre'), { once: true }); }
       parCle.delete(a.cle);
       el.style.setProperty('--c', NIV_ALERTE[a.niveau].couleur); el.style.setProperty('--cd', DOUX[a.niveau]);
-      poser(el.children[0], `<span class="al-ic">${ICONES[a.icone] || ICONES.alerte}</span><div><b>${a.titre}</b><small><em>${NIV_ALERTE[a.niveau].nom}</em> · depuis ${hh(VU[a.cle] ?? t)}</small></div>`);
+      poser(el.children[0], `<span class="al-ic">${ICONES[a.icone] || ICONES.alerte}</span><div><b>${a.titre}</b><small><span class="prio ${a.niveau}"><i></i>${NIV_ALERTE[a.niveau].nom}</span>depuis ${hh(VU[a.cle] ?? t)}</small></div>`);
       poser(el.children[1], a.detail.map((d) => `<li>${d}</li>`).join(''));
       poser(el.children[2], `<button data-al-voir="${a.voir}">${ICONES.voir} Voir</button>${a.actions.map((x) => `<button data-al="${x.act}" class="${x.primaire ? 'prim' : ''}" ${x.off ? 'disabled' : ''}>${x.label}</button>`).join('')}${a.actions.filter((x) => x.off && x.raison).map((x) => `<small>${x.label} : ${x.raison}</small>`).join('')}`);
       if (liste.children[i] !== el) liste.insertBefore(el, liste.children[i] || null);
@@ -1035,25 +1182,53 @@ function rendreFiche() {
 // Zoom au clic
 const ZOOMS = { magasin: 1.7, caisses: 2.2, rayons: 1.9, reserve: 2.4, quai: 2.4, parking: 1.7, accueil: 3, bureau: 3.4, pause: 3.2, escalier: 3.4, vestiaires: 3.4, 'etage-rh': 3.4, 'etage-compta': 3.4, 'etage-reunion': 3.2 };
 let vise = null;
-function viser(cible, zoom, dir = null) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0, d0: camera.position.clone().sub(controls.target), d1: dir }; }
-// Vue d'ensemble : tout le magasin (et le quai) cadré dans la place laissée libre par les boutons et les panneaux
+function viser(cible, zoom, dir = null) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: REDUIT.matches ? 0.999 : 0, d0: camera.position.clone().sub(controls.target), d1: dir }; }
+// Trois vues : la surface de vente seule (Maquette, par défaut), tout le site, l'étage des bureaux.
+// Chaque vue cadre une boîte dans la place laissée libre par les boutons et les panneaux.
+const VUES = {
+  maquette: { boite: [-40.8, 2.5, 0, 3.4, -30.8, 6.6], dir: DIR_MAQ, etage: false, voile: 0.8, nom: 'Maquette : la surface de vente' },
+  site: { boite: [-40.8, 23, 0, 3.4, -30.8, 6.6], dir: DIR_VUE, etage: true, voile: 0, nom: 'Tout le site : magasin, réserve, quai, parking et bureaux' },
+  etage: { boite: [1.4, 18.8, 0, 6.8, -10.8, 6.8], dir: DIR_VUE, etage: true, voile: 0, nom: 'Étage : bureaux RH, comptabilité, réunion' },
+};
+let vueCourante = 'maquette', voileOp = VUES.maquette.voile;
+const DANS_MAGASIN = (p) => p.x > -41 && p.x < 2 && p.z > -31 && p.z < 7;
 let priseEnMain = false;
-function cadre() {
-  const w = conteneur.clientWidth, h = conteneur.clientHeight, a = w / h, s = a < 1.1 ? 40 / a : 30;
+function cadre(nom = vueCourante) {
+  const V = VUES[nom], w = conteneur.clientWidth, h = conteneur.clientHeight, a = w / h, s = a < 1.1 ? 40 / a : 30;
   const o = $('scene').querySelector('.outils'), haut = o ? o.offsetTop + o.offsetHeight + 8 : 50;
-  const pan = !MOBILE && innerWidth >= 1100 ? 218 : 8;
-  const L = pan, R = w - 10, T = haut, B = h - (MOBILE && !$('legende').hidden ? 58 : 10);
-  const tmp = new THREE.OrthographicCamera(); tmp.position.copy(DIR_VUE); tmp.lookAt(0, 0, 0); // une caméra regarde le long de -z
+  const pan = !MOBILE && innerWidth >= 1100 && nom !== 'etage' ? 232 : 8;
+  const L = pan, R = w - 18, T = haut, B = h - (MOBILE && !$('legende').hidden ? 58 : 10);
+  const tmp = new THREE.OrthographicCamera(); tmp.position.copy(V.dir); tmp.lookAt(0, 0, 0); // une caméra regarde le long de -z
   const droite = new THREE.Vector3(1, 0, 0).applyQuaternion(tmp.quaternion), dessus = new THREE.Vector3(0, 1, 0).applyQuaternion(tmp.quaternion);
-  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const p = new THREE.Vector3();
-  for (const x of [-40.8, 23]) for (const y of [0, 3.4]) for (const z of [-30.8, 6.6]) { p.set(x, y, z); const vx = p.dot(droite), vy = p.dot(dessus); x0 = Math.min(x0, vx); x1 = Math.max(x1, vx); y0 = Math.min(y0, vy); y1 = Math.max(y1, vy); }
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const p = new THREE.Vector3(), b = V.boite;
+  for (const x of [b[0], b[1]]) for (const y of [b[2], b[3]]) for (const z of [b[4], b[5]]) { p.set(x, y, z); const vx = p.dot(droite), vy = p.dot(dessus); x0 = Math.min(x0, vx); x1 = Math.max(x1, vx); y0 = Math.min(y0, vy); y1 = Math.max(y1, vy); }
   const zoom = Math.min((R - L) / (x1 - x0), (B - T) / (y1 - y0)) * (2 * s) / h;
   const k = (zoom * h) / (2 * s), cx = (x0 + x1) / 2 - ((L + R) / 2 - w / 2) / k, cy = (y0 + y1) / 2 + ((T + B) / 2 - h / 2) / k;
-  const c = droite.multiplyScalar(cx).add(dessus.multiplyScalar(cy)); c.addScaledVector(DIR_VUE, -c.y / DIR_VUE.y);
-  return { cible: c, zoom };
+  const c = droite.multiplyScalar(cx).add(dessus.multiplyScalar(cy)); c.addScaledVector(V.dir, -c.y / V.dir.y);
+  return { cible: c, zoom, dir: V.dir };
 }
 let zoomVue = 1;
-function appliquerCadre() { const c = cadre(); zoomVue = c.zoom; controls.target.copy(c.cible); camera.position.copy(c.cible).addScaledVector(DIR_VUE, 160); camera.zoom = c.zoom; camera.updateProjectionMatrix(); }
+function appliquerCadre() { const c = cadre(); zoomVue = c.zoom; controls.target.copy(c.cible); camera.position.copy(c.cible).addScaledVector(c.dir, 160); camera.zoom = c.zoom; camera.updateProjectionMatrix(); }
+function montrerEtage(oui) {
+  etageVu = oui; ETAGE.montrer(oui);
+  const b = $('etage'); b.classList.toggle('actif', !oui); b.querySelector('span').textContent = oui ? 'Rez-de-chaussée' : 'Afficher l\'étage';
+  synchroniser(true);
+}
+// changer de vue ; cadrer = false quand c'est un clic sur un élément qui décide où va la caméra
+function changerVue(nom, cadrer = true) {
+  if (!VUES[nom]) return;
+  const V = VUES[nom]; vueCourante = nom;
+  document.querySelectorAll('[data-vue]').forEach((b) => { const a = b.dataset.vue === nom; b.classList.toggle('actif', a); b.setAttribute('aria-selected', a); });
+  placerCurseur();
+  murMaquette.visible = nom === 'maquette';
+  $('tableau').classList.toggle('hors-vue', nom === 'etage'); // à l'étage, les panneaux du magasin laissent la place
+  $('etage').hidden = nom === 'maquette';
+  if (etageVu !== V.etage) montrerEtage(V.etage);
+  if (cadrer) { choisir(null); const c = cadre(); zoomVue = c.zoom; viser(c.cible, c.zoom, c.dir); annoncer(V.nom); }
+}
+function placerCurseur() { const b = document.querySelector('[data-vue].actif'), c = document.querySelector('.vues-curseur'); if (!b || !c) return; c.style.left = b.offsetLeft + 'px'; c.style.width = b.offsetWidth + 'px'; }
+document.querySelectorAll('[data-vue]').forEach((b) => (b.onclick = () => changerVue(b.dataset.vue)));
+addEventListener('resize', placerCurseur);
 function positionDe(s) {
   if (!s) return null;
   if (/^e\d/.test(s)) { const o = objets[s].obj; return o.visible ? [o.position, 3] : null; }
@@ -1064,12 +1239,15 @@ function positionDe(s) {
   return P ? [new THREE.Vector3(P[0], 0, P[1]), ZOOMS[s]] : null;
 }
 function choisir(cle) {
-  selection = cle; rendreFiche(); const p = positionDe(cle); if (!p) return;
+  const p = positionDe(cle);
+  // un élément hors de la surface de vente : on passe à la vue qui le montre
+  if (cle && p && /^etage/.test(cle) && vueCourante !== 'etage') changerVue('etage', false);
+  else if (cle && p && vueCourante === 'maquette' && !DANS_MAGASIN(p[0])) changerVue('site', false);
+  selection = cle; rendreFiche(); if (!p) return;
   const z = p[1] * (MOBILE ? 1.3 : 1), v = p[0].clone();
   viser(v, z);
-  if (MOBILE && cle) $('fiche').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
-if (MOBILE) $('scene').after($('fiche')); // sur téléphone la fiche s'affiche sous la maquette
+if (MOBILE) document.body.appendChild($('fiche')); // sur téléphone la fiche monte du bas de l'écran, par-dessus le tiroir
 $('fermer').onclick = () => choisir(null);
 $('fiche-c').onclick = (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b || !/^r\d/.test(selection || '')) return;
@@ -1092,12 +1270,22 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
-$('etage').onclick = (e) => { etageVu = !etageVu; ETAGE.montrer(etageVu); e.target.classList.toggle('actif', etageVu); e.target.textContent = etageVu ? 'Étage' : 'Rez-de-chaussée'; synchroniser(true); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
-$('recentrer').onclick = () => { choisir(null); const c = cadre(); zoomVue = c.zoom; viser(c.cible, c.zoom, DIR_VUE); };
+$('etage').onclick = () => { montrerEtage(!etageVu); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
+$('recentrer').onclick = () => { choisir(null); const c = cadre(); zoomVue = c.zoom; viser(c.cible, c.zoom, c.dir); };
 function legende() { const c = chaleur.visible, p = $('b-parcours').classList.contains('actif'); $('legende').hidden = !c && !p; $('leg-chaleur').hidden = !c; $('leg-parcours').hidden = !p; }
 $('b-chaleur').onclick = (e) => { const oui = !chaleur.visible; chaleur.montrer(oui); e.currentTarget.classList.toggle('actif', oui); e.currentTarget.setAttribute('aria-pressed', oui); legende(); if (oui) annoncer('Affluence des 30 dernières minutes, calculée sur la position des clients'); };
 $('b-parcours').onclick = (e) => { const oui = !e.currentTarget.classList.contains('actif'); chaleur.parcours(oui); e.currentTarget.classList.toggle('actif', oui); e.currentTarget.setAttribute('aria-pressed', oui); legende(); };
-$('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
+$('pause').onclick = () => { pause = !pause; const b = $('pause'); b.classList.toggle('actif', pause); b.setAttribute('aria-label', pause ? 'Reprendre' : 'Pause'); b.querySelector('.sr').textContent = pause ? 'Reprendre' : 'Pause'; b.querySelector('.ic-pause').style.display = pause ? 'none' : ''; b.querySelector('.ic-lecture').style.display = pause ? '' : 'none'; };
+// téléphone : les onglets sont dans un tiroir qui monte du bas (toucher la poignée ou un onglet, ou glisser)
+{
+  const tir = $('tiroir'), poi = $('poignee');
+  const ouvrir = (oui) => { tir.classList.toggle('ouvert', oui); poi.setAttribute('aria-expanded', oui); };
+  poi.onclick = () => ouvrir(!tir.classList.contains('ouvert'));
+  document.querySelectorAll('[data-onglet]').forEach((b) => b.addEventListener('click', () => { if (MOBILE) ouvrir(true); }));
+  let y0 = null;
+  poi.addEventListener('pointerdown', (e) => { y0 = e.clientY; });
+  addEventListener('pointerup', (e) => { if (y0 === null) return; const d = e.clientY - y0; y0 = null; if (Math.abs(d) > 30) ouvrir(d < 0); });
+}
 function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); if (!priseEnMain && !vise && !selection) appliquerCadre(); }
 addEventListener('resize', taille); taille();
 
@@ -1144,14 +1332,16 @@ function animer(now) {
   anneau.visible = !!ps && !/^(magasin|parking|rayons)$/.test(selection);
   if (anneau.visible) { anneau.position.set(ps[0].x, 0.25, ps[0].z); anneau.scale.setScalar((/^e\d/.test(selection) ? 0.4 : 1.2) * (1 + Math.sin(now / 300) * 0.04)); }
   controls.update();
-  pastilles.maj(alertes, positionDe, camera.zoom);
+  pastilles.maj(alertes, positionDe, camera.zoom, REDUIT.matches ? null : now);
   $('tableau').classList.toggle('discret', camera.zoom > zoomVue * 1.45);
   scene.updateMatrixWorld(); foule.maj();
+  voileOp += (VUES[vueCourante].voile - voileOp) * (REDUIT.matches ? 1 : Math.min(1, ecoule * 4));
+  voile.maj(VUES.maquette.boite, voileOp);
   renderer.render(scene, camera);
   window.maquetteOk = true;
   placer();
   const m = Math.floor(t * 60);
-  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majKpis(); majDecisions(); majTableau(); rendrePanneau(); if (selection) rendreFiche(); }
+  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majDecisions(); majKpis(); majTableau(); rendrePanneau(); if (selection) rendreFiche(); }
   requestAnimationFrame(animer);
 }
 // Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
@@ -1161,10 +1351,11 @@ const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.
 initReserve();
 synchroniser(true);
 prechauffer();
-const rafraichir = () => { majKpis(); majDecisions(); majTableau(); rendrePanneau(); if (selection) rendreFiche(); };
+const rafraichir = () => { majDecisions(); majKpis(); majTableau(); rendrePanneau(); if (selection) rendreFiche(); };
 // carte de chaleur et parcours affichés d'entrée, comme un plan d'analyse du magasin
-chaleur.montrer(true); chaleur.parcours(true); legende(); appliquerCadre();
-window.demo = { temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
+chaleur.montrer(true); chaleur.parcours(true); legende(); appliquerCadre(); placerCurseur();
+if (document.fonts) document.fonts.ready.then(placerCurseur);
+window.demo = { vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), regler: (h) => { t = h; HIST_ALERTES.clear(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
 requestAnimationFrame(animer);
 </script>
 </body>
