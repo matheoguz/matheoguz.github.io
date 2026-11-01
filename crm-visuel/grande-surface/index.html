@@ -303,6 +303,7 @@ import { creerPastilles } from './pastilles.js';
 import { ombresContact, halo, creerVoile } from './decor.js';
 import { creerKpis } from './tableau.js';
 import { creerInterface, poserGarde, ICONES_UI } from '../interface.js';
+import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende } from '../page.js';
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
@@ -914,6 +915,7 @@ const rubrique = () => (ui ? ui.rubrique() : 'accueil');
 const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
 function rendrePanneau() {
   const c = $('contenu'), rub = rubrique();
+  if (ui && ui.plein()) return rendrePage();
   if (rub === 'accueil') return;
   if (rub === 'rh') return rh.rendre(c);
   if (rub === 'traiter') return rendreATraiter(c);
@@ -947,6 +949,39 @@ function rendrePanneau() {
       + `<div class="bloc-r"><p class="titre-r">Réserve et quai</p><div class="bascules"><button type="button" class="bouton-r" data-cle-aller="reserve">Voir la réserve</button><button type="button" class="bouton-r" data-cle-aller="quai">Voir le quai</button></div></div>`;
   }
   poserGarde(c, h);
+}
+// ================= Pages pleines : RH, Équipe, Chiffres (sans la 3D) =================
+function rendrePage() {
+  const rub = rubrique(), corps = ui.page().corps;
+  if (rub === 'rh') return rh.rendrePage(corps);
+  if (rub === 'equipe') return rh.rendreEquipe(corps);
+  if (rub === 'chiffres') return rendreChiffres(corps);
+}
+// Tableau de bord : tout est recalculé à partir de la simulation (affluence, ventes, stocks, horaires de l'équipe)
+function rendreChiffres(corps) {
+  if (!corps.querySelector('#ch-graphes')) {
+    corps.innerHTML = '<div id="ch-kpis"></div><div id="ch-graphes"></div>';
+    $('ch-kpis').appendChild($('kpis-grille'));
+  }
+  const fin = Math.min(t, FERMETURE), hh0 = Math.floor(OUVERTURE);
+  const heures = []; for (let h = hh0; h < FERMETURE; h++) heures.push(h);
+  const caH = heures.map((h) => Math.max(0, caDuJour(Math.min(h + 1, fin)) - caDuJour(Math.max(h, OUVERTURE))) * (h < fin ? 1 : 0));
+  const xs = []; for (let h = OUVERTURE; h <= fin + 1e-6; h += 0.25) xs.push(h); if (xs[xs.length - 1] < fin) xs.push(fin);
+  const libX = []; for (let h = 9; h <= 20; h += 2) libX.push([h, h + 'h']);
+  const caNow = caDuJour(), cout = coutJour(), part = caNow ? (cout / caNow) * 100 : 0;
+  const maxRup = Math.max(1, ...RAYONS.map((r) => rupturesDe(r)));
+  const pres = []; for (let h = 6; h < 21; h++) pres.push(h);
+  const h = poserGarde.bind(null, $('ch-graphes'));
+  h(`<div class="pg-grille">`
+    + carteGraphe('Chiffre d\'affaires par heure', `${euros(caNow)} depuis ${hTxt(OUVERTURE)}`, barres({ lib: heures.map((x) => x + 'h'), val: caH, coul: '#16a34a', format: (n) => n >= 1000 ? Math.round(n / 1000) + ' k€' : Math.round(n) + ' €', passe: heures.map((x) => x < fin), titreBarre: (i) => `${heures[i]}h-${heures[i] + 1}h : ${euros(caH[i])}` }) + `<p class="pg-note">Ventes de chaque heure (passages en caisse × panier moyen de ${PANIER.toLocaleString('fr-FR')} €). Les heures à venir restent vides.</p>`)
+    + carteGraphe('Clients dans le magasin', `${nb(clientsMagasin())} maintenant`, courbes({ x: xs, xLib: libX, series: [{ val: xs.map((x) => clientsEn(x)), coul: '#2563eb', aire: true }], max: 220, format: (n) => Math.round(n) }) + `<p class="pg-note">Pics à midi et en fin d'après-midi ; courbe arrêtée à l'heure de la démo.</p>`)
+    + `</div><div class="pg-grille g3">`
+    + carteGraphe('Coût de l\'équipe et chiffre d\'affaires', 'cumulés depuis le matin', courbes({ x: xs, xLib: libX, series: [{ val: xs.map((x) => caDuJour(x)), coul: '#16a34a', aire: true }, { val: xs.map((x) => coutJour(x)), coul: '#ea580c' }], format: (n) => n >= 1000 ? Math.round(n / 1000) + ' k€' : Math.round(n) + ' €' }) + legende([[`CA ${euros(caNow)}`, '#16a34a'], [`Équipe ${euros(cout)}`, '#ea580c']]))
+    + carteGraphe('Ruptures par rayon', `${nb(RAYONS.reduce((s, r) => s + rupturesDe(r), 0))} au total`, barresH(RAYONS.map((r) => ({ label: r.nom, val: rupturesDe(r), max: maxRup, coul: hexa(r.couleur), txt: `${rupturesDe(r)} · stock ${Math.round(stockDe(r) * 100)} %` }))))
+    + carteGraphe('Part de l\'équipe dans le CA', 'coût du jour ÷ CA du jour', anneauPct(Math.min(100, part), part > 25 ? '#ea580c' : '#16a34a', `${part.toFixed(1).replace('.', ',')} %`, 'du chiffre d\'affaires') + `<p class="pg-note" style="text-align:center">${euros(cout)} d'équipe pour ${euros(caNow)} de ventes. Le matin, l'équipe arrive avant les clients : la part baisse dans la journée.</p>`)
+    + `</div><div class="pg-grille">`
+    + carteGraphe('Équipe présente par heure', `${EQUIPE.filter(present).length} sur ${EQUIPE.length} maintenant`, barres({ lib: pres.map((x) => x + 'h'), val: pres.map((x) => presentsA(x + 0.5)), coul: '#0f766e', passe: pres.map((x) => x < t), format: (n) => Math.round(n), titreBarre: (i) => `${pres[i]}h30 : ${presentsA(pres[i] + 0.5)} personnes` }) + `<p class="pg-note">D'après les horaires du jour ; en gris, les heures à venir (planning prévu).</p>`, 'large')
+    + `</div>`);
 }
 // le panneau est redessiné chaque minute de démo (chaque seconde) : un clic commencé sur une ligne remplacée entre-temps compte quand même
 let appuiPanneau = null;
@@ -1259,7 +1294,9 @@ function calques(rub) {
   teinte.visible = rub === 'stocks'; majTeinte();
 }
 function surRubrique(rub) {
-  const c = $('contenu'); c._h = null; if (c.contains($('kpis-grille'))) $('kpis-reserve').appendChild($('kpis-grille')); c.innerHTML = '';
+  const c = $('contenu'); c._h = null; if (document.getElementById('page').contains($('kpis-grille')) || c.contains($('kpis-grille'))) $('kpis-reserve').appendChild($('kpis-grille')); c.innerHTML = '';
+  tiroir.fermer();
+  if (ui.plein()) { ui.page().corps.replaceChildren(); ui.page().actions.innerHTML = '<span class="pg-fictif">Données fictives</span>'; if (selection) { selection = null; rendreFiche(); } rendrePage(); return; }
   calques(rub);
   const R = RUB_3D[rub] || {};
   if (R.vue && R.vue !== vueCourante) changerVue(R.vue, false);
@@ -1268,13 +1305,15 @@ function surRubrique(rub) {
   rendrePanneau();
 }
 $('pause').onclick = () => { pause = !pause; const b = $('pause'); b.classList.toggle('actif', pause); b.setAttribute('aria-label', pause ? 'Reprendre' : 'Pause'); b.querySelector('.sr').textContent = pause ? 'Reprendre' : 'Pause'; b.querySelector('.ic-pause').style.display = pause ? 'none' : ''; b.querySelector('.ic-lecture').style.display = pause ? '' : 'none'; };
-function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); if (!priseEnMain && !vise && !selection) appliquerCadre(); }
+function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); if (!priseEnMain && !vise && !selection) appliquerCadre(); }
 addEventListener('resize', taille); taille();
 
 // ================= Boucle =================
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
-  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
+  // page pleine (RH, Chiffres, Équipe) : la journée continue, mais la 3D n'est plus dessinée (économie de batterie)
+  const cache = !!(ui && ui.plein());
+  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
   for (const c of clients) {
@@ -1309,6 +1348,7 @@ function animer(now) {
   fondus(dt);
   if (!pause) { chaleur.minute(Math.floor(t * 60)); chaleur.ajouter(pointsClients(), ecoule); }
   if (chaleur.visible && now - chaleurDessin > 500) { chaleurDessin = now; chaleur.dessiner(); const z = chaleur.zones(1)[0]; if ($('leg-zone')) $('leg-zone').textContent = z ? `Plus forte affluence : ${NOM_ZONE(z.x, z.z)}.` : 'Pas encore de clients sur la période.'; }
+  if (!cache) {
   if (vise) { vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv); if (vise.d1) { const l = vise.d0.length(), d = vise.d0.clone().normalize().lerp(vise.d1, e).normalize(); camera.position.copy(nv).addScaledVector(d, l); } camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix(); if (vise.k >= 1) { if (vise.d1) priseEnMain = false; vise = null; } }
   const ps = selection && positionDe(selection);
   anneau.visible = !!ps && !/^(magasin|parking|rayons)$/.test(selection);
@@ -1321,12 +1361,16 @@ function animer(now) {
   renderer.render(scene, camera);
   window.maquetteOk = true;
   placer();
+  }
   const m = Math.floor(t * 60);
   if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); }
-  requestAnimationFrame(animer);
+  if (cache) setTimeout(() => requestAnimationFrame(animer), 200); else requestAnimationFrame(animer);
 }
 // Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
-const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: (id) => choisir(id) });
+const etatPersonne = (e) => (auRepos(e) ? { cle: 'pause', txt: 'En pause', detail: 'salle de pause' } : present(e) ? { cle: 'present', txt: 'Présent·e', detail: objets[e.id]?.job ? objets[e.id].job.texte : ZONE_NOM(e.zone) } : t < e.debut ? { cle: 'avant', txt: 'Arrive à ' + hTxt(e.debut) } : { cle: 'parti', txt: 'Service terminé' });
+// depuis une page pleine : retour à la 3D, zoom sur le poste de la personne
+const voirPoste = (id) => { tiroir.fermer(); ui.aller('accueil'); choisir(id); };
+const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour() });
 // le candidat attendu vient au bureau RH de l'étage pendant son entretien
 const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
@@ -1334,8 +1378,10 @@ synchroniser(true);
 prechauffer();
 const rafraichir = () => { majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); };
 // carte de chaleur et parcours affichés d'entrée, comme un plan d'analyse du magasin
-const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks', 'Stocks'], ['affluence', 'Affluence'], ['caisses', 'Caisses'], ['equipe', 'Équipe'], ['livraisons', 'Livraisons', 'Livraisons et réserve'], ['rh', 'RH', 'Ressources humaines'], ['chiffres', 'Chiffres', 'Tous les chiffres']];
-ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre]) => ({ id, label, titre })), surChangement: surRubrique });
+// RH, Équipe et Chiffres n'ont pas besoin du magasin : pages pleines, la 3D est masquée et mise en pause
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks', 'Stocks'], ['affluence', 'Affluence'], ['caisses', 'Caisses'], ['equipe', 'Équipe', 'Équipe du jour', 'Planning et annuaire de l\'équipe, en direct'], ['livraisons', 'Livraisons', 'Livraisons et réserve'], ['rh', 'RH', 'Ressources humaines', 'Personnel, recrutement, entretiens, anciens salariés et documents'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo']];
+const PLEINES = new Set(['rh', 'equipe', 'chiffres']);
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id) })), surChangement: surRubrique });
 calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
 if (document.fonts) document.fonts.ready.then(placerCurseur);
 window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), regler: (h) => { t = h; HIST_ALERTES.clear(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };

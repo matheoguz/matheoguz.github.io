@@ -8,6 +8,8 @@
 //   rh.rdvDuJour();         // [{ id, nom, poste, debut, fin }] entretiens d'aujourd'hui (heures décimales)
 //   rh.ouvrirDocument(id);  // ouvre le CV / la lettre / le suivi d'un candidat
 
+import { avatar, kpi, tiroir } from '../page.js';
+
 const CSS = `
 .rh-fictif { border: 1px dashed #fca5a5; background: var(--accent-doux, #fee2e2); color: var(--accent, #b91c1c); border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-weight: 600; margin: 0 0 10px; }
 .rh-resume { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 12px; }
@@ -105,6 +107,17 @@ const CSS = `
 .rh-suivi li b { display: block; font-size: 12px; color: var(--doux, #6b7280); font-weight: 600; }
 .rh-suivi .lignes { margin: 0 0 16px; }
 body.rh-bloque { overflow: hidden; }
+/* page pleine RH */
+.rhp .rh-postes { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.rhp h2 { font-size: 12px; margin: 0 0 10px; }
+.rhp .rh-postes + h2 { margin-top: 8px; }
+.rhp-anciens { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.rhp-anciens > h2 { grid-column: 1 / -1; margin: 0; }
+.rhp-anciens .rh-carte { margin: 0; padding: 14px 16px; border-radius: 14px; background: var(--carte, #fff); }
+.rhp .pg-carte .rh-rdv { margin-bottom: 8px; }
+.rhp .pg-ch { margin-bottom: 12px; }
+.rhp .rh-perso > button { padding: 10px 4px; }
+@media (max-width: 640px) { .rhp-anciens { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
   .rh-resume b { font-size: 16px; }
 }
@@ -398,6 +411,34 @@ const PERSONNEL = [
   ['Apprentissage (CAP Équipier polyvalent du commerce)', '2026-09-01', '2028-08-31', '35 (école comprise)', 2.5, '2026-09-08', '2027-02-26', ['CAP en alternance', 'Accueil sécurité nouvel arrivant']],
 ];
 
+// Rôle de chaque salarié d'EQUIPE (même ordre), fictif
+const ROLES = [
+  'Dirige le magasin : objectifs, budget, plannings des chefs de rayon et relation avec l\'enseigne.',
+  'Responsable du rayon frais et surgelés : commandes, chaîne du froid, encadre le libre-service du frais.',
+  'Responsable du rayon épicerie : commandes, implantation, suivi des ruptures ; recrute son adjoint·e.',
+  'Mise en rayon et facing à l\'épicerie, contrôle des dates, aide au déchargement du matin.',
+  'Tient le rayon boissons : réassort depuis la réserve, étiquettes de prix, rotation des packs.',
+  'Mise en rayon hygiène et entretien, inventaires tournants ; remplace à l\'épicerie si besoin.',
+  'Apprentie en BTS : tient le rayon maison et bazar l\'après-midi, projet d\'études sur l\'implantation.',
+  'Ouvre le quai à 6 h : reçoit les camions, contrôle les bons de livraison, range la réserve. Cariste référent.',
+  'Réceptionne les livraisons de l\'après-midi et prépare les palettes de mise en rayon.',
+  'Accueil et service client du matin : retours, réclamations, cartes de fidélité ; secouriste.',
+  'Accueil de l\'après-midi et de la fermeture : service client, annonces au micro, colis à retirer.',
+  'Hôtesse de caisse, référente des caisses automatiques : forme les nouveaux arrivants.',
+  'Hôte de caisse du matin : ouvre les caisses et prépare les fonds de caisse.',
+  'Hôtesse de caisse : tient sa caisse du creux du matin jusqu\'à la fin d\'après-midi.',
+  'Hôte de caisse : assure sa caisse du pic de midi jusqu\'au début du pic du soir.',
+  'Hôtesse de caisse en remplacement : caisse de l\'après-midi et clôture du soir.',
+  'Hôte de caisse de l\'après-midi et du soir, clôture de caisse à la fermeture.',
+  'Renfort saisonnier des fêtes : caisse du soir, aux heures de forte affluence.',
+  'Étudiant à temps partiel : caisse de 17 h à la fermeture, en renfort du pic du soir.',
+  'Apprentie en CAP : caisse du midi en renfort, formation au libre-service.',
+  'Recrutement, contrats, paie avec la comptabilité, entretiens annuels et suivi des formations.',
+  'Factures fournisseurs, rapprochement des livraisons, remises en banque et préparation de la paie.',
+];
+const SERVICES = { bureau: 'Direction', 'etage-rh': 'Ressources humaines', 'etage-compta': 'Comptabilité', accueil: 'Accueil', reserve: 'Réserve et quai', c: 'Caisses', r0: 'Fruits et légumes', r1: 'Épicerie', r2: 'Boissons', r3: 'Frais et surgelés', r4: 'Hygiène et entretien', r5: 'Maison et bazar' };
+const CHARGES = 1.35; // coût chargé = brut × 1,35 (fictif)
+
 // ================= Outils =================
 const JOUR = 86400000;
 const aujourdhui = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
@@ -423,7 +464,7 @@ function anciennete(debut, fin = aujourdhui()) {
   return [a ? `${a} an${a > 1 ? 's' : ''}` : '', r ? `${r} mois` : ''].filter(Boolean).join(' et ');
 }
 
-export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {} } = {}) {
+export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {}, etat = () => ({ cle: 'present', txt: 'Présent·e' }), pauseDe = () => null, coutJour = () => 0, voirPoste = choisirPersonne } = {}) {
   if (!document.getElementById('rh-css')) { const s = document.createElement('style'); s.id = 'rh-css'; s.textContent = CSS; document.head.appendChild(s); }
 
   // état de la démo (copie : les boutons changent l'étape sans toucher aux données d'origine)
@@ -568,5 +609,203 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     return true;
   }
 
-  return { rendre, rdvDuJour, ouvrirDocument };
+
+  // ================= Page pleine RH (et page Équipe) =================
+  // Salaires FICTIFS déduits du coût horaire chargé de la démo (EQUIPE.cout, déjà utilisé pour le coût de l'équipe) :
+  // taux horaire brut = coût chargé / 1,35 (charges patronales fictives de 35 %), brut mensuel = taux × heures par semaine × 52 / 12.
+  const zoneInit = Object.fromEntries(equipe.map((e) => [e.id, e.zone]));
+  const idx = (e) => equipe.indexOf(e);
+  const perso = (e) => PERSONNEL[idx(e)] || ['CDI', '2020-01-06', null, 35, 10, '2024-01-15', null, []];
+  const heuresSem = (e) => { const h = perso(e)[3]; return typeof h === 'number' ? h : /jours/.test(h) ? 35 : parseFloat(h) || 35; };
+  const tauxBrut = (e) => e.cout / CHARGES;
+  const brutMois = (e) => tauxBrut(e) * heuresSem(e) * 52 / 12;
+  const serviceDe = (e) => SERVICES[zoneInit[e.id]] || SERVICES[(zoneInit[e.id] || '')[0]] || 'Magasin';
+  const typeContrat = (e) => { const c = perso(e)[0]; return /^Apprentissage/.test(c) ? 'Apprentissage' : /^Saisonnier/.test(c) ? 'CDD saisonnier' : /^CDD/.test(c) ? 'CDD' : /cadre/.test(c) ? 'CDI cadre' : 'CDI'; };
+  const tempsPartiel = (e) => typeof perso(e)[3] === 'number' && perso(e)[3] < 35;
+  const contratCourt = (e) => typeContrat(e) + (tempsPartiel(e) ? ' · temps partiel' : '');
+  const eur = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+  const eur2 = (n) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const ST_CL = { present: 'ok', pause: 'att', avant: '', parti: '' };
+  const pill = (e) => { const s = etat(e); return `<span class="pg-st ${ST_CL[s.cle]}">${s.txt}</span>`; };
+  const P = { q: '', service: '', statut: '', tri: 'service', vue: 'cartes', eq: 'planning' };
+  const ORDRE_SERV = ['Direction', 'Ressources humaines', 'Comptabilité', 'Accueil', 'Caisses', 'Fruits et légumes', 'Épicerie', 'Frais et surgelés', 'Boissons', 'Hygiène et entretien', 'Maison et bazar', 'Réserve et quai'];
+  const servicesListe = () => ORDRE_SERV.filter((s) => equipe.some((e) => serviceDe(e) === s));
+  const IC = (d) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const ICK = {
+    gens: IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.7c1.8.8 3 2.5 3 5.3"/>'),
+    ok: IC('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>'),
+    euro: IC('<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>'),
+    jour: IC('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+    poste: IC('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>'),
+    pause: IC('<path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v3M10 2v3M14 2v3"/>'),
+    caisse: IC('<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V5h10v5M7 15h4"/>'),
+    doc: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>',
+  };
+  const masse = () => equipe.reduce((s, e) => s + brutMois(e), 0);
+  function kpisRH() {
+    const pres = equipe.filter((e) => ['present', 'pause'].includes(etat(e).cle)), pz = equipe.filter((e) => etat(e).cle === 'pause').length;
+    const ouverts = cands.filter((k) => !['retenu', 'refuse'].includes(k.etape)).length;
+    return [
+      kpi({ ic: ICK.gens, c: '#2563eb', cd: '#dbeafe', label: 'Effectif', val: equipe.length, det: `${equipe.filter((e) => /^CDI/.test(typeContrat(e))).length} CDI · ${equipe.filter((e) => !/^CDI/.test(typeContrat(e))).length} autres contrats` }),
+      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${equipe.length}`, det: pz ? `dont ${pz} en pause` : 'personne en pause' }),
+      kpi({ ic: ICK.euro, c: '#7c3aed', cd: '#ede9fe', label: 'Masse salariale du mois', val: eur(masse()), det: `brut · ${eur(masse() * CHARGES)} chargé` }),
+      kpi({ ic: ICK.jour, c: '#ea580c', cd: '#ffedd5', label: 'Coût du jour', val: eur(coutJour()), det: `à ${hTxt(Math.floor(heure() * 4) / 4)}, heures faites` }),
+      kpi({ ic: ICK.poste, c: '#be123c', cd: '#ffe4e6', label: 'Postes ouverts', val: POSTES.length, det: `${ouverts} candidature${ouverts > 1 ? 's' : ''} en cours` }),
+    ].join('');
+  }
+  const filtres = () => {
+    const q = P.q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const sans = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    let l = equipe.filter((e) => (!q || sans(`${e.nom} ${e.poste} ${serviceDe(e)} ${ROLES[idx(e)] || ''}`).includes(q))
+      && (!P.service || serviceDe(e) === P.service)
+      && (!P.statut || (P.statut === 'present' ? ['present', 'pause'].includes(etat(e).cle) : P.statut === 'pause' ? etat(e).cle === 'pause' : ['avant', 'parti'].includes(etat(e).cle))));
+    const tri = { nom: (a, b) => a.nom.localeCompare(b.nom, 'fr'), salaire: (a, b) => brutMois(b) - brutMois(a), anciennete: (a, b) => dIso(perso(a)[1]) - dIso(perso(b)[1]), service: (a, b) => ORDRE_SERV.indexOf(serviceDe(a)) - ORDRE_SERV.indexOf(serviceDe(b)) || brutMois(b) - brutMois(a) };
+    return l.sort(tri[P.tri] || tri.service);
+  };
+  function cartePerso(e) {
+    return `<button type="button" class="pp" data-rh-fiche="${e.id}">${pill(e)}<div class="pp-tete">${avatar(e.nom, { taille: 52 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div>`
+      + `<p class="pp-role">${ROLES[idx(e)] || ''}</p><div class="pp-tags"><span>${serviceDe(e)}</span><span>${contratCourt(e)}</span><span>${hTxt(e.debut)}–${hTxt(e.fin)}</span></div>`
+      + `<div class="pp-pied"><div><small>Brut mensuel</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Ancienneté</small><b>${anciennete(dIso(perso(e)[1]))}</b></div><div><small>Heures / semaine</small><b>${heuresSem(e)} h</b></div></div></button>`;
+  }
+  function listePerso(l) {
+    return `<div class="pg-carte pg-table-l"><table class="pg-table"><thead><tr><th>Salarié</th><th>Service</th><th>Contrat</th><th>Aujourd'hui</th><th>Statut</th><th class="num">Brut mensuel</th><th class="num">Taux brut</th><th class="num">Ancienneté</th></tr></thead><tbody>${l.map((e) => `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 36 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td>${serviceDe(e)}</td><td>${contratCourt(e)}<br><small>${heuresSem(e)} h / sem.</small></td><td>${hTxt(e.debut)}–${hTxt(e.fin)}</td><td>${pill(e)}</td><td class="num">${eur(brutMois(e))}</td><td class="num">${eur2(tauxBrut(e))}</td><td class="num">${anciennete(dIso(perso(e)[1]))}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function corpsPersonnel() {
+    const l = filtres();
+    return `${l.length ? (P.vue === 'liste' ? listePerso(l) : `<div class="pp-grille">${l.map(cartePerso).join('')}</div>`) : '<div class="pg-vide">Aucun salarié ne correspond à ces filtres.</div>'}`
+      + `<p class="pg-note">Données fictives · accès réservé RH (RGPD). Salaires inventés, déduits du coût horaire chargé de la démo (charges patronales comptées à 35 %). Fiches limitées aux informations professionnelles.</p>`;
+  }
+  const outilsPersonnel = () => `<div class="pg-outils"><input type="search" data-p="q" placeholder="Rechercher un nom, un poste…" aria-label="Rechercher" value="${esc(P.q)}">`
+    + `<select data-p="service" aria-label="Service"><option value="">Tous les services</option>${servicesListe().map((s) => `<option ${P.service === s ? 'selected' : ''}>${s}</option>`).join('')}</select>`
+    + `<select data-p="statut" aria-label="Statut"><option value="">Tous les statuts</option><option value="present" ${P.statut === 'present' ? 'selected' : ''}>Présents</option><option value="pause" ${P.statut === 'pause' ? 'selected' : ''}>En pause</option><option value="absent" ${P.statut === 'absent' ? 'selected' : ''}>Absents</option></select>`
+    + `<select data-p="tri" aria-label="Trier"><option value="service">Tri : service</option><option value="nom" ${P.tri === 'nom' ? 'selected' : ''}>Tri : nom</option><option value="salaire" ${P.tri === 'salaire' ? 'selected' : ''}>Tri : salaire</option><option value="anciennete" ${P.tri === 'anciennete' ? 'selected' : ''}>Tri : ancienneté</option></select>`
+    + `<span class="pg-seg" role="group" aria-label="Affichage"><button type="button" data-p-vue="cartes" aria-pressed="${P.vue === 'cartes'}">Cartes</button><button type="button" data-p-vue="liste" aria-pressed="${P.vue === 'liste'}">Liste</button></span><span class="pg-compte" id="rh-compte"></span></div>`;
+  function corpsEntretiens() {
+    const auj = aujourdhui();
+    const ann = equipe.map((e) => ({ e, d: dIso(perso(e)[6]) })).filter((x) => x.d).sort((a, b) => a.d - b.d);
+    return `<div class="pg-grille"><section class="pg-carte">${vueRdv().replace('<h2>Entretiens d\'embauche</h2>', '<div class="pg-ch"><h3>Entretiens d\'embauche</h3></div>')}</section>`
+      + `<section class="pg-carte"><div class="pg-ch"><h3>Entretiens annuels</h3><small>${ann.filter((x) => x.d < auj).length} à reprogrammer</small></div><table class="pg-table"><tbody>${ann.map(({ e, d }) => { const j = Math.round((d - auj) / JOUR); return `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 32 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td class="num">${dCourt(d)}<br>${j < 0 ? '<span class="pg-st att">à reprogrammer</span>' : j <= 14 ? '<span class="pg-st bleu">bientôt</span>' : `<small>dans ${j} jours</small>`}</td></tr>`; }).join('')}</tbody></table></section></div>`;
+  }
+  function corpsDocuments() {
+    return `<div class="pg-grille"><section class="pg-carte">${vuePersonnel().replace(/<h2>Dossiers du personnel \((\d+)\)<\/h2>/, '<div class="pg-ch"><h3>Dossiers du personnel</h3><small>$1 salariés</small></div>')}</section>`
+      + `<section class="pg-carte"><div class="pg-ch"><h3>CV et lettres des candidats</h3><small>${cands.length} candidatures</small></div><table class="pg-table"><tbody>${cands.map((k) => `<tr data-rh-doc="${k.id}"><td><div class="pg-qui">${avatar(nomK(k), { taille: 32 })}<div><b>${nomK(k)}</b><small>${posteDe(k.poste).titre}</small></div></div></td><td>${etape(k)}</td><td class="num"><small>CV · lettre · suivi</small></td></tr>`).join('')}</tbody></table></section></div>`;
+  }
+  const SOUS = [['personnel', 'Personnel', () => equipe.length], ['recrutement', 'Recrutement', () => cands.filter((k) => !['retenu', 'refuse'].includes(k.etape)).length], ['entretiens', 'Entretiens', () => rdvDuJour().length], ['anciens', 'Anciens salariés', () => ANCIENS.length], ['documents', 'Documents', () => '']];
+  const corpsSous = () => ({
+    personnel: corpsPersonnel,
+    recrutement: () => `<section class="pg-carte rhp-recru">${vueRecrutement()}</section>`,
+    entretiens: corpsEntretiens,
+    anciens: () => `<div class="rhp-anciens">${vueAnciens()}</div>`,
+    documents: corpsDocuments,
+  }[P.sous || 'personnel']());
+  let rootP = null, sousRendu = null;
+  function rendrePage(corps) {
+    if (!rootP || !corps.contains(rootP)) {
+      rootP = document.createElement('div'); rootP.className = 'rh rhp'; sousRendu = null;
+      corps.replaceChildren(rootP);
+      rootP.addEventListener('click', clicPage);
+      rootP.addEventListener('input', (ev) => { const el = ev.target.closest('[data-p]'); if (!el) return; P[el.dataset.p] = el.value; majPage(); });
+      rootP.addEventListener('keydown', (ev) => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('.rh-rdv')) { ev.preventDefault(); clicPage(ev); } });
+    }
+    P.sous ||= 'personnel';
+    if (sousRendu !== P.sous) {
+      sousRendu = P.sous;
+      rootP.innerHTML = `<div class="pg-kpis" data-z="kpis"></div><nav class="pg-onglets" data-z="onglets"></nav>${P.sous === 'personnel' ? outilsPersonnel() : ''}<div data-z="corps"></div>`;
+    }
+    majPage();
+  }
+  const poser = (el, h) => { if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
+  function majPage() {
+    if (!rootP) return;
+    poser(rootP.querySelector('[data-z="kpis"]'), kpisRH());
+    poser(rootP.querySelector('[data-z="onglets"]'), SOUS.map(([k, t, n]) => `<button type="button" data-rh-psous="${k}" class="${P.sous === k ? 'actif' : ''}">${t}${n() !== '' ? `<small>${n()}</small>` : ''}</button>`).join(''));
+    poser(rootP.querySelector('[data-z="corps"]'), corpsSous());
+    const c = rootP.querySelector('#rh-compte'); if (c) c.textContent = `${filtres().length} sur ${equipe.length}`;
+    rootP.querySelectorAll('[data-p-vue]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.pVue === P.vue));
+    if (tiroir.cle() && equipe.some((e) => e.id === tiroir.cle())) tiroir.maj(fiche(equipe.find((e) => e.id === tiroir.cle())));
+  }
+  function clicPage(ev) {
+    const s = ev.target.closest('[data-rh-psous]'); if (s) { P.sous = s.dataset.rhPsous; rendrePage(rootP.parentElement); return; }
+    const v = ev.target.closest('[data-p-vue]'); if (v) { P.vue = v.dataset.pVue; majPage(); return; }
+    const f = ev.target.closest('[data-rh-fiche]'); if (f) { ouvrirFiche(f.dataset.rhFiche); return; }
+    const vp = ev.target.closest('[data-rh-voirposte]'); if (vp) { voirPoste(vp.dataset.rhVoirposte); return; }
+    clicPanneau(ev);
+    if (ev.target.closest('[data-rh-poste],[data-rh-perso]')) majPage();
+  }
+  // planning de la semaine (fictif) : les horaires du jour, sur le nombre de jours qui couvre le contrat
+  const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  function semaine(e) {
+    const len = e.fin - e.debut, n = Math.max(1, Math.min(6, Math.round(heuresSem(e) / len))), auj = (aujourdhui().getDay() + 6) % 7;
+    const repos = []; let k = (idx(e) * 5 + 2) % 6;
+    while (6 - repos.length > n) { if (k !== auj && !repos.includes(k)) repos.push(k); k = (k + 4) % 6; if (repos.length > 6) break; }
+    return JOURS.map((j, i) => ({ j, auj: i === auj, travail: !repos.includes(i) }));
+  }
+  function fiche(e) {
+    const [contrat, entree, fin, , conges, visite, entretien, formations] = perso(e);
+    const auj = aujourdhui(), dA = dIso(entretien), s = etat(e), pz = pauseDe(e);
+    const sem = semaine(e).map((x) => `<div class="${x.auj ? 'auj' : ''}"><span>${x.j}${x.auj ? ' (auj.)' : ''}</span><i>${x.travail ? `<u style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></u>` : ''}</i><b>${x.travail ? `${hTxt(e.debut)}–${hTxt(e.fin)}` : '<small style="color:var(--doux);font-weight:500">repos</small>'}</b></div>`).join('');
+    const docs = [['Contrat de travail', contrat], ['Fiche de poste', e.poste], ...formations.map((f) => ['Attestation de formation', f]), ['Aptitude (visite médicale)', visite ? dCourt(dIso(visite)) : '-'], ['Bulletins de paie', 'consultables par la comptabilité']];
+    return `<div class="ti-tete">${avatar(e.nom, { taille: 72 })}<div><h2>${esc(e.nom)}</h2><p>${esc(e.poste)} · ${serviceDe(e)}</p>${pill(e)}</div></div>`
+      + `<p class="ti-role"><b>Rôle :</b> ${ROLES[idx(e)] || ''}</p>`
+      + `<div class="ti-chiffres"><div><small>Brut mensuel</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Coût chargé / h</small><b>${eur2(e.cout)}</b></div></div>`
+      + `<div class="ti-actions"><button type="button" class="pg-bt prim" data-ti-voir="${e.id}">Voir son poste sur la maquette</button></div>`
+      + `<section class="ti-s"><h3>Aujourd'hui</h3><ul class="ti-l"><li><span>Horaires</span><b>${hTxt(e.debut)} – ${hTxt(e.fin)}</b></li>${pz !== null ? `<li><span>Pause</span><b>${hTxt(pz)} – ${hTxt(pz + 0.5)}</b></li>` : ''}<li><span>Statut</span><b>${s.txt}${s.detail ? ` · ${s.detail}` : ''}</b></li><li><span>Heures faites</span><b>${nb(Math.round(Math.max(0, Math.min(heure(), e.fin) - e.debut) * 10) / 10)} h</b></li></ul></section>`
+      + `<section class="ti-s"><h3>Contrat</h3><ul class="ti-l"><li><span>Contrat</span><b>${contrat}</b></li><li><span>Durée du travail</span><b>${typeof perso(e)[3] === 'number' ? perso(e)[3] + ' h par semaine' : perso(e)[3]}</b></li><li><span>Entrée</span><b>${dCourt(dIso(entree))}</b></li>${fin ? `<li><span>Fin prévue</span><b>${dCourt(dIso(fin))}</b></li>` : ''}<li><span>Ancienneté</span><b>${anciennete(dIso(entree))}</b></li><li><span>Congés restants</span><b>${nb(conges)} jours</b></li></ul></section>`
+      + `<section class="ti-s"><h3>Planning de la semaine</h3><div class="ti-sem">${sem}</div><p class="pg-note">Semaine type, magasin fermé le dimanche. Barre : de 6h à 21h.</p></section>`
+      + `<section class="ti-s"><h3>Compétences et formations</h3><div class="ti-tags">${formations.map((f) => `<span>${f}</span>`).join('')}</div></section>`
+      + `<section class="ti-s"><h3>Entretiens annuels</h3><ul class="ti-l"><li><span>Prochain entretien</span><b>${dA ? (dA < auj ? `${dCourt(dA)}, à reprogrammer` : dCourt(dA)) : 'après la fin du contrat'}</b></li><li><span>Avec</span><b>${RH.nom} (RH)</b></li><li><span>Visite médicale</span><b>${visite ? dCourt(dIso(visite)) : '-'}</b></li></ul></section>`
+      + `<section class="ti-s"><h3>Documents</h3><ul class="ti-docs">${docs.map(([a, b]) => `<li>${ICK.doc}<span>${a}</span><small>${b}</small></li>`).join('')}</ul></section>`
+      + `<p class="ti-rgpd">Données fictives · accès réservé RH (RGPD). Fiche limitée aux informations professionnelles ; salaire inventé, déduit du coût horaire chargé de la démo.</p>`;
+  }
+  function ouvrirFiche(id) {
+    const e = equipe.find((x) => x.id === id); if (!e) return;
+    tiroir.ouvrir(fiche(e), id);
+    const el = tiroir.element();
+    if (!el._rh) { el._rh = 1; el.addEventListener('click', (ev) => { const b = ev.target.closest('[data-ti-voir]'); if (b) { tiroir.fermer(); voirPoste(b.dataset.tiVoir); } }); }
+  }
+
+  // ---------- page Équipe : planning du jour et annuaire ----------
+  let rootE = null;
+  function rendreEquipe(corps) {
+    if (!rootE || !corps.contains(rootE)) {
+      rootE = document.createElement('div'); rootE.className = 'eqp';
+      rootE.innerHTML = `<div class="pg-kpis" data-z="kpis"></div><div class="pg-outils"><span class="pg-seg" role="group" aria-label="Affichage"><button type="button" data-eq="planning">Planning du jour</button><button type="button" data-eq="annuaire">Annuaire</button></span><span class="pg-compte">Horaires de 6h à 21h · le trait rouge marque l'heure de la démo</span></div><div data-z="corps"></div>`;
+      corps.replaceChildren(rootE);
+      rootE.addEventListener('click', (ev) => {
+        const s = ev.target.closest('[data-eq]'); if (s) { P.eq = s.dataset.eq; majEquipe(); return; }
+        const vp = ev.target.closest('[data-rh-voirposte]'); if (vp) { voirPoste(vp.dataset.rhVoirposte); return; }
+        const f = ev.target.closest('[data-rh-fiche]'); if (f) ouvrirFiche(f.dataset.rhFiche);
+      });
+    }
+    majEquipe();
+  }
+  function majEquipe() {
+    if (!rootE) return;
+    const pres = equipe.filter((e) => ['present', 'pause'].includes(etat(e).cle)), pz = equipe.filter((e) => etat(e).cle === 'pause');
+    const enCaisse = pres.filter((e) => /^c\d/.test(e.zone) && etat(e).cle === 'present').length;
+    poser(rootE.querySelector('[data-z="kpis"]'), [
+      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${equipe.length}`, det: `à ${hTxt(Math.floor(heure() * 4) / 4)}` }),
+      kpi({ ic: ICK.pause, c: '#ea580c', cd: '#ffedd5', label: 'En pause', val: pz.length, det: pz.map((e) => e.nom.split(' ')[0]).join(', ') || 'personne' }),
+      kpi({ ic: ICK.caisse, c: '#7c3aed', cd: '#ede9fe', label: 'En caisse', val: enCaisse, det: 'renforts compris' }),
+      kpi({ ic: ICK.euro, c: '#2563eb', cd: '#dbeafe', label: 'Coût du jour', val: eur(coutJour()), det: 'heures faites × coût chargé' }),
+    ].join(''));
+    rootE.querySelectorAll('[data-eq]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.eq === P.eq));
+    const pct = (h) => ((Math.min(21, Math.max(6, h)) - 6) / 15) * 100, h0 = heure();
+    let corps;
+    if (P.eq === 'annuaire') {
+      corps = `<div class="pg-carte pg-table-l"><table class="pg-table"><thead><tr><th>Personne</th><th>Service</th><th>Horaires</th><th>Statut</th><th>En ce moment</th><th></th></tr></thead><tbody>${[...equipe].sort((a, b) => ORDRE_SERV.indexOf(serviceDe(a)) - ORDRE_SERV.indexOf(serviceDe(b))).map((e) => { const s = etat(e); return `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 36 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td>${serviceDe(e)}</td><td>${hTxt(e.debut)}–${hTxt(e.fin)}</td><td>${pill(e)}</td><td><small>${s.detail || '-'}</small></td><td class="num"><button type="button" class="pg-bt" data-rh-voirposte="${e.id}" ${['present', 'pause'].includes(s.cle) ? '' : 'disabled'}>Voir sur la maquette</button></td></tr>`; }).join('')}</tbody></table></div>`;
+    } else {
+      const heures = []; for (let h = 6; h <= 21; h += 3) heures.push(`<span style="left:${pct(h)}%">${h}h</span>`);
+      const traits = []; for (let h = 6; h <= 21; h++) traits.push(`<b class="h" style="left:${pct(h)}%"></b>`);
+      const lignes = servicesListe().map((sv) => `<div class="frise-l groupe">${sv}</div>` + equipe.filter((e) => serviceDe(e) === sv).map((e) => {
+        const s = etat(e), pz = pauseDe(e), fait = h0 >= e.fin, cours = h0 >= e.debut && !fait;
+        const fond = s.cle === 'pause' ? '#ffedd5' : cours ? '#dbeafe' : fait ? '#eef1f5' : '#f1f5f9', bord = cours ? '#93c5fd' : '#e2e8f0', coul = cours ? '#1d4ed8' : '#64748b';
+        return `<div class="frise-l"><div class="pg-qui" data-rh-fiche="${e.id}">${avatar(e.nom, { taille: 32 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div><div class="frise-piste">${traits.join('')}<div class="bloc-f" data-rh-fiche="${e.id}" style="left:${pct(e.debut)}%;width:${pct(e.fin) - pct(e.debut)}%;background:${fond};border-color:${bord};color:${coul}" title="${hTxt(e.debut)}–${hTxt(e.fin)}">${hTxt(e.debut)}–${hTxt(e.fin)}</div>${pz !== null ? `<div class="bloc-f" style="left:${pct(pz)}%;width:${pct(pz + 0.5) - pct(pz)}%;background:#fed7aa;border-color:#fdba74;top:14px;bottom:14px;padding:0" title="Pause ${hTxt(pz)}"></div>` : ''}<i class="maint" style="left:${pct(h0)}%"></i></div></div>`;
+      }).join('')).join('');
+      corps = `<div class="frise"><div class="frise-l tete"><div style="padding-left:16px">Personne</div><div class="frise-piste">${heures.join('')}</div></div>${lignes}</div><p class="pg-note">Clic sur une personne : sa fiche (poste, horaires, salaire fictif). Depuis l'annuaire, « Voir sur la maquette » revient à la 3D et zoome sur son poste.</p>`;
+    }
+    poser(rootE.querySelector('[data-z="corps"]'), corps);
+  }
+
+  return { rendre, rdvDuJour, ouvrirDocument, rendrePage, majPage, rendreEquipe, majEquipe, ouvrirFiche };
 }

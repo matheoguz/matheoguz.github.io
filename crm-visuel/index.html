@@ -273,6 +273,7 @@ import { texturesSol, construireDecor, geosVoiture, geosPersonne, geoMoto } from
 import { calculerAlertes, NIVEAUX, SEUILS, ICONES } from './ae-alertes.js';
 import { creerPastilles } from './ae-pastilles.js';
 import { creerInterface, poserGarde, ICONES_UI } from './interface.js';
+import { creerPagesAE } from './ae-pages.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
@@ -719,6 +720,7 @@ function htmlTraiter() {
 }
 function rendrePanneau(force = false) {
   const c = $('contenu'), onglet = rubrique();
+  if (ui && ui.plein()) { pages.rendre(onglet, ui.page().corps); return; }
   let html = '', apres = null;
   const chiffres = (l) => `<div class="chiffres-r">${l.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join('')}</div>`;
   if (onglet === 'accueil') return;
@@ -924,6 +926,7 @@ $('pause').onclick = () => { pause = !pause; $('pause').innerHTML = icPause(); $
 
 function taille() {
   const w = conteneur.clientWidth, h = conteneur.clientHeight;
+  if (!w || !h) return; // page pleine : la maquette est masquée
   renderer.setSize(w, h, false);
   const a = w / h, s = a < 1.1 ? 15.5 / a : 18;
   Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix();
@@ -934,7 +937,9 @@ function majTout() { majAlertes(); histAlertes.push({ t, n: alertes.length }); i
 // ================= Rubriques : chacune recadre la caméra sur sa zone =================
 const RUB_3D = { vehicules: [new THREE.Vector3(10.5, 0, -4.6), 1.7], moniteurs: [new THREE.Vector3(-21, 0, -1), 2.1], eleves: [new THREE.Vector3(-14, 0, 2.5), 1.6], code: [new THREE.Vector3(-13, 0, -1), 2.3] };
 function surRubrique(rub) {
-  const c = $('contenu'); c._h = null; if (c.contains($('kpis'))) $('kpis-reserve').appendChild($('kpis')); c.innerHTML = ''; dernierPanneau = '';
+  const c = $('contenu'); c._h = null; if (!$('kpis-reserve').contains($('kpis'))) $('kpis-reserve').appendChild($('kpis')); c.innerHTML = ''; dernierPanneau = '';
+  pages.fermer();
+  if (ui.plein()) { ui.page().corps.replaceChildren(); ui.page().actions.innerHTML = '<span class="pg-fictif">Données fictives</span>'; if (selection) { selection = null; rendreFiche(); } rendrePanneau(true); return; }
   if (selection) { selection = null; rendreFiche(); }
   const z = RUB_3D[rub]; if (z) viser(z[0], z[1] * (MOBILE ? 1.2 : 1)); else viser(CIBLE, 1);
   majSegment(); rendrePanneau(true);
@@ -944,7 +949,9 @@ $('recentrer').onclick = () => { choisir(null); const z = RUB_3D[rubrique()]; if
 // ================= Boucle =================
 let avant = performance.now(), dernierRendu = -1;
 function animer(now) {
-  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
+  // page pleine (Planning, Moniteurs, Élèves, Chiffres) : la journée continue, la 3D n'est plus dessinée (économie de batterie)
+  const cache = !!(ui && ui.plein());
+  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
     if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
@@ -973,20 +980,26 @@ function animer(now) {
   controls.update();
   const minute = Math.floor(t * 60);
   if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majTout(); }
-  pastilles.maj(alertes, positionPastille, camera.zoom, now, CALME);
-  scene.updateMatrixWorld(); foule.maj();
-  renderer.render(scene, camera);
-  window.maquetteOk = true;
-  placerEtiquettes();
-  requestAnimationFrame(animer);
+  if (!cache) {
+    pastilles.maj(alertes, positionPastille, camera.zoom, now, CALME);
+    scene.updateMatrixWorld(); foule.maj();
+    renderer.render(scene, camera);
+    window.maquetteOk = true;
+    placerEtiquettes();
+  }
+  if (cache) setTimeout(() => requestAnimationFrame(animer), 200); else requestAnimationFrame(animer);
 }
 // pour les tests automatiques : état, alertes, actions, dessins
 window.demo = {
   objets, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
   aller: (h) => { t = h; synchroniser(true); majTout(); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
 };
-const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['planning', 'Planning'], ['vehicules', 'Véhicules'], ['moniteurs', 'Moniteurs'], ['eleves', 'Élèves'], ['code', 'Salle de code'], ['chiffres', 'Chiffres', 'Tous les chiffres']];
-ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre]) => ({ id, label, titre })), surChangement: surRubrique });
+// Planning, Moniteurs, Élèves et Chiffres n'ont pas besoin de la maquette : pages pleines (3D masquée et en pause)
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['planning', 'Planning', 'Planning du jour', 'Moniteurs × heures, en direct'], ['vehicules', 'Véhicules'], ['moniteurs', 'Moniteurs', 'Moniteurs', 'Leur journée, leurs heures et le remplissage'], ['eleves', 'Élèves', 'Élèves', 'Forfaits, leçons du jour et paiements'], ['code', 'Salle de code'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo']];
+const PLEINES = new Set(['planning', 'moniteurs', 'eleves', 'chiffres']);
+const voirSurMaquette = (cle) => { pages.fermer(); ui.aller('accueil'); choisir(cle); };
+const pages = creerPagesAE({ t: () => t, PLANNING, MONITEURS, ELEVES, VOITURES, MOTOS, OUVERTURE, FERMETURE, H_DISPO, hTxt, hh, euros, virgule, statut, caJour, heuresRoulees, relances, reportees, voir: voirSurMaquette, kpisEl: () => $('kpis') });
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id) })), surChangement: surRubrique });
 window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
 requestAnimationFrame(animer);

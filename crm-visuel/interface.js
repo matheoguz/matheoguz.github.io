@@ -8,6 +8,11 @@
 //   ui.rubrique()         // rubrique en cours
 //   ui.fiche(oui)         // une fiche est ouverte (le panneau s'ouvre pour elle)
 //   ui.badge(id, n, ton)  // pastille de nombre sur une rubrique (ton : 'rouge' | 'orange' | '')
+//   ui.plein()            // la rubrique en cours est une page pleine (rubrique { plein: true, sous })
+//   ui.page()             // { corps, actions } de la page pleine (en-tête : titre et sous-titre de la rubrique)
+//
+// Page pleine : la maquette 3D et le panneau sont masqués (la scène n'est pas recréée), la page prend toute
+// la largeur à droite de la barre de rubriques. La page hôte met son rendu 3D en pause tant que ui.plein().
 //
 // Balisage attendu : .app > #rubriques (nav), #panneau > .pan-tete (#pan-retour, #pan-titre, #pan-fermer),
 // #fiche (avec son bouton #fermer), #contenu.
@@ -40,6 +45,12 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
     + `<button type="button" class="rub-replier" id="rub-replier" title="Réduire la barre" aria-label="Réduire la barre" aria-pressed="false"><span class="rub-ic">${ICONES_UI.replier}</span><span class="rub-l">Réduire</span></button>`;
   retour.innerHTML = ICONES_UI.retour + '<span></span>';
   fermer.innerHTML = ICONES_UI.fermer;
+  let page = document.getElementById('page');
+  if (!page) {
+    page = document.createElement('section'); page.className = 'page'; page.id = 'page'; page.setAttribute('aria-labelledby', 'page-titre');
+    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div></div><div class="page-corps" id="page-corps"></div>';
+    nav.after(page);
+  }
   let courante = defaut;
   const redimensionner = () => dispatchEvent(new Event('resize')); // la maquette 3D se recale sur sa nouvelle place
   function ouvrir(oui) {
@@ -50,12 +61,16 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   function libelle(id) { const r = rubriques.find((x) => x.id === id); return r ? r.titre || r.label : ''; }
   function aller(id) {
     if (!rubriques.some((r) => r.id === id)) return;
+    const R = rubriques.find((r) => r.id === id), plein = !!R.plein, change = app.classList.contains('plein') !== plein;
     courante = id; app.dataset.rubrique = id;
+    app.classList.toggle('plein', plein);
+    if (plein) { document.getElementById('page-titre').textContent = R.titre || R.label; document.getElementById('page-sous').textContent = R.sous || ''; document.getElementById('page-actions').innerHTML = ''; page.scrollTop = 0; }
     nav.querySelectorAll('[data-rub]').forEach((b) => { const a = b.dataset.rub === id; b.classList.toggle('actif', a); if (a) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     titre.textContent = libelle(id);
     retour.querySelector('span').textContent = id === 'accueil' ? 'Fermer la fiche' : libelle(id);
     if (app.classList.contains('avec-fiche')) { const f = document.getElementById('fermer'); if (f) f.click(); }
-    ouvrir(id !== 'accueil');
+    ouvrir(id !== 'accueil' && !plein);
+    if (change) redimensionner();
     const b = nav.querySelector(`[data-rub="${id}"]`); if (b && nav.scrollWidth > nav.clientWidth) b.scrollIntoView({ block: 'nearest', inline: 'center' });
     surChangement(id);
     const c = document.getElementById('contenu'); if (c) c.scrollTop = 0;
@@ -63,7 +78,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   function fiche(oui) {
     oui = !!oui;
     if (app.classList.contains('avec-fiche') !== oui) app.classList.toggle('avec-fiche', oui);
-    ouvrir(oui || courante !== 'accueil');
+    ouvrir(oui || (courante !== 'accueil' && !app.classList.contains('plein')));
   }
   function badge(id, n, ton = '') {
     const el = document.getElementById('rub-n-' + id); if (!el) return;
@@ -71,7 +86,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   }
   nav.onclick = (ev) => {
     const r = ev.target.closest('[data-rub]');
-    if (r) { aller(r.dataset.rub === courante && r.dataset.rub !== 'accueil' && !app.classList.contains('avec-fiche') ? 'accueil' : r.dataset.rub); return; }
+    if (r) { aller(r.dataset.rub === courante && r.dataset.rub !== 'accueil' && !app.classList.contains('plein') && !app.classList.contains('avec-fiche') ? 'accueil' : r.dataset.rub); return; }
     if (ev.target.closest('#rub-replier')) { const oui = app.classList.toggle('replie'); document.getElementById('rub-replier').setAttribute('aria-pressed', oui); redimensionner(); }
   };
   retour.onclick = () => { const f = document.getElementById('fermer'); if (f) f.click(); };
@@ -79,7 +94,8 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && app.classList.contains('panneau-ouvert') && !document.body.classList.contains('rh-bloque')) { if (app.classList.contains('avec-fiche')) retour.onclick(); else aller('accueil'); } });
   app.dataset.rubrique = courante;
   nav.querySelector(`[data-rub="${courante}"]`)?.classList.add('actif');
-  return { aller, rubrique: () => courante, fiche, badge };
+  const pageEl = { corps: document.getElementById('page-corps'), actions: document.getElementById('page-actions') };
+  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl };
 }
 
 // Remplace le contenu d'un élément seulement s'il a changé, en gardant les blocs repliables ouverts
