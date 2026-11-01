@@ -275,7 +275,7 @@
     .poignee i { width: 40px; height: 5px; border-radius: 5px; background: #cbd5e1; }
     .onglets { padding: 2px 12px 10px; }
     .contenu { padding: 12px 14px; }
-    .fiche { position: fixed; z-index: 40; left: 8px; right: 8px; bottom: 8px; width: auto; max-width: none; max-height: 70vh; max-height: 70dvh; box-shadow: 0 -4px 32px rgba(15,23,42,.22); }
+    .fiche { position: fixed; z-index: 40; left: 8px; right: 8px; bottom: 8px; width: auto; max-width: none; max-height: 55vh; max-height: 55dvh; box-shadow: 0 -4px 32px rgba(15,23,42,.22); }
     .service { width: 80px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -1243,7 +1243,9 @@ function choisir(cle) {
   // un élément hors de la surface de vente : on passe à la vue qui le montre
   if (cle && p && /^etage/.test(cle) && vueCourante !== 'etage') changerVue('etage', false);
   else if (cle && p && vueCourante === 'maquette' && !DANS_MAGASIN(p[0])) changerVue('site', false);
-  selection = cle; rendreFiche(); if (!p) return;
+  selection = cle; rendreFiche();
+  if (MOBILE && cle && window.ouvrirTiroir) window.ouvrirTiroir(false); // téléphone : le tiroir redescend pour montrer la maquette et la fiche
+  if (!p) return;
   const z = p[1] * (MOBILE ? 1.3 : 1), v = p[0].clone();
   viser(v, z);
 }
@@ -1280,6 +1282,7 @@ $('pause').onclick = () => { pause = !pause; const b = $('pause'); b.classList.t
 {
   const tir = $('tiroir'), poi = $('poignee');
   const ouvrir = (oui) => { tir.classList.toggle('ouvert', oui); poi.setAttribute('aria-expanded', oui); };
+  window.ouvrirTiroir = ouvrir;
   poi.onclick = () => ouvrir(!tir.classList.contains('ouvert'));
   document.querySelectorAll('[data-onglet]').forEach((b) => b.addEventListener('click', () => { if (MOBILE) ouvrir(true); }));
   let y0 = null;
