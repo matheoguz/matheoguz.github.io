@@ -24,7 +24,6 @@
   body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
   button { font: inherit; color: inherit; }
   svg { flex: none; }
-  .app { display: grid; grid-template-columns: minmax(0, 1fr) 420px; grid-template-rows: auto auto auto minmax(0, 1fr); height: 100vh; }
 
   /* bandeau et en-tête */
   .bandeau-demo { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fffbeb; color: #92400e; border-bottom: 1px solid #fde68a; font-size: 12px; font-weight: 600; padding: 5px 16px; text-align: center; line-height: 1.3; }
@@ -198,11 +197,8 @@
   .avatar { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-size: 11px; font-weight: 700; color: #fff; margin-right: 8px; vertical-align: middle; float: left; }
   .doux { color: var(--doux); }
 
-  @media (max-width: 1320px) { .kpis { gap: 10px; padding: 12px 16px; } .kpi { padding: 10px 12px 8px; } .kpi-ic { width: 26px; height: 26px; } .kpi-ic svg { width: 14px; height: 14px; } .kpi-v { font-size: 19px; } .spark { width: 40px; } .barres i { width: 6px; } .tend { font-size: 10.5px; padding: 2px 6px; } .tend svg { display: none; } .app { grid-template-columns: minmax(0, 1fr) 390px; } .onglets button { padding: 6px 8px; font-size: 12.5px; } }
   @media (max-width: 1240px) { .segment button span { display: none; } .segment button { padding: 6px 10px; } .direct-panneau { width: 214px; } }
-  @media (max-width: 1100px) { .app { grid-template-columns: minmax(0, 1fr) 360px; } .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } .legende-p { display: none; } }
   @media (max-width: 900px) {
-    .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; padding-bottom: var(--peek); }
     .bandeau-demo { font-size: 11px; padding: 4px 10px; } .bandeau-demo span { display: none; }
     header { flex-wrap: wrap; padding: 8px 14px; gap: 8px 10px; }
     .logo { width: 34px; height: 34px; border-radius: 10px; font-size: 15px; }
@@ -211,27 +207,18 @@
     .rond { width: 32px; height: 32px; }
     .segment { order: 3; width: 100%; margin: 0; overflow-x: auto; scrollbar-width: none; }
     .segment button { flex: 1 0 auto; justify-content: center; padding: 6px 8px; } .segment button span { display: inline; } .segment button svg { display: none; }
-    .kpis { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 14px; gap: 10px; scrollbar-width: none; flex: none; }
-    .kpis::-webkit-scrollbar { display: none; }
-    .kpi { flex: 0 0 58%; scroll-snap-align: start; padding: 10px 12px 8px; }
-    .kpi:hover { transform: none; }
-    .kpi-v { font-size: 20px; margin: 4px 0 2px; }
-    .scene { flex: 1; }
     .direct-panneau, .legende-p, .annonce { display: none; }
     .aide { bottom: 10px; right: 10px; font-size: 10.5px; }
-    .fiche { top: 8px; bottom: auto; left: 8px; right: 8px; width: auto; max-height: 52%; padding: 10px 12px; border-radius: 12px; }
-    .fiche h3 { font-size: 14px; } .fiche .sous { margin: 0 0 6px; font-size: 11.5px; } .lignes { margin-top: 6px; } .lignes li { font-size: 11.5px; padding: 3px 0; } .fiche .actions { margin-top: 8px; }
     .et { font-size: 10px; padding: 2px 7px; } .badge { font-size: 9.5px; padding: 1px 5px; } .badge small { display: none; }
-    aside { position: fixed; left: 0; right: 0; bottom: 0; height: var(--peek); border: 0; border-radius: 20px 20px 0 0; box-shadow: 0 -6px 30px rgba(15,23,42,.16); z-index: 30; transition: height .32s cubic-bezier(.2,.8,.2,1); padding-bottom: env(safe-area-inset-bottom); }
-    aside.mi { height: 52vh; height: 52dvh; } aside.haut { height: 88vh; height: 88dvh; }
-    .poignee { display: flex; justify-content: center; align-items: center; height: 22px; border: 0; background: none; width: 100%; cursor: grab; touch-action: none; flex: none; }
-    .poignee i { width: 40px; height: 5px; border-radius: 5px; background: #cbd2dc; }
-    .onglets { padding: 2px 12px 10px; }
-    .contenu { padding: 12px 14px; }
-    .note { display: none; }
   }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  :root { --ui: #2563eb; --ui-doux: #eff4ff; }
+  .grille-kpi .kpi-v { font-size: 20px; }
+  .grille-kpi .kpi { box-shadow: none; }
+  .grille-kpi .kpi:hover { transform: none; }
+  .grille-kpi .kpi-note { display: block; margin-top: 6px; color: var(--doux); font-size: 11.5px; line-height: 1.35; }
 </style>
+<link rel="stylesheet" href="./interface.css">
 <script type="importmap">
 { "imports": { "three": "./vendor/three.module.min.js" } }
 </script>
@@ -258,23 +245,23 @@
     </div>
   </header>
 
-  <section class="kpis" id="kpis" aria-label="Chiffres clés"></section>
-
-  <main class="scene" id="scene">
-    <div class="etiquettes" id="etiquettes"></div>
-    <div class="direct-panneau verre" id="maintenant-p"></div>
-    <div class="legende-p verre" aria-hidden="true"><b>Pastilles</b><span><i class="pt" style="background:#dc2626;display:inline-block"></i> urgent</span><span><i class="pt" style="background:#ea580c;display:inline-block"></i> à surveiller</span><span><i class="pt" style="background:#2563eb;display:inline-block"></i> conseil</span></div>
-    <div class="annonce" id="annonce"></div>
-    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Le planning et les chiffres restent à jour. Essayez avec un navigateur récent (Chrome, Safari, Firefox).</div>
-    <div class="fiche verre" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer"></button><div id="fiche-c"></div></div>
-  </main>
-
-  <aside id="panneau">
-    <button class="poignee" id="poignee" aria-label="Agrandir ou réduire le panneau"><i></i></button>
-    <nav class="onglets" role="tablist" id="onglets"></nav>
+  <nav class="rubriques" id="rubriques" aria-label="Rubriques"></nav>
+  <div class="centre">
+    <section class="resume" id="resume" aria-label="L'essentiel"></section>
+    <main class="scene" id="scene">
+      <div class="etiquettes" id="etiquettes"></div>
+      <div class="outils-ui"><button class="outil-ui" id="recentrer" type="button" title="Recadrer la vue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Recadrer</span></button></div>
+      <div class="annonce" id="annonce"></div>
+      <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Le planning, les chiffres et les rubriques restent à jour. Essayez avec un navigateur récent (Chrome, Safari, Firefox).</div>
+    </main>
+  </div>
+  <aside class="panneau" id="panneau" aria-label="Rubrique">
+    <div class="pan-tete"><button class="pan-retour" id="pan-retour" type="button"></button><h2 id="pan-titre"></h2><button class="pan-fermer" id="pan-fermer" type="button" aria-label="Fermer le panneau"></button></div>
+    <div class="fiche" id="fiche" role="region" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer la fiche"></button><div id="fiche-c"></div></div>
     <div class="contenu" id="contenu"></div>
     <p class="note">Démo avec des données inventées : aucune vraie auto-école, aucun vrai élève. Un clic sur un élément de la maquette ou du planning ouvre sa fiche.</p>
   </aside>
+  <div hidden id="kpis-reserve"><div class="grille-kpi" id="kpis"></div></div>
 </div>
 
 <script type="module">
@@ -285,6 +272,7 @@ import { fusionnerStatique, creerFoule, assembler } from './ae-rendu.js';
 import { texturesSol, construireDecor, geosVoiture, geosPersonne, geoMoto } from './ae-decor.js';
 import { calculerAlertes, NIVEAUX, SEUILS, ICONES } from './ae-alertes.js';
 import { creerPastilles } from './ae-pastilles.js';
+import { creerInterface, poserGarde, ICONES_UI } from './interface.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
@@ -655,7 +643,7 @@ function spark(vals, couleur, id) {
 const tend = (classe, icone, txt) => `<span class="tend ${classe}">${icone}${txt}</span>`;
 const histAlertes = [];
 function carte(id, ic, c, cd, label, valeur, pied, titre = '') {
-  return `<div class="kpi" style="--c:${c};--cd:${cd}" title="${titre}"><div class="kpi-t"><span class="kpi-ic">${ic}</span><span>${label}</span></div><div class="kpi-v" id="k-${id}">${valeur}</div><div class="kpi-p">${pied}</div></div>`;
+  return `<div class="kpi" style="--c:${c};--cd:${cd}" title="${titre}"><div class="kpi-t"><span class="kpi-ic">${ic}</span><span>${label}</span></div><div class="kpi-v" id="k-${id}">${valeur}</div><div class="kpi-p">${pied}</div>${titre ? `<small class="kpi-note">${titre}</small>` : ''}</div>`;
 }
 let dernierKpi = '';
 function majKpis() {
@@ -685,29 +673,32 @@ function majKpis() {
       `${encaisse ? tend('haut', I.tendanceBas, `${euros(encaisse)} reçus`) : tend('att', '', `${dus.length} élève${dus.length > 1 ? 's' : ''}`)}${spark(serie((h) => resteTotal + encaissements.filter((x) => x.t > h).reduce((s, x) => s + x.montant, 0)), '#be123c', 's')}`),
   ].join('');
   if (html !== dernierKpi) { dernierKpi = html; $('kpis').innerHTML = html; }
+  // Accueil : trois chiffres seulement, et la pilule « N choses à traiter »
+  const carteR = (rub, ic, c, cd, label, val, det) => `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span></button>`;
+  const ton = urg ? '#dc2626' : nAl ? '#ea580c' : '#16a34a';
+  poserGarde($('resume'), carteR('traiter', ICONES_UI.traiter, ton, urg ? '#fef2f2' : nAl ? '#fff7ed' : '#ecfdf3', 'Alertes à traiter', nAl, urg ? `${urg} urgente${urg > 1 ? 's' : ''}` : nAl ? 'rien d\'urgent' : 'tout est en ordre')
+    + carteR('vehicules', ICONES_UI.vehicules, '#ea580c', '#fff7ed', 'Voitures en leçon', `${vLecon} / ${VOITURES.length}`, `${vDispo} au parking`)
+    + carteR('eleves', ICONES_UI.eleves, '#be123c', '#fff1f2', 'À encaisser', euros(resteTotal), `${dus.length} élève${dus.length > 1 ? 's' : ''} concerné${dus.length > 1 ? 's' : ''}`)
+    + `<button type="button" class="pilule ${nAl ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${nAl ? `${nAl} chose${nAl > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}</button>`);
+  if (ui) { ui.badge('traiter', nAl, urg ? 'rouge' : nAl ? 'orange' : ''); ui.badge('eleves', dus.length, ''); }
 }
+$('resume').onclick = (ev) => { const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
 
 // ================= Panneau « En ce moment » (sur la maquette) =================
-let dernierMaintenant = '';
-function majMaintenant() {
+function htmlMaintenant() {
   const d = MONITEURS.filter((m) => dispo(m)).length, dehors = VOITURES.filter((v) => objets[v.id].mode !== 'gare').length, n = nbCode();
   const moto = enCours((x) => x.veh.startsWith('mo')), proch = PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut)[0];
   const lg = (cle, c, lab, val) => `<div class="ligne-d" data-cle="${cle}"><i class="pt" style="background:${c}"></i><span>${lab}</span><b>${val}</b></div>`;
-  const html = `<h4>En ce moment <small>${hh(t)}</small></h4>${lg('bureau', d ? '#16a34a' : '#ea580c', 'Moniteurs à l\'agence', `${d} / ${MONITEURS.length}`)}${lg('parking', '#ea580c', 'Voitures en leçon', `${dehors} / ${VOITURES.length}`)}${lg('code', n >= SEUILS.codeAlerte ? '#dc2626' : '#2563eb', 'Salle de code', `${n} / ${PLACES_CODE}`)}${lg('plateau', moto ? '#ea580c' : '#16a34a', 'Plateau moto', moto ? 'occupé' : 'libre')}${proch ? lg(proch.id, '#7c3aed', `Prochain départ · ${proch.eleve.split(' ')[0]}`, hTxt(proch.debut)) : ''}`;
-  if (html !== dernierMaintenant) { dernierMaintenant = html; $('maintenant-p').innerHTML = html; }
+  const html = `<div class="bloc-r"><p class="titre-r">En ce moment · ${hh(t)}</p><div class="maintenant-l">${lg('bureau', d ? '#16a34a' : '#ea580c', 'Moniteurs à l\'agence', `${d} / ${MONITEURS.length}`)}${lg('parking', '#ea580c', 'Voitures en leçon', `${dehors} / ${VOITURES.length}`)}${lg('code', n >= SEUILS.codeAlerte ? '#dc2626' : '#2563eb', 'Salle de code', `${n} / ${PLACES_CODE}`)}${lg('plateau', moto ? '#ea580c' : '#16a34a', 'Plateau moto', moto ? 'occupé' : 'libre')}${proch ? lg(proch.id, '#7c3aed', `Prochain départ · ${proch.eleve.split(' ')[0]}`, hTxt(proch.debut)) : ''}`;
+  return html + '</div></div>';
 }
-$('maintenant-p').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
 
 // ================= Panneau de droite =================
 const pct = (h) => ((h - OUVERTURE) / (FERMETURE - OUVERTURE)) * 100;
 const statutTxt = { fait: 'Terminée', occupe: 'En cours', avenir: 'À venir' };
-const ONGLETS = [['traiter', 'À traiter'], ['planning', 'Planning'], ['moniteurs', 'Moniteurs'], ['vehicules', 'Véhicules'], ['eleves', 'Élèves']];
-let onglet = 'traiter', selection = null, dernierPanneau = '', dejaVus = new Set(), eclat = null;
-function rendreOnglets() {
-  const u = alertes.filter((a) => a.niveau === 'urgent').length;
-  const html = ONGLETS.map(([k, lab]) => `<button role="tab" aria-selected="${onglet === k}" class="${onglet === k ? 'actif' : ''}" data-onglet="${k}">${lab}${k === 'traiter' && alertes.length ? `<span class="compteur ${u ? '' : 'calme'}">${alertes.length}</span>` : ''}</button>`).join('');
-  if ($('onglets').innerHTML !== html) $('onglets').innerHTML = html;
-}
+let ui = null;
+const rubrique = () => (ui ? ui.rubrique() : 'accueil');
+let selection = null, dernierPanneau = '', dejaVus = new Set(), eclat = null;
 const hex = (c) => '#' + c.toString(16).padStart(6, '0');
 const initiales = (n) => n.split(' ').map((x) => x[0]).join('');
 function htmlTraiter() {
@@ -727,49 +718,64 @@ function htmlTraiter() {
   return { h, nouveaux };
 }
 function rendrePanneau(force = false) {
-  rendreOnglets();
-  const c = $('contenu');
+  const c = $('contenu'), onglet = rubrique();
   let html = '', apres = null;
+  const chiffres = (l) => `<div class="chiffres-r">${l.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join('')}</div>`;
+  if (onglet === 'accueil') return;
+  if (onglet === 'chiffres') { if (!c.contains($('kpis'))) { c.innerHTML = `<p class="intro-r">Tous les chiffres de la journée, recalculés chaque minute, avec leur tendance et leur courbe depuis l'ouverture.</p>`; c.appendChild($('kpis')); dernierPanneau = ''; } return; }
   if (onglet === 'traiter') { const r = htmlTraiter(); html = r.h; apres = r.nouveaux; }
+  else if (onglet === 'code') {
+    const n = nbCode(), proch = PLANNING.filter((l) => l.debut > t && l.type.startsWith('Examen')).sort((a, b) => a.debut - b.debut)[0];
+    html = chiffres([['Présents', `${n} / ${PLACES_CODE}`], ['Postes libres', PLACES_CODE - n], ['Code en ligne', codeEnLigne && t < codeEnLigne.jusqua ? `${codeEnLigne.n} élèves` : 'non']])
+      + `<div class="bloc-r">${htmlFiche('code').replace(/^<h3>.*?<\/h3><p class="sous">.*?<\/p>/, '')}</div><div class="bloc-r"><button type="button" class="bouton-r" data-cle="code">Voir la salle sur la maquette</button></div>`;
+    void proch;
+  }
   else if (onglet === 'planning') {
     const H = 44, haut = (FERMETURE - OUVERTURE) * H, y = (h) => (h - OUVERTURE) * H;
     const graduations = [], traits = [];
     for (let h = OUVERTURE; h <= FERMETURE; h++) { graduations.push(`<span style="top:${y(h)}px">${h}h</span>`); traits.push(`<div class="trait" style="top:${y(h)}px"></div>`); }
     const tt = Math.min(Math.max(t, OUVERTURE), FERMETURE);
-    html = `<h2>Planning du jour</h2><div class="agenda"><div></div>${MONITEURS.map((m) => { const l = enCours((x) => x.m === m.id); return `<div class="tete" data-cle="${m.id}">${m.nom}<small class="${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</small></div>`; }).join('')}
+    html = `${htmlMaintenant()}<div class="bloc-r"><p class="titre-r">Planning du jour</p><div class="agenda"><div></div>${MONITEURS.map((m) => { const l = enCours((x) => x.m === m.id); return `<div class="tete" data-cle="${m.id}">${m.nom}<small class="${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</small></div>`; }).join('')}
       <div class="grille" style="height:${haut}px">${traits.join('')}<div class="graduation">${graduations.join('')}</div>${MONITEURS.map((m) => `<div class="colonne">${PLANNING.filter((x) => x.m === m.id).map((x) => `<div class="bloc ${statut(x)} ${x.ajout && statut(x) === 'avenir' ? 'ajout' : ''} ${selection === x.id ? 'sel' : ''}" data-cle="${x.id}" style="top:${y(x.debut) + 1}px;height:${x.duree * H - 3}px" title="${hTxt(x.debut)} – ${hTxt(x.fin)} · ${x.eleve} · ${x.type}">${x.eleve.split(' ')[0]}<small>${x.veh.startsWith('mo') ? 'moto' : x.type.startsWith('Examen') ? 'examen' : x.ajout ? 'ajoutée' : hTxt(x.debut)}</small></div>`).join('')}</div>`).join('')}
       <div class="maintenant" style="top:${y(tt)}px"></div></div></div>
     <div class="legende"><span><i style="background:#eef0f3"></i>terminée</span><span><i style="background:var(--orange-doux);border:1px solid #fdba74"></i>en cours</span><span><i style="background:var(--accent-doux)"></i>à venir</span>${nbAjouts ? '<span><i style="background:var(--vert-doux);border:1px solid #86efac"></i>ajoutée</span>' : ''}<span><i style="background:#dc2626"></i>maintenant</span></div>
-    <div class="bloc-txt"><h2>Prochaines leçons</h2><table><tbody>${PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 5).map((l) => `<tr class="clic" data-cle="${l.id}"><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td><td class="num">${euros(l.prix)}</td></tr>`).join('') || '<tr><td>Plus de leçon aujourd\'hui</td></tr>'}</tbody></table></div>
-    ${reportees.length ? `<div class="bloc-txt"><h2>Reportées à demain</h2><table><tbody>${reportees.map((l) => `<tr><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td></tr>`).join('')}</tbody></table></div>` : ''}`;
+    </div><details data-pli="prochaines"><summary>Prochaines leçons</summary><table><tbody>${PLANNING.filter((l) => l.debut > t).sort((a, b) => a.debut - b.debut).slice(0, 5).map((l) => `<tr class="clic" data-cle="${l.id}"><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td><td class="num">${euros(l.prix)}</td></tr>`).join('') || '<tr><td>Plus de leçon aujourd\'hui</td></tr>'}</tbody></table></details>
+    ${reportees.length ? `<details data-pli="reportees" open><summary>Reportées à demain<small>${reportees.length}</small></summary><table><tbody>${reportees.map((l) => `<tr><td>${hTxt(l.debut)}</td><td><b>${l.eleve}</b></td><td>${objets[l.m].data.nom}</td></tr>`).join('')}</tbody></table></details>` : ''}`;
   } else if (onglet === 'moniteurs') {
-    html = `<h2>Moniteurs</h2><table><thead><tr><th>Moniteur</th><th>Statut</th><th class="num">Heures</th><th class="num">CA du jour</th></tr></thead><tbody>${MONITEURS.map((m) => {
+    const libres = MONITEURS.filter((m) => !enCours((x) => x.m === m.id)).length;
+    html = `${chiffres([['À l\'agence', `${libres} / ${MONITEURS.length}`], ['En leçon', MONITEURS.length - libres], ['Heures prévues', virgule(PLANNING.reduce((s2, l) => s2 + l.duree, 0)) + ' h']])}<table><thead><tr><th>Moniteur</th><th>Statut</th><th class="num">Heures</th><th class="num">CA du jour</th></tr></thead><tbody>${MONITEURS.map((m) => {
       const ls = PLANNING.filter((x) => x.m === m.id), l = enCours((x) => x.m === m.id), h = ls.reduce((s, x) => s + x.duree, 0);
       return `<tr class="clic" data-cle="${m.id}"><td><span class="avatar" style="background:${hex(m.couleur)}">${initiales(m.nom)}</span><b>${m.nom}</b><br><small class="doux">permis ${m.permis}</small></td><td><span class="statut ${l ? 'occupe' : 'dispo'}">${l ? 'en leçon' : 'dispo'}</span></td><td class="num">${virgule(h)} / 10 h<br><span class="mini"><i style="width:${h * 10}%"></i></span></td><td class="num">${euros(ls.reduce((s, x) => s + x.prix, 0))}</td></tr>`;
     }).join('')}</tbody></table><p class="doux" style="font-size:12px">CA du jour = leçons prévues aujourd'hui.</p>`;
   } else if (onglet === 'vehicules') {
-    html = `<h2>Véhicules</h2><table><thead><tr><th>Véhicule</th><th>Statut</th><th class="num">Utilisation</th><th>Compteur</th></tr></thead><tbody>${[...VOITURES, ...MOTOS].map((v) => {
+    const vd = VOITURES.filter((v) => objets[v.id].mode === 'gare').length;
+    html = `${chiffres([['Au parking', `${vd} / ${VOITURES.length}`], ['En leçon', VOITURES.length - vd], ['Motos libres', `${MOTOS.filter((m) => objets[m.id].mode === 'gare').length} / ${MOTOS.length}`]])}<table><thead><tr><th>Véhicule</th><th>Statut</th><th class="num">Utilisation</th><th>Compteur</th></tr></thead><tbody>${[...VOITURES, ...MOTOS].map((v) => {
       const o = objets[v.id], h = PLANNING.filter((x) => x.veh === v.id).reduce((s, x) => s + x.duree, 0), dehors = o.mode !== 'gare';
       return `<tr class="clic" data-cle="${v.id}"><td><b>${v.nom}</b><br><small class="doux">${v.modele}</small></td><td><span class="statut ${dehors ? 'occupe' : 'dispo'}">${dehors ? 'en leçon' : 'dispo'}</span></td><td class="num">${virgule(h)} h<br><span class="mini"><i style="width:${Math.min(100, h * 10)}%"></i></span></td><td>${v.km ? kmDuJour(v).toLocaleString('fr-FR') + ' km' : v.entretien}${rdvGarage[v.id] ? '<br><small class="doux">garage ' + rdvGarage[v.id] + '</small>' : ''}</td></tr>`;
     }).join('')}</tbody></table>`;
   } else {
     const noms = [...new Set(PLANNING.map((l) => l.eleve))];
-    html = `<h2>Élèves du jour</h2><table><thead><tr><th>Élève</th><th>Heure</th><th class="num">Forfait</th><th class="num">Reste à payer</th></tr></thead><tbody>${noms.map((n) => {
+    const dus = Object.entries(ELEVES).filter(([, e]) => e[2] > 0), exams = PLANNING.filter((l) => l.type.startsWith('Examen')).length;
+    html = `${chiffres([['À encaisser', euros(dus.reduce((s2, [, e]) => s2 + e[2], 0))], ['Élèves concernés', dus.length], ['Examens du jour', exams]])}<p class="titre-r">Élèves du jour</p><table><thead><tr><th>Élève</th><th>Heure</th><th class="num">Forfait</th><th class="num">Reste à payer</th></tr></thead><tbody>${noms.map((n) => {
       const e = ELEVES[n], l = PLANNING.filter((x) => x.eleve === n).sort((a, b) => a.debut - b.debut)[0];
       return `<tr class="clic" data-cle="${l.id}"><td><b>${n}</b>${relances[n] !== undefined ? '<br><small class="doux">relancé à ' + hTxt(relances[n]) + '</small>' : ''}</td><td>${hTxt(l.debut)}</td><td class="num">${e[0]} / ${e[1]} h<br><span class="mini"><i style="width:${Math.min(100, (e[0] / e[1]) * 100)}%"></i></span></td><td class="num" style="color:${e[2] ? 'var(--orange)' : 'var(--vert)'}">${e[2] ? euros(e[2]) : 'à jour'}</td></tr>`;
     }).join('')}</tbody></table>`;
   }
-  if (html !== dernierPanneau || force) { dernierPanneau = html; c.innerHTML = html; }
+  if (html !== dernierPanneau || force) { dernierPanneau = html; c._h = null; poserGarde(c, html); }
   if (apres) for (const k of apres) dejaVus.add(k);
 }
+// le panneau est redessiné chaque minute de démo (chaque seconde) : un clic commencé sur une ligne remplacée entre-temps compte quand même
+let appuiPanneau = null;
+$('contenu').addEventListener('pointerdown', (ev) => { const el = ev.target.closest('[data-act],[data-voir],[data-cle]'); appuiPanneau = el ? el.cloneNode(false) : null; });
 $('contenu').onclick = (ev) => {
+  if (!ev.target.closest('[data-act],[data-voir],[data-cle]') && appuiPanneau) ev = { target: appuiPanneau };
+  appuiPanneau = null;
   const act = ev.target.closest('[data-act]');
   if (act) { const a = alertes.find((x) => x.cle === act.dataset.al); if (a) agir(act.dataset.act, a); return; }
   const voir = ev.target.closest('[data-voir]');
-  if (voir) { choisir(voir.dataset.voir); if (MOBILE) tiroir('bas'); return; }
+  if (voir) { choisir(voir.dataset.voir); return; }
   const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle);
 };
-$('onglets').onclick = (ev) => { const b = ev.target.closest('[data-onglet]'); if (!b) return; onglet = b.dataset.onglet; $('contenu').scrollTop = 0; rendrePanneau(true); if (MOBILE && $('panneau').className === '') tiroir('mi'); };
 
 // ================= Actions de « À traiter » : elles changent vraiment l'état de la démo =================
 function agir(act, a) {
@@ -797,12 +803,19 @@ function agir(act, a) {
 const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
 function rendreFiche() {
   const f = $('fiche'), c = $('fiche-c'), s = selection;
-  $('maintenant-p').hidden = !!s;
+  if (ui) ui.fiche(!!s);
   if (!s) { f.classList.remove('vu'); return; }
-  const deja = f.classList.contains('vu'); f.classList.add('vu');
+  const deja = f.classList.contains('vu');
+  const html = htmlFiche(s);
+  if (html === null) { selection = null; f.classList.remove('vu'); if (ui) ui.fiche(false); return; }
+  f.classList.add('vu');
+  if (c.innerHTML !== html) c.innerHTML = html;
+  if (!deja) { f.style.animation = 'none'; void f.offsetWidth; f.style.animation = ''; }
+}
+function htmlFiche(s) {
   let html = '';
   if (/^l\d/.test(s)) {
-    const l = PLANNING.find((x) => x.id === s); if (!l) { selection = null; f.classList.remove('vu'); return; }
+    const l = PLANNING.find((x) => x.id === s); if (!l) return null;
     const e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data, res = resultats[l.id];
     html = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span>${res ? ` <span class="statut ${res === 'recu' ? 'dispo' : 'ko'}">${res === 'recu' ? 'Reçu' : 'Ajourné'}</span>` : ''}<ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}${relances[l.eleve] !== undefined ? li('Relancé', 'à ' + hTxt(relances[l.eleve])) : ''}</ul>${e[2] ? `<div class="actions"><button class="btn prim" data-fiche="encaisser:${l.eleve}">Encaisser ${euros(e[2])}</button></div>` : ''}`;
   } else if (s === 'agence') {
@@ -838,8 +851,7 @@ function rendreFiche() {
       html = `<h3>${v.nom}</h3><p class="sous">${v.modele}${v.plaque ? ' · ' + v.plaque : ''}</p><span class="statut ${o.mode !== 'gare' ? 'occupe' : 'dispo'}">${st}</span><ul class="lignes">${l ? li('Moniteur', objets[l.m].data.nom) + li('Élève', l.eleve) + li('Retour prévu', hTxt(l.fin)) : ''}${v.km ? li('Kilométrage', km.toLocaleString('fr-FR') + ' km') + li(`Révision des ${cap.toLocaleString('fr-FR')} km`, rdvGarage[v.id] ? 'RDV ' + rdvGarage[v.id] : `dans ${(cap - km).toLocaleString('fr-FR')} km`) : ''}${li('Utilisation aujourd\'hui', virgule(h) + ' h')}${li('Prochain entretien', v.entretien)}</ul>`;
     }
   }
-  if (c.innerHTML !== html) c.innerHTML = html;
-  if (!deja) { f.style.animation = 'none'; void f.offsetWidth; f.style.animation = ''; }
+  return html;
 }
 $('fiche-c').onclick = (ev) => { const b = ev.target.closest('[data-fiche]'); if (!b) return; const [k, nom] = b.dataset.fiche.split(':'); agir(b.dataset.fiche, { cle: 'fiche-' + nom, titre: `Paiement : ${nom}` }); };
 $('fermer').innerHTML = I.fermer;
@@ -849,7 +861,6 @@ const ZOOMS = { parking: 1.9, agence: 2, bureau: 2.6, accueil: 2.4, code: 2.4, p
 let vise = null;
 function viser(cible, zoom) {
   const vers = cible.clone().setY(0);
-  if (MOBILE && zoom > 1.2) vers.add(new THREE.Vector3(-2, 0, -9).divideScalar(zoom)); // sur téléphone, la fiche est en haut : l'élément descend sous la fiche
   vise = { de: controls.target.clone(), vers, z0: camera.zoom, z1: zoom, k: CALME ? 1 : 0 };
 }
 function zoomPour(cle) {
@@ -860,7 +871,7 @@ function zoomPour(cle) {
   const o = objets[/^l\d/.test(cle) ? PLANNING.find((x) => x.id === cle)?.veh : cle];
   return [p[0], (ZOOMS[cle] || ZOOMS[o?.type] || 2.4) * (MOBILE ? 1.4 : 1)];
 }
-function choisir(cle) { selection = cle; rendreFiche(); if (onglet === 'planning') rendrePanneau(); const z = zoomPour(cle); if (z) viser(z[0], z[1]); majSegment(); }
+function choisir(cle) { selection = cle; rendreFiche(); if (rubrique() === 'planning') rendrePanneau(); const z = zoomPour(cle); if (z) viser(z[0], z[1]); majSegment(); }
 $('fermer').onclick = () => choisir(null);
 function positionSelection() {
   const s = selection; if (!s) return null;
@@ -897,33 +908,19 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(souris, camera);
   const a = pastilles.toucher(ray);
-  if (a) { ouvrirAlerte(a.cle); choisir(a.voir); return; }
+  if (a) { if (selection) choisir(null); ouvrirAlerte(a.cle); const s0 = selection; selection = a.voir; const z = zoomPour(a.voir); selection = s0; if (z) viser(z[0], z[1]); return; }
   const visibles = cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; });
   const hit = ray.intersectObjects(visibles, false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
 function ouvrirAlerte(cle) {
-  onglet = 'traiter'; eclat = cle; rendrePanneau(true);
-  if (MOBILE && $('panneau').className !== 'haut') tiroir('mi');
+  eclat = cle; ui.aller('traiter'); rendrePanneau(true);
   const el = document.querySelector(`[data-alerte="${CSS.escape(cle)}"]`); if (el) el.scrollIntoView({ block: 'nearest', behavior: CALME ? 'auto' : 'smooth' });
   setTimeout(() => { eclat = null; rendrePanneau(true); }, 2200);
 }
 const icPause = () => (pause ? I.lecture : I.pause);
 $('pause').innerHTML = icPause();
 $('pause').onclick = () => { pause = !pause; $('pause').innerHTML = icPause(); $('pause').setAttribute('aria-label', pause ? 'Reprendre' : 'Mettre en pause'); $('direct').classList.toggle('arret', pause); $('direct').lastChild.textContent = pause ? 'En pause' : 'En direct'; };
-
-// ================= Tiroir du bas (téléphone) =================
-function tiroir(etat) { const p = $('panneau'); p.className = etat === 'bas' ? '' : etat; }
-{
-  let y0 = null, etat0 = '';
-  const pg = $('poignee');
-  pg.addEventListener('pointerdown', (e) => { y0 = e.clientY; etat0 = $('panneau').className; pg.setPointerCapture(e.pointerId); });
-  pg.addEventListener('pointerup', (e) => {
-    if (y0 === null) return; const dy = e.clientY - y0; y0 = null;
-    const ordre = ['', 'mi', 'haut'], i = ordre.indexOf(etat0);
-    if (Math.abs(dy) < 8) tiroir(i === 2 ? 'bas' : ordre[i + 1]); else tiroir(dy < 0 ? ordre[Math.min(2, i + 1)] || 'haut' : (ordre[Math.max(0, i - 1)] || 'bas'));
-  });
-}
 
 function taille() {
   const w = conteneur.clientWidth, h = conteneur.clientHeight;
@@ -933,7 +930,16 @@ function taille() {
 }
 addEventListener('resize', taille); taille();
 
-function majTout() { majAlertes(); histAlertes.push({ t, n: alertes.length }); if (histAlertes.length > 400) histAlertes.shift(); majKpis(); majMaintenant(); rendrePanneau(); if (selection) rendreFiche(); }
+function majTout() { majAlertes(); histAlertes.push({ t, n: alertes.length }); if (histAlertes.length > 400) histAlertes.shift(); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
+// ================= Rubriques : chacune recadre la caméra sur sa zone =================
+const RUB_3D = { vehicules: [new THREE.Vector3(10.5, 0, -4.6), 1.7], moniteurs: [new THREE.Vector3(-21, 0, -1), 2.1], eleves: [new THREE.Vector3(-14, 0, 2.5), 1.6], code: [new THREE.Vector3(-13, 0, -1), 2.3] };
+function surRubrique(rub) {
+  const c = $('contenu'); c._h = null; if (c.contains($('kpis'))) $('kpis-reserve').appendChild($('kpis')); c.innerHTML = ''; dernierPanneau = '';
+  if (selection) { selection = null; rendreFiche(); }
+  const z = RUB_3D[rub]; if (z) viser(z[0], z[1] * (MOBILE ? 1.2 : 1)); else viser(CIBLE, 1);
+  majSegment(); rendrePanneau(true);
+}
+$('recentrer').onclick = () => { choisir(null); const z = RUB_3D[rubrique()]; if (z) viser(z[0], z[1] * (MOBILE ? 1.2 : 1)); else viser(CIBLE, 1); };
 
 // ================= Boucle =================
 let avant = performance.now(), dernierRendu = -1;
@@ -979,6 +985,9 @@ window.demo = {
   objets, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
   aller: (h) => { t = h; synchroniser(true); majTout(); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
 };
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['planning', 'Planning'], ['vehicules', 'Véhicules'], ['moniteurs', 'Moniteurs'], ['eleves', 'Élèves'], ['code', 'Salle de code'], ['chiffres', 'Chiffres', 'Tous les chiffres']];
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre]) => ({ id, label, titre })), surChangement: surRubrique });
+window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
 requestAnimationFrame(animer);
 </script>
