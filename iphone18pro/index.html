@@ -100,6 +100,13 @@ section{position:relative}
 .head .h2{margin-top:6px}
 .head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
 
+
+/* film TOFU */
+.film{display:grid;grid-template-columns:1fr 380px;gap:70px;align-items:center}
+.vframe{position:relative;border-radius:44px;overflow:hidden;background:#111;aspect-ratio:9/16;box-shadow:0 0 0 10px #1d1d1f,0 0 0 11px #3a3a3c,0 40px 120px rgba(138,52,69,.35)}
+.vframe video{width:100%;height:100%;object-fit:cover;display:block}
+.vplay{position:absolute;right:16px;bottom:16px;width:36px;height:36px;border-radius:50%;background:rgba(66,66,69,.7);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center}
+
 /* Points forts */
 .hl-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 max(22px,calc((100vw - 1260px)/2 + 22px));scroll-padding:0 max(22px,calc((100vw - 1260px)/2 + 22px))}
 .hl-track::-webkit-scrollbar{display:none}
@@ -375,6 +382,8 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
   .hero .copy{bottom:120px}
   .hero .buypill{left:22px;right:auto;bottom:44px}
   .hero .sw{display:none}
+  .film{grid-template-columns:1fr;gap:44px}
+  .vframe{max-width:300px;margin:0 auto;width:100%}
   .hl{flex-basis:86vw;min-height:520px}
   .hl .t{left:26px;top:28px;right:26px}
   .hl .num{left:26px;bottom:28px}
@@ -407,7 +416,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 <div class="notice">Projet étudiant (EEC · TC2) · site fictif, non affilié à Apple · <b>Reprise jusqu'à 650 €</b> et paiement en 4× sans frais</div>
 <div class="gnav"><div class="wide">
   <a class="logo" href="#top">iPhone 18 <em>Pro</em></a>
-  <nav><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
+  <nav><a href="#film">Le film</a><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
   <button class="icon" id="cartBtn" aria-label="Panier"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 5h12l-.9 11H2.9L2 5Z"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/></svg><span class="badge" id="badge">0</span></button>
   <button class="icon burger" id="burger" aria-label="Menu"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 1h16M1 6h16M1 11h16"/></svg></button>
 </div></div>
@@ -416,7 +425,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
   <a class="l" href="#points-forts">Vue d'ensemble</a><a class="l" href="#comparer">Comparer</a><a class="l" href="#boutique-rdv">En boutique</a>
   <a class="btn sm" href="#acheter">Acheter</a>
 </div></div>
-<nav class="mnav" id="mnav"><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
+<nav class="mnav" id="mnav"><a href="#film">Le film</a><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
 
 <main id="top">
 <!-- HÉRO -->
@@ -428,6 +437,23 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
   <div class="copy"><div class="eyebrow">iPhone 18 Pro</div><div class="h1">Il suit<br>ton rythme.</div></div>
   <div class="buypill"><span>À partir de <b>1 329 €</b> ou <b id="heroMo"></b></span><a class="btn sm" href="#acheter">Acheter</a></div>
   <div class="sw" id="heroSw"></div>
+</section>
+
+
+<!-- VIDÉO DE LA CAMPAGNE (TOFU) -->
+<section class="sec" id="film" style="background:#000">
+  <div class="w film">
+    <div>
+      <div class="eyebrow rv">Le film de la campagne</div>
+      <h2 class="h2 rv" style="--i:1">Chaque matin,<br>tu repousses<br>tes limites.</h2>
+      <p class="lead rv" style="--i:2;margin-top:20px">Ton iPhone aussi. Le film de 17 secondes vu sur <b>TikTok</b>, <b>Instagram</b> et <b>YouTube Shorts</b> : une course au lever du soleil, et l'iPhone 18 Pro qui suit le rythme.</p>
+      <div class="rv" style="--i:3;margin-top:26px;display:flex;gap:18px;align-items:center;flex-wrap:wrap"><button class="btn" id="vSound">Activer le son</button><a class="lnk" href="#points-forts">Découvrir l'iPhone</a></div>
+    </div>
+    <div class="vframe rv" style="--i:1">
+      <video id="tofu" src="tofu.mp4" muted loop playsinline preload="metadata" aria-label="Film de la campagne iPhone 18 Pro : une coureuse au lever du soleil"></video>
+      <button class="vplay" id="vPlay" aria-label="Pause"><svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg></button>
+    </div>
+  </div>
 </section>
 
 <!-- POINTS FORTS -->
@@ -752,6 +778,13 @@ $('heroMo').textContent=eur(monthly(4,STORAGE[0][2]))+'/mois';
 /* pilule flottante */
 const fpIO=new IntersectionObserver(([e])=>{const shop=$('acheter').getBoundingClientRect();$('floatPill').classList.toggle('on',!e.isIntersecting&&!(shop.top<innerHeight&&shop.bottom>0))},{threshold:0});
 fpIO.observe($('hero'));addEventListener('scroll',()=>{const h=$('hero').getBoundingClientRect().bottom<0;const shop=$('acheter').getBoundingClientRect();$('floatPill').classList.toggle('on',h&&!(shop.top<innerHeight&&shop.bottom>0))},{passive:true});
+
+
+/* film TOFU : lecture quand il est à l'écran */
+const tofu=$('tofu');let tofuOn=true;
+new IntersectionObserver(([e])=>{if(e.isIntersecting&&tofuOn&&!RM)tofu.play().catch(()=>{});else tofu.pause()},{threshold:.35}).observe(tofu);
+$('vSound').onclick=()=>{tofu.muted=!tofu.muted;$('vSound').textContent=tofu.muted?'Activer le son':'Couper le son';if(!tofu.muted){tofu.currentTime=0;tofuOn=true;tofu.play().catch(()=>{})}};
+$('vPlay').onclick=()=>{tofuOn=tofu.paused;tofuOn?tofu.play().catch(()=>{}):tofu.pause();$('vPlay').innerHTML=tofuOn?'<svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg>':'<svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><path d="M0 0l10 6-10 6z"/></svg>';$('vPlay').setAttribute('aria-label',tofuOn?'Pause':'Lecture')};
 
 /* Points forts */
 const cards=[...document.querySelectorAll('.hl')];let hi=0,hlPlay=!RM,hlT;const DUR=6000;
