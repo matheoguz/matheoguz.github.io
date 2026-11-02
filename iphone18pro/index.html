@@ -101,8 +101,8 @@ sup a{color:inherit;font-size:.6em;margin-left:1px}
 /* héro */
 .hero{position:relative;height:calc(100svh - 96px);min-height:620px;overflow:hidden;background:#000}
 .hero .glow{position:absolute;left:50%;top:44%;width:70vw;height:70vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);border-radius:50%;filter:blur(90px);opacity:.38;transition:background 1.2s}
-.hero .word{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);font-size:clamp(120px,26vw,380px);font-weight:700;letter-spacing:-.06em;line-height:1;background:linear-gradient(180deg,#3a3a3c 0%,#111 80%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none;white-space:nowrap}
-.hero .ph{position:absolute;left:50%;top:46%;height:min(64vh,640px);transform:translate(-50%,-50%) translateY(30px) scale(.94);opacity:0;transition:opacity 1s,transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.hero .word{position:absolute;left:50%;top:17%;transform:translate(-50%,-50%);font-size:clamp(120px,26vw,380px);font-weight:700;letter-spacing:-.06em;line-height:1;background:linear-gradient(180deg,#3a3a3c 0%,#111 80%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none;white-space:nowrap}
+.hero .ph{position:absolute;left:50%;top:52%;height:min(64vh,640px);transform:translate(-50%,-50%) translateY(30px) scale(.94);opacity:0;transition:opacity 1s,transform 1.4s cubic-bezier(.2,.8,.2,1)}
 .hero .ph.on{opacity:1;transform:translate(-50%,-50%)}
 .hero .copy{position:absolute;left:max(22px,calc((100vw - 1260px)/2 + 22px));bottom:56px}
 .hero .copy .eyebrow{color:#f5f5f7}
@@ -148,6 +148,7 @@ section{position:relative}
 .apcard{display:flex;align-items:center;gap:16px}
 .apcard .ap{width:64px;height:48px}
 
+.hl img.sm{max-height:420px;height:76%;right:12%}
 /* Points forts */
 .hl-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 max(22px,calc((100vw - 1260px)/2 + 22px));scroll-padding:0 max(22px,calc((100vw - 1260px)/2 + 22px))}
 .hl-track::-webkit-scrollbar{display:none}
@@ -510,10 +511,10 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 <section class="sec dark1" id="points-forts" style="padding-bottom:110px">
   <div class="wide head-row"><h2 class="h2 rv">Points forts.</h2><a class="lnk rv" href="#pourquoi">Pourquoi le choisir</a></div>
   <div class="hl-track" id="hlTrack">
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="iphone_bleu.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="v_arriere_bleu.png" alt="" class="sm"></article>
     <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#3d1620,#000 70%)"><p class="t">Toute ta journée. <span>Du footing du matin au dernier Reel du soir, sans chercher de prise.</span></p><span class="num grad">16 h 43</span><img src="iphone_rouge.png" alt=""></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="iphone_noir.png" alt=""></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="iphone_blanc.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="v_avant_noir.png" alt="" class="sm"></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="v_perspective_blanc.png" alt="" class="sm"></article>
   </div>
   <div class="hl-ctrl" id="hlCtrl"><div class="hl-dots" id="hlDots"></div><button class="hl-play" id="hlPlay" aria-label="Pause"><svg id="hlIco" width="12" height="14" viewBox="0 0 12 14" fill="#fff"><rect width="4" height="14"/><rect x="8" width="4" height="14"/></svg></button></div>
 </section>
