@@ -203,7 +203,7 @@ section{position:relative}
 /* zoom sticky caméra */
 .zoom{height:260vh;background:#000}
 .zoom .stage{position:sticky;top:96px;height:calc(100vh - 96px);overflow:hidden;display:flex;align-items:center;justify-content:center}
-.zoom img{height:84%;width:auto;will-change:transform;transform-origin:34% 18%}
+.zoom img{height:84%;width:auto;will-change:transform;transform-origin:24% 16%}
 .zoom .zt{position:absolute;inset:auto 0 12%;text-align:center;will-change:opacity}
 .specgrid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:70px}
 .specgrid .big{display:grid;gap:34px}
@@ -560,7 +560,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 
 <!-- PHOTO : ZOOM STICKY -->
 <section class="zoom" id="photo">
-  <div class="stage"><img id="zImg" src="v_arriere_bleu.png" alt="Dos de l'iPhone 18 Pro bleu et son module photo"><div class="zt" id="zT"><div class="eyebrow" style="color:#f5f5f7">Système photo</div><h2 class="h2">Tes voyages,<br>en grand.</h2></div></div>
+  <div class="stage"><img id="zImg" src="u_bleu.png" alt="Dos de l'iPhone 18 Pro bleu et son module photo"><div class="zt" id="zT"><div class="eyebrow" style="color:#f5f5f7">Système photo</div><h2 class="h2">Tes voyages,<br>en grand.</h2></div></div>
 </section>
 <section class="sec" style="padding-top:40px">
   <div class="w">
@@ -866,7 +866,7 @@ vPills.forEach((p,i)=>p.onclick=e=>{if(e.target.closest('.vchip'))return;vPills.
 COLORS.forEach(([n,c],i)=>{const b=document.createElement('span');b.className='dot vchip'+(i===0?' on':'');b.style.background=c;b.setAttribute('role','button');b.setAttribute('aria-label',n);b.tabIndex=0;b.onclick=()=>{vColor=i;vSrc();[...$('vChips').children].forEach((x,k)=>x.classList.toggle('on',k===i))};$('vChips').appendChild(b)});
 
 /* zoom sticky */
-const zSec=$('photo');function zoom(){const r=zSec.getBoundingClientRect();const p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));$('zImg').style.transform='scale('+(3.2-2.2*p)+')';$('zT').style.opacity=Math.max(0,1-p*2.2)}
+const zSec=$('photo');function zoom(){const r=zSec.getBoundingClientRect();const p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));$('zImg').style.transform='scale('+(2-1*p)+')';$('zT').style.opacity=Math.max(0,1-p*2.2)}
 if(!RM){addEventListener('scroll',()=>requestAnimationFrame(zoom),{passive:true});zoom()}
 
 /* segmenté */
