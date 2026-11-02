@@ -567,11 +567,10 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 
 <div class="dark1" style="padding:0 0 90px"><div class="wide"><div class="quickbuy rv"><a class="btn" href="#acheter">Précommander</a><span>AirPods 3 offerts · dès <b>332,25 €/mois</b></span></div></div></div>
 <!-- PHOTO : ZOOM STICKY -->
-<section class="zoom" id="photo">
-  <div class="stage"><img id="zImg" src="u_bleu.png" alt="Dos de l'iPhone 18 Pro bleu et son module photo"><div class="zt" id="zT"><div class="eyebrow" style="color:#f5f5f7">Système photo</div><h2 class="h2">Tes voyages,<br>en grand.</h2></div></div>
-</section>
-<section class="sec" style="padding-top:40px">
+
+<section class="sec" id="photo">
   <div class="w">
+    <div class="eyebrow rv">Système photo</div><h2 class="h2 rv" style="--i:1;margin-bottom:24px">Tes voyages, en grand.</h2>
     <p class="lead rv" style="max-width:720px">Le coucher de soleil en voyage, le portrait pour LinkedIn, la vidéo pour ton Reel : <b>trois capteurs 48 Mpx</b> et un <b>zoom optique jusqu'à 8x</b>. Même de nuit, ça fait le job.<sup><a href="#note-1">1</a></sup></p>
     <div class="specgrid">
       <div class="big rv"><div><b class="grad-b">48 Mpx</b><span>sur les trois capteurs</span></div><div><b>8x</b><span>zoom optique</span></div><div><b>18 Mpx</b><span>caméra avant Center Stage</span></div></div>
@@ -866,7 +865,7 @@ COLORS.forEach(([n,c],i)=>{const b=document.createElement('span');b.className='d
 
 /* zoom sticky */
 const zSec=$('photo');function zoom(){const r=zSec.getBoundingClientRect();const p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));$('zImg').style.transform='scale('+(2-1*p)+')';$('zT').style.opacity=Math.max(0,1-p*2.2)}
-if(!RM){addEventListener('scroll',()=>requestAnimationFrame(zoom),{passive:true});zoom()}
+
 
 /* segmenté */
 const SEG=['Grande ouverture : plus de lumière, idéale pour tes photos de nuit et un joli flou derrière les visages.','Le bon réglage pour le quotidien : portraits nets et arrière-plan doux.','Pour les photos de groupe : tout le monde est net, même au deuxième rang.','Pour les paysages de voyage : tout est net, du premier plan jusqu\'à l\'horizon.'];
