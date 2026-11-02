@@ -1,0 +1,870 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>iPhone 18 Pro · projet étudiant</title>
+<meta name="description" content="iPhone 18 Pro : il suit ton rythme. Site fictif réalisé pour un projet étudiant (EEC, TC2), non affilié à Apple.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#000;--d1:#1d1d1f;--d2:#2a2a2d;--grey:#86868b;--light:#f5f5f7;--white:#fff;--text:#f5f5f7;--ink:#1d1d1f;
+  --blue:#0071e3;--blue2:#2997ff;--rose:#e8a3b1;--rouge:#8a3445;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --w:1040px;
+}
+html{scroll-behavior:smooth;background:#000}
+body{font-family:var(--font);background:#000;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.47;letter-spacing:-.011em;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+.w{max-width:var(--w);margin:0 auto;padding:0 22px}
+.wide{max-width:1260px;margin:0 auto;padding:0 22px}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible){outline:none}
+
+/* typo */
+.eyebrow{font-size:clamp(17px,1.6vw,21px);font-weight:600;color:var(--grey)}
+.h1{font-size:clamp(44px,7.4vw,96px);font-weight:700;line-height:1.02;letter-spacing:-.03em}
+.h2{font-size:clamp(36px,5.6vw,72px);font-weight:700;line-height:1.05;letter-spacing:-.028em}
+.h3{font-size:clamp(28px,3.4vw,44px);font-weight:700;line-height:1.08;letter-spacing:-.022em}
+.lead{font-size:clamp(17px,1.7vw,21px);color:var(--grey);font-weight:500;line-height:1.45}
+.lead b{color:var(--text);font-weight:600}
+.light .lead b{color:var(--ink)}
+.grad{background:linear-gradient(120deg,#f6c7d0 0%,#e8a3b1 35%,#b9637a 70%,#8a3445 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-b{background:linear-gradient(120deg,#cfe0ff,#7fb2ff 50%,#2997ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-g{background:linear-gradient(120deg,#c6f6c0,#5fd068 60%,#2ea44f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--blue);color:#fff;border-radius:980px;padding:11px 22px;font-size:17px;font-weight:500;transition:background .2s,transform .2s;white-space:nowrap}
+.btn:hover{background:#0077ed}
+.btn.sm{padding:6px 14px;font-size:13px}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 1px currentColor;color:var(--blue2)}
+.light .btn.ghost{color:var(--blue)}
+.lnk{color:var(--blue2);font-size:17px}
+.lnk:hover{text-decoration:underline}
+.light .lnk{color:var(--blue)}
+.lnk::after{content:" ›"}
+sup a{color:inherit;font-size:.6em;margin-left:1px}
+
+/* révélation au scroll */
+.rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.25,.1,.25,1),transform .9s cubic-bezier(.25,.1,.25,1);transition-delay:calc(var(--i,0)*90ms)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}*{animation:none!important;scroll-behavior:auto!important}}
+
+/* barres */
+.notice{background:#1d1d1f;color:#d2d2d7;font-size:13px;text-align:center;padding:10px 16px}
+.notice b{color:#fff;font-weight:500}
+.gnav{position:sticky;top:0;z-index:40;height:44px;background:rgba(0,0,0,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+.gnav .wide{display:flex;align-items:center;height:44px;gap:28px;font-size:12.5px;color:#d2d2d7}
+.gnav .logo{font-weight:600;color:#fff;font-size:15px;letter-spacing:-.01em;margin-right:auto}
+.gnav .logo em{font-style:normal;color:var(--rose)}
+.gnav nav{display:flex;gap:26px}
+.gnav nav a:hover{color:#fff}
+.icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;position:relative;color:#d2d2d7}
+.icon:hover{color:#fff}
+.badge{position:absolute;top:1px;right:-2px;min-width:16px;height:16px;border-radius:8px;background:var(--blue);color:#fff;font-size:10px;font-weight:600;display:none;align-items:center;justify-content:center;padding:0 4px}
+.badge.on{display:flex}
+.lnav{position:sticky;top:44px;z-index:39;height:52px;background:rgba(22,22,23,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.1)}
+.lnav .wide{display:flex;align-items:center;height:52px;gap:22px}
+.lnav b{font-size:21px;font-weight:600;letter-spacing:-.02em;margin-right:auto}
+.lnav a.l{font-size:12px;color:#d2d2d7}
+.lnav a.l:hover,.lnav a.l.on{color:#fff}
+.burger{display:none}
+.mnav{display:none}
+
+/* héro */
+.hero{position:relative;height:calc(100svh - 96px);min-height:620px;overflow:hidden;background:#000}
+.hero .glow{position:absolute;left:50%;top:44%;width:70vw;height:70vw;max-width:900px;max-height:900px;transform:translate(-50%,-50%);border-radius:50%;filter:blur(90px);opacity:.38;transition:background 1.2s}
+.hero .word{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);font-size:clamp(120px,26vw,380px);font-weight:700;letter-spacing:-.06em;line-height:1;background:linear-gradient(180deg,#3a3a3c 0%,#111 80%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none;white-space:nowrap}
+.hero .ph{position:absolute;left:50%;top:46%;height:min(64vh,640px);transform:translate(-50%,-50%) translateY(30px) scale(.94);opacity:0;transition:opacity 1s,transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.hero .ph.on{opacity:1;transform:translate(-50%,-50%)}
+.hero .copy{position:absolute;left:max(22px,calc((100vw - 1260px)/2 + 22px));bottom:56px}
+.hero .copy .eyebrow{color:#f5f5f7}
+.hero .copy .h1{margin-top:4px}
+.buypill{display:flex;align-items:center;gap:16px;padding:8px 8px 8px 22px;border-radius:980px;background:rgba(66,66,69,.55);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);font-size:14px;color:#e8e8ed}
+.buypill b{color:#fff;font-weight:600}
+.hero .buypill{position:absolute;right:max(22px,calc((100vw - 1260px)/2 + 22px));bottom:62px}
+.floatpill{position:fixed;right:22px;bottom:22px;z-index:35;opacity:0;transform:translateY(20px);pointer-events:none;transition:opacity .4s,transform .4s}
+.floatpill.on{opacity:1;transform:none;pointer-events:auto}
+.pause{position:absolute;right:22px;top:22px;width:36px;height:36px;border-radius:50%;background:rgba(66,66,69,.6);display:flex;align-items:center;justify-content:center;color:#fff}
+.hero .sw{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;font-size:12px;color:#86868b}
+.dot{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);position:relative}
+.dot.on{outline:1.5px solid #f5f5f7;outline-offset:2px}
+
+/* sections */
+section{position:relative}
+.sec{padding:150px 0}
+.dark1{background:var(--d1)}
+.light{background:var(--light);color:var(--ink)}
+.white{background:#fff;color:var(--ink)}
+.center{text-align:center}
+.head{margin-bottom:60px}
+.head .h2{margin-top:6px}
+.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
+
+/* Points forts */
+.hl-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 max(22px,calc((100vw - 1260px)/2 + 22px));scroll-padding:0 max(22px,calc((100vw - 1260px)/2 + 22px))}
+.hl-track::-webkit-scrollbar{display:none}
+.hl{flex:0 0 min(80vw,1000px);height:min(70vh,660px);min-height:480px;border-radius:28px;position:relative;overflow:hidden;scroll-snap-align:start;background:#000}
+.hl img{position:absolute;height:88%;width:auto;right:8%;bottom:-6%;transition:transform 6s ease}
+.hl.active img{transform:scale(1.05) translateY(-10px)}
+.hl .t{position:absolute;left:44px;top:44px;max-width:420px;font-size:clamp(22px,2.4vw,28px);font-weight:600;line-height:1.2;letter-spacing:-.02em}
+.hl .t span{color:var(--grey)}
+.hl .num{position:absolute;left:44px;bottom:40px;font-size:clamp(56px,7vw,96px);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hl-ctrl{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:30px}
+.hl-dots{display:flex;gap:10px;padding:16px 22px;border-radius:980px;background:rgba(66,66,69,.55)}
+.hl-dots button{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.4);position:relative;overflow:hidden;transition:width .4s}
+.hl-dots button.on{width:48px}
+.hl-dots button i{position:absolute;inset:0;background:#fff;transform-origin:left;transform:scaleX(0)}
+.hl-dots button.on i{animation:fill var(--dur,6s) linear forwards}
+.paused .hl-dots button.on i{animation-play-state:paused}
+@keyframes fill{to{transform:scaleX(1)}}
+.hl-play{width:56px;height:56px;border-radius:50%;background:rgba(66,66,69,.55);display:flex;align-items:center;justify-content:center}
+
+/* déclaration + comparer */
+.stmt p{max-width:820px;margin:28px auto 0}
+.cmpbar{border-top:1px solid #424245;margin-top:70px;padding-top:40px}
+.cmpsel{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;font-size:19px;font-weight:600}
+.pillsel{appearance:none;-webkit-appearance:none;background:#2a2a2d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23f5f5f7' fill='none' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 16px center;border:0;border-radius:980px;padding:10px 42px 10px 18px;font-size:17px;font-weight:600;cursor:pointer}
+.light .pillsel{background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231d1d1f' fill='none' stroke-width='1.6'/%3E%3C/svg%3E");box-shadow:inset 0 0 0 1px #d2d2d7}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:46px;text-align:center}
+.stats3 b{display:block;font-size:clamp(36px,4.6vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1.05;transition:opacity .3s}
+.stats3 span{display:block;color:var(--grey);font-size:17px;margin-top:6px;font-weight:500}
+
+/* visualiseur à pilules */
+.viewer{display:grid;grid-template-columns:340px 1fr;min-height:660px;border-radius:36px;background:#000;overflow:hidden;position:relative}
+.vlist{padding:48px 0 48px 40px;display:flex;flex-direction:column;justify-content:center;gap:10px;z-index:2}
+.vpill{align-self:flex-start;text-align:left;border-radius:28px;background:rgba(66,66,69,.6);backdrop-filter:blur(10px);padding:14px 22px 14px 16px;font-size:17px;font-weight:600;display:grid;grid-template-columns:28px 1fr;align-items:start;gap:8px;max-width:300px;transition:background .3s}
+.vpill .plus{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #f5f5f7;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;transition:transform .3s}
+.vpill .body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s}
+.vpill .body>div{overflow:hidden;font-weight:500;color:#d2d2d7;font-size:15px;line-height:1.45}
+.vpill.on{background:rgba(66,66,69,.9)}
+.vpill.on .plus{transform:rotate(45deg)}
+.vpill.on .body{grid-template-rows:1fr}
+.vpill.on .body>div{padding-top:6px}
+.vpill .chips{display:flex;gap:10px;margin-top:12px}
+.vstage{position:relative}
+.vstage img{position:absolute;left:50%;top:50%;height:80%;width:auto;transform:translate(-50%,-50%) scale(.96);opacity:0;transition:opacity .6s,transform .8s}
+.vstage img.on{opacity:1;transform:translate(-50%,-50%)}
+
+/* zoom sticky caméra */
+.zoom{height:260vh;background:#000}
+.zoom .stage{position:sticky;top:96px;height:calc(100vh - 96px);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.zoom img{height:84%;width:auto;will-change:transform;transform-origin:34% 18%}
+.zoom .zt{position:absolute;inset:auto 0 12%;text-align:center;will-change:opacity}
+.specgrid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:70px}
+.specgrid .big{display:grid;gap:34px}
+.specgrid .big b{display:block;font-size:clamp(44px,5vw,64px);font-weight:700;letter-spacing:-.03em;line-height:1}
+.specgrid .big span{color:var(--grey);font-size:17px;font-weight:500}
+.specgrid ul{list-style:none;border-top:1px solid #424245}
+.specgrid li{padding:16px 0;border-bottom:1px solid #424245;font-size:17px;color:#d2d2d7}
+.specgrid li b{color:#fff;font-weight:600}
+
+/* segmenté */
+.seg{display:inline-flex;position:relative;background:#1d1d1f;border-radius:980px;padding:4px;margin-top:34px}
+.seg button{position:relative;z-index:1;padding:10px 20px;font-size:15px;font-weight:600;color:#86868b;border-radius:980px;transition:color .3s}
+.seg button.on{color:#000}
+.seg i{position:absolute;top:4px;bottom:4px;left:0;border-radius:980px;background:#f5f5f7;transition:transform .4s cubic-bezier(.3,.7,.2,1),width .4s}
+.segtxt{max-width:640px;margin:26px auto 0;min-height:60px;transition:opacity .3s}
+
+/* autonomie / puce */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.cardd{border-radius:28px;background:var(--d1);padding:40px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:70px}
+.cols3 svg{width:40px;height:40px;color:var(--rose)}
+.cols3 h4{font-size:21px;font-weight:600;margin-top:14px;letter-spacing:-.015em}
+.cols3 p{color:var(--grey);font-size:17px;margin-top:6px;font-weight:500}
+.sweep{background:linear-gradient(90deg,#f5f5f7 50%,#3a3a3c 50%);background-size:200% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;transition:background-position 1.6s cubic-bezier(.3,.6,.2,1)}
+.sweep.in{background-position:0 0}
+
+/* Pourquoi */
+.why{border-radius:36px;background:var(--d1);padding:60px}
+.why-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}
+.tile{border-radius:20px;background:#000;padding:30px;min-height:230px;display:flex;flex-direction:column}
+.tile svg{width:34px;height:34px;color:var(--rose)}
+.tile b{font-size:clamp(30px,3vw,40px);font-weight:700;letter-spacing:-.03em;line-height:1.05;margin-top:auto}
+.tile p{color:var(--grey);font-size:15px;font-weight:500;margin-top:8px}
+
+/* Clair : raisons */
+.reasons{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:10px max(22px,calc((100vw - 1260px)/2 + 22px)) 30px}
+.reasons::-webkit-scrollbar{display:none}
+.rcard{flex:0 0 330px;min-height:420px;border-radius:28px;background:#fff;padding:32px;scroll-snap-align:start;display:flex;flex-direction:column;position:relative;transition:box-shadow .3s,transform .3s}
+.rcard:hover{box-shadow:0 4px 30px rgba(0,0,0,.08);transform:scale(1.01)}
+.rcard small{font-size:12px;font-weight:600;color:#6e6e73;text-transform:uppercase;letter-spacing:.02em}
+.rcard h4{font-size:26px;font-weight:700;line-height:1.12;letter-spacing:-.02em;margin-top:8px}
+.rcard p{color:#6e6e73;font-size:15px;margin-top:10px;font-weight:500}
+.rcard .ill{margin-top:auto;font-size:64px;font-weight:700;letter-spacing:-.04em;line-height:1}
+.rcard .go{position:absolute;right:22px;bottom:22px;width:36px;height:36px;border-radius:50%;background:#1d1d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.arrows{display:flex;gap:12px;justify-content:flex-end;max-width:1260px;margin:0 auto;padding:0 22px}
+.arrows button{width:36px;height:36px;border-radius:50%;background:#e8e8ed;color:#1d1d1f;font-size:18px}
+
+/* Achat */
+.shop{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:start}
+.gallery{position:sticky;top:120px}
+.gmain{border-radius:28px;background:#fff;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gmain img{height:84%;width:auto}
+.thumbs{display:flex;gap:10px;margin-top:12px}
+.thumbs button{flex:1;aspect-ratio:1/1;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;padding:10px;box-shadow:inset 0 0 0 1px #d2d2d7}
+.thumbs button.on{box-shadow:inset 0 0 0 2px #0071e3}
+.thumbs img{height:100%;width:auto}
+.opt-t{display:flex;justify-content:space-between;align-items:baseline;font-size:21px;font-weight:600;letter-spacing:-.015em;margin:36px 0 14px}
+.opt-t span{font-size:14px;color:#6e6e73;font-weight:500}
+.colors{display:flex;gap:14px}
+.colors button{width:32px;height:32px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.colors button.on{outline:2px solid #0071e3;outline-offset:3px}
+.opts{display:grid;gap:12px}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;text-align:left;padding:18px 20px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px #d2d2d7;transition:box-shadow .2s}
+.opt.on{box-shadow:inset 0 0 0 2px #0071e3}
+.opt b{font-weight:600;font-size:17px}
+.opt small{display:block;font-size:13px;color:#6e6e73;margin-top:2px}
+.opt .r{text-align:right;font-size:14px;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;font-weight:600;color:#bf4800;margin-left:6px}
+select.sel{width:100%;appearance:none;-webkit-appearance:none;padding:18px 44px 18px 20px;border-radius:14px;border:0;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231d1d1f' fill='none' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 18px center;box-shadow:inset 0 0 0 1px #d2d2d7;font-size:17px;cursor:pointer}
+.sum{margin-top:30px;border-radius:20px;background:#fff;padding:26px}
+.sum .row{display:flex;justify-content:space-between;font-size:15px;color:#6e6e73;margin:5px 0}
+.sum .row b{color:#1d1d1f;font-weight:500}
+.sum .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #d2d2d7;margin-top:14px;padding-top:14px}
+.sum .tot b{font-size:32px;font-weight:700;letter-spacing:-.025em}
+.sum .mo{text-align:right;font-size:14px;color:#6e6e73}
+.sum .btn{width:100%;margin-top:18px}
+.pay{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.pay span{font-size:11px;color:#6e6e73;border:1px solid #d2d2d7;border-radius:6px;padding:3px 8px}
+.gift{margin-top:14px;border-radius:20px;background:linear-gradient(135deg,#fff3f5,#fde4e9);padding:22px}
+.gift b{font-weight:600}
+.timer{display:flex;gap:18px;margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--rouge);font-variant-numeric:tabular-nums}
+.timer small{display:block;font-size:11px;color:#6e6e73;font-weight:500}
+.hint{font-size:14px;color:#6e6e73;text-align:center;margin-top:12px}
+.hint a{color:#0071e3}
+
+/* RDV */
+.rdv{display:grid;grid-template-columns:1fr 1.15fr;gap:20px;align-items:start}
+.rdv>*,.shop>*{min-width:0}
+.stores{display:grid;gap:12px}
+.store{text-align:left;padding:20px 22px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px #d2d2d7}
+.store.on{box-shadow:inset 0 0 0 2px #0071e3}
+.store b{display:block;font-weight:600;font-size:17px}
+.store .ad{display:block;font-size:14px;color:#6e6e73;margin-top:3px}
+.store .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:#6e6e73}
+.store .meta i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#34c759;margin-right:5px}
+.slotbox{border-radius:20px;background:#fff;padding:26px}
+.slotbox h4{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.days{display:flex;gap:8px;overflow-x:auto;margin:16px 0 12px;padding-bottom:4px;scrollbar-width:none}
+.day{flex:0 0 64px;padding:10px 0;border-radius:14px;box-shadow:inset 0 0 0 1px #d2d2d7;text-align:center;font-size:12px;color:#6e6e73}
+.day b{display:block;font-size:22px;font-weight:600;color:#1d1d1f;line-height:1.2}
+.day.on{background:#1d1d1f;color:#d2d2d7;box-shadow:none}.day.on b{color:#fff}
+.day:disabled{opacity:.35;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{padding:10px 0;border-radius:10px;box-shadow:inset 0 0 0 1px #d2d2d7;font-size:14px}
+.slot.on{background:#0071e3;color:#fff;box-shadow:none}
+.slot:disabled{opacity:.3;text-decoration:line-through;cursor:not-allowed}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.f2 .full{grid-column:1/-1}
+.field{display:block;width:100%;padding:14px 16px;margin-top:10px;border-radius:12px;border:0;box-shadow:inset 0 0 0 1px #d2d2d7;background:#fff;font-size:17px;outline:none;color:#1d1d1f}
+.field:focus{box-shadow:inset 0 0 0 2px #0071e3}
+select.field{appearance:none;-webkit-appearance:none;cursor:pointer}
+textarea.field{min-height:110px;resize:vertical}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#6e6e73;line-height:1.45;margin-top:12px}
+.err{font-size:14px;color:#e30000;min-height:1.2em;margin-top:8px}
+.okbox{border-radius:16px;background:#e9f8ee;padding:18px;margin-top:14px;font-size:15px}
+.okbox b{font-weight:600}
+.okbox dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-top:10px}
+.okbox dt{color:#6e6e73}
+
+/* comparateur */
+.cmp{border-radius:28px;background:#fff;overflow:hidden}
+.cmp .r{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:24px;padding:20px 30px;border-top:1px solid #e8e8ed;align-items:baseline}
+.cmp .r:first-child{border-top:0}
+.cmp .r>span{color:#6e6e73;font-size:14px;font-weight:500}
+.cmp .r>p{font-size:17px}
+.cmp .r>p:nth-child(2){font-weight:600}
+.cmp .hd b{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.cmp .hd b:last-child{color:#6e6e73}
+.capg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.capg div{border-radius:20px;background:#fff;padding:24px}
+.capg b{font-size:30px;font-weight:700;letter-spacing:-.03em;display:block}
+.capg p{font-size:14px;color:#6e6e73;margin-top:6px}
+.capg .p{color:#1d1d1f;font-weight:600;margin-top:14px}
+
+/* quiz */
+.quiz{max-width:720px;margin:0 auto;border-radius:28px;background:#fff;padding:44px}
+.quiz .qn{font-size:13px;color:#6e6e73;font-weight:600}
+.qbar{height:4px;border-radius:2px;background:#e8e8ed;margin:12px 0 26px;overflow:hidden}
+.qbar i{display:block;height:100%;background:#0071e3;transition:width .4s}
+.quiz h4{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+.ans{display:grid;gap:10px}
+.ans button{text-align:left;padding:18px 20px;border-radius:14px;box-shadow:inset 0 0 0 1px #d2d2d7;font-size:17px;transition:box-shadow .2s}
+.ans button:hover{box-shadow:inset 0 0 0 2px #0071e3}
+.res b{display:block;font-size:36px;font-weight:700;letter-spacing:-.03em;margin:6px 0 10px}
+.res p{color:#6e6e73;font-size:17px}
+.res .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:22px}
+
+/* FAQ */
+.faq{max-width:820px;margin:0 auto}
+details{border-bottom:1px solid #d2d2d7}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:24px 0;font-size:19px;font-weight:600;letter-spacing:-.015em}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-weight:400;font-size:26px;line-height:1;color:#6e6e73;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:#6e6e73;font-size:17px;padding-bottom:24px;margin-top:-6px}
+
+/* kit */
+.kit{border-radius:36px;background:#000;color:#f5f5f7;padding:64px;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;overflow:hidden;position:relative}
+.kit .glow2{position:absolute;right:-10%;top:-40%;width:60%;height:180%;background:radial-gradient(closest-side,rgba(232,163,177,.35),transparent);pointer-events:none}
+.kit form{display:flex;flex-wrap:wrap;gap:10px;position:relative}
+.kit input[type=text],.kit input[type=email]{flex:1 1 180px;padding:14px 18px;border-radius:980px;border:0;background:#1d1d1f;color:#fff;font-size:17px;outline:none}
+.kit input:focus{box-shadow:inset 0 0 0 2px #2997ff}
+.kit .consent{color:#86868b;position:relative}
+.kit .err{color:#ff6961}
+
+/* notes + pied */
+.notes{background:var(--light);color:#6e6e73;font-size:12px;line-height:1.5;padding:30px 0 20px;border-top:1px solid #d2d2d7}
+.notes ol{padding-left:16px;display:grid;gap:8px}
+footer{background:var(--light);color:#6e6e73;font-size:12px;padding:20px 0 30px}
+footer .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;border-top:1px solid #d2d2d7;border-bottom:1px solid #d2d2d7;padding:24px 0}
+footer h5{color:#1d1d1f;font-size:12px;font-weight:600;margin-bottom:10px}
+footer ul{list-style:none;display:grid;gap:8px}
+footer a:hover{text-decoration:underline;color:#1d1d1f}
+footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px}
+
+/* panier, modales, toast */
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:61;width:min(100%,420px);background:#fff;color:#1d1d1f;transform:translateX(100%);transition:transform .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.drawer .dh{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid #e8e8ed}
+.drawer .dh b{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.drawer .db{flex:1;overflow:auto;padding:8px 22px}
+.drawer .df{padding:20px 22px;border-top:1px solid #e8e8ed}
+.drawer .tot{display:flex;justify-content:space-between;font-weight:600;font-size:17px;margin-bottom:14px}
+.drawer .btn{width:100%}
+.item{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid #e8e8ed}
+.item .th{width:72px;height:72px;border-radius:14px;background:var(--light);display:flex;align-items:center;justify-content:center}
+.item .th img{height:86%;width:auto}
+.item b{display:block;font-weight:600}
+.item small{color:#6e6e73;font-size:13px}
+.item .rm{font-size:13px;color:#0071e3;margin-top:4px}
+.empty{color:#6e6e73;text-align:center;padding:40px 0}
+.modal{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
+.modal.on{opacity:1;pointer-events:auto}
+.mbox{position:relative;width:min(100%,860px);max-height:92vh;overflow:auto;background:#fff;color:#1d1d1f;border-radius:28px;display:grid;grid-template-columns:1fr 1fr;transform:translateY(16px) scale(.98);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.modal.on .mbox{transform:none}
+.mbox.one{grid-template-columns:1fr;width:min(100%,470px)}
+.mvis{background:#000;display:flex;align-items:center;justify-content:center;min-height:440px;position:relative;overflow:hidden}
+.mvis .glow{position:absolute;width:80%;height:70%;border-radius:50%;background:#8a3445;filter:blur(60px);opacity:.5}
+.mvis img{height:78%;width:auto;position:relative}
+.mtxt{padding:44px 36px 30px}
+.mtxt .k{font-size:14px;font-weight:600;color:#bf4800}
+.mtxt h3{font-size:34px;font-weight:700;line-height:1.08;letter-spacing:-.025em;margin:8px 0 12px}
+.mtxt ul{list-style:none;display:grid;gap:8px;margin:14px 0 8px}
+.mtxt li{display:flex;gap:10px;font-size:15px}
+.mtxt li::before{content:"✓";color:#0071e3;font-weight:700}
+.mtxt .fine{font-size:12px;color:#6e6e73;margin-top:12px}
+.mtxt .btn{width:100%;margin-top:6px}
+.x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(232,232,237,.9);color:#1d1d1f;display:flex;align-items:center;justify-content:center;z-index:2}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:980px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:80}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:900px){
+  .gnav nav,.lnav a.l{display:none}
+  .burger{display:flex}
+  .mnav{position:sticky;top:96px;z-index:38;background:rgba(22,22,23,.96);flex-direction:column;padding:6px 22px 14px}
+  .mnav.on{display:flex}
+  .mnav a{padding:12px 0;border-bottom:1px solid #333;font-size:17px}
+  .sec{padding:96px 0}
+  .hero{min-height:640px}
+  .hero .ph{height:52vh;top:42%}
+  .hero .copy{bottom:120px}
+  .hero .buypill{left:22px;right:auto;bottom:44px}
+  .hero .sw{display:none}
+  .hl{flex-basis:86vw;min-height:520px}
+  .hl .t{left:26px;top:28px;right:26px}
+  .hl .num{left:26px;bottom:28px}
+  .hl img{height:62%;right:-4%}
+  .viewer{grid-template-columns:1fr;min-height:0}
+  .vlist{padding:26px 20px 0;order:2}
+  .vstage{height:420px}
+  .vpill{max-width:none;align-self:stretch}
+  .stats3,.cols3,.two,.specgrid,.shop,.rdv,.kit,.mbox{grid-template-columns:1fr}
+  .stats3{gap:26px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .why{padding:34px 20px}
+  .gallery{position:relative;top:0}
+  .slots{grid-template-columns:repeat(3,1fr)}
+  .f2{grid-template-columns:1fr}
+  .cmp .r{grid-template-columns:1fr 1fr;gap:6px 14px;padding:16px 20px}
+  .cmp .r>span{grid-column:1/-1}
+  .cmp .hd span{display:none}
+  .cmp .hd b{font-size:18px}
+  .capg{grid-template-columns:1fr 1fr}
+  .quiz{padding:28px 22px}
+  .kit{padding:36px 22px}
+  footer .cols{grid-template-columns:1fr 1fr}
+  .mvis{min-height:200px}.mvis img{height:180px}
+  .mtxt{padding:28px 22px 22px}.mtxt h3{font-size:28px}
+  .floatpill{left:16px;right:16px;bottom:16px;justify-content:space-between}
+}
+</style>
+
+<div class="notice">Projet étudiant (EEC · TC2) · site fictif, non affilié à Apple · <b>Reprise jusqu'à 650 €</b> et paiement en 4× sans frais</div>
+<div class="gnav"><div class="wide">
+  <a class="logo" href="#top">iPhone 18 <em>Pro</em></a>
+  <nav><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
+  <button class="icon" id="cartBtn" aria-label="Panier"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 5h12l-.9 11H2.9L2 5Z"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/></svg><span class="badge" id="badge">0</span></button>
+  <button class="icon burger" id="burger" aria-label="Menu"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 1h16M1 6h16M1 11h16"/></svg></button>
+</div></div>
+<div class="lnav"><div class="wide">
+  <b>iPhone 18 Pro</b>
+  <a class="l" href="#points-forts">Vue d'ensemble</a><a class="l" href="#comparer">Comparer</a><a class="l" href="#boutique-rdv">En boutique</a>
+  <a class="btn sm" href="#acheter">Acheter</a>
+</div></div>
+<nav class="mnav" id="mnav"><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
+
+<main id="top">
+<!-- HÉRO -->
+<section class="hero" id="hero">
+  <div class="glow" id="glow"></div>
+  <div class="word" aria-hidden="true">PRO</div>
+  <img class="ph on" src="iphone_rouge.png" alt="iPhone 18 Pro rouge profond"><img class="ph" src="iphone_bleu.png" alt="iPhone 18 Pro bleu"><img class="ph" src="iphone_noir.png" alt="iPhone 18 Pro noir"><img class="ph" src="iphone_blanc.png" alt="iPhone 18 Pro blanc">
+  <button class="pause" id="heroPause" aria-label="Mettre en pause le changement de coloris"><svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg></button>
+  <div class="copy"><div class="eyebrow">iPhone 18 Pro</div><div class="h1">Il suit<br>ton rythme.</div></div>
+  <div class="buypill"><span>À partir de <b>1 329 €</b> ou <b id="heroMo"></b></span><a class="btn sm" href="#acheter">Acheter</a></div>
+  <div class="sw" id="heroSw"></div>
+</section>
+
+<!-- POINTS FORTS -->
+<section class="sec dark1" id="points-forts" style="padding-bottom:110px">
+  <div class="wide head-row"><h2 class="h2 rv">Points forts.</h2><a class="lnk rv" href="#pourquoi">Pourquoi le choisir</a></div>
+  <div class="hl-track" id="hlTrack">
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="v_arriere_bleu.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#3d1620,#000 70%)"><p class="t">Toute ta journée. <span>Du footing du matin au dernier Reel du soir, sans chercher de prise.</span></p><span class="num grad">16 h 43</span><img src="v_perspective_rouge.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="v_avant_noir.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="v_avant_blanc.png" alt=""></article>
+  </div>
+  <div class="hl-ctrl" id="hlCtrl"><div class="hl-dots" id="hlDots"></div><button class="hl-play" id="hlPlay" aria-label="Pause"><svg id="hlIco" width="12" height="14" viewBox="0 0 12 14" fill="#fff"><rect width="4" height="14"/><rect x="8" width="4" height="14"/></svg></button></div>
+</section>
+
+<!-- DÉCLARATION + COMPARER AVEC TON TÉLÉPHONE -->
+<section class="sec center stmt" id="comparer-tel">
+  <div class="w">
+    <div class="eyebrow rv">Fait pour ta vie</div>
+    <h2 class="h2 rv" style="--i:1">Tes moments. Ton Mac.<br>Tes données.</h2>
+    <p class="lead rv" style="--i:2">Un iPhone qui <b>capture tes moments</b>, <b>tient toute ta journée</b>, travaille <b>main dans la main avec ton Mac</b> et <b>protège ta vie privée</b>. Et qui se garde trois ans sans prendre une ride.</p>
+    <div class="cmpbar rv" style="--i:3">
+      <div class="cmpsel">Tu as aujourd'hui un <select class="pillsel" id="oldPhone" aria-label="Ton téléphone actuel"></select></div>
+      <div class="stats3"><div><b id="st1" class="grad"></b><span>de reprise sur ta commande</span></div><div><b id="st2"></b><span id="st2l">par mois en 4× sans frais</span></div><div><b class="grad-g">100 %</b><span>batterie neuve, garantie incluse</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN : VISUALISEUR -->
+<section class="sec dark1" id="design">
+  <div class="wide">
+    <div class="head"><div class="eyebrow rv">Design</div><h2 class="h2 rv" style="--i:1">Titane et verre.<br>Pensé pour durer.</h2></div>
+    <div class="viewer rv" style="--i:2">
+      <div class="vlist" id="vlist">
+        <button class="vpill on" data-img="0"><span class="plus">+</span><span><span>Coloris</span><span class="body"><div><b>Quatre coloris.</b> Rouge profond, bleu, noir ou blanc : choisis celui qui te ressemble.<div class="chips" id="vChips"></div></div></span></span></button>
+        <button class="vpill" data-img="1"><span class="plus">+</span><span><span>Titane</span><span class="body"><div><b>Léger et solide.</b> Un boîtier en titane et un dos en verre qui résistent aux rayures du quotidien.</div></span></span></button>
+        <button class="vpill" data-img="2"><span class="plus">+</span><span><span>Écran 120 Hz</span><span class="body"><div><b>Fluide comme jamais.</b> Super Retina XDR avec ProMotion jusqu'à 120 Hz et Dynamic Island.</div></span></span></button>
+        <button class="vpill" data-img="3"><span class="plus">+</span><span><span>Face ID</span><span class="body"><div><b>Il te reconnaît.</b> Déverrouillage d'un regard, et caméra avant Center Stage 18 Mpx pour tes visios.</div></span></span></button>
+        <button class="vpill" data-img="4"><span class="plus">+</span><span><span>USB-C</span><span class="body"><div><b>Un seul câble.</b> Pour charger ton iPhone et transférer tes fichiers vers ton Mac.</div></span></span></button>
+      </div>
+      <div class="vstage" id="vstage">
+        <img class="on" src="v_perspective_rouge.png" alt="iPhone 18 Pro de trois quarts"><img src="v_droit_rouge.png" alt="Tranche en titane"><img src="v_avant_rouge.png" alt="Écran de l'iPhone 18 Pro"><img src="v_avant_noir.png" alt="Face avant avec Dynamic Island"><img src="v_dessous_rouge.png" alt="Port USB-C">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO : ZOOM STICKY -->
+<section class="zoom" id="photo">
+  <div class="stage"><img id="zImg" src="v_arriere_bleu.png" alt="Dos de l'iPhone 18 Pro bleu et son module photo"><div class="zt" id="zT"><div class="eyebrow" style="color:#f5f5f7">Système photo</div><h2 class="h2">Tes voyages,<br>en grand.</h2></div></div>
+</section>
+<section class="sec" style="padding-top:40px">
+  <div class="w">
+    <p class="lead rv" style="max-width:720px">Le coucher de soleil en voyage, le portrait pour LinkedIn, la vidéo pour ton Reel : <b>trois capteurs 48 Mpx</b> et un <b>zoom optique jusqu'à 8x</b>. Même de nuit, ça fait le job.<sup><a href="#note-1">1</a></sup></p>
+    <div class="specgrid">
+      <div class="big rv"><div><b class="grad-b">48 Mpx</b><span>sur les trois capteurs</span></div><div><b>8x</b><span>zoom optique</span></div><div><b>18 Mpx</b><span>caméra avant Center Stage</span></div></div>
+      <ul class="rv" style="--i:1"><li><b>Principal Fusion</b>, ouverture variable de ƒ/1.48 à ƒ/4.0</li><li><b>Ultra grand-angle</b> avec mode macro</li><li><b>Téléobjectif</b> jusqu'au zoom optique 8x</li><li><b>Caméra avant</b> 18 Mpx avec recadrage automatique</li></ul>
+    </div>
+    <div class="center" style="margin-top:110px">
+      <h3 class="h3 rv">Une ouverture pour chaque moment.</h3>
+      <div class="seg rv" id="seg"><i id="segI"></i><button class="on" data-t="0">ƒ/1.48</button><button data-t="1">ƒ/1.8</button><button data-t="2">ƒ/2.8</button><button data-t="3">ƒ/4.0</button></div>
+      <p class="lead segtxt" id="segTxt"></p>
+    </div>
+  </div>
+</section>
+
+<!-- AUTONOMIE + PUCE -->
+<section class="sec dark1">
+  <div class="w">
+    <div class="two">
+      <div><div class="eyebrow rv">Autonomie</div><h2 class="h2 rv" style="--i:1">Toute ta journée.<br>Sans chargeur.</h2></div>
+      <div><b class="rv grad" style="display:block;font-size:clamp(64px,9vw,120px);font-weight:700;letter-spacing:-.05em;line-height:1">16 h 43</b><p class="lead rv" style="--i:1;margin-top:10px">d'utilisation active en test, avec une batterie jusqu'à <b>4 288 mAh</b>.<sup><a href="#note-2">2</a></sup> Footing, métro, réunions, apéro : tu ne cherches plus de prise à 18 h.</p></div>
+    </div>
+    <div style="margin-top:150px" class="center">
+      <div class="eyebrow rv">Puce A20 Pro</div>
+      <h2 class="h2 sweep" id="sweep">Rapide. Sans chauffer.</h2>
+      <p class="lead rv" style="max-width:700px;margin:24px auto 0">Gravée en <b>2 nm</b>, avec un <b>double Neural Engine 16 cœurs</b> pour l'IA. Montage vidéo, jeux, multitâche : ça ne rame pas.</p>
+      <div class="cols3" style="text-align:left">
+        <div class="rv"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="24" height="24" rx="4"/><path d="M14 2v6M20 2v6M26 2v6M14 32v6M20 32v6M26 32v6M2 14h6M2 20h6M2 26h6M32 14h6M32 20h6M32 26h6"/></svg><h4>Processeur 6 cœurs</h4><p>2 cœurs de puissance et 4 cœurs économes pour tenir la journée.</p></div>
+        <div class="rv" style="--i:1"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 30l10-12 8 8 6-6 8 10"/><rect x="4" y="6" width="32" height="28" rx="4"/></svg><h4>Puce graphique 7 cœurs</h4><p>Pour tes jeux et le montage de tes vidéos 4K, directement sur l'iPhone.</p></div>
+        <div class="rv" style="--i:2"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><circle cx="20" cy="20" r="6"/><path d="M20 4v6M20 30v6M4 20h6M30 20h6M9 9l4 4M27 27l4 4M31 9l-4 4M13 27l-4 4"/></svg><h4>Double Neural Engine</h4><p>16 cœurs pour les fonctions d'IA, sans envoyer tes données ailleurs.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POURQUOI -->
+<section class="sec" id="pourquoi">
+  <div class="wide">
+    <div class="why">
+      <div class="why-top"><h2 class="h2 rv">Pourquoi le choisir&nbsp;?<br><span style="color:#86868b">Pour tout ça.</span></h2><a class="lnk rv" href="#comparer">Neuf ou reconditionné ?</a></div>
+      <div class="tiles">
+        <div class="tile rv"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="20" height="14" rx="2"/><path d="M2 25h24"/><rect x="24" y="12" width="8" height="16" rx="2"/></svg><b>Mac + iPhone</b><p>Tes photos, notes et AirPods passent d'un appareil à l'autre tout seuls.</p></div>
+        <div class="tile rv" style="--i:1"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l11 4v9c0 7-5 12-11 15C11 28 6 23 6 16V7l11-4Z"/></svg><b>Face ID</b><p>Ta vie privée reste privée. C'est toi qui choisis.</p></div>
+        <div class="tile rv" style="--i:2"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 26h17a6 6 0 0 0 0-12 9 9 0 0 0-17 2 5 5 0 0 0 0 10Z"/></svg><b>iCloud</b><p>Tes photos de voyage sauvegardées. Tu ne perds rien.</p></div>
+        <div class="tile rv"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12h18l-3-4M26 22H8l3 4"/></svg><b>−650 €</b><p>Jusqu'à, avec la reprise de ton ancien iPhone.</p></div>
+        <div class="tile rv" style="--i:1"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="28" height="19" rx="3"/><path d="M3 14h28"/></svg><b>4× sans frais</b><p>Tu n'avances pas tout d'un coup. Ou sur 24 mois.</p></div>
+        <div class="tile rv" style="--i:2"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="17" r="13"/><path d="M17 9v8l5 3"/></svg><b>3 ans</b><p>Un iPhone se garde longtemps : autant prendre le plus récent.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- === PARTIE CLAIRE : ACHAT === -->
+<section class="sec light" style="padding-bottom:70px">
+  <div class="wide head-row"><h2 class="h2 rv">Tant de raisons<br>de précommander ici.</h2></div>
+  <div class="reasons" id="reasons">
+    <a class="rcard rv" href="#acheter"><small>Reprise</small><h4>Ton ancien iPhone fait baisser le prix.</h4><p>Estimation immédiate, déduite de ta commande.</p><span class="ill grad">−650 €</span><span class="go">›</span></a>
+    <a class="rcard rv" href="#acheter" style="--i:1"><small>Paiement</small><h4>En 4 fois sans frais.</h4><p>Ou sur 24 mois. Tu choisis à la commande.</p><span class="ill grad-b">4×</span><span class="go">›</span></a>
+    <a class="rcard rv" href="#boutique-rdv" style="--i:2"><small>En boutique</small><h4>Prends-le en main avant d'acheter.</h4><p>20 minutes avec un conseiller à Lyon.</p><span class="ill" style="color:#1d1d1f">20 min</span><span class="go">›</span></a>
+    <a class="rcard rv" href="#acheter" style="--i:3"><small>Bonus</small><h4>Coque et 3 mois d'AppleCare+ offerts.</h4><p>Pour le stock de lancement.</p><span class="ill grad-g">Offert</span><span class="go">›</span></a>
+    <a class="rcard rv" href="#aide" style="--i:4"><small>Livraison</small><h4>Chez toi le jour de la sortie.</h4><p>Livraison offerte, retour gratuit sous 14 jours.</p><span class="ill" style="color:#1d1d1f">0 €</span><span class="go">›</span></a>
+  </div>
+  <div class="arrows"><button id="rPrev" aria-label="Précédent">‹</button><button id="rNext" aria-label="Suivant">›</button></div>
+</section>
+
+<section class="sec light" id="lequel" style="padding-top:60px">
+  <div class="w center head"><h2 class="h2 rv">Lequel est fait pour toi&nbsp;?</h2><p class="lead rv" style="--i:1;margin-top:14px">Trois questions, vingt secondes.</p></div>
+  <div class="w"><div class="quiz rv" id="quiz"></div></div>
+</section>
+
+<section class="sec white" id="acheter">
+  <div class="wide">
+    <div class="head"><div class="eyebrow" style="color:#bf4800">Précommandes ouvertes</div><h2 class="h2">Acheter l'iPhone 18 Pro.</h2></div>
+    <div class="shop">
+      <div class="gallery"><div class="gmain" style="background:var(--light)"><img id="gImg" src="v_perspective_rouge.png" alt="iPhone 18 Pro"></div><div class="thumbs" id="thumbs"></div></div>
+      <div>
+        <div class="opt-t" style="margin-top:0">Coloris. <span id="cName"></span></div>
+        <div class="colors" id="colors"></div>
+        <div class="opt-t">Capacité. <span>Besoin d'aide ? <a class="lnk" href="#lequel" style="font-size:14px">Fais le test</a></span></div>
+        <div class="opts" id="caps"></div>
+        <div class="opt-t">Reprise. <span>Fais baisser le prix</span></div>
+        <select class="sel" id="trade" aria-label="Reprise de ton ancien téléphone"></select>
+        <div class="opt-t">Paiement.</div>
+        <div class="opts" id="plans"></div>
+        <div class="sum" style="background:var(--light)">
+          <div class="row"><span id="sModel"></span><b id="sPrice"></b></div>
+          <div class="row" id="sTradeRow"><span>Reprise</span><b id="sTrade"></b></div>
+          <div class="row"><span>Livraison</span><b>Offerte</b></div>
+          <div class="tot"><span>Total</span><b id="sTot"></b></div>
+          <div class="mo" id="sMo"></div>
+          <button class="btn" id="add">Ajouter au panier</button>
+          <div class="pay"><span>Carte bancaire</span><span>Apple Pay</span><span>PayPal</span><span>4× sans frais</span></div>
+        </div>
+        <div class="gift"><b>Offert avec ta précommande :</b> coque MagSafe assortie et 3 mois d'AppleCare+, jusqu'au <span id="until"></span> ou dans la limite du stock de lancement.
+          <div class="timer"><div><span id="td">00</span><small>jours</small></div><div><span id="th">00</span><small>heures</small></div><div><span id="tm">00</span><small>min</small></div><div><span id="ts">00</span><small>sec</small></div></div></div>
+        <p class="hint">Tu préfères le voir avant ? <a href="#boutique-rdv">Réserve une prise en main en boutique</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec light" id="boutique-rdv">
+  <div class="wide">
+    <div class="head"><div class="eyebrow">En boutique à Lyon</div><h2 class="h2">Prends-le en main.<br>Avant d'acheter.</h2><p class="lead" style="margin-top:14px;max-width:640px">Réserve 20 minutes avec un conseiller : tu testes l'appareil photo, tu compares les coloris, tu fais estimer ta reprise. Gratuit et sans engagement.</p></div>
+    <div class="rdv">
+      <div class="stores" id="stores"></div>
+      <div class="slotbox">
+        <h4 id="rdvTitle">Choisis un créneau</h4>
+        <div class="days" id="days"></div>
+        <div class="slots" id="slots"></div>
+        <div class="f2">
+          <input class="field" id="rName" placeholder="Prénom" autocomplete="given-name">
+          <input class="field" id="rPhone" type="tel" placeholder="Téléphone (rappel SMS)" autocomplete="tel" inputmode="tel">
+          <input class="field full" id="rEmail" type="email" placeholder="Adresse e-mail" autocomplete="email">
+          <select class="field full" id="rWhy"><option>Tester l'appareil photo</option><option>Comparer les coloris</option><option>Faire estimer ma reprise</option><option>Transférer mes données</option><option>Retirer ma précommande</option></select>
+        </div>
+        <div class="err" id="rErr"></div>
+        <button class="btn" id="rGo" style="width:100%">Réserver ce créneau</button>
+        <p class="hint">Démonstration : aucune réservation n'est envoyée au magasin. Horaires indicatifs.</p>
+        <div id="rdvOk"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec white" id="comparer">
+  <div class="wide">
+    <div class="head center"><h2 class="h2">Neuf ou reconditionné&nbsp;?</h2><p class="lead" style="margin-top:14px">On sait que tu y penses. Voilà la vraie différence.</p></div>
+    <div class="cmp" style="background:var(--light)">
+      <div class="r hd"><span></span><b>iPhone 18 Pro neuf</b><b>Reconditionné</b></div>
+      <div class="r"><span>Batterie</span><p>Neuve, 100 %</p><p>Déjà usée, capacité variable</p></div>
+      <div class="r"><span>Garantie</span><p>Garantie constructeur + 3 mois d'AppleCare+ offerts</p><p>Garantie du vendeur, souvent plus courte</p></div>
+      <div class="r"><span>Mises à jour</span><p>Toutes les prochaines années devant lui</p><p>Plusieurs années déjà consommées</p></div>
+      <div class="r"><span>Photo et puce</span><p>Les dernières : 48 Mpx, A20 Pro 2 nm</p><p>Une ou plusieurs générations en retard</p></div>
+      <div class="r"><span>Ce que tu paies vraiment</span><p id="vsPrice"></p><p>Moins cher à l'achat, mais à remplacer plus tôt</p></div>
+    </div>
+    <h3 class="h3 center" style="margin-top:110px">Quelle capacité&nbsp;?</h3>
+    <div class="capg" id="capg"></div>
+  </div>
+</section>
+
+<section class="sec light" id="aide">
+  <div class="w">
+    <div class="head center"><h2 class="h2">Questions fréquentes.</h2></div>
+    <div class="faq">
+      <details><summary>Je le reçois quand ?</summary><p>Les premières précommandes sont livrées le jour de la sortie. Ensuite, le délai dépend du stock du coloris choisi.</p></details>
+      <details><summary>Ça marche avec mon Mac et mes AirPods ?</summary><p>Oui. Connecte-toi avec ton identifiant Apple : tes photos, tes notes, ton presse-papiers et tes AirPods passent automatiquement d'un appareil à l'autre.</p></details>
+      <details><summary>Je vais perdre mes photos en changeant de téléphone ?</summary><p>Non. Le transfert se fait en quelques minutes depuis ton ancien iPhone, et tes photos restent sauvegardées sur iCloud.</p></details>
+      <details><summary>Comment marche la reprise ?</summary><p>Choisis ton ancien modèle : le montant estimé est déduit tout de suite. Tu le renvoies avec l'enveloppe fournie après avoir reçu le nouveau.</p></details>
+      <details><summary>Le paiement en 4 fois a des frais ?</summary><p>Non, le montant est divisé en 4 mensualités égales, sans frais.</p></details>
+      <details><summary>Et après la commande ?</summary><p>1. Confirmation par e-mail avec ton numéro de commande. 2. Ton iPhone est réservé dans le coloris et la capacité choisis. 3. Livraison le jour de la sortie, suivi par SMS. 4. Transfert de tes données en quelques minutes.</p></details>
+      <details><summary>Je peux annuler ?</summary><p>Oui, à tout moment avant l'expédition, et tu as 14 jours après réception pour le renvoyer.</p></details>
+      <details><summary>Comment vous contacter ?</summary><p>Service client au 01 99 00 18 18 (numéro fictif, projet étudiant), du lundi au samedi de 9 h à 19 h, ou à bonjour@iphone18pro-projet.fr (adresse fictive).</p></details>
+    </div>
+    <div class="kit" style="margin-top:110px">
+      <div class="glow2"></div>
+      <div style="position:relative"><div class="eyebrow" style="color:#e8a3b1">Gratuit</div><h3 class="h3" style="margin-top:6px">Le kit pour bien choisir.</h3><p class="lead" style="margin-top:12px">Le guide pour choisir sans te ruiner, la vidéo « 5 réglages photo pour tes voyages et tes Reels », et une alerte dès qu'une promo tombe.</p></div>
+      <div id="kitBox" style="position:relative">
+        <form id="kitForm" novalidate><input type="text" id="kName" placeholder="Prénom" autocomplete="given-name"><input type="email" id="kEmail" placeholder="Adresse e-mail" autocomplete="email"><button class="btn" type="submit">Recevoir le kit</button></form>
+        <label class="consent"><input type="checkbox" id="kOk"> J'accepte de recevoir les informations et offres sur l'iPhone 18 Pro. Désinscription en un clic.</label>
+        <div class="err" id="kErr"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="notes"><div class="w"><ol>
+  <li id="note-1">Caractéristiques de l'appareil photo reprises de la fiche technique du projet. Les photos de nuit dépendent des conditions de prise de vue.</li>
+  <li id="note-2">16 h 43 d'utilisation active : durée relevée en test. L'autonomie réelle varie selon l'usage et les réglages.</li>
+  <li>Prix, reprises, bonus et financements imaginés pour l'exercice. Aucune vente réelle. Les adresses de boutiques sont réelles, les réservations sont simulées.</li>
+</ol></div></div>
+<footer><div class="w">
+  <div class="cols">
+    <div><h5>Découvrir</h5><ul><li><a href="#points-forts">Points forts</a></li><li><a href="#design">Design</a></li><li><a href="#photo">Photo</a></li></ul></div>
+    <div><h5>Acheter</h5><ul><li><a href="#acheter">Précommander</a></li><li><a href="#acheter">Reprise</a></li><li><a href="#acheter">Paiement en 4×</a></li></ul></div>
+    <div><h5>Boutiques</h5><ul><li><a href="#boutique-rdv">Prise en main à Lyon</a></li><li><a href="#comparer">Neuf ou reconditionné</a></li></ul></div>
+    <div><h5>Aide</h5><ul><li><a href="#aide">Questions fréquentes</a></li><li><a href="#aide" id="ftKit">Recevoir le kit</a></li></ul></div>
+  </div>
+  <div class="legal"><span>Projet étudiant (EEC · TC2) : site fictif, aucune vente réelle, non affilié à Apple.</span><span>Prix et offres imaginés pour l'exercice.</span></div>
+</div></footer>
+
+<div class="buypill floatpill" id="floatPill"><span id="fpTxt">iPhone 18 Pro · dès <b>1 329 €</b></span><a class="btn sm" href="#acheter">Acheter</a></div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Panier">
+  <div class="dh"><b>Ton panier</b><button class="x" style="position:static" id="dClose" aria-label="Fermer">✕</button></div>
+  <div class="db" id="cartList"></div>
+  <div class="df"><div class="tot"><span>Total</span><span id="cartTot">0 €</span></div><button class="btn" id="checkout">Passer commande</button><p class="hint">Livraison offerte · Retour gratuit sous 14 jours</p></div>
+</aside>
+
+<div class="modal" id="pop" role="dialog" aria-modal="true" aria-labelledby="popT">
+  <div class="mbox">
+    <button class="x" id="popX" aria-label="Fermer">✕</button>
+    <div class="mvis"><div class="glow"></div><img src="v_perspective_rouge.png" alt=""></div>
+    <div class="mtxt">
+      <div id="popForm">
+        <span class="k">On reste en contact ?</span>
+        <h3 id="popT">Tu veux profiter à fond de ton futur iPhone&nbsp;?</h3>
+        <p style="color:#6e6e73">Laisse ton e-mail, on t'offre :</p>
+        <ul><li>Le guide « Bien choisir sans se ruiner »</li><li>La vidéo « 5 réglages photo pour tes voyages et tes Reels »</li><li>Une alerte dès qu'une promo tombe</li></ul>
+        <input class="field" id="pName" placeholder="Prénom" autocomplete="given-name">
+        <input class="field" id="pEmail" type="email" placeholder="Adresse e-mail" autocomplete="email">
+        <label class="consent"><input type="checkbox" id="pOk"> J'accepte de recevoir les informations et offres sur l'iPhone 18 Pro.</label>
+        <div class="err" id="pErr"></div>
+        <button class="btn" id="pGo">Tout recevoir</button>
+        <p class="fine">Ton adresse ne sera jamais revendue. Désinscription en un clic.</p>
+      </div>
+      <div id="popDone" hidden><span class="k">C'est noté</span><h3 id="pdT">Merci !</h3><p style="color:#6e6e73" id="pdP"></p><button class="btn" id="pdX" style="margin-top:22px">Découvrir l'iPhone 18 Pro</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="order" role="dialog" aria-modal="true" aria-labelledby="oT">
+  <div class="mbox one">
+    <button class="x" id="oX" aria-label="Fermer">✕</button>
+    <div class="mtxt">
+      <div id="oForm">
+        <span class="k">Paiement</span>
+        <h3 id="oT">C'est presque à toi.</h3>
+        <p style="color:#6e6e73" id="oRecap"></p>
+        <input class="field" id="fName" placeholder="Prénom et nom" autocomplete="name">
+        <input class="field" id="fEmail" type="email" placeholder="Adresse e-mail" autocomplete="email">
+        <input class="field" id="fPhone" type="tel" placeholder="Téléphone (suivi par SMS)" inputmode="tel" autocomplete="tel">
+        <input class="field" id="fZip" placeholder="Code postal" inputmode="numeric" autocomplete="postal-code">
+        <label class="consent"><input type="checkbox" id="fCgv"> J'accepte les conditions générales de vente.</label>
+        <div class="err" id="fErr"></div>
+        <button class="btn" id="fGo">Confirmer la précommande</button>
+        <p class="fine">Démonstration : aucun paiement n'est demandé ni enregistré.</p>
+      </div>
+      <div id="oDone" hidden><span class="k" style="color:#008009">Commande simulée</span><h3 id="dT">Merci !</h3><p style="color:#6e6e73" id="dP"></p><button class="btn" id="dX" style="margin-top:22px">Fermer</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const eur=n=>n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'}).replace(/,00(?=\s)/,'');
+const mailOk=m=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
+const phoneOk=t=>/^(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/.test(t);
+const esc=s=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t){$('toast').textContent=t;$('toast').classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('on'),2400)}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const COLORS=[['Rouge profond','#5a2a33','rouge','#8a3445'],['Bleu','#9fb3cf','bleu','#4d6f9e'],['Noir','#2b2b2d','noir','#55555a'],['Blanc','#e3e3e0','blanc','#9a9a96']];
+const STORAGE=[['256 Go','Photos, apps, un peu de vidéo',1329],['512 Go','Pour tes vidéos 4K et tes voyages',1579,'Le plus choisi'],['1 To','Pour les créateurs de contenu',1829],['2 To','Tout garder, toujours',2329]];
+const TRADE=[['Pas de reprise',0],['iPhone 17 Pro',650],['iPhone 16 Pro',480],['iPhone 15 Pro',360],['iPhone 14 / 14 Pro',230],['iPhone 13 ou plus ancien',120],['Autre smartphone',90]];
+const PLANS=[['Comptant','En une fois',1],['4× sans frais','Par carte bancaire',4],['24 mois','TAEG 4,9 %',24]];
+const VIEWS=['perspective','arriere','avant','droit'];
+const S={c:0,s:1,t:0,p:1,v:0};
+const total=()=>Math.max(0,STORAGE[S.s][2]-TRADE[S.t][1]);
+const monthly=(k,t=total())=>Math.ceil(t*(k===24?1.049:1)/k*100)/100;
+
+/* révélations */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.18});
+document.querySelectorAll('.rv,.sweep').forEach(el=>io.observe(el));
+
+/* nav mobile */
+$('burger').onclick=()=>$('mnav').classList.toggle('on');
+$('mnav').querySelectorAll('a').forEach(a=>a.onclick=()=>$('mnav').classList.remove('on'));
+
+/* héro */
+const heroImgs=[...document.querySelectorAll('.hero .ph')];let hc=0,heroOn=true,heroT;
+COLORS.forEach(([n,c],i)=>{const b=document.createElement('button');b.className='dot';b.style.background=c;b.setAttribute('aria-label',n);b.onclick=()=>setHero(i);$('heroSw').appendChild(b)});
+const hsName=document.createElement('span');$('heroSw').appendChild(hsName);
+function setHero(i){hc=i;heroImgs.forEach((im,k)=>im.classList.toggle('on',k===i));[...$('heroSw').querySelectorAll('.dot')].forEach((b,k)=>b.classList.toggle('on',k===i));hsName.textContent=COLORS[i][0];$('glow').style.background=COLORS[i][3]}
+setHero(0);function heroLoop(){clearInterval(heroT);if(heroOn&&!RM)heroT=setInterval(()=>setHero((hc+1)%4),4200)}heroLoop();
+$('heroPause').onclick=()=>{heroOn=!heroOn;heroLoop();$('heroPause').innerHTML=heroOn?'<svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg>':'<svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><path d="M0 0l10 6-10 6z"/></svg>';$('heroPause').setAttribute('aria-label',heroOn?'Mettre en pause':'Relancer')};
+$('heroMo').textContent=eur(monthly(4,STORAGE[0][2]))+'/mois';
+
+/* pilule flottante */
+const fpIO=new IntersectionObserver(([e])=>{const shop=$('acheter').getBoundingClientRect();$('floatPill').classList.toggle('on',!e.isIntersecting&&!(shop.top<innerHeight&&shop.bottom>0))},{threshold:0});
+fpIO.observe($('hero'));addEventListener('scroll',()=>{const h=$('hero').getBoundingClientRect().bottom<0;const shop=$('acheter').getBoundingClientRect();$('floatPill').classList.toggle('on',h&&!(shop.top<innerHeight&&shop.bottom>0))},{passive:true});
+
+/* Points forts */
+const cards=[...document.querySelectorAll('.hl')];let hi=0,hlPlay=!RM,hlT;const DUR=6000;
+cards.forEach((c,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Point fort '+(i+1));b.innerHTML='<i></i>';b.onclick=()=>goHl(i,true);$('hlDots').appendChild(b)});
+function goHl(i,user){hi=i;const tr=$('hlTrack');tr.scrollTo({left:cards[i].offsetLeft-cards[0].offsetLeft,behavior:'smooth'});cards.forEach((c,k)=>c.classList.toggle('active',k===i));[...$('hlDots').children].forEach((b,k)=>{b.classList.remove('on');void b.offsetWidth;if(k===i)b.classList.add('on')});$('hlDots').style.setProperty('--dur',DUR+'ms');clearTimeout(hlT);if(hlPlay)hlT=setTimeout(()=>goHl((hi+1)%cards.length),DUR)}
+const hlIO=new IntersectionObserver(([e])=>{if(e.isIntersecting&&!goHl.started){goHl.started=1;goHl(0)}},{threshold:.4});hlIO.observe($('hlTrack'));
+$('hlPlay').onclick=()=>{hlPlay=!hlPlay;$('hlCtrl').classList.toggle('paused',!hlPlay);$('hlIco').innerHTML=hlPlay?'<rect width="4" height="14"/><rect x="8" width="4" height="14"/>':'<path d="M0 0l12 7-12 7z"/>';$('hlPlay').setAttribute('aria-label',hlPlay?'Pause':'Lecture');clearTimeout(hlT);if(hlPlay)goHl((hi+1)%cards.length)};
+if(RM)$('hlCtrl').classList.add('paused');
+
+/* comparer avec ton téléphone */
+TRADE.slice(1,6).forEach(([n],i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=n;$('oldPhone').appendChild(o)});$('oldPhone').value=3;
+function cmpUpd(){const t=TRADE[+$('oldPhone').value];$('st1').textContent='−'+eur(t[1]);$('st2').textContent=eur(monthly(4,STORAGE[0][2]-t[1]));$('st2l').textContent='par mois en 4× sans frais (256 Go)'}
+$('oldPhone').onchange=()=>{['st1','st2'].forEach(id=>$(id).style.opacity=0);setTimeout(()=>{cmpUpd();['st1','st2'].forEach(id=>$(id).style.opacity=1)},200)};cmpUpd();
+
+/* visualiseur */
+const vImgs=[...$('vstage').querySelectorAll('img')],vPills=[...$('vlist').querySelectorAll('.vpill')];let vColor=0;
+function vSrc(){const c=COLORS[vColor][2];const list=['v_perspective_'+c,'v_droit_'+c,'v_avant_'+c,'v_avant_'+c,'v_dessous_'+c];vImgs.forEach((im,i)=>im.src=list[i]+'.png')}
+vPills.forEach((p,i)=>p.onclick=e=>{if(e.target.closest('.vchip'))return;vPills.forEach(q=>q.classList.toggle('on',q===p));vImgs.forEach((im,k)=>im.classList.toggle('on',k===+p.dataset.img))});
+COLORS.forEach(([n,c],i)=>{const b=document.createElement('span');b.className='dot vchip'+(i===0?' on':'');b.style.background=c;b.setAttribute('role','button');b.setAttribute('aria-label',n);b.tabIndex=0;b.onclick=()=>{vColor=i;vSrc();[...$('vChips').children].forEach((x,k)=>x.classList.toggle('on',k===i))};$('vChips').appendChild(b)});
+
+/* zoom sticky */
+const zSec=$('photo');function zoom(){const r=zSec.getBoundingClientRect();const p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));$('zImg').style.transform='scale('+(3.2-2.2*p)+')';$('zT').style.opacity=Math.max(0,1-p*2.2)}
+if(!RM){addEventListener('scroll',()=>requestAnimationFrame(zoom),{passive:true});zoom()}
+
+/* segmenté */
+const SEG=['Grande ouverture : plus de lumière, idéale pour tes photos de nuit et un joli flou derrière les visages.','Le bon réglage pour le quotidien : portraits nets et arrière-plan doux.','Pour les photos de groupe : tout le monde est net, même au deuxième rang.','Pour les paysages de voyage : tout est net, du premier plan jusqu\'à l\'horizon.'];
+const segBtns=[...$('seg').querySelectorAll('button')];
+function segGo(i){segBtns.forEach((b,k)=>b.classList.toggle('on',k===i));const b=segBtns[i];$('segI').style.width=b.offsetWidth+'px';$('segI').style.transform='translateX('+b.offsetLeft+'px)';$('segTxt').style.opacity=0;setTimeout(()=>{$('segTxt').textContent=SEG[i];$('segTxt').style.opacity=1},150)}
+segBtns.forEach((b,i)=>b.onclick=()=>segGo(i));setTimeout(()=>segGo(0),60);addEventListener('resize',()=>segGo(segBtns.findIndex(b=>b.classList.contains('on'))));
+
+/* raisons */
+$('rPrev').onclick=()=>$('reasons').scrollBy({left:-350,behavior:'smooth'});$('rNext').onclick=()=>$('reasons').scrollBy({left:350,behavior:'smooth'});
+
+/* quiz */
+const QUIZ=[['Tu l\'utilises surtout pour…',[['Créer du contenu (Insta, TikTok)',2],['Le boulot : mails, Slack, Notion',0],['Un peu de tout',1]]],['Tu filmes en 4K ?',[['Souvent, c\'est mon truc',2],['Parfois, en voyage',1],['Jamais',0]]],['Tes photos de voyage, tu les gardes…',[['Toutes, sur le téléphone',2],['Une partie, le reste sur iCloud',1],['Je fais le tri',0]]]];
+const REC=[[0,'Largement assez pour tes apps, tes messages et tes photos du quotidien. Et tu gardes de la marge sur ton budget.'],[1,'Le bon équilibre : de la place pour tes vidéos 4K et tes voyages, sans y penser.'],[2,'Pour tout filmer et tout garder, sans jamais supprimer un souvenir.']];
+let qi=0,score=0;
+function quiz(){const q=$('quiz');
+  if(qi<QUIZ.length){q.innerHTML='<div class="qn"></div><div class="qbar"><i></i></div><h4></h4><div class="ans"></div>';q.querySelector('.qn').textContent='Question '+(qi+1)+' sur 3';q.querySelector('.qbar i').style.width=(qi/3*100+6)+'%';q.querySelector('h4').textContent=QUIZ[qi][0];
+    QUIZ[qi][1].forEach(([l,v])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>{score+=v;qi++;quiz()};q.querySelector('.ans').appendChild(b)})}
+  else{const r=REC[score>=5?2:score>=2?1:0];q.innerHTML='<div class="qn">Notre conseil</div><div class="qbar"><i style="width:100%"></i></div><div class="res"><b></b><p></p><div class="row"><button class="btn" id="qGo">Choisir cette configuration</button><button class="lnk" id="qRe">Recommencer</button></div></div>';
+    q.querySelector('b').textContent='iPhone 18 Pro '+STORAGE[r[0]][0];q.querySelector('p').textContent=r[1]+' '+eur(STORAGE[r[0]][2])+', ou '+eur(monthly(4,STORAGE[r[0]][2]))+'/mois en 4× sans frais.';
+    $('qGo').onclick=()=>{S.s=r[0];renderShop();$('acheter').scrollIntoView({behavior:'smooth'})};$('qRe').onclick=()=>{qi=0;score=0;quiz()}}}
+quiz();
+
+/* boutique */
+COLORS.forEach(([n,c],i)=>{const b=document.createElement('button');b.style.background=c;b.setAttribute('aria-label',n);b.onclick=()=>{S.c=i;renderShop()};$('colors').appendChild(b)});
+VIEWS.forEach((v,i)=>{const b=document.createElement('button');b.innerHTML='<img alt="">';b.setAttribute('aria-label','Vue '+(i+1));b.onclick=()=>{S.v=i;renderShop()};$('thumbs').appendChild(b)});
+STORAGE.forEach(([n,d,p,tag],i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span><b></b><small></small></span><span class="r"></span>';b.querySelector('b').textContent=n;if(tag){const t=document.createElement('span');t.className='tag';t.textContent=tag;b.querySelector('b').appendChild(t)}b.querySelector('small').textContent=d;b.querySelector('.r').textContent=eur(p);b.onclick=()=>{S.s=i;renderShop()};$('caps').appendChild(b)});
+TRADE.forEach(([n,v],i)=>{const o=document.createElement('option');o.value=i;o.textContent=v?n+' : − '+eur(v):n;$('trade').appendChild(o)});
+$('trade').onchange=e=>{S.t=+e.target.value;renderShop()};
+PLANS.forEach(([n,d],i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span><b></b><small></small></span><span class="r"></span>';b.querySelector('b').textContent=n;b.querySelector('small').textContent=d;b.onclick=()=>{S.p=i;renderShop()};$('plans').appendChild(b)});
+function renderShop(){const col=COLORS[S.c];
+  $('gImg').src='v_'+VIEWS[S.v]+'_'+col[2]+'.png';$('gImg').alt='iPhone 18 Pro '+col[0].toLowerCase();
+  [...$('thumbs').children].forEach((b,i)=>{b.querySelector('img').src='v_'+VIEWS[i]+'_'+col[2]+'.png';b.classList.toggle('on',i===S.v)});
+  [...$('colors').children].forEach((b,i)=>b.classList.toggle('on',i===S.c));$('cName').textContent=col[0];
+  [...$('caps').children].forEach((b,i)=>b.classList.toggle('on',i===S.s));$('trade').value=S.t;
+  [...$('plans').children].forEach((b,i)=>{b.classList.toggle('on',i===S.p);const k=PLANS[i][2];b.querySelector('.r').textContent=k===1?eur(total()):eur(monthly(k))+'/mois'});
+  const tv=TRADE[S.t][1];$('sModel').textContent='iPhone 18 Pro '+STORAGE[S.s][0]+' · '+col[0];$('sPrice').textContent=eur(STORAGE[S.s][2]);
+  $('sTradeRow').style.display=tv?'flex':'none';$('sTrade').textContent='− '+eur(tv);$('sTot').textContent=eur(total());
+  const k=PLANS[S.p][2];$('sMo').textContent=k===1?'':'soit '+k+' × '+eur(monthly(k));
+  $('fpTxt').innerHTML='';$('fpTxt').append('iPhone 18 Pro '+STORAGE[S.s][0]+' · ');const bb=document.createElement('b');bb.textContent=k===1?eur(total()):eur(monthly(k))+'/mois';$('fpTxt').append(bb)}
+renderShop();
+const END=Date.now()+5*86400e3;$('until').textContent=new Date(END).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+function tick(){const r=Math.max(0,Math.floor((END-Date.now())/1000));$('td').textContent=String(Math.floor(r/86400)).padStart(2,'0');$('th').textContent=String(Math.floor(r%86400/3600)).padStart(2,'0');$('tm').textContent=String(Math.floor(r%3600/60)).padStart(2,'0');$('ts').textContent=String(r%60).padStart(2,'0')}tick();setInterval(tick,1000);
+
+/* comparer */
+$('vsPrice').textContent='Avec la reprise d\'un iPhone 15 Pro et le 4× : dès '+eur(monthly(4,STORAGE[0][2]-TRADE[3][1]))+' par mois (256 Go)';
+STORAGE.forEach(([n,d,p,tag])=>{const el=document.createElement('div');el.innerHTML='<b></b><p></p><p class="p"></p>';el.querySelector('b').textContent=n;el.querySelector('p').textContent=d+(tag?' · '+tag:'');el.querySelector('.p').textContent=eur(p)+' ou '+eur(monthly(4,p))+'/mois';$('capg').appendChild(el)});
+
+/* RDV */
+const STORES=[{n:'Apple Part-Dieu',a:'Centre commercial Westfield La Part-Dieu, niveau 1 · 69003 Lyon',h:'Lun – sam 10 h – 20 h',t:'Tram T1, métro B Part-Dieu',open:[10,20]},{n:'Apple Confluence',a:'Centre commercial Confluence, 112 cours Charlemagne · 69002 Lyon',h:'Lun – sam 10 h – 20 h',t:'Tram T1 Hôtel de Région',open:[10,20]},{n:'Fnac Lyon Bellecour',a:'85 rue de la République · 69002 Lyon',h:'Lun – sam 10 h – 19 h 30',t:'Métro A Cordeliers',open:[10,19]}];
+const R={st:0,d:0,sl:null};const DAYS=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i+1);return d});
+STORES.forEach((st,i)=>{const b=document.createElement('button');b.className='store';b.innerHTML='<b></b><span class="ad"></span><span class="meta"><span class="h"><i></i></span><span class="t"></span></span>';b.querySelector('b').textContent=st.n;b.querySelector('.ad').textContent=st.a;b.querySelector('.h').append(st.h);b.querySelector('.t').textContent=st.t;b.onclick=()=>{R.st=i;R.sl=null;renderRdv()};$('stores').appendChild(b)});
+const hsh=x=>{let h=7;for(const c of x)h=(h*31+c.charCodeAt(0))%9973;return h};
+function renderRdv(){[...$('stores').children].forEach((b,i)=>b.classList.toggle('on',i===R.st));const st=STORES[R.st];
+  if(DAYS[R.d].getDay()===0)R.d=(R.d+1)%DAYS.length;
+  $('days').innerHTML='';DAYS.forEach((d,i)=>{const b=document.createElement('button');b.className='day'+(i===R.d?' on':'');b.disabled=d.getDay()===0;b.innerHTML=d.toLocaleDateString('fr-FR',{weekday:'short'})+'<b>'+d.getDate()+'</b>'+d.toLocaleDateString('fr-FR',{month:'short'});b.onclick=()=>{R.d=i;R.sl=null;renderRdv()};$('days').appendChild(b)});
+  $('slots').innerHTML='';for(let h=st.open[0];h<st.open[1];h++)for(const m of [0,30]){const lab=h+' h '+(m?'30':'00');const b=document.createElement('button');b.className='slot'+(R.sl===lab?' on':'');b.textContent=lab;b.disabled=hsh(st.n+R.d+lab)%4===0;b.onclick=()=>{R.sl=lab;renderRdv()};$('slots').appendChild(b)}
+  $('rdvTitle').textContent=st.n}
+renderRdv();
+$('rGo').onclick=()=>{const n=$('rName').value.trim(),ph=$('rPhone').value.trim(),m=$('rEmail').value.trim();
+  if(!R.sl)return $('rErr').textContent='Choisis un créneau.';if(!n)return $('rErr').textContent='Indique ton prénom.';if(!phoneOk(ph))return $('rErr').textContent='Numéro invalide (ex. 06 12 34 56 78).';if(!mailOk(m))return $('rErr').textContent='Adresse e-mail invalide.';
+  $('rErr').textContent='';const st=STORES[R.st];const d=DAYS[R.d].toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  $('rdvOk').innerHTML='<div class="okbox"><b></b><dl><dt>Boutique</dt><dd class="a"></dd><dt>Adresse</dt><dd class="b"></dd><dt>Quand</dt><dd class="c"></dd><dt>Pour</dt><dd class="e"></dd><dt>Rappel</dt><dd class="f"></dd><dt>Réf.</dt><dd class="g"></dd></dl></div>';
+  const ok=$('rdvOk');ok.querySelector('b').textContent='C\'est réservé, '+n+' !';ok.querySelector('.a').textContent=st.n;ok.querySelector('.b').textContent=st.a;ok.querySelector('.c').textContent=d+' à '+R.sl+' (20 min)';ok.querySelector('.e').textContent=$('rWhy').value;ok.querySelector('.f').textContent='SMS au '+ph+' la veille, e-mail à '+m;ok.querySelector('.g').textContent='RDV-'+Math.random().toString(36).slice(2,7).toUpperCase();toast('Rendez-vous réservé (démonstration)')};
+
+/* panier */
+let CART=[];const openCart=()=>{$('drawer').classList.add('on');$('scrim').classList.add('on')},closeCart=()=>{$('drawer').classList.remove('on');$('scrim').classList.remove('on')};
+function renderCart(){$('badge').textContent=CART.length;$('badge').classList.toggle('on',CART.length>0);const L=$('cartList');L.innerHTML='';
+  if(!CART.length)L.innerHTML='<p class="empty">Ton panier est vide.</p>';$('checkout').disabled=!CART.length;$('checkout').style.opacity=CART.length?1:.4;
+  CART.forEach((it,i)=>{const d=document.createElement('div');d.className='item';d.innerHTML='<div class="th"><img alt=""></div><div><b></b><small></small><br><button class="rm">Retirer</button></div><b class="pp"></b>';d.querySelector('img').src='v_perspective_'+COLORS[it.c][2]+'.png';d.querySelector('b').textContent='iPhone 18 Pro '+STORAGE[it.s][0];d.querySelector('small').textContent=COLORS[it.c][0]+(it.t?' · reprise '+TRADE[it.t][0]:'')+' · '+PLANS[it.p][0];d.querySelector('.pp').textContent=eur(it.total);d.querySelector('.rm').onclick=()=>{CART.splice(i,1);renderCart()};L.appendChild(d)});
+  $('cartTot').textContent=eur(CART.reduce((a,b)=>a+b.total,0))}
+renderCart();
+$('add').onclick=()=>{CART.push({c:S.c,s:S.s,t:S.t,p:S.p,total:total()});renderCart();openCart()};
+$('cartBtn').onclick=openCart;$('dClose').onclick=closeCart;$('scrim').onclick=closeCart;
+
+/* modales */
+const openM=id=>$(id).classList.add('on'),closeM=id=>$(id).classList.remove('on');
+$('checkout').onclick=()=>{if(!CART.length)return;closeCart();$('oRecap').textContent=CART.length+' article'+(CART.length>1?'s':'')+' · total '+eur(CART.reduce((a,b)=>a+b.total,0))+'.';$('oForm').hidden=false;$('oDone').hidden=true;openM('order')};
+$('oX').onclick=$('dX').onclick=()=>closeM('order');
+$('fGo').onclick=()=>{const n=$('fName').value.trim(),m=$('fEmail').value.trim();
+  if(!n)return $('fErr').textContent='Indique ton nom.';if(!mailOk(m))return $('fErr').textContent='Adresse e-mail invalide.';if(!phoneOk($('fPhone').value.trim()))return $('fErr').textContent='Numéro de téléphone invalide.';if(!$('fCgv').checked)return $('fErr').textContent='Accepte les conditions générales de vente pour continuer.';
+  $('fErr').textContent='';$('oForm').hidden=true;$('oDone').hidden=false;$('dT').textContent='Merci '+n.split(' ')[0]+' !';$('dP').textContent='Commande IP18-'+Math.random().toString(36).slice(2,8).toUpperCase()+' confirmée. Un récapitulatif serait envoyé à '+m+'. (Démonstration : aucune commande réelle.)';CART=[];renderCart()};
+let seen=false;try{seen=sessionStorage.getItem('pop18')==='1'}catch(e){}
+function openPop(force){if(!force&&seen)return;seen=true;try{sessionStorage.setItem('pop18','1')}catch(e){}openM('pop')}
+setTimeout(()=>openPop(false),4000);
+let exitShown=false;try{exitShown=sessionStorage.getItem('exit18')==='1'}catch(e){}
+document.addEventListener('mouseout',e=>{if(exitShown||e.relatedTarget||e.clientY>8||document.querySelector('.modal.on')||!$('popDone').hidden)return;exitShown=true;try{sessionStorage.setItem('exit18','1')}catch(e){}$('popT').textContent='Attends, avant de partir !';openM('pop')});
+$('popX').onclick=$('pdX').onclick=()=>closeM('pop');$('ftKit').onclick=e=>{e.preventDefault();openPop(true)};
+function check(n,m,ok,err){if(!n){err('Indique ton prénom.');return false}if(!mailOk(m)){err('Adresse e-mail invalide.');return false}if(!ok){err('Coche la case pour recevoir le kit.');return false}err('');return true}
+$('pGo').onclick=()=>{const n=$('pName').value.trim(),m=$('pEmail').value.trim();if(!check(n,m,$('pOk').checked,t=>$('pErr').textContent=t))return;$('popForm').hidden=true;$('popDone').hidden=false;$('pdT').textContent='Merci '+n+' !';$('pdP').textContent='Ton kit arrive à '+m+'. On te prévient aussi dès qu\'une promo tombe.'};
+$('kitForm').onsubmit=e=>{e.preventDefault();const n=$('kName').value.trim(),m=$('kEmail').value.trim();if(!check(n,m,$('kOk').checked,t=>$('kErr').textContent=t))return;$('kitBox').innerHTML='<p class="lead" style="color:#f5f5f7">Merci '+esc(n)+', c\'est noté. Ton kit arrive par e-mail.</p>'};
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on'));closeCart()}});
+</script>
