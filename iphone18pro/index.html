@@ -23,16 +23,16 @@ img{display:block;max-width:100%}
 a:focus:not(:focus-visible),button:focus:not(:focus-visible){outline:none}
 
 /* typo */
-.eyebrow{font-size:clamp(17px,1.6vw,21px);font-weight:600;color:var(--grey)}
-.h1{font-size:clamp(44px,7.4vw,96px);font-weight:700;line-height:1.02;letter-spacing:-.03em}
-.h2{font-size:clamp(36px,5.6vw,72px);font-weight:700;line-height:1.05;letter-spacing:-.028em}
-.h3{font-size:clamp(28px,3.4vw,44px);font-weight:700;line-height:1.08;letter-spacing:-.022em}
+.eyebrow{font-size:clamp(15px,1.4vw,19px);font-weight:600;color:var(--grey);letter-spacing:-.005em}
+.h1{font-size:clamp(46px,7.4vw,100px);font-weight:600;line-height:1;letter-spacing:-.045em}
+.h2{font-size:clamp(36px,5.4vw,70px);font-weight:600;line-height:1.04;letter-spacing:-.04em}
+.h3{font-size:clamp(28px,3.4vw,44px);font-weight:600;line-height:1.08;letter-spacing:-.032em}
 .lead{font-size:clamp(17px,1.7vw,21px);color:var(--grey);font-weight:500;line-height:1.45}
 .lead b{color:var(--text);font-weight:600}
 .light .lead b{color:var(--ink)}
-.grad{background:linear-gradient(120deg,#f6c7d0 0%,#e8a3b1 35%,#b9637a 70%,#8a3445 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.grad-b{background:linear-gradient(120deg,#cfe0ff,#7fb2ff 50%,#2997ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.grad-g{background:linear-gradient(120deg,#c6f6c0,#5fd068 60%,#2ea44f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad{background:linear-gradient(180deg,#f3d2d9 0%,#d58a9b 45%,#9b4458 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-b{background:linear-gradient(180deg,#ffffff 0%,#d9d4cc 50%,#8f8a82 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-g{background:linear-gradient(180deg,#ffffff 0%,#d9d4cc 50%,#8f8a82 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--blue);color:#fff;border-radius:980px;padding:11px 22px;font-size:17px;font-weight:500;transition:background .2s,transform .2s;white-space:nowrap}
 .btn:hover{background:#0077ed}
 .btn.sm{padding:6px 14px;font-size:13px}
@@ -44,8 +44,34 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible){outline:none}
 .lnk::after{content:" ›"}
 sup a{color:inherit;font-size:.6em;margin-left:1px}
 
+/* titane sur fond clair */
+.light .grad-b,.light .grad-g,.white .grad-b,.white .grad-g{background:linear-gradient(180deg,#5b5852,#1d1d1f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.light .grad,.white .grad{background:linear-gradient(180deg,#b5566b,#7a2a3b);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* finitions premium */
+::selection{background:#8a3445;color:#fff}
+.sec{border-top:1px solid rgba(255,255,255,.06)}
+.light.sec,.white.sec{border-top:0}
+.hero .word{opacity:.55;background:linear-gradient(180deg,#5a5650 0%,#1a1918 70%);-webkit-background-clip:text;background-clip:text}
+.hero .ph{filter:drop-shadow(0 50px 60px rgba(0,0,0,.6))}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(transparent,#000);pointer-events:none}
+.hero .copy,.hero .buypill,.hero .sw{z-index:2}
+.btn{font-weight:500;letter-spacing:-.01em;box-shadow:0 1px 0 rgba(255,255,255,.12) inset}
+.hl{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.hl img{max-height:520px;filter:drop-shadow(0 30px 50px rgba(0,0,0,.55))}
+.hl .num{font-weight:600;letter-spacing:-.05em}
+.tile{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s}
+.tile:hover{transform:translateY(-4px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.tile svg,.cols3 svg{color:#cfc8bd}
+.tile b,.stats3 b,.capg b,.rcard .ill,.specgrid .big b{font-weight:600;letter-spacing:-.045em}
+.viewer{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.vstage img{max-height:520px;filter:drop-shadow(0 40px 60px rgba(0,0,0,.6))}
+.vframe{box-shadow:0 0 0 9px #1d1d1f,0 0 0 10px #48484a,0 50px 120px rgba(0,0,0,.8),0 0 120px rgba(138,52,69,.25)}
+.rcard{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.gmain img{max-height:520px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.18))}
+.notice{font-size:12px;letter-spacing:.01em}
+
 /* révélation au scroll */
-.rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.25,.1,.25,1),transform .9s cubic-bezier(.25,.1,.25,1);transition-delay:calc(var(--i,0)*90ms)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity 1.1s cubic-bezier(.2,.7,.2,1),transform 1.1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0)*90ms)}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}*{animation:none!important;scroll-behavior:auto!important}}
 
@@ -68,6 +94,8 @@ sup a{color:inherit;font-size:.6em;margin-left:1px}
 .lnav a.l{font-size:12px;color:#d2d2d7}
 .lnav a.l:hover,.lnav a.l.on{color:#fff}
 .burger{display:none}
+.mbuy{display:none}
+@media(max-width:900px){.mbuy{display:inline-flex}}
 .mnav{display:none}
 
 /* héro */
@@ -372,6 +400,11 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 
 @media(max-width:900px){
   .gnav nav,.lnav a.l{display:none}
+  .lnav{display:none}
+  .mnav{top:44px!important}
+  .zoom .stage{top:44px;height:calc(100vh - 44px)}
+  .floatpill{padding:6px 6px 6px 16px;font-size:13px}
+  .hl img{max-height:300px}
   .burger{display:flex}
   .mnav{position:sticky;top:96px;z-index:38;background:rgba(22,22,23,.96);flex-direction:column;padding:6px 22px 14px}
   .mnav.on{display:flex}
@@ -418,7 +451,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
   <a class="logo" href="#top">iPhone 18 <em>Pro</em></a>
   <nav><a href="#film">Le film</a><a href="#points-forts">Points forts</a><a href="#design">Design</a><a href="#photo">Photo</a><a href="#pourquoi">Pourquoi</a><a href="#acheter">Acheter</a><a href="#aide">Aide</a></nav>
   <button class="icon" id="cartBtn" aria-label="Panier"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 5h12l-.9 11H2.9L2 5Z"/><path d="M5 5V4a3 3 0 0 1 6 0v1"/></svg><span class="badge" id="badge">0</span></button>
-  <button class="icon burger" id="burger" aria-label="Menu"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 1h16M1 6h16M1 11h16"/></svg></button>
+  <a class="btn sm mbuy" href="#acheter">Acheter</a><button class="icon burger" id="burger" aria-label="Menu"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 1h16M1 6h16M1 11h16"/></svg></button>
 </div></div>
 <div class="lnav"><div class="wide">
   <b>iPhone 18 Pro</b>
@@ -460,10 +493,10 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 <section class="sec dark1" id="points-forts" style="padding-bottom:110px">
   <div class="wide head-row"><h2 class="h2 rv">Points forts.</h2><a class="lnk rv" href="#pourquoi">Pourquoi le choisir</a></div>
   <div class="hl-track" id="hlTrack">
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="v_arriere_bleu.png" alt=""></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#3d1620,#000 70%)"><p class="t">Toute ta journée. <span>Du footing du matin au dernier Reel du soir, sans chercher de prise.</span></p><span class="num grad">16 h 43</span><img src="v_perspective_rouge.png" alt=""></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="v_avant_noir.png" alt=""></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="v_avant_blanc.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="iphone_bleu.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#3d1620,#000 70%)"><p class="t">Toute ta journée. <span>Du footing du matin au dernier Reel du soir, sans chercher de prise.</span></p><span class="num grad">16 h 43</span><img src="iphone_rouge.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="iphone_noir.png" alt=""></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="iphone_blanc.png" alt=""></article>
   </div>
   <div class="hl-ctrl" id="hlCtrl"><div class="hl-dots" id="hlDots"></div><button class="hl-play" id="hlPlay" aria-label="Pause"><svg id="hlIco" width="12" height="14" viewBox="0 0 12 14" fill="#fff"><rect width="4" height="14"/><rect x="8" width="4" height="14"/></svg></button></div>
 </section>
@@ -476,7 +509,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
     <p class="lead rv" style="--i:2">Un iPhone qui <b>capture tes moments</b>, <b>tient toute ta journée</b>, travaille <b>main dans la main avec ton Mac</b> et <b>protège ta vie privée</b>. Et qui se garde trois ans sans prendre une ride.</p>
     <div class="cmpbar rv" style="--i:3">
       <div class="cmpsel">Tu as aujourd'hui un <select class="pillsel" id="oldPhone" aria-label="Ton téléphone actuel"></select></div>
-      <div class="stats3"><div><b id="st1" class="grad"></b><span>de reprise sur ta commande</span></div><div><b id="st2"></b><span id="st2l">par mois en 4× sans frais</span></div><div><b class="grad-g">100 %</b><span>batterie neuve, garantie incluse</span></div></div>
+      <div class="stats3"><div><b id="st1" class="grad"></b><span>de reprise sur ta commande</span></div><div><b id="st2" class="grad-b"></b><span id="st2l">par mois en 4× sans frais</span></div><div><b class="grad-b">100 %</b><span>batterie neuve, garantie incluse</span></div></div>
     </div>
   </div>
 </section>
