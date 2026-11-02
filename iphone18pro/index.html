@@ -135,18 +135,22 @@ section{position:relative}
 .vframe video{width:100%;height:100%;object-fit:cover;display:block}
 .vplay{position:absolute;right:16px;bottom:16px;width:36px;height:36px;border-radius:50%;background:rgba(66,66,69,.7);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center}
 
+[hidden]{display:none!important}
+.hero .glow{display:none}
+.herov{position:absolute;left:50%;top:28%;width:min(800px,76vw);transform:translate(-50%,-50%);-webkit-mask-image:radial-gradient(75% 80% at 50% 50%,#000 60%,transparent 100%);mask-image:radial-gradient(75% 80% at 50% 50%,#000 60%,transparent 100%)}
+@media(max-width:900px){.herov{top:34%;width:130vw}}
 /* compteur du héro */
 .hcount{margin-top:26px}
 .hk{display:flex;align-items:center;gap:12px;font-size:15px;color:#d2d2d7}
 .hk b{color:#fff;font-weight:600}
-.ap{width:44px;height:33px;flex:0 0 auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+.ap{width:auto;height:44px;flex:0 0 auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
 .digits{display:flex;align-items:flex-start;gap:10px;margin-top:12px;font-variant-numeric:tabular-nums}
 .digits div{text-align:center}
 .digits span{display:block;font-size:clamp(34px,4vw,52px);font-weight:300;letter-spacing:-.03em;line-height:1;background:linear-gradient(180deg,#fff,#b9b3aa);-webkit-background-clip:text;background-clip:text;color:transparent}
 .digits small{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#86868b;margin-top:6px}
 .digits i{font-style:normal;font-size:clamp(28px,3vw,40px);font-weight:200;color:#48484a;line-height:1}
 .apcard{display:flex;align-items:center;gap:16px}
-.apcard .ap{width:64px;height:48px}
+.apcard .ap{width:auto;height:90px}
 
 .hl img.sm{max-height:420px;height:76%;right:12%}
 /* Points forts */
@@ -480,14 +484,14 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
 <!-- HÉRO -->
 <section class="hero" id="hero">
   <div class="glow" id="glow"></div>
-  <div class="word" aria-hidden="true">PRO</div>
-  <img class="ph on" src="iphone_rouge.png" alt="iPhone 18 Pro rouge profond"><img class="ph" src="iphone_bleu.png" alt="iPhone 18 Pro bleu"><img class="ph" src="iphone_noir.png" alt="iPhone 18 Pro noir"><img class="ph" src="iphone_blanc.png" alt="iPhone 18 Pro blanc">
-  <button class="pause" id="heroPause" aria-label="Mettre en pause le changement de coloris"><svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg></button>
+  <img class="herov" src="u_hero.png" alt="iPhone 18 Pro rouge posé sur le mot PRO">
+  
+  <button hidden class="pause" id="heroPause" aria-label="Mettre en pause le changement de coloris"><svg width="10" height="12" viewBox="0 0 10 12" fill="#fff"><rect width="3" height="12"/><rect x="7" width="3" height="12"/></svg></button>
   <div class="copy"><div class="eyebrow">iPhone 18 Pro</div><div class="h1">Il suit<br>ton rythme.</div>
-    <div class="hcount"><div class="hk"><svg class="ap" viewBox="0 0 120 90" aria-hidden="true"><defs><linearGradient id="apg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfcac2"/></linearGradient></defs><g fill="url(#apg)" stroke="#bdb7ae" stroke-width="1"><path d="M30 10c-12 0-20 9-20 20s8 18 17 18h3v32c0 5 3 8 7 8s7-3 7-8V30c0-12-6-20-14-20Z"/><path d="M90 10c12 0 20 9 20 20s-8 18-17 18h-3v32c0 5-3 8-7 8s-7-3-7-8V30c0-12 6-20 14-20Z"/></g><circle cx="22" cy="28" r="4" fill="#2a2a2c"/><circle cx="98" cy="28" r="4" fill="#2a2a2c"/></svg><span><b>AirPods 3 offerts</b> avec ta précommande. Fin de l'offre dans</span></div>
+    <div class="hcount"><div class="hk"><img class="ap" src="u_airpods.png" alt="AirPods 3"><span><b>AirPods 3 offerts</b> avec ta précommande. Fin de l'offre dans</span></div>
       <div class="digits" aria-live="off"><div><span id="cd">03</span><small>jours</small></div><i>:</i><div><span id="ch">07</span><small>heures</small></div><i>:</i><div><span id="cm">42</span><small>min</small></div><i>:</i><div><span id="cs">00</span><small>sec</small></div></div></div></div>
   <div class="buypill"><span>À partir de <b>1 329 €</b> ou <b id="heroMo"></b></span><a class="btn sm" href="#acheter">Acheter</a></div>
-  <div class="sw" id="heroSw"></div>
+  <div class="sw" id="heroSw" hidden></div>
 </section>
 
 
@@ -514,7 +518,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
     <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#22324a,#000 70%)"><p class="t">Trois capteurs 48 Mpx. <span>Tes voyages et tes Reels, nets même de nuit.</span></p><span class="num grad-b">48 Mpx</span><img src="v_arriere_bleu.png" alt="" class="sm"></article>
     <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#3d1620,#000 70%)"><p class="t">Toute ta journée. <span>Du footing du matin au dernier Reel du soir, sans chercher de prise.</span></p><span class="num grad">16 h 43</span><img src="iphone_rouge.png" alt=""></article>
     <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2a2a2d,#000 70%)"><p class="t">Main dans la main avec ton Mac. <span>Copie sur l'iPhone, colle sur le Mac. C'est smooth.</span></p><span class="num" style="color:#f5f5f7">Mac + iPhone</span><img src="v_avant_noir.png" alt="" class="sm"></article>
-    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="v_perspective_blanc.png" alt="" class="sm"></article>
+    <article class="hl" style="background:radial-gradient(90% 90% at 80% 70%,#2c2b28,#000 70%)"><p class="t">Ta vie privée reste privée. <span>Face ID, iCloud, et c'est toi qui choisis ce que les apps voient.</span></p><span class="num grad-g">Face ID</span><img src="u_noir.png" alt="" class="sm" style="max-height:440px"></article>
   </div>
   <div class="hl-ctrl" id="hlCtrl"><div class="hl-dots" id="hlDots"></div><button class="hl-play" id="hlPlay" aria-label="Pause"><svg id="hlIco" width="12" height="14" viewBox="0 0 12 14" fill="#fff"><rect width="4" height="14"/><rect x="8" width="4" height="14"/></svg></button></div>
 </section>
@@ -532,6 +536,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
   </div>
 </section>
 
+<section style="background:#000;padding:0 0 120px"><div class="wide"><img class="rv" src="u_intro.webp" alt="iPhone 18 Pro rouge et bleu" style="width:100%;border-radius:28px"></div></section>
 <!-- DESIGN : VISUALISEUR -->
 <section class="sec dark1" id="design">
   <div class="wide">
@@ -614,7 +619,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
     <a class="rcard rv" href="#acheter"><small>Reprise</small><h4>Ton ancien iPhone fait baisser le prix.</h4><p>Estimation immédiate, déduite de ta commande.</p><span class="ill grad">−650 €</span><span class="go">›</span></a>
     <a class="rcard rv" href="#acheter" style="--i:1"><small>Paiement</small><h4>En 4 fois sans frais.</h4><p>Ou sur 24 mois. Tu choisis à la commande.</p><span class="ill grad-b">4×</span><span class="go">›</span></a>
     <a class="rcard rv" href="#boutique-rdv" style="--i:2"><small>En boutique</small><h4>Prends-le en main avant d'acheter.</h4><p>20 minutes avec un conseiller à Lyon.</p><span class="ill" style="color:#1d1d1f">20 min</span><span class="go">›</span></a>
-    <a class="rcard rv" href="#acheter" style="--i:3"><small>Offre de lancement</small><h4>AirPods 3 offerts avec ta précommande.</h4><p>Plus la coque MagSafe et 3 mois d'AppleCare+. Jusqu'à la fin du compte à rebours.</p><span class="ill apcard"><svg class="ap" viewBox="0 0 120 90" aria-hidden="true"><defs><linearGradient id="apg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfcac2"/></linearGradient></defs><g fill="url(#apg2)" stroke="#bdb7ae" stroke-width="1"><path d="M30 10c-12 0-20 9-20 20s8 18 17 18h3v32c0 5 3 8 7 8s7-3 7-8V30c0-12-6-20-14-20Z"/><path d="M90 10c12 0 20 9 20 20s-8 18-17 18h-3v32c0 5-3 8-7 8s-7-3-7-8V30c0-12 6-20 14-20Z"/></g><circle cx="22" cy="28" r="4" fill="#2a2a2c"/><circle cx="98" cy="28" r="4" fill="#2a2a2c"/></svg><span class="grad">Offerts</span></span><span class="go">›</span></a>
+    <a class="rcard rv" href="#acheter" style="--i:3"><small>Offre de lancement</small><h4>AirPods 3 offerts avec ta précommande.</h4><p>Plus la coque MagSafe et 3 mois d'AppleCare+. Jusqu'à la fin du compte à rebours.</p><span class="ill apcard"><img class="ap" src="u_airpods.png" alt="AirPods 3"><span class="grad">Offerts</span></span><span class="go">›</span></a>
     <a class="rcard rv" href="#aide" style="--i:4"><small>Livraison</small><h4>Chez toi le jour de la sortie.</h4><p>Livraison offerte, retour gratuit sous 14 jours.</p><span class="ill" style="color:#1d1d1f">0 €</span><span class="go">›</span></a>
   </div>
   <div class="arrows"><button id="rPrev" aria-label="Précédent">‹</button><button id="rNext" aria-label="Suivant">›</button></div>
@@ -649,7 +654,7 @@ footer .legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
           <button class="btn" id="add">Ajouter au panier</button>
           <div class="pay"><span>Carte bancaire</span><span>Apple Pay</span><span>PayPal</span><span>4× sans frais</span></div>
         </div>
-        <div class="gift"><div class="apcard"><svg class="ap" viewBox="0 0 120 90" aria-hidden="true"><defs><linearGradient id="apg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfcac2"/></linearGradient></defs><g fill="url(#apg3)" stroke="#bdb7ae" stroke-width="1"><path d="M30 10c-12 0-20 9-20 20s8 18 17 18h3v32c0 5 3 8 7 8s7-3 7-8V30c0-12-6-20-14-20Z"/><path d="M90 10c12 0 20 9 20 20s-8 18-17 18h-3v32c0 5-3 8-7 8s-7-3-7-8V30c0-12 6-20 14-20Z"/></g><circle cx="22" cy="28" r="4" fill="#2a2a2c"/><circle cx="98" cy="28" r="4" fill="#2a2a2c"/></svg><div><b>AirPods 3 offerts</b> avec ta précommande, plus la coque MagSafe assortie et 3 mois d'AppleCare+. Jusqu'au <span id="until"></span> ou dans la limite du stock de lancement.</div></div>
+        <div class="gift"><div class="apcard"><img class="ap" src="u_airpods.png" alt="AirPods 3"><div><b>AirPods 3 offerts</b> avec ta précommande, plus la coque MagSafe assortie et 3 mois d'AppleCare+. Jusqu'au <span id="until"></span> ou dans la limite du stock de lancement.</div></div>
           <div class="timer"><div><span id="td">00</span><small>jours</small></div><div><span id="th">00</span><small>heures</small></div><div><span id="tm">00</span><small>min</small></div><div><span id="ts">00</span><small>sec</small></div></div></div>
         <p class="hint">Tu préfères le voir avant ? <a href="#boutique-rdv">Réserve une prise en main en boutique</a></p>
       </div>
