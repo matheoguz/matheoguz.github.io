@@ -416,3 +416,63 @@ td .pdf-bts { flex-wrap: nowrap; }
 #rubriques [data-rub][hidden] { display: none !important; }
 .role-sel .role-l { white-space: nowrap; }
 @media (max-width: 480px) { .entete .marque > div:not(.logo) { display: none; } }
+
+/* ---------- boutons d'en-tête : visite guidée, vos données ---------- */
+.bt-entete { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 10px; background: var(--carte, #fff); color: var(--texte, #0f172a); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: none; }
+.bt-entete:hover { background: var(--gris-doux, #f1f5f9); }
+.bt-entete.bt-import { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+.bt-entete.bt-import:hover { background: #dbeafe; }
+@media (max-width: 1560px) { .bt-entete.bt-visite span { display: none; } .bt-entete.bt-visite { width: 36px; padding: 0; justify-content: center; } }
+@media (max-width: 900px) { .bt-entete { height: 34px; } .bt-entete span { display: none; } .bt-entete { width: 34px; padding: 0; justify-content: center; } }
+.bandeau-demo.vos-donnees { background: #eff6ff; color: #1e3a8a; border-bottom-color: #bfdbfe; }
+.bandeau-demo.vos-donnees span { color: #1d4ed8; }
+.bd-retour { margin-left: 8px; height: 22px; padding: 0 10px; border: 1px solid #93c5fd; border-radius: 99px; background: #fff; color: #1d4ed8; font: inherit; font-weight: 700; cursor: pointer; }
+
+/* ---------- visite guidée ---------- */
+.vg-halo { position: fixed; z-index: 1100; display: none; border-radius: 12px; pointer-events: none; box-shadow: 0 0 0 3px #2563eb, 0 0 0 9999px rgba(15,23,42,.42); transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease; }
+.vg-halo.vg-action { box-shadow: 0 0 0 3px #f59e0b, 0 0 0 9999px rgba(15,23,42,.42); animation: vg-pouls 1.4s ease-in-out infinite; }
+@keyframes vg-pouls { 50% { box-shadow: 0 0 0 7px rgba(245,158,11,.55), 0 0 0 9999px rgba(15,23,42,.42); } }
+.vg-bulle { position: fixed; z-index: 1101; left: -9999px; top: 0; padding: 14px 16px 12px; border-radius: 14px; background: #fff; color: #0f172a; box-shadow: 0 18px 48px rgba(15,23,42,.32); font-size: 14px; transition: left .35s ease, top .35s ease; }
+.vg-bulle.vg-entre { animation: vg-entre .25s ease-out; }
+@keyframes vg-entre { from { opacity: 0; transform: translateY(6px); } }
+.vg-barre { height: 4px; border-radius: 99px; background: #e2e8f0; overflow: hidden; margin-bottom: 10px; }
+.vg-barre i { display: block; height: 100%; background: #2563eb; border-radius: inherit; transition: width .3s ease; }
+.vg-n { color: #64748b; font-size: 12px; } .vg-n b { color: #b45309; }
+.vg-bulle h3 { margin: 4px 0 4px; font-size: 16px; letter-spacing: -.01em; }
+.vg-bulle p { margin: 0 0 12px; line-height: 1.45; color: #334155; }
+.vg-bts { display: flex; justify-content: space-between; gap: 8px; }
+.vg-bts button { height: 36px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.vg-passer { border: 0; background: none; color: #64748b; padding: 0 4px !important; }
+.vg-suivant { border: 0; background: #2563eb; color: #fff; }
+.vg-suivant:hover { background: #1d4ed8; }
+@media (prefers-reduced-motion: reduce) { .vg-halo, .vg-bulle, .vg-barre i { transition: none; } .vg-halo.vg-action, .vg-bulle.vg-entre { animation: none; } }
+
+/* ---------- écran d'import ---------- */
+.imp { flex: 1; min-height: 0; overflow: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; }
+.imp-garantie { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 10px 12px; border-radius: 10px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; line-height: 1.45; }
+.imp-garantie svg { flex: none; margin-top: 2px; }
+.imp-depot { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 22px 16px; border: 2px dashed #93c5fd; border-radius: 14px; background: #fff; color: #1e3a8a; text-align: center; cursor: pointer; }
+.imp-depot:hover, .imp-depot.survol, .imp-depot:focus-visible { background: #eff6ff; border-color: #2563eb; outline: none; }
+.imp-depot small { color: #64748b; }
+.imp-modeles { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.imp-modeles > span { color: #64748b; }
+.imp-modeles a { display: inline-flex; align-items: center; gap: 4px; color: #1d4ed8; font-weight: 600; text-decoration: none; }
+.imp-modeles a:hover { text-decoration: underline; }
+.imp-exemple { margin-left: auto; height: 32px; padding: 0 12px; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.imp-attendu { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+.imp-attendu > div { padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid #e5e7eb; }
+.imp-attendu b { display: block; } .imp-attendu small { color: #64748b; line-height: 1.4; } .imp-attendu i { font-style: normal; color: #94a3b8; }
+.imp-h { margin: 6px 0 0; font-size: 15px; }
+.imp-sources { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.imp-sources li { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid #e5e7eb; }
+.imp-sources small { display: block; color: #64748b; }
+.imp-erreurs { padding: 10px 12px; border-radius: 10px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.imp-erreurs ul, .imp-notes ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.45; }
+.imp-notes { padding: 10px 12px; border-radius: 10px; background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+.imp-table { display: grid; gap: 4px; } .imp-table small { color: #64748b; }
+.imp-defile { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; }
+.imp-defile table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.imp-defile th, .imp-defile td { padding: 6px 10px; text-align: left; white-space: nowrap; border-bottom: 1px solid #f1f5f9; }
+.imp-defile th { background: #f8fafc; color: #475569; font-weight: 600; }
+.imp-garder { display: inline-flex; align-items: center; gap: 6px; margin-right: auto; font-size: 13px; color: #334155; }
+@media (max-width: 900px) { .imp { padding: 12px 14px 16px; } .imp-exemple { margin-left: 0; } .imp-garder { width: 100%; } }

@@ -467,7 +467,9 @@ function anciennete(debut, fin = aujourdhui()) {
   return [a ? `${a} an${a > 1 ? 's' : ''}` : '', r ? `${r} mois` : ''].filter(Boolean).join(' et ');
 }
 
-export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {}, etat = () => ({ cle: 'present', txt: 'Présent·e' }), pauseDe = () => null, coutJour = () => 0, voirPoste = choisirPersonne, surAction = () => {} } = {}) {
+export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {}, etat = () => ({ cle: 'present', txt: 'Présent·e' }), pauseDe = () => null, coutJour = () => 0, voirPoste = choisirPersonne, surAction = () => {}, services = {}, fichesDemo = true } = {}) {
+  // équipe importée par le visiteur : pas de contrats ni de rôles inventés attachés à ses personnes, services = ses rayons
+  const SERV = { ...SERVICES, ...services };
   if (!document.getElementById('rh-css')) { const s = document.createElement('style'); s.id = 'rh-css'; s.textContent = CSS; document.head.appendChild(s); }
 
   // état de la démo (copie : les boutons changent l'étape sans toucher aux données d'origine)
@@ -620,11 +622,11 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   // taux horaire brut = coût chargé / 1,35 (charges patronales fictives de 35 %), brut mensuel = taux × heures par semaine × 52 / 12.
   const zoneInit = Object.fromEntries(equipe.map((e) => [e.id, e.zone]));
   const idx = (e) => equipe.indexOf(e);
-  const perso = (e) => PERSONNEL[idx(e)] || ['CDI', '2020-01-06', null, 35, 10, '2024-01-15', null, []];
+  const perso = (e) => (fichesDemo && PERSONNEL[idx(e)]) || ['CDI', '2020-01-06', null, 35, 10, '2024-01-15', null, []];
   const heuresSem = (e) => { const h = perso(e)[3]; return typeof h === 'number' ? h : /jours/.test(h) ? 35 : parseFloat(h) || 35; };
   const tauxBrut = (e) => e.cout / CHARGES;
   const brutMois = (e) => tauxBrut(e) * heuresSem(e) * 52 / 12;
-  const serviceDe = (e) => SERVICES[zoneInit[e.id]] || SERVICES[(zoneInit[e.id] || '')[0]] || 'Magasin';
+  const serviceDe = (e) => SERV[zoneInit[e.id]] || SERV[(zoneInit[e.id] || '')[0]] || 'Magasin';
   const typeContrat = (e) => { const c = perso(e)[0]; return /^Apprentissage/.test(c) ? 'Apprentissage' : /^Saisonnier/.test(c) ? 'CDD saisonnier' : /^CDD/.test(c) ? 'CDD' : /cadre/.test(c) ? 'CDI cadre' : 'CDI'; };
   const tempsPartiel = (e) => typeof perso(e)[3] === 'number' && perso(e)[3] < 35;
   const contratCourt = (e) => typeContrat(e) + (tempsPartiel(e) ? ' · temps partiel' : '');
@@ -633,7 +635,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   const ST_CL = { present: 'ok', pause: 'att', avant: '', parti: '' };
   const pill = (e) => { const s = etat(e); return `<span class="pg-st ${ST_CL[s.cle]}">${s.txt}</span>`; };
   const P = { q: '', service: '', statut: '', tri: 'service', vue: 'cartes', eq: 'planning' };
-  const ORDRE_SERV = ['Direction', 'Ressources humaines', 'Comptabilité', 'Accueil', 'Caisses', 'Fruits et légumes', 'Épicerie', 'Frais et surgelés', 'Boissons', 'Hygiène et entretien', 'Maison et bazar', 'Réserve et quai'];
+  const ORDRE_SERV = ['Direction', 'Ressources humaines', 'Comptabilité', 'Accueil', 'Caisses', ...['r0', 'r1', 'r3', 'r2', 'r4', 'r5'].map((k) => SERV[k]), 'Réserve et quai'];
   const servicesListe = () => ORDRE_SERV.filter((s) => equipe.some((e) => serviceDe(e) === s));
   const IC = (d) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
   const ICK = {
@@ -661,7 +663,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   const filtres = () => {
     const q = P.q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     const sans = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-    let l = equipe.filter((e) => (!q || sans(`${e.nom} ${e.poste} ${serviceDe(e)} ${ROLES[idx(e)] || ''}`).includes(q))
+    let l = equipe.filter((e) => (!q || sans(`${e.nom} ${e.poste} ${serviceDe(e)} ${(fichesDemo && ROLES[idx(e)]) || ''}`).includes(q))
       && (!P.service || serviceDe(e) === P.service)
       && (!P.statut || (P.statut === 'present' ? ['present', 'pause'].includes(etat(e).cle) : P.statut === 'pause' ? etat(e).cle === 'pause' : ['avant', 'parti'].includes(etat(e).cle))));
     const tri = { nom: (a, b) => a.nom.localeCompare(b.nom, 'fr'), salaire: (a, b) => brutMois(b) - brutMois(a), anciennete: (a, b) => dIso(perso(a)[1]) - dIso(perso(b)[1]), service: (a, b) => ORDRE_SERV.indexOf(serviceDe(a)) - ORDRE_SERV.indexOf(serviceDe(b)) || brutMois(b) - brutMois(a) };
@@ -669,7 +671,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   };
   function cartePerso(e) {
     return `<button type="button" class="pp" data-rh-fiche="${e.id}">${pill(e)}<div class="pp-tete">${avatar(e.nom, { taille: 52 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div>`
-      + `<p class="pp-role">${ROLES[idx(e)] || ''}</p><div class="pp-tags"><span>${serviceDe(e)}</span><span>${contratCourt(e)}</span><span>${hTxt(e.debut)}–${hTxt(e.fin)}</span></div>`
+      + `<p class="pp-role">${(fichesDemo && ROLES[idx(e)]) || ''}</p><div class="pp-tags"><span>${serviceDe(e)}</span><span>${contratCourt(e)}</span><span>${hTxt(e.debut)}–${hTxt(e.fin)}</span></div>`
       + `<div class="pp-pied"><div><small>Brut mensuel</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Ancienneté</small><b>${anciennete(dIso(perso(e)[1]))}</b></div><div><small>Heures / semaine</small><b>${heuresSem(e)} h</b></div></div></button>`;
   }
   function listePerso(l) {
@@ -752,7 +754,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     const sem = semaine(e).map((x) => `<div class="${x.auj ? 'auj' : ''}"><span>${x.j}${x.auj ? ' (auj.)' : ''}</span><i>${x.travail ? `<u style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></u>` : ''}</i><b>${x.travail ? `${hTxt(e.debut)}–${hTxt(e.fin)}` : '<small style="color:var(--doux);font-weight:500">repos</small>'}</b></div>`).join('');
     const docs = [['Contrat de travail', contrat], ['Fiche de poste', e.poste], ...formations.map((f) => ['Attestation de formation', f]), ['Aptitude (visite médicale)', visite ? dCourt(dIso(visite)) : '-'], ['Bulletins de paie', 'consultables par la comptabilité']];
     return `<div class="ti-tete">${avatar(e.nom, { taille: 72 })}<div><h2>${esc(e.nom)}</h2><p>${esc(e.poste)} · ${serviceDe(e)}</p>${pill(e)}</div></div>`
-      + `<p class="ti-role"><b>Rôle :</b> ${ROLES[idx(e)] || ''}</p>`
+      + `<p class="ti-role"><b>Rôle :</b> ${(fichesDemo && ROLES[idx(e)]) || ''}</p>`
       + (D.salaires ? `<div class="ti-chiffres"><div><small>Brut mensuel${source('Contrat de travail · saisi par les RH')}</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut${source('Calculé : brut mensuel ÷ heures du contrat')}</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Coût chargé / h${source('Calculé : taux brut + charges patronales')}</small><b>${eur2(e.cout)}</b></div></div>` : '')
       + `<div class="ti-actions"><button type="button" class="pg-bt prim" data-ti-voir="${e.id}">Voir son poste sur la maquette</button></div>`
       + `<section class="ti-s"><h3>Aujourd'hui${source('Planning du jour · en direct')}</h3><ul class="ti-l"><li><span>Horaires</span><b>${hTxt(e.debut)} – ${hTxt(e.fin)}</b></li>${pz !== null ? `<li><span>Pause</span><b>${hTxt(pz)} – ${hTxt(pz + 0.5)}</b></li>` : ''}<li><span>Statut</span><b>${s.txt}${s.detail ? ` · ${s.detail}` : ''}</b></li><li><span>Heures faites</span><b>${nb(Math.round(Math.max(0, Math.min(heure(), e.fin) - e.debut) * 10) / 10)} h</b></li></ul></section>`
@@ -835,7 +837,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     return { fichier: `CV - ${e.nom} (fictif).pdf`, titre: `CV de ${e.nom}`, blob: await cvPdf({
       nom: e.nom, titre: e.poste, pour: `Dossier du personnel · ${MAGASIN} (magasin fictif) · ${serviceDe(e)}`, ville: 'Orléans (Loiret)', email: mailE(e.nom), telephone: 'Téléphone : non communiqué (démo)',
       profil: `${e.poste} chez ${MAGASIN} depuis ${anciennete(dE)}, service ${serviceDe(e).toLowerCase()} (${contrat}).`,
-      xp: [[maj(moisAn(dE)), fin ? maj(moisAn(dIso(fin))) : 'aujourd\'hui', e.poste, `${MAGASIN} (magasin fictif) · ${serviceDe(e)} · ${contrat}`, (() => { const r = ROLES[idx(e)] || ''; return (r.includes(' : ') ? r.split(' : ').slice(1).join(' : ') : r).split(/ ?; ?|, (?=[a-zé])/).filter((x) => x.length > 3).map((x) => maj(x.replace(/\.$/, ''))); })()]],
+      xp: [[maj(moisAn(dE)), fin ? maj(moisAn(dIso(fin))) : 'aujourd\'hui', e.poste, `${MAGASIN} (magasin fictif) · ${serviceDe(e)} · ${contrat}`, (() => { const r = (fichesDemo && ROLES[idx(e)]) || ''; return (r.includes(' : ') ? r.split(' : ').slice(1).join(' : ') : r).split(/ ?; ?|, (?=[a-zé])/).filter((x) => x.length > 3).map((x) => maj(x.replace(/\.$/, ''))); })()]],
       formation: formations.map((f) => ['', f, 'Formation suivie dans l\'entreprise (organisme fictif)']),
       competences: formations.slice(0, 5), langues: ['Français'], permis: '',
     }) };

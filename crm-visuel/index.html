@@ -277,34 +277,37 @@ import { creerInterface, poserGarde, ICONES_UI } from './interface.js';
 import { creerPagesAE } from './ae-pages.js';
 import { source } from './page.js';
 import { creerJournal, installerRoles, fenetre, mailResume } from './commun.js';
+import { lireImport, installerImport } from './import.js';
+import { installerVisite } from './visite.js';
+import { TABLEAUX_AE, appliquerAE } from './ae-donnees.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
-const MONITEURS = [
+const MONITEURS_DEMO = [
   { id: 'm1', nom: 'Karim Benali', permis: 'B, A2', couleur: 0x1d4ed8 },
   { id: 'm2', nom: 'Sophie Lambert', permis: 'B', couleur: 0x15803d },
   { id: 'm3', nom: 'Thomas Renaud', permis: 'B, BE', couleur: 0xc2410c },
   { id: 'm4', nom: 'Nadia Kaci', permis: 'B, boîte auto', couleur: 0x7c3aed },
 ];
-const VOITURES = [
+const VOITURES_DEMO = [
   { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf1f1ee },
   { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DÉMO-02', km: 31560, entretien: '3 déc.', couleur: 0x374151 },
   { id: 'v3', nom: 'Voiture 3', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-03', km: 61030, entretien: '28 oct.', couleur: 0x9ca3af },
   { id: 'v4', nom: 'Voiture 4', modele: 'Yaris, boîte manuelle', plaque: 'DÉMO-04', km: 22940, entretien: '19 nov.', couleur: 0xb91c1c },
   { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DÉMO-05', km: 17480, entretien: '7 janv.', couleur: 0x1e3a8a },
 ];
-const MOTOS = [
+const MOTOS_DEMO = [
   { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x111827, entretien: '15 nov.' },
   { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xb91c1c, entretien: '2 déc.' },
 ];
 // [heures faites, forfait, reste à payer en €]
-const ELEVES = {
+const ELEVES_DEMO = {
   'Léa Martin': [14, 20, 0], 'Hugo Durand': [18, 20, 112], 'Inès Toumi': [6, 20, 0], 'Yanis Petit': [18, 25, 336], 'Chloé Roux': [9, 20, 0], 'Lucas Girard': [27, 30, 0],
   'Manon Faure': [3, 20, 0], 'Rayan Saidi': [12, 20, 224], 'Emma Vidal': [16, 20, 0], 'Noah Colin': [20, 20, 0], 'Jade Lefèvre': [8, 13, 0], 'Adam Bernard': [11, 20, 168],
   'Sarah Nicolas': [5, 20, 0], 'Tom Henry': [19, 20, 0], 'Lina Amrani': [2, 20, 0], 'Enzo Marchal': [24, 25, 400],
 };
 // Planning du jour : [moniteur, début (h), durée (h), élève, type, véhicule]
-const PLANNING = [
+const PLANNING_DEMO = [
   ['m1', 8, 1, 'Léa Martin', 'Conduite 1 h', 'v1'], ['m1', 9, 2, 'Hugo Durand', 'Conduite 2 h', 'v1'], ['m1', 11, 1, 'Manon Faure', 'Conduite 1 h', 'v1'],
   ['m1', 14, 2, 'Rayan Saidi', 'Plateau moto 2 h', 'mo1'], ['m1', 16, 1, 'Jade Lefèvre', 'Conduite 1 h', 'v1'], ['m1', 17, 1, 'Adam Bernard', 'Conduite 1 h', 'v1'],
   ['m2', 8, 2, 'Inès Toumi', 'Conduite 2 h', 'v2'], ['m2', 10, 1, 'Chloé Roux', 'Conduite 1 h', 'v2'], ['m2', 11.5, 1, 'Sarah Nicolas', 'Conduite 1 h', 'v2'],
@@ -314,6 +317,12 @@ const PLANNING = [
   ['m4', 9, 1, 'Jade Lefèvre', 'Conduite boîte auto 1 h', 'v5'], ['m4', 10.5, 1, 'Emma Vidal', 'Conduite boîte auto 1 h', 'v5'], ['m4', 11.5, 1, 'Tom Henry', 'Conduite boîte auto 1 h', 'v5'],
   ['m4', 14, 1, 'Sarah Nicolas', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo Marchal', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Hugo Durand', 'Conduite boîte auto 1 h', 'v5'],
 ].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
+// « Essayez avec vos données » : moniteurs, véhicules et élèves importés par le visiteur (restés dans son navigateur)
+const DEMO = { MONITEURS: MONITEURS_DEMO, VOITURES: VOITURES_DEMO, MOTOS: MOTOS_DEMO, ELEVES: ELEVES_DEMO, PLANNING: PLANNING_DEMO };
+const IMPORT = lireImport('auto-ecole');
+let appli = DEMO;
+if (IMPORT) { try { appli = appliquerAE(IMPORT.donnees, DEMO); } catch { appli = DEMO; } }
+const { MONITEURS, VOITURES, MOTOS, ELEVES, PLANNING } = appli;
 const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
 const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000, PLACES_CODE = 12;
 // Historique FICTIF des examens du permis B des six derniers mois : [élève, mois (0 = ce mois-ci, 5 = il y a 5 mois), jour,
@@ -348,7 +357,7 @@ const journal = creerJournal({ hh });
 const ROLES = [
   { id: 'gerant', label: 'Gérant·e', qui: 'Hélène Carpentier', rub: null, finances: true, paiements: true, alertes: () => true, moniteurs: null },
   { id: 'secretaire', label: 'Secrétaire', qui: 'Julie Moreau', rub: new Set(['traiter', 'planning', 'vehicules', 'moniteurs', 'eleves', 'code', 'journal']), finances: false, paiements: true, alertes: () => true, moniteurs: null },
-  { id: 'moniteur', label: 'Moniteur·rice', qui: 'Karim Benali', rub: new Set(['planning', 'eleves']), finances: false, paiements: false, alertes: () => false, moniteurs: new Set(['m1']), planningTitre: 'Mon planning', elevesTitre: 'Mes élèves' },
+  { id: 'moniteur', label: 'Moniteur·rice', qui: MONITEURS[0].nom, rub: new Set(['planning', 'eleves']), finances: false, paiements: false, alertes: () => false, moniteurs: new Set(['m1']), planningTitre: 'Mon planning', elevesTitre: 'Mes élèves' },
 ];
 let roleCourant = ROLES[0];
 const ROLE = () => roleCourant;
@@ -1049,7 +1058,7 @@ function animer(now) {
 }
 // pour les tests automatiques : état, alertes, actions, dessins
 window.demo = {
-  objets, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
+  objets, camera, controls, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
   aller: (h) => { t = h; rejouerJournal(); synchroniser(true); majTout(); }, journal: () => journal.entrees(), resume: () => ouvrirResume(), examens,
   role: (id) => { const s = document.getElementById('role-choix'); if (!id) return ROLE().id; s.value = id; s.dispatchEvent(new Event('change')); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
 };
@@ -1097,6 +1106,21 @@ installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliqu
 appliquerRole(ROLES[0]);
 window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
+// « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
+const droite = document.querySelector('header .droite');
+installerImport({ cle: 'auto-ecole', nom: 'Démo auto-école', tableaux: TABLEAUX_AE, apercu: (d) => appliquerAE(d, DEMO).notes, hote: droite });
+const alerteVisite = () => $('contenu').querySelector('.alerte[data-alerte^="impaye"]:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
+installerVisite({
+  cle: 'auto-ecole', hote: droite, auto: !IMPORT,
+  etapes: [
+    { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur le planning, les forfaits, les paiements et les véhicules. Les plus urgentes en haut.', avant: () => ui.aller('traiter'), cible: () => alerteVisite() || $('contenu') },
+    { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous montre l\'endroit concerné : la voiture, le moniteur ou l\'accueil.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-voir]') },
+    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-act].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : l'écran fait le nécessaire et le note.` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-act].prim:not([disabled])') },
+    { titre: 'C\'est traité', texte: 'L\'alerte passe dans « Traité aujourd\'hui », avec l\'heure. L\'action est aussi notée dans le Journal.', avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); setTimeout(() => $('contenu').querySelector('.traites')?.scrollIntoView({ block: 'nearest' }), 50); }, cible: () => $('contenu').querySelector('.traites')?.parentElement || $('contenu') },
+    { titre: MOBILE ? 'Vos rubriques, en bas' : 'Vos rubriques, à gauche', texte: 'Planning, véhicules, moniteurs, élèves, code, chiffres : chaque rubrique montre sa zone sur la maquette.', avant: () => ui.aller('accueil'), cible: () => $('rubriques') },
+    { titre: 'Essayez avec vos données', texte: 'Déposez un fichier CSV ou Excel avec vos moniteurs, vos véhicules et vos élèves : la démo se recalcule avec, sans rien envoyer sur Internet.', cible: () => $('btn-import') },
+  ],
+});
 requestAnimationFrame(animer);
 </script>
 </body>

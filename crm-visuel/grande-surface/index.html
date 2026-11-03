@@ -306,12 +306,15 @@ import { creerKpis } from './tableau.js';
 import { creerInterface, poserGarde, ICONES_UI } from '../interface.js';
 import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende, source } from '../page.js';
 import { creerJournal, installerRoles, fenetre, mailResume } from '../commun.js';
+import { lireImport, installerImport } from '../import.js';
+import { installerVisite } from '../visite.js';
+import { TABLEAUX_GS, appliquerGS } from './donnees.js';
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
 // [nom, poste, début, fin, coût horaire chargé (fictif), zone]
-const EQUIPE = [
+const EQUIPE_DEMO = [
   ['Claire Dumont', 'Directrice du magasin', 8, 18, 38, 'bureau'],
   ['Mehdi Larbi', 'Chef de rayon frais', 6, 14, 24, 'r3'],
   ['Laura Pineau', 'Cheffe de rayon épicerie', 9, 17, 24, 'r1'],
@@ -335,7 +338,7 @@ const EQUIPE = [
   ['Sophie Marchand', 'Responsable RH', 9, 17, 30, 'etage-rh'],
   ['Marc Lemoine', 'Comptable', 8.5, 16.5, 26, 'etage-compta'],
 ].map(([nom, poste, debut, fin, cout, zone], i) => ({ id: 'e' + i, nom, poste, debut, fin, cout, zone }));
-const RAYONS = [
+const RAYONS_DEMO = [
   { id: 'r0', nom: 'Fruits et légumes', couleur: 0x65a30d, refs: 310, stock: 0.82, ruptures: 2, conso: 0.035 },
   { id: 'r1', nom: 'Épicerie', couleur: 0xd97706, refs: 1840, stock: 0.9, ruptures: 5, conso: 0.012 },
   { id: 'r2', nom: 'Boissons', couleur: 0x2563eb, refs: 620, stock: 0.76, ruptures: 3, conso: 0.02 },
@@ -352,7 +355,15 @@ const LIVRAISONS = [
 ];
 const FOURNISSEURS = { r0: 'Maraîcher local (fictif)', r1: 'Grossiste épicerie (fictif)', r2: 'Boissons du Centre (fictif)', r3: 'Plateforme frais (fictive)', r4: 'Droguerie Centrale (fictive)', r5: 'Bazar Distribution (fictif)' };
 const PAR_PALETTE = 0.01; // part du rayon remplie par une palette reçue
-const NB_CAISSES = 8, PANIER = 41.6;
+const PANIER = 41.6;
+// « Essayez avec vos données » : rayons, équipe et nombre de caisses importés par le visiteur (restés dans son navigateur)
+const DEMO = { EQUIPE: EQUIPE_DEMO, RAYONS: RAYONS_DEMO, NB_CAISSES: 8 };
+const IMPORT = lireImport('grande-surface');
+let appli = DEMO;
+if (IMPORT) { try { appli = appliquerGS(IMPORT.donnees, DEMO); } catch { appli = DEMO; } }
+const { EQUIPE, RAYONS, NB_CAISSES } = appli;
+const QUI = (f, d) => (EQUIPE.find(f) || {}).nom || d;
+const QUI_CAISSE = QUI((e) => /^c\d/.test(e.zone), 'Hôte·sse de caisse');
 
 // ================= Horloge de démo =================
 let t = 11.7, pause = false;
@@ -364,10 +375,10 @@ const journal = creerJournal({ hh });
 const ZONE0 = Object.fromEntries(EQUIPE.map((e) => [e.id, e.zone]));
 // « Voir en tant que » : ce que chaque rôle voit (rubriques, alertes, équipe, salaires, chiffres financiers)
 const ROLES = [
-  { id: 'direction', label: 'Directeur·rice', qui: 'Claire Dumont', rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
-  { id: 'rh', label: 'Responsable RH', qui: 'Sophie Marchand', rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
-  { id: 'rayon', label: 'Chef de rayon', qui: 'Mehdi Larbi', rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
-  { id: 'caisse', label: 'Hôte·sse de caisse', qui: 'Léa Bonnet', rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === 'Léa Bonnet', equipeTitre: 'Mon planning' },
+  { id: 'direction', label: 'Directeur·rice', qui: QUI((e) => e.zone === 'bureau', 'Direction'), rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
+  { id: 'rh', label: 'Responsable RH', qui: QUI((e) => e.zone === 'etage-rh', 'Responsable RH'), rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
+  { id: 'rayon', label: 'Chef de rayon', qui: QUI((e) => /^r\d/.test(e.zone) && /chef/i.test(e.poste), QUI((e) => /^r\d/.test(e.zone), 'Chef de rayon')), rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
+  { id: 'caisse', label: 'Hôte·sse de caisse', qui: QUI_CAISSE, rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === QUI_CAISSE, equipeTitre: 'Mon planning' },
 ];
 let roleCourant = ROLES[0];
 const ROLE = () => roleCourant;
@@ -394,7 +405,7 @@ function rejouerJournal() { journal.vider(); hJournal = 0; evenements(-1, t); hJ
 const JA = new Set(); // alertes déjà notées dans le journal
 const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
-const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
+const debutPause = (e) => (e.pause != null ? e.pause : e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
 const enPause = (e) => { const d = debutPause(e); return d !== null && present(e) && t >= d && t < d + 0.5; };
 const auRepos = (e) => enPause(e) && !objets[e.id]?.job; // la pause commence une fois la tâche en cours finie
 const SIEGES = [[12.3, -6.95, 0], [13.5, -5.05, Math.PI], [14.7, -6.95, 0], [12.3, -5.05, Math.PI], [14.7, -5.05, Math.PI], [13.5, -6.95, 0]];
@@ -1431,7 +1442,7 @@ function ouvrirResume() {
   fenetre.ouvrir({
     titre: 'Résumé du jour', sous: `Aperçu du mail envoyé chaque soir à la direction · arrêté à ${hh(t)} (heure de la démo)`, cle: 'resume',
     corps: mailResume({
-      de: 'Hyper Modèle · écran du magasin', a: 'Claire Dumont (direction)', objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
+      de: 'Hyper Modèle · écran du magasin', a: `${ROLES[0].qui} (direction)`, objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
       intro: `Bonsoir, voici la journée du magasin arrêtée à <b>${hh(t)}</b>. Tous les chiffres viennent de la simulation de la démo.`,
       blocs: [
         { titre: 'Chiffres de la journée', lignes: [['Chiffre d\'affaires', euros(ca)], ['Hier sur la journée entière', euros(CA_HIER)], ['Passages en caisse (estimés)', nb(passages)], ['Panier moyen', PANIER.toLocaleString('fr-FR') + ' €'], ['Coût de l\'équipe', `${euros(cout)} (${(ca ? (cout / ca) * 100 : 0).toFixed(1).replace('.', ',')} % du CA)`], ['Ruptures de stock', nb(rup)], ['Livraisons reçues', `${recues.length} sur ${LIVRAISONS.length}`]] },
@@ -1448,7 +1459,7 @@ function ouvrirResume() {
 const etatPersonne = (e) => (auRepos(e) ? { cle: 'pause', txt: 'En pause', detail: 'salle de pause' } : present(e) ? { cle: 'present', txt: 'Présent·e', detail: objets[e.id]?.job ? objets[e.id].job.texte : ZONE_NOM(e.zone) } : t < e.debut ? { cle: 'avant', txt: 'Arrive à ' + hTxt(e.debut) } : { cle: 'parti', txt: 'Service terminé' });
 // depuis une page pleine : retour à la 3D, zoom sur le poste de la personne
 const voirPoste = (id) => { tiroir.fermer(); ui.aller('accueil'); choisir(id); };
-const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
+const rh = installerRH({ services: Object.fromEntries(RAYONS.map((r) => [r.id, r.nom])), fichesDemo: !IMPORT || EQUIPE === EQUIPE_DEMO, equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
 // le candidat attendu vient au bureau RH de l'étage pendant son entretien
 const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
@@ -1466,6 +1477,22 @@ appliquerRole(ROLES[0]);
 calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
 if (document.fonts) document.fonts.ready.then(placerCurseur);
 window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), role: (id) => (id ? document.getElementById('role-choix') && (document.getElementById('role-choix').value = id, document.getElementById('role-choix').dispatchEvent(new Event('change'))) : ROLE().id), journal: () => journal.entrees(), resume: () => ouvrirResume(), regler: (h) => { t = h; HIST_ALERTES.clear(); rejouerJournal(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
+// « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
+const droite = document.querySelector('.entete .droite');
+installerImport({ cle: 'grande-surface', nom: 'Démo supermarché', tableaux: TABLEAUX_GS, apercu: (d) => appliquerGS(d, DEMO).notes, hote: droite });
+const alerteCaisse = () => $('contenu').querySelector('.alerte[data-k^="caisse"]:has([data-al="caisse"]:not([disabled]))');
+const alerteVisite = () => alerteCaisse() || $('contenu').querySelector('.alerte:has([data-al].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
+installerVisite({
+  cle: 'grande-surface', hote: droite, auto: !IMPORT,
+  etapes: [
+    { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur les stocks, les files en caisse, les livraisons et le planning. Les plus urgentes en haut.', avant: () => { if (selection) choisir(null); ui.aller('traiter'); }, cible: () => $('contenu').querySelector('.at-liste') },
+    { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous emmène à l\'endroit concerné, dans le magasin.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-al-voir]') },
+    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-al].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : ${b.dataset.al === 'caisse' ? 'la personne la plus proche part en renfort' : b.dataset.al.startsWith('commander') ? 'la commande part, avec l\'heure de livraison' : 'l\'écran fait le nécessaire'}, et c'est noté.` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); }, cible: () => alerteVisite()?.querySelector('[data-al].prim:not([disabled])') },
+    { titre: 'C\'est traité', texte: 'L\'alerte passe dans « Traité », avec l\'heure et la personne. L\'action est aussi notée dans le Journal.', avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); setTimeout(() => $('contenu').querySelector('.at-traites')?.scrollIntoView({ block: 'nearest' }), 50); }, cible: () => $('contenu').querySelector('.at-traites .traites') || $('contenu').querySelector('.at-liste') },
+    { titre: MOBILE ? 'Vos rubriques, en bas' : 'Vos rubriques, à gauche', texte: 'Stocks, affluence, caisses, équipe, livraisons, RH, chiffres : chaque rubrique montre sa zone sur la maquette.', avant: () => ui.aller('accueil'), cible: () => $('rubriques') },
+    { titre: 'Essayez avec vos données', texte: 'Déposez un fichier CSV ou Excel avec vos rayons, votre équipe et vos caisses : la démo se recalcule avec, sans rien envoyer sur Internet.', cible: () => $('btn-import') },
+  ],
+});
 requestAnimationFrame(animer);
 </script>
 </body>
