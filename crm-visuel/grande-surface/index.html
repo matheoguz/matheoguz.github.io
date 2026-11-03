@@ -11,110 +11,230 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --fond: #f3f4f6; --carte: #fff; --texte: #111827; --doux: #6b7280; --ligne: #e5e7eb; --accent: #b91c1c; --accent-doux: #fee2e2; --vert: #15803d; --vert-doux: #dcfce7; --orange: #c2410c; --orange-doux: #ffedd5; --gris-doux: #f3f4f6; }
+  :root {
+    --fond: #f1f4f9; --carte: #fff; --texte: #0f172a; --doux: #64748b; --doux2: #94a3b8; --ligne: #e5e9f0; --ligne2: #eef1f6;
+    --bleu: #2563eb; --bleu-doux: #eff6ff; --vert: #16a34a; --vert-doux: #dcfce7; --orange: #ea580c; --orange-doux: #ffedd5; --rouge: #dc2626; --rouge-doux: #fee2e2; --gris-doux: #f1f5f9;
+    --accent: #b91c1c; --verre: rgba(255,255,255,.85); --ombre: 0 1px 2px rgba(15,23,42,.05), 0 8px 24px rgba(15,23,42,.08); --ombre-s: 0 1px 2px rgba(15,23,42,.05), 0 2px 8px rgba(15,23,42,.04); --r: 14px;
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--fond); color: var(--texte); font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
-  .app { display: grid; grid-template-columns: minmax(0, 1fr) 430px; grid-template-rows: auto auto minmax(0, 1fr); height: 100vh; }
-  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
-  .logo { width: 36px; height: 36px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; }
-  .titre b { display: block; font-size: 15px; }
-  .titre span { color: var(--doux); font-size: 12.5px; }
-  .demo { font-size: 11.5px; font-weight: 600; color: var(--orange); background: var(--orange-doux); padding: 3px 8px; border-radius: 99px; margin-left: 6px; }
-  .horloge { margin-left: auto; text-align: right; }
-  .horloge b { font-size: 20px; font-variant-numeric: tabular-nums; }
-  .horloge span { display: block; color: var(--doux); font-size: 11.5px; }
-  .direct { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert) !important; margin-right: 8px; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+  .bandeau-demo { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 6px; background: #fffbeb; color: #92400e; border-bottom: 1px solid #fde68a; font-size: 11.5px; font-weight: 600; padding: 4px 12px; text-align: center; line-height: 1.3; }
+  .bandeau-demo svg { flex: none; }
+  .bandeau-demo span { font-weight: 500; color: #a16207; }
+
+  /* ---------- en-tête ---------- */
+  .entete { grid-column: 1 / -1; display: flex; align-items: center; gap: 24px; padding: 12px 24px; background: var(--carte); border-bottom: 1px solid var(--ligne); }
+  .marque { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .logo { width: 40px; height: 40px; flex: none; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(185,28,28,.25); }
+  .marque b { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; }
+  .marque > div > span { display: block; color: var(--doux); font-size: 12.5px; white-space: nowrap; }
+  .demo { font-size: 11px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 2px 8px; border-radius: 99px; }
+  .vues { position: relative; display: inline-flex; padding: 4px; border-radius: 12px; background: #eef1f6; margin: 0 auto; }
+  .vues button { position: relative; z-index: 1; border: 0; background: none; padding: 7px 16px; border-radius: 9px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; white-space: nowrap; transition: color .2s; display: inline-flex; align-items: center; gap: 6px; }
+  .vues button svg { opacity: .7; }
+  .vues button.actif { color: var(--texte); }
+  .vues button.actif svg { opacity: 1; color: var(--bleu); }
+  .vues-curseur { position: absolute; top: 4px; bottom: 4px; left: 4px; width: 0; border-radius: 9px; background: #fff; box-shadow: 0 1px 3px rgba(15,23,42,.12), 0 1px 2px rgba(15,23,42,.06); transition: left .3s cubic-bezier(.3,.7,.3,1), width .3s cubic-bezier(.3,.7,.3,1); }
+  .droite { display: flex; align-items: center; gap: 12px; }
+  .direct { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--vert); background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 99px; }
   .direct i { width: 7px; height: 7px; border-radius: 50%; background: var(--vert); animation: pouls 2s infinite; }
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
-  .kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--ligne); border-bottom: 1px solid var(--ligne); }
-  .kpi { background: var(--carte); padding: 12px 18px; }
-  .kpi span { color: var(--doux); font-size: 12px; }
-  .kpi b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin: 1px 0; }
-  .kpi em { font-style: normal; font-size: 11.5px; color: var(--doux); }
-  .jauge { height: 4px; border-radius: 4px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
-  .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 4px; }
-  .scene { position: relative; overflow: hidden; min-height: 0; background: #e9ebe6; }
+  .horloge { text-align: right; line-height: 1.15; }
+  .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .horloge small { color: var(--doux); font-size: 11px; }
+  .bouton-ic { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--ligne); background: #fff; border-radius: 10px; cursor: pointer; color: #334155; }
+  .bouton-ic:hover { background: var(--gris-doux); }
+  .bouton-ic.actif { background: var(--bleu-doux); border-color: #bfdbfe; color: var(--bleu); }
+  .lien-offre { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 10px; background: var(--texte); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .lien-offre:hover { background: #1e293b; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- chiffres clés ---------- */
+  .kpi { background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); box-shadow: var(--ombre-s); padding: 12px 14px 10px; min-width: 0; }
+  .kpi-h { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .kpi-ic { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--kd); color: var(--k); transition: background .4s, color .4s; }
+  .kpi-l { color: var(--doux); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-m { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin: 6px 0 4px; }
+  .kpi-m b { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .spark { flex: none; color: var(--k); overflow: visible; }
+  .kpi-b { display: flex; align-items: center; min-width: 0; font-size: 11.5px; }
+  .kpi em { display: none; font-style: normal; color: var(--doux); font-size: 11.5px; }
+  .tend { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; color: var(--doux); min-width: 0; }
+  .tend b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tend span { color: var(--doux2); overflow: hidden; text-overflow: ellipsis; }
+  .tend.bien { color: var(--vert); } .tend.mal { color: var(--rouge); } .tend.neutre { color: #475569; }
+
+  /* ---------- maquette 3D ---------- */
+  .scene { position: relative; overflow: hidden; min-height: 0; background: #eef0f3; margin: 0 8px 16px 16px; border-radius: 18px; border: 1px solid var(--ligne); box-shadow: var(--ombre-s); }
   .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
   .scene canvas:active { cursor: grabbing; }
-  .aide { position: absolute; right: 12px; top: 14px; background: rgba(255,255,255,.9); border: 1px solid var(--ligne); border-radius: 7px; padding: 5px 9px; font-size: 11.5px; color: var(--doux); pointer-events: none; transition: opacity .6s; }
+  .verre { background: var(--verre); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); border: 1px solid rgba(255,255,255,.75); box-shadow: var(--ombre); border-radius: var(--r); }
+  .aide { position: absolute; right: 12px; bottom: 12px; padding: 6px 10px; font-size: 11.5px; color: #475569; pointer-events: none; transition: opacity .6s; border-radius: 10px; }
   .aide.cache { opacity: 0; }
-  @media (max-width: 900px) { .aide { top: auto; bottom: 10px; right: 10px; } }
   .etiquettes { position: absolute; inset: 0; pointer-events: none; }
-  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.96); border: 1px solid var(--ligne); border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 1px 4px rgba(17,24,39,.12); pointer-events: auto; cursor: pointer; }
+  .et { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(226,232,240,.9); border-radius: 99px; padding: 3px 10px 3px 8px; font-size: 11.5px; font-weight: 600; box-shadow: 0 2px 8px rgba(15,23,42,.12); pointer-events: auto; cursor: pointer; transition: opacity .3s; }
   .et small { font-weight: 500; color: var(--doux); }
-  .et i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
-  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(17,24,39,.86); color: #fff; border-radius: 5px; padding: 2px 6px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
+  .et i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .badge { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: rgba(15,23,42,.84); color: #fff; border-radius: 7px; padding: 2px 7px; font-size: 10.5px; font-weight: 600; line-height: 1.25; pointer-events: none; text-align: center; }
   .badge small { display: block; font-weight: 500; font-size: 9.5px; opacity: .8; }
-  .outils { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; }
-  .bouton { border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 7px; cursor: pointer; text-decoration: none; }
-  .bouton.actif { border-color: var(--accent); color: var(--accent); background: var(--accent-doux); }
-  .annonce { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: var(--texte); color: #fff; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
-  .annonce.vu { opacity: .92; }
-  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; padding: 14px 16px; font-size: 13px; text-align: center; }
-  .fiche { position: absolute; left: 14px; bottom: 14px; width: 330px; max-width: calc(100% - 28px); background: var(--carte); border: 1px solid var(--ligne); border-radius: 10px; box-shadow: 0 6px 24px rgba(17,24,39,.14); padding: 14px 16px; display: none; max-height: 70%; overflow-y: auto; }
-  .fiche.vu { display: block; }
-  .fiche h3 { margin: 0; font-size: 16px; }
-  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 8px; }
-  .fermer { position: absolute; right: 10px; top: 8px; border: 0; background: none; font-size: 18px; color: var(--doux); cursor: pointer; }
-  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
-  .statut.ok { color: var(--vert); background: var(--vert-doux); }
-  .statut.att { color: var(--orange); background: var(--orange-doux); }
-  .statut.ko { color: var(--accent); background: var(--accent-doux); }
-  .lignes { margin: 8px 0 0; padding: 0; list-style: none; }
-  .connecte { border: 1px solid #bbf7d0; background: var(--vert-doux); border-radius: 8px; padding: 9px 11px; margin: 0 0 12px; font-size: 12px; line-height: 1.45; }
-  .connecte b { color: var(--vert); }
-  .connecte p { margin: 4px 0 0; color: var(--texte); }
-  .connecte small { color: var(--doux); }
-  .synchro { font-size: 11.5px; color: var(--vert); margin: 6px 0 0; }
-  .commande { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--ligne); }
-  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .commande .ligne b { min-width: 74px; text-align: center; font-size: 13px; }
-  .commande button { border: 1px solid var(--ligne); background: var(--carte); font: inherit; font-size: 13px; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-  .commande button.go { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; margin-left: auto; }
-  .commande button:disabled { opacity: .45; cursor: default; }
-  .commande small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 5px; }
-  .commande .fait { color: var(--vert); font-weight: 600; font-size: 12px; margin-top: 5px; }
-  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--ligne); font-size: 13px; }
+  .bouton { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #334155; font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 9px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s; }
+  .bouton:hover { background: rgba(241,245,249,.9); }
+  .bouton.actif { background: var(--bleu-doux); color: #1d4ed8; }
+  .bouton[hidden] { display: none; }
+  .annonce { position: absolute; left: 50%; top: 14px; transform: translate(-50%, -6px); background: rgba(15,23,42,.9); color: #fff; font-size: 12.5px; font-weight: 500; padding: 8px 14px; border-radius: 99px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; z-index: 3; box-shadow: 0 8px 24px rgba(15,23,42,.25); }
+  .annonce.vu { opacity: 1; transform: translate(-50%, 0); }
+  .erreur { position: absolute; inset: 40px 20px auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); padding: 14px 16px; font-size: 13px; text-align: center; }
+  /* panneaux flottants (ordinateur) */
+  .zl { display: grid; grid-template-columns: 1fr auto; gap: 3px 8px; align-items: center; padding: 4px 0; }
+  .zl span { color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+  .zl span i { width: 8px; height: 8px; border-radius: 3px; flex: none; }
+  .zl b { font-variant-numeric: tabular-nums; font-size: 12px; }
+  .zl .barre { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: var(--ligne2); overflow: hidden; }
+  .zl .barre i { display: block; height: 100%; border-radius: 4px; transition: width .6s; }
+  .histo { display: flex; align-items: flex-end; gap: 3px; height: 56px; margin-top: 2px; }
+  .histo i { flex: 1; background: #dbeafe; border-radius: 3px 3px 1px 1px; min-height: 2px; }
+  .histo i.passe { background: #93c5fd; }
+  .histo i.now { background: var(--bleu); }
+  .histo-h { display: flex; justify-content: space-between; color: var(--doux2); font-size: 10px; margin-top: 4px; }
+  /* fiche de l'élément choisi */
+  .fiche { position: absolute; left: 12px; bottom: 12px; width: 340px; max-width: calc(100% - 24px); padding: 16px 18px; display: none; max-height: 72%; overflow-y: auto; z-index: 4; }
+  .fiche.vu { display: block; animation: monte .28s ease-out; }
+  .fiche h3 { margin: 0; font-size: 16px; letter-spacing: -.01em; padding-right: 28px; }
+  .fiche .sous { color: var(--doux); font-size: 12.5px; margin: 2px 0 10px; }
+  .fermer { position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: rgba(241,245,249,.9); color: #475569; cursor: pointer; display: grid; place-items: center; }
+  .fermer:hover { background: #e2e8f0; }
+  .statut { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--gris-doux); color: #475569; }
+  .statut.ok { color: #15803d; background: var(--vert-doux); }
+  .statut.att { color: #c2410c; background: var(--orange-doux); }
+  .statut.ko { color: #b91c1c; background: var(--rouge-doux); }
+  .lignes { margin: 10px 0 0; padding: 0; list-style: none; }
+  .lignes li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--ligne2); font-size: 13px; }
   .lignes li span:first-child { color: var(--doux); }
   .lignes li b { font-weight: 600; text-align: right; }
-  aside { background: var(--carte); border-left: 1px solid var(--ligne); display: flex; flex-direction: column; min-height: 0; }
-  .onglets { display: flex; border-bottom: 1px solid var(--ligne); padding: 0 12px; }
-  .onglets button { flex: 1; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--doux); padding: 12px 4px 10px; border-bottom: 2px solid transparent; cursor: pointer; }
-  .onglets button.actif { color: var(--accent); border-color: var(--accent); }
-  .contenu { padding: 14px 16px; overflow-y: auto; flex: 1; }
-  .note { color: var(--doux); font-size: 11.5px; padding: 10px 16px; border-top: 1px solid var(--ligne); margin: 0; }
-  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  .connecte { border: 1px solid #bbf7d0; background: #f0fdf4; border-radius: 12px; padding: 10px 12px; margin: 0 0 16px; font-size: 12px; line-height: 1.45; }
+  .connecte b { color: #15803d; }
+  .connecte p { margin: 4px 0 0; color: var(--texte); }
+  .connecte small { color: var(--doux); }
+  .synchro { font-size: 11.5px; color: #15803d; margin: 8px 0 0; }
+  .commande, .fiche .actions-fiche { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ligne2); }
+  .commande .ligne { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .commande .ligne b { min-width: 80px; text-align: center; font-size: 13px; }
+  .commande button, .fiche .actions-fiche button { height: 32px; border: 1px solid var(--ligne); background: var(--carte); font-size: 13px; font-weight: 600; border-radius: 10px; padding: 0 12px; cursor: pointer; }
+  .commande button:hover, .fiche .actions-fiche button:hover { background: var(--gris-doux); }
+  .commande button.go { background: var(--texte); border-color: var(--texte); color: #fff; margin-left: auto; }
+  .commande button:disabled, .fiche .actions-fiche button:disabled { opacity: .45; cursor: default; }
+  .commande small, .fiche .actions-fiche small { display: block; color: var(--doux); font-size: 11.5px; margin-top: 6px; }
+  .commande .fait { color: #15803d; font-weight: 600; font-size: 12px; margin-top: 6px; }
+
+  /* ---------- colonne de droite ---------- */
+  .compteur { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 99px; background: var(--gris-doux); color: var(--doux); font-size: 11px; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums; }
+  .compteur.rouge { background: var(--rouge); color: #fff; }
+  .compteur.orange { background: var(--orange); color: #fff; }
+  .contenu { padding: 16px; overflow-y: auto; flex: 1; }
+  .note { color: var(--doux2); font-size: 11px; padding: 10px 16px; border-top: 1px solid var(--ligne2); margin: 0; flex: none; }
+  h2 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); margin: 0 0 8px; font-weight: 600; }
+  /* onglet À traiter */
+  .at-resume { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 8px; }
+  .pastille { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #f8fafc; border: 1px solid var(--ligne2); color: #334155; }
+  .pastille i { width: 7px; height: 7px; border-radius: 50%; }
+  .pastille svg { width: 13px; height: 13px; color: var(--vert); }
+  .at-note { color: var(--doux2); font-size: 11.5px; margin: 0 0 16px; }
+  .alerte { background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--r); box-shadow: var(--ombre-s); padding: 14px; margin: 0 0 12px; transition: box-shadow .2s, border-color .2s; }
+  .alerte:hover { border-color: #d5dbe5; box-shadow: var(--ombre); }
+  .alerte.entre { animation: entree .38s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes entree { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+  @keyframes monte { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .al-tete { display: flex; gap: 12px; align-items: flex-start; }
+  .al-ic { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: var(--cd); }
+  .al-tete b { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; letter-spacing: -.005em; }
+  .al-tete small { display: flex; align-items: center; gap: 8px; margin-top: 4px; color: var(--doux); font-size: 11.5px; }
+  .prio { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 6px; border-radius: 99px; background: var(--cd); color: var(--c); font-weight: 600; }
+  .prio i { position: relative; width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .prio.urgent i::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--c); opacity: 0; animation: onde 1.8s ease-out infinite; }
+  @keyframes onde { 0% { transform: scale(.4); opacity: .7; } 100% { transform: scale(1.4); opacity: 0; } }
+  .alerte ul { margin: 10px 0 0 44px; padding: 0; list-style: none; font-size: 12.5px; color: #475569; }
+  .alerte li { margin: 2px 0; }
+  .al-act { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 0 44px; }
+  .al-act button { display: inline-flex; align-items: center; gap: 6px; height: 32px; border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); font-size: 12.5px; font-weight: 600; padding: 0 12px; border-radius: 10px; cursor: pointer; transition: background .15s, transform .1s; }
+  .al-act button:hover { background: var(--gris-doux); }
+  .al-act button:active { transform: scale(.97); }
+  .al-act button.prim { background: var(--texte); border-color: var(--texte); color: #fff; }
+  .al-act button.prim:hover { background: #1e293b; }
+  .al-act button:disabled { opacity: .45; cursor: default; }
+  .al-act small { flex-basis: 100%; color: var(--doux); font-size: 11px; }
+  .vide { text-align: center; padding: 32px 16px; color: var(--doux); border: 1px dashed #d5dbe5; border-radius: var(--r); margin: 0 0 16px; background: linear-gradient(180deg, #f8fafc, #fff); }
+  .vide .rond { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; background: var(--vert-doux); color: var(--vert); }
+  .vide .rond svg { width: 22px; height: 22px; }
+  .vide b { display: block; color: var(--texte); font-size: 14px; margin-bottom: 4px; }
+  .traites { margin-top: 16px; }
+  .traites ul { list-style: none; margin: 0; padding: 0; }
+  .traites li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--ligne2); font-size: 12.5px; }
+  .traites li svg { flex: none; color: var(--vert); margin-top: 1px; }
+  .traites li small { display: block; color: var(--doux); font-size: 11.5px; }
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid var(--ligne); }
-  td { padding: 7px 4px; border-bottom: 1px solid var(--ligne); vertical-align: middle; }
+  th { text-align: left; font-weight: 600; color: var(--doux); font-size: 11.5px; padding: 8px 6px; border-bottom: 1px solid var(--ligne); }
+  td { padding: 8px 6px; border-bottom: 1px solid var(--ligne2); vertical-align: middle; }
   tr.clic { cursor: pointer; }
-  tr.clic:hover td { background: var(--gris-doux); }
+  tr.clic:hover td { background: #f8fafc; }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .mini { height: 6px; border-radius: 6px; background: var(--gris-doux); width: 90px; display: inline-block; vertical-align: middle; overflow: hidden; }
-  .mini i { display: block; height: 100%; }
+  .mini i { display: block; height: 100%; border-radius: 6px; }
   .service { position: relative; height: 8px; background: var(--gris-doux); border-radius: 4px; width: 120px; display: inline-block; vertical-align: middle; }
   .service i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: #93c5fd; }
-  .service b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #dc2626; }
+  .service b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--rouge); }
   small.d { color: var(--doux); }
-  @media (max-width: 1150px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* ---------- téléphone : maquette en haut, chiffres en carrousel, panneaux en tiroir ---------- */
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: auto auto 52vh auto auto; height: auto; }
-    aside { border-left: 0; border-top: 1px solid var(--ligne); }
-    .contenu { overflow: visible; }
-    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .kpi { padding: 10px 14px; }
-    .kpi b { font-size: 19px; }
-    header { flex-wrap: wrap; padding: 12px 14px; }
-    .horloge { margin-left: 0; text-align: left; width: 100%; }
-    .et { font-size: 10px; padding: 2px 6px; }
+    body { overflow: hidden; }
+    .bandeau-demo { font-size: 11px; padding: 4px 10px; }
+    .bandeau-demo span { display: none; }
+    .entete { flex-wrap: wrap; gap: 10px 12px; padding: 10px 14px; }
+    .marque { flex: 1; }
+    .logo { width: 34px; height: 34px; border-radius: 10px; }
+    .marque b { font-size: 15px; }
+    .marque b .demo, .marque > div > span, .lien-offre span, .horloge small { display: none; }
+    .lien-offre { width: 34px; height: 34px; padding: 0; justify-content: center; }
+    .bouton-ic { width: 34px; height: 34px; }
+    .direct { padding: 2px 8px; font-size: 11px; }
+    .horloge b { font-size: 18px; }
+    .droite { gap: 8px; }
+    .vues { order: 3; width: 100%; margin: 0; }
+    .vues button { flex: 1; justify-content: center; padding: 7px 6px; font-size: 12.5px; }
+    .kpi-m b { font-size: 19px; }
+    .spark { width: 52px; }
+    .tend span { display: none; }
+    .scene { flex: 1; margin: 0 12px; border-radius: 16px; min-height: 0; }
+    .bouton { padding: 6px 8px; font-size: 12px; }
+    #recentrer span { display: none; }
+    .direct { font-size: 0; gap: 0; padding: 5px; }
+    .aide { display: none; }
+    .et { font-size: 10px; padding: 2px 7px 2px 6px; }
     .badge { font-size: 9.5px; padding: 1px 5px; }
     .badge small { display: none; }
-    .fiche { position: static; width: auto; max-width: none; max-height: none; overflow: visible; margin: 10px 12px 0; padding: 12px 14px; box-shadow: none; } /* sous la maquette, pour ne pas la cacher */
-    .annonce { display: none; }
+    .annonce { max-width: 86%; font-size: 12px; top: 50px; }
+    .entete { gap: 8px 10px; padding: 8px 12px; }
+    .vues button { padding: 6px 4px; }
     .service { width: 80px; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+  :root { --ui: #2563eb; --ui-doux: #eff6ff; }
+  .grille-kpi .kpi em { display: block; margin-top: 2px; }
+  .grille-kpi .kpi-m b { font-size: 20px; }
+  .grille-kpi .spark { width: 64px; }
+  .grille-kpi .tend span { display: none; }
+  .grille-kpi .jauge { height: 5px; border-radius: 5px; background: var(--gris-doux); margin-top: 6px; overflow: hidden; }
+  .grille-kpi .jauge i { display: block; height: 100%; background: var(--vert); border-radius: 5px; transition: width .6s; }
+  .degrade { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #bfdbfe, #60a5fa, #7dd3fc, #fdba74, #f97316, #dc2626); }
+  .bornes { display: flex; justify-content: space-between; color: var(--doux); margin: 4px 0 0; font-size: 11px; }
+  .alerte.eclat { border-color: var(--c); box-shadow: 0 0 0 3px var(--cd), var(--ombre); }
 </style>
+<link rel="stylesheet" href="../interface.css">
 <script type="importmap">
 { "imports": { "three": "../vendor/three.module.min.js" } }
 </script>
@@ -126,45 +246,47 @@
 </head>
 <body>
 <div class="app">
-  <header>
-    <div class="logo">H</div>
-    <div class="titre"><b>Hyper Modèle <span class="demo">Démo · données fictives</span></b><span>Grande surface imaginaire · tableau de bord du magasin, en direct</span></div>
-    <div class="horloge"><span class="direct"><i></i>En direct</span><b id="heure">--:--</b><span>journée accélérée pour la démo (1 s = 1 min)</span></div>
+  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives<span>— magasin, personnes, stocks et chiffres sont inventés, les alertes sont calculées sur cette simulation</span><em class="role-mention" id="role-mention"></em></div>
+  <header class="entete">
+    <div class="marque">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7M10 20v-4h4v4"/></svg></div>
+      <div><b>Hyper Modèle <span class="demo">Démo</span></b><span>Tableau de bord du magasin, en direct · données fictives</span></div>
+    </div>
+    <div class="vues" role="tablist" aria-label="Vue de la maquette">
+      <span class="vues-curseur" aria-hidden="true"></span>
+      <button role="tab" data-vue="maquette" class="actif" aria-selected="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg>Maquette</button>
+      <button role="tab" data-vue="site" aria-selected="false"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15h18M9 3v12"/></svg>Tout le site</button>
+      <button role="tab" data-vue="etage" aria-selected="false"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"/></svg>Étage</button>
+    </div>
+    <div class="droite">
+      <div id="role"></div>
+      <span class="direct"><i></i>En direct</span>
+      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <button class="bouton-ic" id="pause" aria-label="Pause" title="Mettre la journée en pause"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="ic-pause" d="M9 6v12M15 6v12"/><path class="ic-lecture" d="M8 5l11 7-11 7z" fill="currentColor" stroke="none" style="display:none"/></svg><span class="sr">Pause</span></button>
+      <a class="lien-offre" href="../offre/" aria-label="L'offre"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>L'offre</span></a>
+    </div>
   </header>
 
-  <section class="kpis" aria-label="Chiffres clés">
-    <div class="kpi"><span>Chiffre d'affaires aujourd'hui</span><b id="k-ca">-</b><em id="k-ca-d"></em></div>
-    <div class="kpi"><span>Clients dans le magasin</span><b id="k-clients">-</b><em id="k-clients-d"></em></div>
-    <div class="kpi"><span>Caisses ouvertes</span><b id="k-caisses">-</b><em id="k-caisses-d"></em></div>
-    <div class="kpi"><span>Ruptures de stock</span><b id="k-ruptures">-</b><em id="k-ruptures-d"></em></div>
-    <div class="kpi"><span>Équipe présente</span><b id="k-equipe">-</b><em id="k-equipe-d"></em></div>
-    <div class="kpi"><span>Coût de l'équipe aujourd'hui</span><b id="k-salaires">-</b><em id="k-salaires-d"></em><div class="jauge"><i id="k-salaires-j"></i></div></div>
-  </section>
-
-  <main class="scene" id="scene">
-    <div class="etiquettes" id="etiquettes"></div>
-    <div class="outils">
-      <button class="bouton" id="recentrer">Vue d'ensemble</button>
-      <button class="bouton actif" id="etage">Étage</button>
-      <button class="bouton" id="pause">Pause</button>
-      <a class="bouton" href="../offre/">L'offre</a>
-    </div>
-    <div class="annonce" id="annonce"></div>
-    <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Les chiffres et les onglets à droite restent à jour. Essayez avec un navigateur récent.</div>
-    <div class="fiche" id="fiche" role="dialog" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer">×</button><div id="fiche-c"></div></div>
-  </main>
-
-  <aside>
-    <nav class="onglets" role="tablist">
-      <button class="actif" data-onglet="equipe">Équipe</button>
-      <button data-onglet="rayons">Rayons</button>
-      <button data-onglet="caisses">Caisses</button>
-      <button data-onglet="livraisons">Livraisons</button>
-      <button data-onglet="rh">RH</button>
-    </nav>
+  <nav class="rubriques" id="rubriques" aria-label="Rubriques"></nav>
+  <div class="centre">
+    <section class="resume" id="resume" aria-label="L'essentiel"></section>
+    <main class="scene" id="scene">
+      <div class="etiquettes" id="etiquettes"></div>
+      <div class="outils-ui">
+        <button class="outil-ui" id="etage" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4"/></svg><span>Afficher l'étage</span></button>
+        <button class="outil-ui" id="recentrer" title="Recadrer la vue"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Recadrer</span></button>
+      </div>
+      <div class="annonce" id="annonce"></div>
+      <div class="erreur" id="erreur" hidden><b>La maquette 3D n'a pas pu s'afficher sur cet appareil.</b><br>Les chiffres et les rubriques restent à jour. Essayez avec un navigateur récent.</div>
+    </main>
+  </div>
+  <aside class="panneau" id="panneau" aria-label="Rubrique">
+    <div class="pan-tete"><button class="pan-retour" id="pan-retour" type="button"></button><h2 id="pan-titre"></h2><button class="pan-fermer" id="pan-fermer" type="button" aria-label="Fermer le panneau"></button></div>
+    <div class="fiche" id="fiche" role="region" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer la fiche"></button><div id="fiche-c"></div></div>
     <div class="contenu" id="contenu"></div>
     <p class="note">Démo avec des données inventées : magasin, enseigne, personnes, salaires et chiffres sont imaginaires. Un clic sur un élément de la maquette ou d'une liste ouvre sa fiche.</p>
   </aside>
+  <div hidden id="kpis-reserve"><div class="grille-kpi" id="kpis-grille"></div></div>
 </div>
 
 <script type="module">
@@ -174,6 +296,17 @@ import { construireRayon } from './rayons.js';
 import { construireEtage } from './etage.js';
 import { creerTrafic } from './trafic.js';
 import { installerRH } from './rh.js';
+import { calculerAlertes, NIVEAUX as NIV_ALERTE, ICONES } from './alertes.js';
+import { creerChaleur } from './chaleur.js';
+import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
+import { fusionnerStatique, creerFoule, assembler, textureCarrelage } from './rendu.js';
+import { creerPastilles } from './pastilles.js';
+import { ombresContact, halo, creerVoile } from './decor.js';
+import { creerKpis } from './tableau.js';
+import { creerInterface, poserGarde, ICONES_UI } from '../interface.js';
+import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende, source } from '../page.js';
+import { creerJournal, installerRoles, fenetre, mailResume } from '../commun.js';
+const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
@@ -226,6 +359,39 @@ let t = 11.7, pause = false;
 const hh = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60 + 1e-6)).padStart(2, '0')}`;
 const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60)).padStart(2, '0') : ''}`;
 const euros = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+// Journal des actions et des événements de la journée (rubrique Journal)
+const journal = creerJournal({ hh });
+const ZONE0 = Object.fromEntries(EQUIPE.map((e) => [e.id, e.zone]));
+// « Voir en tant que » : ce que chaque rôle voit (rubriques, alertes, équipe, salaires, chiffres financiers)
+const ROLES = [
+  { id: 'direction', label: 'Directeur·rice', qui: 'Claire Dumont', rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
+  { id: 'rh', label: 'Responsable RH', qui: 'Sophie Marchand', rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
+  { id: 'rayon', label: 'Chef de rayon', qui: 'Mehdi Larbi', rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
+  { id: 'caisse', label: 'Hôte·sse de caisse', qui: 'Léa Bonnet', rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === 'Léa Bonnet', equipeTitre: 'Mon planning' },
+];
+let roleCourant = ROLES[0];
+const ROLE = () => roleCourant;
+const voitRub = (id) => !ROLE().rub || id === 'accueil' || ROLE().rub.has(id);
+const vues = () => alertes.filter(ROLE().alertes);
+const agir = (texte) => journal.ajouter({ h: t, qui: ROLE().qui, role: ROLE().label, type: 'action', texte });
+// événements de la simulation entre deux heures (prises de service, caisses, camions) : rejouables, donc le journal du matin existe dès l'ouverture de la démo
+function evenements(h0, h1) {
+  const dans = (h) => h > h0 + 1e-9 && h <= h1 + 1e-9;
+  if (dans(OUVERTURE)) journal.ajouter({ h: OUVERTURE, qui: 'Magasin', type: 'journee', texte: 'Ouverture des portes aux clients' });
+  if (dans(FERMETURE)) journal.ajouter({ h: FERMETURE, qui: 'Magasin', type: 'journee', texte: 'Fermeture des portes' });
+  for (const e of EQUIPE) {
+    const z = ZONE0[e.id];
+    if (dans(e.debut)) journal.ajouter({ h: e.debut, qui: e.nom, role: e.poste, type: 'journee', texte: /^c\d/.test(z) ? `Prise de service et ouverture de la caisse ${+z.slice(1, 2) + 1}` : 'Prise de service (planning)' });
+    if (dans(e.fin)) journal.ajouter({ h: e.fin, qui: e.nom, role: e.poste, type: 'journee', texte: /^c\d/.test(z) ? `Fin de service, caisse ${+z.slice(1, 2) + 1} clôturée` : 'Fin de service' });
+  }
+  for (const d of LIVRAISONS) {
+    if (dans(d.heure)) journal.ajouter({ h: d.heure, qui: 'Quai de réception', type: 'journee', texte: `Camion au quai : ${d.fourn}, ${d.palettes} palettes${d.commande ? ' (commande passée depuis l\'écran)' : ''}` });
+    if (dans(d.heure + 0.75)) journal.ajouter({ h: d.heure + 0.75, qui: 'Quai de réception', type: 'journee', texte: `Livraison déchargée et rangée en réserve : ${d.fourn}` });
+  }
+}
+let hJournal = 0;
+function rejouerJournal() { journal.vider(); hJournal = 0; evenements(-1, t); hJournal = t; JA.clear(); }
+const JA = new Set(); // alertes déjà notées dans le journal
 const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
 const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
@@ -243,39 +409,45 @@ const CA_HIER = Math.round(caDuJour(FERMETURE) * 1.04 / 10) * 10;
 const caissiers = () => EQUIPE.filter((e) => e.zone.startsWith('c') && present(e));
 const caisseDe = (e) => +e.zone.slice(1, 2);
 const caissesOuvertes = () => [...new Set(caissiers().map(caisseDe))].sort();
-const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER[r.id] || 0) * PAR_PALETTE));
-const rupturesDe = (r) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r)) * 20));
-const coutJour = () => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout, 0);
+const stockDe = (r, h = t) => Math.min(0.98, Math.max(0.15, r.stock - r.conso * Math.max(0, h - OUVERTURE) + LIVRAISONS.filter((d) => d.rayon === r.id && d.heure + 0.75 <= h && d.heure >= OUVERTURE).reduce((n, d) => n + d.palettes, 0) * PAR_PALETTE + (MER_H[r.id] || []).filter((x) => x <= h).length * PAR_PALETTE));
+const rupturesDe = (r, h = t) => Math.max(0, Math.round(r.ruptures + (0.8 - stockDe(r, h)) * 20));
+const coutJour = (h = t) => EQUIPE.reduce((s, e) => s + Math.max(0, Math.min(h, e.fin) - e.debut) * e.cout, 0);
 const statutLiv = (d) => (t < d.heure - 0.05 ? 'prévue' : t < d.heure + 0.75 ? 'au quai' : 'déchargée');
 
 // ================= Scène =================
 const conteneur = document.getElementById('scene');
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
-conteneur.prepend(renderer.domElement);
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0xe9ebe6);
-const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 500);
-const VUE = new THREE.Vector3(70, 76, 84); camera.position.copy(VUE);
-const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.3, maxPolarAngle: 1.2, minZoom: 0.8, maxZoom: 5, enablePan: true, screenSpacePanning: false });
 const MOBILE = matchMedia('(max-width: 900px)').matches;
-const CIBLE = MOBILE ? new THREE.Vector3(-4, 0, -2) : new THREE.Vector3(-6, 0, -2);
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.82;
+conteneur.prepend(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xeef0f3);
+// environnement doux (pièce blanche éclairée) : reflets légers sur le sol, le métal et les vitrines
+{ const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(renderer), 0.04).texture; pm.dispose(); }
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 600);
+// vue d'ensemble de dessus en biais, de face (comme un plan de magasin en 3D)
+const DIR_VUE = new THREE.Vector3(Math.sin(0.2) * Math.cos(0.88), Math.sin(0.88), Math.cos(0.2) * Math.cos(0.88)).normalize();
+const CIBLE = new THREE.Vector3(-11, 0, -12);
+// vue « Maquette » : la surface de vente seule, de face et plus haut (comme un plan de magasin en perspective)
+const DIR_MAQ = new THREE.Vector3(Math.sin(0.1) * Math.cos(0.98), Math.sin(0.98), Math.cos(0.1) * Math.cos(0.98)).normalize();
+camera.position.copy(CIBLE).addScaledVector(DIR_VUE, 160);
+const controls = new OrbitControls(camera, renderer.domElement);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.2, maxPolarAngle: 1.2, minZoom: 0.6, maxZoom: 6, enablePan: true, screenSpacePanning: false });
 controls.target.copy(CIBLE);
 // Glisser (souris ou un doigt) déplace la vue ; clic droit ou deux doigts tournent et zooment ; flèches du clavier aussi
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
 controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.keyPanSpeed = 20; controls.listenToKeyEvents(window);
-controls.addEventListener('start', () => { vise = null; });
+controls.addEventListener('start', () => { vise = null; priseEnMain = true; });
 const aide = document.createElement('div'); aide.className = 'aide';
 aide.textContent = MOBILE ? 'Un doigt : se déplacer · deux doigts : zoomer et tourner' : 'Glisser : se déplacer · clic droit : tourner · molette : zoomer';
 conteneur.appendChild(aide); controls.addEventListener('start', () => setTimeout(() => aide.classList.add('cache'), 2500), { once: true }); // on reprend la main : le zoom automatique s'arrête
 // on ne sort pas de la maquette
 controls.addEventListener('change', () => { const t = controls.target, x = Math.max(-45, Math.min(45, t.x)) - t.x, z = Math.max(-34, Math.min(32, t.z)) - t.z; if (x || z) { t.x += x; t.z += z; camera.position.x += x; camera.position.z += z; } });
-scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3c8, 1.4));
-const soleil = new THREE.DirectionalLight(0xfff6ea, 2.3); soleil.position.set(-40, 80, 30); soleil.castShadow = true;
-soleil.shadow.mapSize.set(2048, 2048); Object.assign(soleil.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, near: 1, far: 220 }); soleil.shadow.bias = -0.0003; soleil.shadow.normalBias = 0.03;
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd3da, 0.35));
+const soleil = new THREE.DirectionalLight(0xfff8ef, 1.9); soleil.position.set(-38, 80, 34); soleil.target.position.set(-6, 0, -10); scene.add(soleil.target); soleil.castShadow = true;
+soleil.shadow.mapSize.set(MOBILE ? 1024 : 2048, MOBILE ? 1024 : 2048); Object.assign(soleil.shadow.camera, { left: -50, right: 50, top: 46, bottom: -46, near: 1, far: 220 }); soleil.shadow.bias = -0.0004; soleil.shadow.normalBias = 0.04; soleil.shadow.radius = 3;
 scene.add(soleil);
 
 const mats = new Map();
@@ -284,11 +456,50 @@ function boite(l, h, p, m, x, y, z, parent = scene, ombre = true) { const b = ne
 function texte(txt, { w = 1024, h = 128, fond = '#fff', couleur = '#111827', taille = 64 } = {}) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = fond; g.fillRect(0, 0, w, h); g.fillStyle = couleur; g.font = `700 ${taille}px Inter, Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, w / 2, h / 2 + 4); const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; return tx; }
 const cliquables = [];
 const clic = (obj, cle) => obj.traverse((o) => { if (o.isMesh) { o.userData.cle = cle; cliquables.push(o); } });
+function panneauTexte(txt, x, y, z, rot = 0, fond = '#1e3a8a', l = 2.4) { const m = new THREE.Mesh(new THREE.PlaneGeometry(l, 0.45), new THREE.MeshBasicMaterial({ map: texte(txt, { w: 512 * Math.max(1, Math.round(l / 2.4)), h: 96, fond, couleur: '#fff', taille: 44 }), side: THREE.DoubleSide })); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m); }
 const zone = (l, p, x, z, cle, y = 0.14) => { const b = boite(l, 0.05, p, new THREE.MeshBasicMaterial({ visible: false }), x, y, z, scene, false); b.userData.cle = cle; cliquables.push(b); return b; };
 
+// Personnes, chariots, voitures et palettes : dessinés en instances (rendu.js), chaque objet reste un Object3D animé
+const foule = creerFoule(THREE, scene);
+{
+  const C = (r, l) => new THREE.CapsuleGeometry(r, l, 3, 8), S = (r, w = 10, h = 8) => new THREE.SphereGeometry(r, w, h);
+  // vêtements (couleur de l'instance) : torse et bras
+  foule.type('vetements', assembler(THREE, [
+    { geo: C(0.155, 0.34), y: 1.13, sz: 0.72 },
+    { geo: C(0.045, 0.4), x: -0.2, y: 1.08, rz: 0.08 }, { geo: C(0.045, 0.4), x: 0.2, y: 1.08, rz: -0.08 },
+  ]), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75 }), 160);
+  // le reste : jambes, chaussures, tête, cheveux, mains (couleurs fixes, nuancées par instance)
+  foule.type('corps', assembler(THREE, [
+    { geo: C(0.062, 0.6), x: -0.075, y: 0.4, couleur: 0x273246 }, { geo: C(0.062, 0.6), x: 0.075, y: 0.4, couleur: 0x273246 },
+    { geo: new THREE.BoxGeometry(0.1, 0.07, 0.22), x: -0.075, y: 0.035, z: 0.03, couleur: 0x1f2937 }, { geo: new THREE.BoxGeometry(0.1, 0.07, 0.22), x: 0.075, y: 0.035, z: 0.03, couleur: 0x1f2937 },
+    { geo: new THREE.CylinderGeometry(0.045, 0.05, 0.1, 8), y: 1.47, couleur: 0xd9a57f },
+    { geo: S(0.105, 12, 9), y: 1.6, couleur: 0xe0b392 },
+    { geo: new THREE.SphereGeometry(0.11, 12, 6, 0, Math.PI * 2, 0, Math.PI * 0.55), y: 1.615, z: -0.008, couleur: 0x3b2a1e },
+    { geo: S(0.04, 6, 5), x: -0.215, y: 0.82, couleur: 0xd9a57f }, { geo: S(0.04, 6, 5), x: 0.215, y: 0.82, couleur: 0xd9a57f },
+  ]), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7 }), 160);
+  // chariot de courses : panier grillagé (fond et parois fines), poignée rouge, roulettes
+  const M = 0xaeb6bf, B = (l, h, p, x, y, z, couleur = M) => ({ geo: new THREE.BoxGeometry(l, h, p), x, y, z, couleur });
+  foule.type('chariot', assembler(THREE, [
+    B(0.5, 0.02, 0.72, 0, 0.5, 0), B(0.5, 0.3, 0.015, 0, 0.66, -0.36), B(0.5, 0.36, 0.015, 0, 0.69, 0.36), B(0.015, 0.33, 0.72, -0.25, 0.67, 0), B(0.015, 0.33, 0.72, 0.25, 0.67, 0),
+    B(0.46, 0.01, 0.6, 0, 0.23, 0.02), B(0.03, 0.5, 0.03, -0.22, 0.25, -0.33), B(0.03, 0.5, 0.03, 0.22, 0.25, -0.33),
+    B(0.52, 0.04, 0.04, 0, 0.98, -0.42, 0xdc2626),
+    ...[[-0.2, -0.3], [0.2, -0.3], [-0.2, 0.3], [0.2, 0.3]].map(([x, z]) => B(0.03, 0.08, 0.08, x, 0.04, z, 0x1f2937)),
+  ]), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4, metalness: 0.5 }), 80);
+}
+const PEAUX = [0xffffff, 0xf3e6dc, 0xd9c2ad, 0xb99a80, 0x8d7462];
+let nPersonnes = 0;
+function personne(couleur, taille = 1, chariot = false) {
+  const g = new THREE.Group(); g.userData.dyn = true;
+  const hit = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.75, 0.45), mat(0xffffff, { visible: false })); hit.position.y = 0.875 * taille; g.add(hit); // pour le clic
+  const p = new THREE.Object3D(); p.scale.setScalar(taille); g.add(p);
+  foule.ajouter('vetements', p, couleur); foule.ajouter('corps', p, PEAUX[nPersonnes++ % PEAUX.length]);
+  if (chariot) { const c = new THREE.Object3D(); c.position.set(0, 0, 0.58); g.add(c); foule.ajouter('chariot', c); }
+  return g;
+}
+
 // Terrain, rue, parking
-boite(92, 1.5, 70, 0xd6d3cb, 0, -1.5, 0);
-boite(90, 0.05, 68, 0xc9d8b8, 0, 0, 0);
+boite(92, 1.5, 70, 0xdcdad4, 0, -1.5, 0);
+boite(90, 0.05, 68, 0xd3dfc6, 0, 0, 0);
 boite(90, 0.12, 8, 0x50555e, 0, 0, 29);
 for (let x = -42; x <= 42; x += 4) boite(2, 0.02, 0.15, 0xf5f5f0, x, 0.12, 29, scene, false);
 boite(90, 0.2, 1.6, 0xc8c6c0, 0, 0, 24.2);
@@ -304,17 +515,28 @@ zone(66, 15, -6, 15.5, 'parking');
 
 // Bâtiment (coupe à 1,4 m)
 const BX0 = -40, BX1 = 18, BZ0 = -30, BZ1 = 6, HM = 1.4, EM = 0.3, MUR = 0xfafaf8;
+const NUIT = 0x1f2b4d, NUIT_HAUT = 0x8b98bb, HX = 3.6, EX = 1.1; // murs extérieurs bleu nuit, épais, coupés (dessus visible)
 boite(BX1 - BX0, 0.15, BZ1 - BZ0, 0xeceae4, (BX0 + BX1) / 2, 0.05, (BZ0 + BZ1) / 2);
-boite(42, 0.02, 30, 0xe7e5df, -19, 0.2, -12, scene, false);   // surface de vente
-boite(16, 0.02, 20, 0xcfccc4, 10, 0.2, -20, scene, false);    // réserve
+const carrelage = textureCarrelage(THREE); carrelage.repeat.set(42 / 2.4, 30 / 2.4);
+boite(42, 0.02, 30, new THREE.MeshStandardMaterial({ map: carrelage, roughness: 0.42, metalness: 0, envMapIntensity: 0.6 }), -19, 0.2, -12, scene, false);   // surface de vente : carrelage clair
+const beton = textureCarrelage(THREE, { joint: '#b9b6ae', n: 2 }); beton.repeat.set(16 / 4, 20 / 4);
+boite(16, 0.02, 20, new THREE.MeshStandardMaterial({ map: beton, color: 0xd6d3cc, roughness: 0.8 }), 10, 0.2, -20, scene, false);    // réserve : dalle béton
+for (const z of [-26.7, -22.3, -16.6, -12.4]) boite(16, 0.012, 0.1, 0xfacc15, 10, 0.21, z, scene, false); // allées de la réserve
 const mur = (l, p, x, z) => boite(l, HM, p, MUR, x, 0.2, z);
-mur(BX1 - BX0, EM, (BX0 + BX1) / 2, BZ0); mur(EM, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2); mur(EM, 8.5, BX1, -25.75); mur(EM, 24.5, BX1, -6.25); // porte de quai entre z -21,5 et -18,5
-mur(24, EM, -28, BZ1); mur(22, EM, 7, BZ1); // façade, entrée au milieu
+// mur extérieur : bleu nuit, dessus plus clair comme une coupe de plan ; h = hauteur (1,4 m là où l'étage prend le relais)
+const murExt = (l, p, x, z, h = HX) => { boite(l, h, p, NUIT, x, 0.2, z); boite(l + 0.002, 0.03, p + 0.002, NUIT_HAUT, x, 0.2 + h, z, scene, false); };
+murExt(BX1 - BX0 + EX, EX, (BX0 + BX1) / 2, BZ0); murExt(EX, BZ1 - BZ0, BX0, (BZ0 + BZ1) / 2);
+murExt(EX, 8.5, BX1, -25.75); murExt(EX, 8.5, BX1, -14.25); murExt(EX, 16, BX1, -2, HM); // porte de quai entre z -21,5 et -18,5 ; locaux du personnel (étage au-dessus)
+// façade basse et vitrée côté parking (on voit les caisses), entrée au milieu
+murExt(24 + EX / 2, EX, -28 - EX / 4, BZ1, 0.9); murExt(6, EX, -1, BZ1, 0.9); murExt(16, EX, 10, BZ1, HM);
+const vitrage = new THREE.MeshStandardMaterial({ color: 0xbcd7ea, transparent: true, opacity: 0.28, roughness: 0.05, metalness: 0.2, depthWrite: false });
+for (const [x0, x1] of [[-40, -16], [-4, 2]]) { boite(x1 - x0, 1.5, 0.06, vitrage, (x0 + x1) / 2, 1.1, BZ1, scene, false); boite(x1 - x0, 0.12, EX, NUIT, (x0 + x1) / 2, 2.6, BZ1); for (let x = x0 + 2; x < x1; x += 2) boite(0.06, 1.5, 0.08, NUIT, x, 1.1, BZ1, scene, false); }
 mur(EM, 13, 2, -23.5); mur(EM, 4.5, 2, -12.25); // cloison réserve, portes battantes entre les deux
 mur(EM, 7, 2, -6.5); mur(EM, 7, 2, 2.5);          // cloison des locaux du personnel, entrée du couloir entre z -3 et -1
 mur(16, EM, 10, -10);
-const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.45, roughness: 0.1 });
+const verre = new THREE.MeshStandardMaterial({ color: 0x9cc3d9, transparent: true, opacity: 0.35, roughness: 0.05, depthWrite: false });
 boite(8, 1.2, 0.08, verre, -12, 0.2, BZ1, scene, false);
+for (const x of [-16, -8, -4]) boite(0.25, 2.5, EX, NUIT, x, 0.2, BZ1); boite(12, 0.3, EX, NUIT, -10, 2.4, BZ1); // encadrement de l'entrée
 const enseigne = new THREE.Mesh(new THREE.BoxGeometry(14, 1.8, 0.2), [mat(0xb91c1c), mat(0xb91c1c), mat(0xb91c1c), mat(0xb91c1c), new THREE.MeshStandardMaterial({ map: texte('HYPER MODÈLE', { fond: '#b91c1c', couleur: '#fff', taille: 70 }) }), mat(0xb91c1c)]);
 enseigne.position.set(-12, 3.2, BZ1 + 0.4); enseigne.castShadow = true; scene.add(enseigne);
 for (const x of [-18.5, -5.5]) boite(0.15, 2.4, 0.15, 0x6b7280, x, 0, BZ1 + 0.4);
@@ -323,16 +545,31 @@ zone(BX1 - BX0, BZ1 - BZ0, (BX0 + BX1) / 2, (BZ0 + BZ1) / 2, 'magasin', 0.12);
 // Rayons : vraies gondoles (étagères, produits, têtes de gondole, vitrines), le remplissage suit le stock (rayons.js)
 const gondoles = {};
 RAYONS.forEach((r, i) => { gondoles[r.id] = construireRayon({ THREE, scene, boite, mat, texte, clic }, r, i); });
+// vitrines réfrigérées le long du mur du fond (rayon frais) et îlots de fruits et légumes (rayon fruits), même stock que leur rayon
+const MEUBLES = [
+  ['r3', construireRayon({ THREE, scene, boite, mat, texte, clic }, RAYONS[3], 3, { xa: -39.1, xb: 1.2, z: -29.62, cotes: [1], frigo: true, sansTetes: true, sansPanneau: true, nom: '-mur' })],
+  ['r0', construireRayon({ THREE, scene, boite, mat, texte, clic }, RAYONS[0], 0, { ilots: [[-2.2, -25.4, 3], [-0.6, -25.4, 6], [-2.2, -24.3, 4], [-0.6, -24.3, 5], [-2.2, -21.6, 1], [-0.6, -21.6, 7], [-2.2, -9.6, 0], [-0.6, -9.6, 3], [-2.2, -8.5, 2], [-0.6, -8.5, 6]], nom: '-ilots' })],
+];
+for (const [txt, x] of [['CRÈMERIE', -31], ['FROMAGES · TRAITEUR', -19], ['SURGELÉS', -7]]) panneauTexte(txt, x, 2.75, -29.26, 0, '#1d4ed8', 4.2);
 // Caisses (devant l'entrée)
 const CAISSES = [];
 for (let i = 0; i < NB_CAISSES; i++) {
   const x = -34 + i * 3.6, z = 0.5;
   const g = new THREE.Group(); scene.add(g);
-  boite(0.9, 0.9, 2.6, 0xe5e7eb, x, 0.2, z, g); boite(0.5, 0.35, 0.05, 0x111827, x, 1.1, z - 0.6, g);
-  const lampe = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.5, 12), mat(0x9ca3af, { emissive: 0x000000 }));
-  lampe.position.set(x, 2.2, z + 1.1); g.add(lampe); boite(0.06, 1.8, 0.06, 0x9ca3af, x, 0.2, z + 1.1, g);
-  const num = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.5), new THREE.MeshBasicMaterial({ map: texte(String(i + 1), { w: 128, h: 80, fond: '#111827', couleur: '#fff', taille: 60 }) }));
-  num.position.set(x, 2.75, z + 1.1); g.add(num);
+  // comptoir blanc et bleu : tapis roulant, scanner, zone d'ensachage, écran côté hôte, terminal de paiement côté client
+  boite(0.9, 0.62, 2.6, 0xf8fafc, x, 0.2, z, g); boite(0.92, 0.2, 2.62, 0x1d4ed8, x, 0.82, z, g);
+  boite(0.62, 0.03, 1.45, 0x1f2937, x + 0.06, 1.02, z - 0.55, g, false); for (const dx of [-0.27, 0.39]) boite(0.04, 0.06, 1.45, 0xb8bec6, x + dx, 1.02, z - 0.55, g, false);
+  boite(0.5, 0.05, 0.34, 0x374151, x, 1.02, z + 0.4, g, false); boite(0.36, 0.012, 0.22, mat(0x7dd3fc, { emissive: 0x38bdf8, emissiveIntensity: 0.7 }), x, 1.07, z + 0.4, g, false);
+  boite(0.8, 0.04, 0.7, 0xe5e7eb, x + 0.02, 1.02, z + 0.95, g, false);
+  boite(0.04, 0.26, 0.04, 0x4b5563, x - 0.3, 1.02, z + 0.12, g, false); boite(0.05, 0.24, 0.36, 0x111827, x - 0.3, 1.26, z + 0.12, g);
+  boite(0.012, 0.2, 0.31, mat(0x1e40af, { emissive: 0x2563eb, emissiveIntensity: 0.9 }), x - 0.33, 1.28, z + 0.12, g, false);
+  boite(0.09, 0.15, 0.07, 0x111827, x + 0.4, 1.02, z + 0.12, g, false); boite(0.07, 0.04, 0.005, mat(0x22c55e, { emissive: 0x16a34a, emissiveIntensity: 0.6 }), x + 0.4, 1.12, z + 0.155, g, false);
+  boite(0.06, 2.15, 0.06, 0x9ca3af, x, 0.2, z + 1.2, g);
+  const lampe = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.2, 0.22), mat(0x9ca3af, { emissive: 0x000000 })); lampe.userData.dyn = true;
+  lampe.position.set(x, 2.45, z + 1.2); g.add(lampe);
+  const faceNum = new THREE.MeshBasicMaterial({ map: texte(String(i + 1), { w: 160, h: 112, fond: '#1d4ed8', couleur: '#fff', taille: 84 }), toneMapped: false }), bordNum = new THREE.MeshBasicMaterial({ color: 0x1e3a8a });
+  const num = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.06), [bordNum, bordNum, bordNum, bordNum, faceNum, faceNum]);
+  num.position.set(x, 2.85, z + 1.2); g.add(num);
   clic(g, 'c' + i);
   CAISSES.push({ x, z, lampe, file: [] });
 }
@@ -341,7 +578,6 @@ boite(4, 1.05, 1, 0xf8fafc, -2, 0.2, 3.5); boite(4, 0.05, 1.05, 0xb91c1c, -2, 1.
 // Locaux du personnel (derrière l'accueil) : bureau de la direction, salle de pause, couloir, vestiaires, sanitaires, escalier
 const BOIS = 0x8b6b4a, GRIS = 0x9ca3af, FONCE = 0x374151, BLANC = 0xf8fafc;
 const porte = (x, z, rot, l = 1.1) => { const g = new THREE.Group(); boite(l, 1.25, 0.06, 0xb08d64, l / 2, 0.2, 0, g); g.position.set(x, 0, z); g.rotation.y = rot; scene.add(g); };
-const panneauTexte = (txt, x, y, z, rot = 0, fond = '#1e3a8a', l = 2.4) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(l, 0.45), new THREE.MeshBasicMaterial({ map: texte(txt, { w: 512, h: 96, fond, couleur: '#fff', taille: 44 }), side: THREE.DoubleSide })); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m); };
 mur(EM, 7, 9, -6.5);                         // direction | pause
 mur(4.5, EM, 4.25, -3); mur(1.3, EM, 8.35, -3); // direction | couloir (porte en x 6.5-7.7)
 mur(9, EM, 13.5, -1);                        // pause | vestiaires
@@ -367,7 +603,7 @@ for (const x of [14.9, 16.8]) { boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, x - 0.95, 0.
 boite(EM * 0.5, 1.2, 2.2, 0xe5e7eb, 17.75, 0.2, 4.8); boite(2.4, 0.85, 0.5, 0xffffff, 15.8, 0.2, 0);
 // le vrai 1er étage et son escalier (etage.js)
 const ETAGE = construireEtage({ THREE, scene, boite, mat, texte, clic, zone });
-let etageVu = true;
+let etageVu = false; // la vue Maquette (par défaut) montre le rez-de-chaussée
 // candidat en entretien, assis dans le bureau RH (voir rh.js)
 const visiteur = personne(0x7c3aed); visiteur.position.copy(ETAGE.postes.rhVisiteur); visiteur.rotation.y = Math.PI; visiteur.visible = false; visiteur.userData.s = 0; scene.add(visiteur); clic(visiteur, 'etage-rh');
 panneauTexte('ÉTAGE : BUREAUX', 5.6, 2.1, 2.8, Math.PI / 2, '#374151', 2.2);
@@ -385,21 +621,29 @@ RACKS.forEach((rk, ri) => {
 });
 for (let b = 0; b < 5; b++) SLOTS.push({ x: 6 + b * 2.4, y: 0.2, z: -14, acces: -12.4, rangee: 2, rayon: null, mesh: null, pris: false });
 for (let b = 0; b < 5; b++) boite(1.4, 0.015, 1.2, 0xfde68a, 6 + b * 2.4, 0.21, -14, scene, false); // emplacements au sol marqués
+{
+  const B = (l, h, p, x, y, z, couleur) => ({ geo: new THREE.BoxGeometry(l, h, p), x, y, z, couleur });
+  foule.type('palette', assembler(THREE, [B(1.1, 0.03, 0.9, 0, 0.125, 0, 0xc19a6b), ...[-0.4, 0, 0.4].map((z) => B(1.1, 0.1, 0.12, 0, 0.05, z, 0xa57f55)), B(1.1, 0.02, 0.9, 0, 0.01, 0, 0xb08d64)]), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85 }), 64);
+  // cartons sous film : couleur du rayon, bandes de cerclage
+  foule.type('charge', assembler(THREE, [B(1, 0.75, 0.82, 0, 0, 0, 0xffffff), B(1.012, 0.04, 0.832, 0, 0.18, 0, 0x9ca3af), B(1.012, 0.04, 0.832, 0, -0.18, 0, 0x9ca3af), B(1.02, 0.02, 0.84, 0, 0.385, 0, 0xf1f5f9)]), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7 }), 64);
+}
 function palette(rid) {
-  const g = new THREE.Group();
-  boite(1.1, 0.14, 0.9, 0xb08d64, 0, 0, 0, g);
-  const charge = boite(1, 0.75, 0.82, COULEUR_RAYON[rid], 0, 0.14, 0, g); g.userData.charge = charge;
-  boite(1.02, 0.02, 0.84, 0xf1f5f9, 0, 0.89, 0, g, false);
+  const g = new THREE.Group(); g.userData.dyn = true;
+  foule.ajouter('palette', g);
+  const charge = new THREE.Object3D(); charge.position.y = 0.14 + 0.375; g.add(charge); g.userData.charge = charge;
+  foule.ajouter('charge', charge, new THREE.Color(COULEUR_RAYON[rid]).lerp(new THREE.Color(0xd6b98c), 0.35));
   return g;
 }
 function remplir(sl, rid) { sl.rayon = rid; sl.mesh = palette(rid); sl.mesh.position.set(sl.x, sl.y, sl.z); scene.add(sl.mesh); }
 function vider(sl) { const rid = sl.rayon; if (sl.mesh) scene.remove(sl.mesh); sl.mesh = null; sl.rayon = null; return rid; }
 const slotsPleins = () => SLOTS.filter((sl) => sl.rayon).length;
-const MER = {}; // palettes mises en rayon aujourd'hui, par rayon
+const MER = {}, MER_H = {}, DERNIERE_MER = {}; // palettes mises en rayon aujourd'hui, par rayon ; dernière mise en rayon (heure, qui)
 function initReserve() {
   SLOTS.forEach((sl) => { vider(sl); sl.pris = false; });
   SLOTS.forEach((sl, i) => { if (sl.rangee < 2 && (i * 7) % 10 < 6) remplir(sl, RAYONS[(i * 5) % 6].id); });
   for (const k in MER) delete MER[k];
+  for (const k in MER_H) delete MER_H[k];
+  for (const k in DERNIERE_MER) delete DERNIERE_MER[k];
   LIVRAISONS.forEach((d) => { d.dechargees = statutLiv(d) === 'déchargée' ? d.palettes : 0; });
 }
 zone(16, 20, 10, -20, 'reserve', 0.22);
@@ -414,26 +658,19 @@ function camion() {
   for (const [x, z] of [[-1.2, 4], [1.2, 4], [-1.2, -3], [1.2, -3], [-1.2, -4.6], [1.2, -4.6]]) { const w = new THREE.Mesh(roue, mat(0x18181b)); w.rotation.z = Math.PI / 2; w.position.set(x, 0.55, z); w.castShadow = true; g.add(w); }
   return g;
 }
-const truck = camion(); truck.visible = false; scene.add(truck); clic(truck, 'quai');
+const truck = camion(); truck.visible = false; truck.userData.dyn = true; scene.add(truck); clic(truck, 'quai');
 // Arbres
 function arbre(x, z, s = 1) { const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.16 * s, 0.22 * s, 1.8 * s, 8), mat(0x7c5a3c)); tr.position.set(x, 0.9 * s, z); tr.castShadow = true; scene.add(tr); const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5 * s, 1), mat(0x5f8f55, { flatShading: true })); f.position.set(x, 2.6 * s, z); f.castShadow = true; scene.add(f); }
 [[-43, -30], [-43, -10], [-43, 10], [42, -30], [42, 5], [38, 15], [-40, 22.5], [20, 22.5], [5, 22.5], [-15, 22.5]].forEach(([x, z]) => arbre(x, z));
 
-// Personnes
-function personne(couleur, taille = 1) {
-  const g = new THREE.Group();
-  for (const x of [-0.1, 0.1]) boite(0.13 * taille, 0.8 * taille, 0.16 * taille, 0x1f2937, x * taille, 0, 0, g);
-  const torse = new THREE.Mesh(new THREE.CapsuleGeometry(0.2 * taille, 0.42 * taille, 4, 12), mat(couleur)); torse.position.y = 1.12 * taille; torse.castShadow = true; g.add(torse);
-  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.14 * taille, 16, 12), mat(0xdcb08a)); tete.position.y = 1.62 * taille; g.add(tete);
-  return g;
-}
+
 // Postes de l'équipe dans la maquette
 function posteDe(e, i) {
   if (e.zone.startsWith('c')) { const c = CAISSES[caisseDe(e)]; return new THREE.Vector3(c.x - 0.9, 0.2, c.z - 0.2); }
   if (/^r\d/.test(e.zone)) { const g = gondoles[e.zone]; return new THREE.Vector3(g.x0 + 8 + (i % 3) * 7, 0.2, g.z + 1.4); }
   return { bureau: new THREE.Vector3(5.5, 0.2, -6.9), reserve: new THREE.Vector3(9 + (i % 2) * 3, 0.2, -18.2), accueil: new THREE.Vector3(-2, 0.2, 2.6), 'etage-rh': ETAGE.postes.rh, 'etage-compta': ETAGE.postes.compta1 }[e.zone].clone();
 }
-const COULEUR_POSTE = (e) => (e.zone.startsWith('c') ? 0xb91c1c : /^r\d/.test(e.zone) ? 0x15803d : e.zone === 'reserve' ? 0xd97706 : 0x1e3a8a);
+const COULEUR_POSTE = (e) => (e.zone.startsWith('c') ? 0xb91c1c : /^r\d/.test(e.zone) ? 0x15803d : e.zone === 'reserve' ? 0xf59e0b : 0x1e3a8a); // caisse rouge, rayon vert, réserve gilet orange, bureaux bleu marine
 const objets = {};
 EQUIPE.forEach((e, i) => { const o = personne(COULEUR_POSTE(e)); o.position.copy(posteDe(e, i)); o.visible = false; o.userData.s = 0; scene.add(o); clic(o, e.id); objets[e.id] = { e, obj: o, base: o.position.clone(), phase: i * 1.7 }; });
 // ================= Logistique : déchargement du camion, rangement en rack, mise en rayon =================
@@ -467,18 +704,21 @@ function receptionner(x, d) {
     x.job.etapes.push(...versSlot(sl).map((q) => ({ aller: pt(q) })), { duree: 1.4, leve: sl.y, fin: () => { porter(x, null); remplir(sl, d.rayon); sl.pris = false; } }, ...depuisSlot(sl).map((q) => ({ aller: pt(q) })));
   } }]), `décharge le camion (${d.fourn})`, 'décharge le camion');
 }
-function mettreEnRayon(x) {
-  const rid = x.e.zone, sl = slotAPrendre(rid); if (!sl) return false;
+// mettreEnRayon(x) : tournée normale de l'employé dans son rayon ; mettreEnRayon(x, rid) : envoyé depuis l'écran vers le rayon rid
+const paletteDe = (rid) => SLOTS.filter((sl) => sl.rayon === rid && !sl.pris).sort((a, b) => b.rangee - a.rangee || a.y - b.y)[0];
+function mettreEnRayon(x, cible) {
+  const rid = cible || x.e.zone, sl = cible ? paletteDe(cible) : slotAPrendre(rid); if (!sl) return false;
   sl.pris = true;
-  const g = gondoles[rid], az = allee(x), bx = x.base.x;
+  const g = gondoles[rid], az = allee(x), bx = x.base.x, azc = g.z + 2.1, bxc = cible && cible !== x.e.zone ? g.x0 + g.l * 0.55 : bx;
   const aller = [[bx, az], [-4.5, az], [-4.5, PORTE_VENTE[1]], PORTE_VENTE, PORTE_RESERVE, ...versSlot(sl)];
-  const retour = [...depuisSlot(sl), PORTE_RESERVE, PORTE_VENTE, [-4.5, PORTE_VENTE[1]], [-4.5, az], [bx, az], [bx, g.z + 1.3]];
+  const retour = [...depuisSlot(sl), PORTE_RESERVE, PORTE_VENTE, [-4.5, PORTE_VENTE[1]], [-4.5, azc], [bxc, azc], [bxc, g.z + 1.3]];
+  const rentrer = bxc !== bx ? [[bxc, azc], [-4.5, azc], [-4.5, az], [bx, az]].map((q) => ({ aller: pt(q) })) : [];
   let pris = rid;
   lancer(x, [...aller.map((q) => ({ aller: pt(q) })), { duree: 1.2, fin: () => { pris = vider(sl); sl.pris = false; porter(x, pris); x.job.texte = `apporte une palette ${RAYON_DE(pris).nom.toLowerCase()} en rayon`; x.job.court = 'apporte en rayon'; } },
     ...retour.map((q) => ({ aller: pt(q) })),
     { duree: 0.01, fin: () => { x.job.texte = `met en rayon (${RAYON_DE(pris).nom.toLowerCase()})`; x.job.court = 'met en rayon'; } },
-    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; porter(x, null); } },
-    { aller: x.base.clone() }], 'va chercher une palette en réserve', 'va en réserve');
+    { duree: 4.5, vide: true, fin: () => { MER[pris] = (MER[pris] || 0) + 1; (MER_H[pris] ||= []).push(t); DERNIERE_MER[pris] = { h: t, nom: x.e.nom }; porter(x, null); } },
+    ...rentrer, { aller: x.base.clone() }], cible ? `envoyé·e chercher une palette ${RAYON_DE(rid).nom.toLowerCase()} en réserve` : 'va chercher une palette en réserve', 'va en réserve');
   return true;
 }
 function annulerJob(x) {
@@ -517,17 +757,67 @@ function logistique(dt) {
 // Clients qui circulent dans les allées (boucles lissées), en nombre selon l'affluence
 const CLIENTS_MAX = 46;
 const boucles = [];
-for (let i = 0; i < 6; i++) { const z = -23.9 + i * 4.2; boucles.push(new THREE.CatmullRomCurve3([new THREE.Vector3(-38, 0.2, z), new THREE.Vector3(-22, 0.2, z + 0.2), new THREE.Vector3(-6, 0.2, z), new THREE.Vector3(-5, 0.2, z - 2.1), new THREE.Vector3(-22, 0.2, z - 2.3), new THREE.Vector3(-38.5, 0.2, z - 2.1)], true, 'centripetal')); }
+// chaque boucle remonte une allée et redescend par l'allée voisine, en faisant le tour d'un rayon (jamais à travers)
+for (let i = 0; i < 6; i++) { const z = -23.9 + i * 4.2; boucles.push(new THREE.CatmullRomCurve3([new THREE.Vector3(-38.2, 0.2, z), new THREE.Vector3(-22, 0.2, z + 0.15), new THREE.Vector3(-6.2, 0.2, z), new THREE.Vector3(-4.7, 0.2, z - 2.1), new THREE.Vector3(-6.2, 0.2, z - 4.2), new THREE.Vector3(-22, 0.2, z - 4.35), new THREE.Vector3(-38.2, 0.2, z - 4.2), new THREE.Vector3(-39.1, 0.2, z - 2.1)], true, 'centripetal')); }
 const clients = [];
-for (let i = 0; i < CLIENTS_MAX; i++) { const o = personne([0x94a3b8, 0x64748b, 0xa8a29e, 0x78716c][i % 4], 0.92); o.visible = false; o.userData.s = 0; scene.add(o); clients.push({ o, boucle: boucles[i % 6], u: (i * 0.137) % 1, v: 0.9 + (i % 5) * 0.12, rot: 0 }); }
+const TENUES = [0x60a5fa, 0xe5e7eb, 0x475569, 0xd6b48a, 0x0f766e, 0x9f1239, 0x334155, 0xf1f5f9, 0x7c3aed, 0x92400e, 0x1e40af, 0xa3a3a3];
+for (let i = 0; i < CLIENTS_MAX; i++) { const o = personne(TENUES[(i * 5) % TENUES.length], 0.92, i % 2 === 0); o.visible = false; o.userData.s = 0; scene.add(o); clients.push({ o, boucle: boucles[i % 6], u: (i * 0.137) % 1, v: 0.9 + (i % 5) * 0.12, rot: 0 }); }
 // Files d'attente aux caisses
 const attenteCaisse = [];
-for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = personne(0x94a3b8, 0.92); o.position.set(CAISSES[c].x + 0.9, 0.2, CAISSES[c].z - 2.2 - k * 1.1); o.visible = false; o.userData.s = 0; scene.add(o); attenteCaisse.push({ o, c, k }); }
+for (let c = 0; c < NB_CAISSES; c++) for (let k = 0; k < 4; k++) { const o = personne(TENUES[(c * 3 + k * 7) % TENUES.length], 0.92, k % 2 === 0); o.position.set(CAISSES[c].x + 0.9, 0.2, CAISSES[c].z - 2.2 - k * 0.8); o.visible = false; o.userData.s = 0; scene.add(o); attenteCaisse.push({ o, c, k }); }
 // Voitures des clients sur le parking
-function voiture(couleur) { const g = new THREE.Group(); const W = 1.76; const s = new THREE.Shape(); [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v))); const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2); const c = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); c.castShadow = true; g.add(c); const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v))); const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2); g.add(new THREE.Mesh(vg, mat(0x1f2a37, { roughness: 0.15 }))); const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 14); for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); g.add(r); } return g; }
+const GEO_VOITURE = (() => { const g = voitureMeshes(0xffffff); const morceaux = []; g.updateMatrixWorld(true); g.traverse((m) => { if (m.isMesh) { const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); m.matrixWorld.decompose(p, q, s); const e = new THREE.Euler().setFromQuaternion(q); morceaux.push({ geo: m.geometry, x: p.x, y: p.y, z: p.z, rx: e.x, ry: e.y, rz: e.z, sx: s.x, sy: s.y, sz: s.z, couleur: m.material.color.getHex() }); } }); return assembler(THREE, morceaux); })();
+foule.type('voiture', GEO_VOITURE, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.3 }), 96);
+function voiture(couleur) { const g = new THREE.Group(); g.userData.dyn = true; foule.ajouter('voiture', g, couleur); g.userData.peindre = (c) => g.userData.couleurFoule.setHex(c); return g; }
+function voitureMeshes(couleur) { const g = new THREE.Group(); const W = 1.76; const s = new THREE.Shape(); [[-2.05, 0.28], [2.05, 0.28], [2.08, 0.62], [1.9, 0.82], [0.9, 0.92], [0.28, 1.42], [-1.2, 1.44], [-1.9, 1.0], [-2.08, 0.86]].forEach(([u, v], i) => (i ? s.lineTo(u, v) : s.moveTo(u, v))); const geo = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 2 }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2); const c = new THREE.Mesh(geo, mat(couleur, { roughness: 0.35, metalness: 0.25 })); c.castShadow = true; g.add(c); const vs = new THREE.Shape(); [[0.82, 0.93], [0.26, 1.38], [-1.16, 1.4], [-1.8, 1.0]].forEach(([u, v], i) => (i ? vs.lineTo(u, v) : vs.moveTo(u, v))); const vg = new THREE.ExtrudeGeometry(vs, { depth: W + 0.12, bevelEnabled: false }); vg.translate(0, 0, -(W + 0.12) / 2); vg.rotateY(-Math.PI / 2); g.add(new THREE.Mesh(vg, mat(0x1f2a37, { roughness: 0.15 }))); const roue = new THREE.CylinderGeometry(0.33, 0.33, 0.24, 14); for (const [x, z] of [[-0.82, 1.3], [0.82, 1.3], [-0.82, -1.3], [0.82, -1.3]]) { const r = new THREE.Mesh(roue, mat(0x18181b)); r.rotation.z = Math.PI / 2; r.position.set(x, 0.33, z); g.add(r); } return g; }
 const COULEURS_AUTO = [0xf1f1ee, 0x374151, 0x9ca3af, 0xb91c1c, 0x1e3a8a, 0x0f766e, 0xe5e7eb, 0x78350f];
 const trafic = creerTrafic({ THREE, scene, PLACES, voiture, couleurs: COULEURS_AUTO }); // arrivées, départs en marche arrière, circulation (trafic.js)
-const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0xb91c1c, transparent: true, opacity: 0.9, side: THREE.DoubleSide })); anneau.rotation.x = -Math.PI / 2; anneau.visible = false; scene.add(anneau);
+// Carte de chaleur de l'affluence (positions réelles des clients simulés, 30 dernières minutes) et parcours (chaleur.js)
+const chaleur = creerChaleur({ THREE, scene, boucles });
+const pastilles = creerPastilles({ THREE, scene, icones: ICONES, couleurs: Object.fromEntries(Object.entries(NIV_ALERTE).map(([k, v]) => [k, v.couleur])) });
+const pointsClients = () => [...clients.filter((c) => c.o.visible).map((c) => c.o.position), ...attenteCaisse.filter((a) => a.o.userData.cible === 1).map((a) => a.o.position)];
+// au chargement (et après un saut dans le temps) : on rejoue les 30 dernières minutes de la simulation, pas à pas de 30 s
+function prechauffer() {
+  chaleur.vider(); const m = Math.floor(t * 60); chaleur.minute(m);
+  const p = new THREE.Vector3();
+  for (let k = 1; k <= 60; k++) {
+    const h = t - k / 120, a = affluence(h), n = Math.round(CLIENTS_MAX * a), age = Math.floor(k / 2), pts = [];
+    clients.forEach((c, i) => { if (i >= n) return; c.boucle.getPointAt((((c.u - (c.v * k * 30) / 70) % 1) + 1) % 1, p); pts.push(p.clone()); });
+    const ouv = ouvertesA(h), f = fileA(a, ouv.length);
+    for (const x of attenteCaisse) if (ouv.includes(x.c) && x.k < f - (x.c % 2)) pts.push(x.o.position);
+    chaleur.ajouter(pts, 0.5, age);
+  }
+}
+const NOM_ZONE = (x, z) => (z > -6 ? 'files des caisses' : x > -6 ? 'allée du fond, côté réserve' : 'allée ' + RAYONS.map((r) => [r, Math.abs(gondoles[r.id].z - z)]).sort((a, b) => a[1] - b[1])[0][0].nom.toLowerCase());
+let chaleurDessin = 0;
+const anneau = new THREE.Mesh(new THREE.RingGeometry(2.3, 2.55, 48), new THREE.MeshBasicMaterial({ color: 0xb91c1c, transparent: true, opacity: 0.9, side: THREE.DoubleSide })); anneau.rotation.x = -Math.PI / 2; anneau.visible = false; anneau.userData.dyn = true; scene.add(anneau);
+// ================= Vue « Maquette » : maison de poupée =================
+// côté réserve et bureaux, la cloison devient un mur bleu nuit comme les autres (portes laissées ouvertes) ;
+// groupe « conteneur » : fusionné à part, affiché seulement dans la vue Maquette
+const murMaquette = new THREE.Group(); murMaquette.userData.conteneur = true; scene.add(murMaquette);
+for (const [z0, z1] of [[-30.55, -17.1], [-14.4, -3.1], [-0.9, 6.55]]) { boite(0.7, HX, z1 - z0, NUIT, 2.05, 0.2, (z0 + z1) / 2, murMaquette); boite(0.702, 0.03, z1 - z0 + 0.002, NUIT_HAUT, 2.05, 0.2 + HX, (z0 + z1) / 2, murMaquette, false); }
+// lumière froide des vitrines du mur du fond : trois spots discrets et une flaque bleutée au sol
+for (const x of [-31, -19, -7]) { const l = new THREE.PointLight(0xcfe6ff, 7, 9, 2); l.position.set(x, 2.3, -28.2); scene.add(l); }
+halo(THREE, scene, { x0: -39.5, x1: 1.2, z0: -29.1, z1: -26.9, couleur: '#8fc3ff', force: 0.32, taches: [0.21, 0.5, 0.79] });
+// ombres douces au pied des meubles (dessinées une fois dans une texture, un seul dessin)
+{
+  const R = [], bord = (x0, x1, z0, z1, a = 0.42, flou = 0.32, m = 0.12) => R.push({ x0: x0 - m, x1: x1 + m, z0: z0 - m, z1: z1 + m, a, flou });
+  for (const r of RAYONS) { const g = gondoles[r.id]; bord(g.x0, g.x0 + g.l, g.z - 0.72, g.z + 0.72, 0.4); }
+  bord(-39.4, 1.6, -29.7, -28.9, 0.45);                                     // vitrines froides
+  for (const [x, z] of [[-2.2, -25.4], [-0.6, -25.4], [-2.2, -24.3], [-0.6, -24.3], [-2.2, -21.6], [-0.6, -21.6], [-2.2, -9.6], [-0.6, -9.6], [-2.2, -8.5], [-0.6, -8.5]]) bord(x - 0.6, x + 0.6, z - 0.42, z + 0.42, 0.4, 0.22);
+  for (const c of CAISSES) bord(c.x - 0.45, c.x + 0.45, c.z - 1.3, c.z + 1.3, 0.38, 0.22);
+  bord(-4, 0, 3, 4, 0.35, 0.2);                                              // accueil
+  for (const rk of RACKS) bord(3.2, 15.4, rk.z - 0.6, rk.z + 0.6, 0.35, 0.3);
+  // pied des murs : léger assombrissement le long des murs extérieurs
+  bord(-40.6, 18.5, -30.6, -29.9, 0.3, 0.5, 0); bord(-40.6, -39.9, -30.6, 6.5, 0.3, 0.5, 0); bord(17.5, 18.5, -30.6, 6.5, 0.25, 0.5, 0);
+  ombresContact(THREE, scene, { x0: -41, z0: -31, l: 60, p: 38, rects: R });
+}
+// tout ce qui ne bouge pas est fusionné par matière : quelques dizaines de dessins au lieu de plusieurs milliers (rendu.js)
+const FUSION = fusionnerStatique(THREE, scene, { cliquables });
+scene.matrixWorldAutoUpdate = false; // mis à jour une fois par image dans animer(), avant de recopier les instances
+murMaquette.visible = false;
+const voile = creerVoile(THREE, scene, camera, { couleur: 0xeef0f3 }); // atténue ce qui sort de la surface de vente
+ETAGE.montrer(etageVu);
 
 // ================= Mise à jour de la maquette =================
 let instantane = false;
@@ -548,6 +838,7 @@ function synchroniser(instant = false) {
   const occ = Math.round(PLACES.length * Math.min(0.95, 0.2 + 0.85 * a));
   if (instant) trafic.placerDirect(occ); else trafic.viser(occ);
   for (const r of RAYONS) gondoles[r.id].majStock(stockDe(r));
+  for (const [rid, m] of MEUBLES) m.majStock(stockDe(RAYON_DE(rid)));
   const d = LIVRAISONS.find((x) => statutLiv(x) === 'au quai');
   if (d && dernierCamion !== d.id && !instant) annoncer(`${hh(t)} · Livraison au quai : ${d.fourn}, ${d.palettes} palettes`);
   if (d) { if (!camionAnim || camionAnim.id !== d.id) camionAnim = { id: d.id, k: instant ? 1 : 0, sens: 1 }; } else if (camionAnim && camionAnim.sens === 1) camionAnim.sens = -1;
@@ -571,7 +862,7 @@ EQUIPE.forEach((e) => { const el = document.createElement('div'); el.className =
 const v3 = new THREE.Vector3();
 function placer() {
   const r = renderer.domElement.getBoundingClientRect();
-  for (const e of etiquettes) { e.el.style.display = etageVu && e.cle === 'pause' ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
+  for (const e of etiquettes) { e.el.style.display = (etageVu && e.cle === 'pause') || (vueCourante === 'maquette' && /^(pause|reserve|quai|parking)$/.test(e.cle)) ? 'none' : ''; const html = e.fn(); if (e.el.innerHTML !== html) e.el.innerHTML = html; v3.copy(e.pos()).project(camera); e.el.style.left = ((v3.x + 1) / 2) * r.width + 'px'; e.el.style.top = ((1 - v3.y) / 2) * r.height + 'px'; }
   const vu = camera.zoom >= 1.7;
   for (const b of badges) {
     const o = objets[b.e.id].obj;
@@ -588,34 +879,162 @@ function annoncer(txt) { const a = document.getElementById('annonce'); a.textCon
 
 // ================= Chiffres et panneau =================
 const $ = (id) => document.getElementById(id);
-function majKpis() {
-  const ca = caDuJour(), cout = coutJour();
-  $('k-ca').textContent = euros(ca); $('k-ca-d').textContent = `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}`;
-  $('k-clients').textContent = clientsMagasin(); $('k-clients-d').textContent = affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme';
-  const o = caissesOuvertes().length, att = Math.max(1, Math.round((affluence() * 9) / Math.max(1, o) * 2));
-  $('k-caisses').textContent = `${o} / ${NB_CAISSES}`; $('k-caisses-d').textContent = `attente moyenne ${att} min`;
-  const rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0); $('k-ruptures').textContent = rup; $('k-ruptures-d').textContent = `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits`;
-  const pres = EQUIPE.filter(present).length; $('k-equipe').textContent = `${pres} / ${EQUIPE.length}`; const pz = EQUIPE.filter(auRepos).length; $('k-equipe-d').textContent = `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`;
-  $('k-salaires').textContent = euros(cout); const p = ca ? (cout / ca) * 100 : 0; $('k-salaires-d').textContent = `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; $('k-salaires-j').style.width = Math.min(100, p * 5) + '%';
+// Contenus des rubriques Stocks et Affluence : uniquement des chiffres calculés par la simulation
+const COUL_STOCK = (st) => (st < 0.5 ? '#dc2626' : st < 0.7 ? '#ea580c' : '#16a34a');
+const hexa = (c) => '#' + c.toString(16).padStart(6, '0');
+function htmlHisto() {
+  const H0 = Math.floor(OUVERTURE), heures = [...Array(Math.ceil(FERMETURE) - H0).keys()].map((k) => H0 + k);
+  const moy = (h) => { let s = 0, n = 0; for (let x = Math.max(h, OUVERTURE); x < Math.min(h + 1, FERMETURE); x += 0.05) { s += clientsEn(x); n++; } return n ? s / n : 0; };
+  const v = heures.map(moy), max = Math.max(...v), pic = heures[v.indexOf(max)];
+  return `<div class="histo" role="img" aria-label="Clients présents en moyenne par heure">${heures.map((h, k) => `<i class="${Math.floor(t) === h ? 'now' : h + 1 <= t ? 'passe' : ''}" style="height:${Math.round((v[k] / max) * 100)}%" title="${h}h : ${Math.round(v[k])} clients en moyenne"></i>`).join('')}</div><div class="histo-h"><span>${H0}h</span><span>14h</span><span>${Math.ceil(FERMETURE) - 1}h</span></div><p class="intro-r" style="margin:8px 0 0">Moyenne simulée par heure · pic à ${pic}h, environ ${Math.round(max)} clients.</p>`;
 }
-let onglet = 'equipe', selection = null;
+// Teinte de stock posée sur les rayons (rubrique Stocks seulement)
+const teinte = new THREE.Group(); teinte.visible = false; teinte.userData.dyn = true; scene.add(teinte);
+const teintes = RAYONS.map((r) => { const g = gondoles[r.id], m = new THREE.MeshBasicMaterial({ color: 0x16a34a, transparent: true, opacity: 0.42, depthWrite: false }); const pl = new THREE.Mesh(new THREE.PlaneGeometry(g.l + 0.6, 3.6), m); pl.rotation.x = -Math.PI / 2; pl.position.set(g.x0 + g.l / 2, 0.24, g.z); pl.renderOrder = 3; teinte.add(pl); return { r, m }; });
+function majTeinte() { if (teinte.visible) for (const x of teintes) x.m.color.set(COUL_STOCK(stockDe(x.r))); }
+// Chiffres clés : chaque carte sait recalculer son chiffre à n'importe quelle heure (courbe et tendance)
+const IC = (d) => `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const HIST_ALERTES = new Map(); // minute de démo -> nombre d'alertes ouvertes (relevé en direct : non recalculable après coup)
+const nb = (n) => Math.round(n).toLocaleString('fr-FR');
+const ouvertesHist = (h) => (h > t - 1e-6 ? caissesOuvertes().length : ouvertesA(h).length);
+const pctAttente = (h) => { const ouv = ouvertesA(h), f = fileA(affluence(h), ouv.length), sat = ouv.filter((c) => Math.min(4, Math.max(0, f - (c % 2))) >= 3).length; return ouv.length ? Math.round((sat / ouv.length) * 100) : 0; };
+const pctRayons = (h) => Math.round((RAYONS.filter((r) => stockDe(r, h) >= 0.7).length / RAYONS.length) * 100);
+const presentsA = (h) => EQUIPE.filter((e) => e.debut <= h && h < e.fin).length;
+const NIV_COUL = { urgent: ['#dc2626', '#fee2e2'], surveiller: ['#ea580c', '#ffedd5'], conseil: ['#2563eb', '#dbeafe'], ok: ['#16a34a', '#dcfce7'] };
+const kpis = creerKpis({
+  rangee: $('kpis-grille'), plus: $('kpis-grille'), ouverture: OUVERTURE, reduit: () => REDUIT.matches, hTxt: (h) => hh(h).replace(':', 'h'),
+  cartes: [
+    { id: 'alertes', label: 'Alertes ouvertes', source: 'Calculé : règles sur les stocks, les caisses, les livraisons et le planning', icone: IC('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1, pas: 1 / 12,
+      valeur: (h) => { const m = Math.floor(h * 60 + 1e-6); return HIST_ALERTES.has(m) ? HIST_ALERTES.get(m) : null; }, maintenant: () => alertes.length, format: nb,
+      detail: () => { const u = alertes.filter((a) => a.niveau === 'urgent').length; return `${u} urgente${u > 1 ? 's' : ''} · ${TRAITES.length} traitée${TRAITES.length > 1 ? 's' : ''}`; },
+      couleurDyn: () => NIV_COUL[alertes.some((a) => a.niveau === 'urgent') ? 'urgent' : alertes.some((a) => a.niveau === 'surveiller') ? 'surveiller' : alertes.length ? 'conseil' : 'ok'] },
+    { id: 'ca', label: "Chiffre d'affaires", source: 'Caisse · mis à jour en direct', icone: IC('<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>'), couleur: '#16a34a', doux: '#dcfce7', sens: 1,
+      valeur: (h) => caDuJour(h), format: euros, detail: () => `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}` },
+    { id: 'clients', label: 'Clients dans le magasin', source: 'Calculé à partir des passages en caisse · en direct', icone: IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.7c1.8.8 3 2.5 3 5.3"/>'), couleur: '#2563eb', doux: '#dbeafe', sens: 0,
+      valeur: (h) => Math.round(clientsEn(h)), format: nb, detail: () => (affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme') },
+    { id: 'caisses', label: 'Caisses ouvertes', source: 'Caisse · ouverture des caisses en direct', icone: IC('<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V5h10v5M7 15h4"/>'), couleur: '#7c3aed', doux: '#ede9fe', sens: 0,
+      valeur: ouvertesHist, format: (n) => `${Math.round(n)} / ${NB_CAISSES}`, ecart: nb, detail: () => `attente moyenne ${attenteMin()} min` },
+    { id: 'attente', label: "Taux d'attente en caisse", source: 'Calculé : clients en file à chaque caisse', icone: IC('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1,
+      valeur: pctAttente, maintenant: () => { const fc = filesCaisses(); return fc.length ? Math.round((fc.filter((x) => x.f >= 3).length / fc.length) * 100) : 0; }, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts',
+      detail: () => { const fc = filesCaisses(), sat = fc.filter((x) => x.f >= 3).length; return `${sat} caisse${sat > 1 ? 's' : ''} sur ${fc.length} à 3 clients et plus`; } },
+    { id: 'stock', label: 'Rayons en stock', source: 'Logiciel de stock · synchronisé toutes les 5 min', icone: IC('<path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'), couleur: '#0891b2', doux: '#cffafe', sens: 1,
+      valeur: pctRayons, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts', detail: () => `${RAYONS.filter((r) => stockDe(r) >= 0.7).length} sur ${RAYONS.length} au-dessus de 70 % de stock` },
+    { id: 'ruptures', label: 'Ruptures de stock', source: 'Logiciel de stock · synchronisé toutes les 5 min', enPlus: true, icone: IC('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h0"/>'), couleur: '#dc2626', doux: '#fee2e2', sens: -1,
+      valeur: (h) => RAYONS.reduce((s, r) => s + rupturesDe(r, h), 0), format: nb, detail: () => `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits` },
+    { id: 'equipe', label: 'Équipe présente', source: 'Planning du jour', enPlus: true, icone: IC('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'), couleur: '#0f766e', doux: '#ccfbf1', sens: 0,
+      valeur: presentsA, format: (n) => `${Math.round(n)} / ${EQUIPE.length}`, ecart: nb, detail: () => { const pz = EQUIPE.filter(auRepos).length; return `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`; } },
+    { id: 'salaires', label: "Coût de l'équipe aujourd'hui", source: 'Calculé : heures faites (planning) × coût horaire saisi par les RH', enPlus: true, icone: IC('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>'), couleur: '#475569', doux: '#f1f5f9', sens: 0,
+      valeur: (h) => coutJour(h), format: euros, detail: () => { const ca = caDuJour(), p = ca ? (coutJour() / ca) * 100 : 0; return `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; } },
+  ],
+});
+$('k-salaires-c').insertAdjacentHTML('beforeend', '<div class="jauge"><i id="k-salaires-j"></i></div>');
+function majKpis() {
+  kpis.maj(t);
+  const ca = caDuJour(); $('k-salaires-j').style.width = Math.min(100, (ca ? (coutJour() / ca) * 100 : 0) * 5) + '%';
+  majResume();
+}
+// Accueil : trois chiffres seulement, et la pilule « N choses à traiter »
+function majResume() {
+  const A = vues(), n = A.length, u = A.filter((a) => a.niveau === 'urgent').length, ouv = caissesOuvertes().length;
+  const SRC = { traiter: 'Calculé : règles sur les stocks, les caisses, les livraisons et le planning', affluence: 'Calculé à partir des passages en caisse · en direct', caisses: 'Caisse · mis à jour en direct' };
+  const carteR = (rub, ic, c, cd, label, val, det) => (voitRub(rub) ? `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span>${source(SRC[rub])}</button>` : '');
+  const ton = u ? '#dc2626' : n ? '#ea580c' : '#16a34a';
+  const R = $('resume');
+  if (!R.querySelector('.rs-c')) R.innerHTML = `<div class="rs-c" style="display:contents"></div><button type="button" class="bt-resume" data-resume title="Aperçu du rapport envoyé chaque soir"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Résumé du jour</span></button>`;
+  R.querySelector('.bt-resume').hidden = !ROLE().finances;
+  poser(R.querySelector('.rs-c'), carteR('traiter', ICONES_UI.traiter, ton, u ? '#fee2e2' : n ? '#ffedd5' : '#dcfce7', 'Alertes à traiter', nb(n), u ? `${u} urgente${u > 1 ? 's' : ''}` : n ? 'rien d\'urgent' : 'tout est en ordre')
+    + carteR('affluence', ICONES_UI.equipe, '#2563eb', '#dbeafe', 'Clients dans le magasin', nb(clientsMagasin()), affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme')
+    + carteR('caisses', ICONES_UI.caisses, '#7c3aed', '#ede9fe', 'Caisses ouvertes', `${ouv} / ${NB_CAISSES}`, `attente moyenne ${attenteMin()} min`)
+    + (voitRub('traiter') ? `<button type="button" class="pilule ${n ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${n ? `${n} chose${n > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}<span>${n ? '' : ''}</span></button>` : ''));
+  if (ui) { ui.badge('traiter', n, u ? 'rouge' : n ? 'orange' : ''); const rup = RAYONS.filter((r) => stockDe(r) < 0.7).length; ui.badge('stocks', rup, rup ? 'orange' : ''); }
+}
+$('resume').onclick = (ev) => { if (ev.target.closest('[data-resume]')) { ouvrirResume(); return; } const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
+let selection = null, ui = null, parcoursVu = true;
+const rubrique = () => (ui ? ui.rubrique() : 'accueil');
 const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
 function rendrePanneau() {
-  const c = $('contenu');
-  if (onglet === 'rh') return rh.rendre(c);
-  if (onglet === 'equipe') {
-    c.innerHTML = `<h2>Équipe du jour (horaires de 6h à 21h)</h2><table><thead><tr><th>Personne</th><th>Service</th><th class="num">Coût</th></tr></thead><tbody>${EQUIPE.map((e) => `<tr class="clic" data-cle="${e.id}"><td><b>${e.nom}</b><br><small class="d">${e.poste} · ${hTxt(e.debut)}-${hTxt(e.fin)}</small></td><td>${service(e)}<br><small class="d">${present(e) ? 'présent·e' : t < e.debut ? 'arrive à ' + hTxt(e.debut) : 'parti·e'}</small></td><td class="num">${euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout)}</td></tr>`).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">Coût = heures faites aujourd'hui × coût horaire chargé (montants fictifs).</p>`;
-  } else if (onglet === 'rayons') {
-    c.innerHTML = `${encartLogiciel()}<h2>Stock par rayon</h2><table><thead><tr><th>Rayon</th><th>Stock</th><th class="num">Ruptures</th></tr></thead><tbody>${RAYONS.map((r) => { const s = stockDe(r), col = s < 0.5 ? '#b91c1c' : s < 0.7 ? '#c2410c' : '#15803d'; return `<tr class="clic" data-cle="${r.id}"><td><b>${r.nom}</b><br><small class="d">${r.refs.toLocaleString('fr-FR')} produits</small></td><td><span class="mini"><i style="width:${s * 100}%;background:${col}"></i></span> ${Math.round(s * 100)} %</td><td class="num" style="color:${rupturesDe(r) > 5 ? 'var(--accent)' : 'inherit'}">${rupturesDe(r)}</td></tr>`; }).join('')}</tbody></table>`;
-  } else if (onglet === 'caisses') {
-    const ouv = caissesOuvertes();
-    c.innerHTML = `<h2>Caisses</h2><table><thead><tr><th>Caisse</th><th>Hôte ou hôtesse</th><th class="num">File</th></tr></thead><tbody>${CAISSES.map((_, i) => { const e = caissiers().find((x) => caisseDe(x) === i); const f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length; return `<tr class="clic" data-cle="c${i}"><td><b>Caisse ${i + 1}</b></td><td>${e ? e.nom : '<small class="d">fermée</small>'}</td><td class="num">${ouv.includes(i) ? f + ' client' + (f > 1 ? 's' : '') : '-'}</td></tr>`; }).join('')}</tbody></table>`;
-  } else {
-    c.innerHTML = `<h2>Livraisons du jour</h2><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commandée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table>`;
+  const c = $('contenu'), rub = rubrique();
+  if (ui && ui.plein()) return rendrePage();
+  if (rub === 'accueil') return;
+  if (rub === 'rh') return rh.rendre(c);
+  if (rub === 'traiter') return rendreATraiter(c);
+  if (rub === 'chiffres') { if (!c.contains($('kpis-grille'))) { c.innerHTML = `<p class="intro-r">Tous les chiffres de la journée, recalculés chaque minute. La flèche compare avec il y a une heure ; la courbe suit la journée depuis l'ouverture.</p>`; c.appendChild($('kpis-grille')); c._h = null; } return; }
+  const chiffres = (l) => `<div class="chiffres-r">${l.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join('')}</div>`;
+  const pli = (id, titre, n, corps) => `<details data-pli="${id}"><summary>${titre}${n !== '' ? `<small>${n}</small>` : ''}</summary>${corps}</details>`;
+  let h = '';
+  if (rub === 'stocks') {
+    const bas = RAYONS.filter((r) => stockDe(r) < 0.7).length, rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0);
+    h = chiffres([['Sous 70 %', `${bas} / ${RAYONS.length}`], ['Ruptures', nb(rup)], ['Palettes en réserve', slotsPleins()]])
+      + `<div class="bloc-r"><p class="titre-r">Stock par rayon</p><ul class="lignes-r">${RAYONS.map((r) => { const st = stockDe(r), col = COUL_STOCK(st); return `<li data-cle="${r.id}"><i class="pt-r" style="background:${hexa(r.couleur)}"></i><span>${r.nom}<small>${rupturesDe(r)} rupture${rupturesDe(r) > 1 ? 's' : ''}${commandees[r.id] ? ' · commande en route' : ''}</small><span class="barre-r"><i style="width:${Math.round(st * 100)}%;background:${col}"></i></span></span><b style="color:${st < 0.7 ? col : 'inherit'}">${Math.round(st * 100)} %</b></li>`; }).join('')}</ul><p class="intro-r" style="margin:8px 0 0">Un clic sur un rayon ouvre sa fiche : stock exact, réserve, commande, mise en rayon.</p></div>`
+      + pli('logiciel', 'Lien avec le logiciel de caisse', '', encartLogiciel());
+  } else if (rub === 'affluence') {
+    const z = chaleur.zones(1)[0];
+    h = chiffres([['Clients maintenant', nb(clientsMagasin())], ['Caisses ouvertes', `${caissesOuvertes().length} / ${NB_CAISSES}`], ['Attente moyenne', `${attenteMin()} min`]])
+      + `<div class="bloc-r"><p class="titre-r">Sur la maquette</p><div class="bascules"><button type="button" class="bascule" data-bascule="chaleur" aria-pressed="${chaleur.visible}">Carte de chaleur</button><button type="button" class="bascule" data-bascule="parcours" aria-pressed="${parcoursVu}">Parcours clients</button></div><div class="degrade"></div><div class="bornes"><span>Faible</span><span>Forte</span></div><p class="intro-r" id="leg-zone" style="margin:8px 0 0">${z ? `Plus forte affluence : ${NOM_ZONE(z.x, z.z)}.` : 'Affluence des 30 dernières minutes, calculée sur la position des clients simulés.'}</p></div>`
+      + `<div class="bloc-r"><p class="titre-r">Clients par heure</p>${htmlHisto()}</div>`;
+  } else if (rub === 'caisses') {
+    const ouv = caissesOuvertes(), fc = filesCaisses(), enFile = fc.reduce((s, x) => s + x.f, 0);
+    h = chiffres([['Ouvertes', `${ouv.length} / ${NB_CAISSES}`], ['Clients en file', enFile], ['Attente moyenne', `${attenteMin()} min`]])
+      + `<div class="bloc-r"><p class="titre-r">Les 8 caisses</p><table><thead><tr><th>Caisse</th><th>Hôte ou hôtesse</th><th class="num">File</th></tr></thead><tbody>${CAISSES.map((_, i) => { const e = caissiers().find((x) => caisseDe(x) === i); const f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length; return `<tr class="clic" data-cle="c${i}"><td><b>Caisse ${i + 1}</b></td><td>${e ? e.nom : '<small class="d">fermée</small>'}</td><td class="num">${ouv.includes(i) ? f + ' client' + (f > 1 ? 's' : '') : '-'}</td></tr>`; }).join('')}</tbody></table></div>`;
+  } else if (rub === 'equipe') {
+    const pres = EQUIPE.filter(present), pz = EQUIPE.filter(auRepos);
+    h = chiffres([['Présents', `${pres.length} / ${EQUIPE.length}`], ['En pause', pz.length], ['Coût du jour', euros(coutJour())]])
+      + `<div class="bloc-r"><p class="titre-r">En ce moment</p><ul class="lignes-r">${pres.slice(0, 5).map((e) => `<li data-cle="${e.id}"><span>${e.nom}<small>${e.poste} · ${ZONE_NOM(e.zone)}</small></span><b class="statut ${auRepos(e) ? 'att' : 'ok'}">${auRepos(e) ? 'en pause' : objets[e.id].job ? objets[e.id].job.court : 'à son poste'}</b></li>`).join('')}</ul></div>`
+      + pli('equipe', 'Toute l\'équipe du jour', `${EQUIPE.length} personnes`, `<p class="intro-r">Horaires de 6h à 21h ; le trait rouge marque l'heure actuelle.</p><table><thead><tr><th>Personne</th><th>Service</th><th class="num">Coût</th></tr></thead><tbody>${EQUIPE.map((e) => `<tr class="clic" data-cle="${e.id}"><td><b>${e.nom}</b><br><small class="d">${e.poste} · ${hTxt(e.debut)}-${hTxt(e.fin)}</small></td><td>${service(e)}<br><small class="d">${present(e) ? 'présent·e' : t < e.debut ? 'arrive à ' + hTxt(e.debut) : 'parti·e'}</small></td><td class="num">${euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout)}</td></tr>`).join('')}</tbody></table><p style="color:var(--doux);font-size:12px">Coût = heures faites aujourd'hui × coût horaire chargé (montants fictifs).</p>`);
+  } else if (rub === 'livraisons') {
+    const proch = LIVRAISONS.filter((d) => statutLiv(d) !== 'déchargée').sort((a, b) => a.heure - b.heure)[0];
+    h = chiffres([['Prochaine', proch ? hTxt(proch.heure) : 'aucune'], ['Au quai', LIVRAISONS.some((d) => statutLiv(d) === 'au quai') ? 'oui' : 'non'], ['Palettes en réserve', slotsPleins()]])
+      + `<div class="bloc-r"><p class="titre-r">Livraisons du jour</p><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commandée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table></div>`
+      + `<div class="bloc-r"><p class="titre-r">Réserve et quai</p><div class="bascules"><button type="button" class="bouton-r" data-cle-aller="reserve">Voir la réserve</button><button type="button" class="bouton-r" data-cle-aller="quai">Voir le quai</button></div></div>`;
   }
+  poserGarde(c, h);
 }
-$('contenu').onclick = (ev) => { const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle); };
-document.querySelectorAll('[data-onglet]').forEach((b) => (b.onclick = () => { onglet = b.dataset.onglet; document.querySelectorAll('[data-onglet]').forEach((x) => x.classList.toggle('actif', x === b)); rendrePanneau(); }));
+// ================= Pages pleines : RH, Équipe, Chiffres (sans la 3D) =================
+function rendrePage() {
+  const rub = rubrique(), corps = ui.page().corps;
+  if (rub === 'rh') return rh.rendrePage(corps);
+  if (rub === 'equipe') return rh.rendreEquipe(corps);
+  if (rub === 'chiffres') return rendreChiffres(corps);
+  if (rub === 'journal') return journal.rendrePage(corps);
+}
+// Tableau de bord : tout est recalculé à partir de la simulation (affluence, ventes, stocks, horaires de l'équipe)
+function rendreChiffres(corps) {
+  if (!corps.querySelector('#ch-graphes')) {
+    corps.innerHTML = '<div id="ch-kpis"></div><div id="ch-graphes"></div>';
+    $('ch-kpis').appendChild($('kpis-grille'));
+  }
+  const fin = Math.min(t, FERMETURE), hh0 = Math.floor(OUVERTURE);
+  const heures = []; for (let h = hh0; h < FERMETURE; h++) heures.push(h);
+  const caH = heures.map((h) => Math.max(0, caDuJour(Math.min(h + 1, fin)) - caDuJour(Math.max(h, OUVERTURE))) * (h < fin ? 1 : 0));
+  const xs = []; for (let h = OUVERTURE; h <= fin + 1e-6; h += 0.25) xs.push(h); if (xs[xs.length - 1] < fin) xs.push(fin);
+  const libX = []; for (let h = 9; h <= 20; h += 2) libX.push([h, h + 'h']);
+  const caNow = caDuJour(), cout = coutJour(), part = caNow ? (cout / caNow) * 100 : 0;
+  const maxRup = Math.max(1, ...RAYONS.map((r) => rupturesDe(r)));
+  const pres = []; for (let h = 6; h < 21; h++) pres.push(h);
+  const h = poserGarde.bind(null, $('ch-graphes'));
+  h(`<div class="pg-grille">`
+    + carteGraphe('Chiffre d\'affaires par heure', `${euros(caNow)} depuis ${hTxt(OUVERTURE)}`, barres({ lib: heures.map((x) => x + 'h'), val: caH, coul: '#16a34a', format: (n) => n >= 1000 ? Math.round(n / 1000) + ' k€' : Math.round(n) + ' €', passe: heures.map((x) => x < fin), titreBarre: (i) => `${heures[i]}h-${heures[i] + 1}h : ${euros(caH[i])}` }) + `<p class="pg-note">Ventes de chaque heure (passages en caisse × panier moyen de ${PANIER.toLocaleString('fr-FR')} €). Les heures à venir restent vides.</p>`)
+    + carteGraphe('Clients dans le magasin', `${nb(clientsMagasin())} maintenant`, courbes({ x: xs, xLib: libX, series: [{ val: xs.map((x) => clientsEn(x)), coul: '#2563eb', aire: true }], max: 220, format: (n) => Math.round(n) }) + `<p class="pg-note">Pics à midi et en fin d'après-midi ; courbe arrêtée à l'heure de la démo.</p>`)
+    + `</div><div class="pg-grille g3">`
+    + carteGraphe('Coût de l\'équipe et chiffre d\'affaires', 'cumulés depuis le matin', courbes({ x: xs, xLib: libX, series: [{ val: xs.map((x) => caDuJour(x)), coul: '#16a34a', aire: true }, { val: xs.map((x) => coutJour(x)), coul: '#ea580c' }], format: (n) => n >= 1000 ? Math.round(n / 1000) + ' k€' : Math.round(n) + ' €' }) + legende([[`CA ${euros(caNow)}`, '#16a34a'], [`Équipe ${euros(cout)}`, '#ea580c']]))
+    + carteGraphe('Ruptures par rayon', `${nb(RAYONS.reduce((s, r) => s + rupturesDe(r), 0))} au total`, barresH(RAYONS.map((r) => ({ label: r.nom, val: rupturesDe(r), max: maxRup, coul: hexa(r.couleur), txt: `${rupturesDe(r)} · stock ${Math.round(stockDe(r) * 100)} %` }))))
+    + carteGraphe('Part de l\'équipe dans le CA', 'coût du jour ÷ CA du jour', anneauPct(Math.min(100, part), part > 25 ? '#ea580c' : '#16a34a', `${part.toFixed(1).replace('.', ',')} %`, 'du chiffre d\'affaires') + `<p class="pg-note" style="text-align:center">${euros(cout)} d'équipe pour ${euros(caNow)} de ventes. Le matin, l'équipe arrive avant les clients : la part baisse dans la journée.</p>`)
+    + `</div><div class="pg-grille">`
+    + carteGraphe('Équipe présente par heure', `${EQUIPE.filter(present).length} sur ${EQUIPE.length} maintenant`, barres({ lib: pres.map((x) => x + 'h'), val: pres.map((x) => presentsA(x + 0.5)), coul: '#0f766e', passe: pres.map((x) => x < t), format: (n) => Math.round(n), titreBarre: (i) => `${pres[i]}h30 : ${presentsA(pres[i] + 0.5)} personnes` }) + `<p class="pg-note">D'après les horaires du jour ; en gris, les heures à venir (planning prévu).</p>`, 'large')
+    + `</div>`);
+}
+// le panneau est redessiné chaque minute de démo (chaque seconde) : un clic commencé sur une ligne remplacée entre-temps compte quand même
+let appuiPanneau = null;
+$('contenu').addEventListener('pointerdown', (ev) => { const el = ev.target.closest('[data-cle],[data-al],[data-al-voir],[data-bascule],[data-cle-aller]'); appuiPanneau = el ? el.cloneNode(false) : null; });
+$('contenu').onclick = (ev) => {
+  if (!ev.target.closest('[data-cle],[data-al],[data-al-voir],[data-bascule],[data-cle-aller]') && appuiPanneau) ev = { target: appuiPanneau };
+  appuiPanneau = null;
+  const bs = ev.target.closest('[data-bascule]'); if (bs) { if (bs.dataset.bascule === 'chaleur') chaleur.montrer(!chaleur.visible); else { parcoursVu = !parcoursVu; chaleur.parcours(parcoursVu); } bs.setAttribute('aria-pressed', bs.dataset.bascule === 'chaleur' ? chaleur.visible : parcoursVu); return; }
+  const ca = ev.target.closest('[data-cle-aller]'); if (ca) { choisir(ca.dataset.cleAller); return; }
+  const a = ev.target.closest('[data-al]'); if (a) { if (!a.disabled) faire(a.dataset.al); return; }
+  const v = ev.target.closest('[data-al-voir]'); if (v) { voir(v.dataset.alVoir); return; }
+  const el = ev.target.closest('[data-cle]'); if (el) choisir(el.dataset.cle);
+};
 const li = (a, b) => `<li><span>${a}</span><b>${b}</b></li>`;
 const RAYON_DE = (id) => RAYONS.find((r) => r.id === id);
 // Lien (fictif) avec le logiciel de caisse et de stock du magasin : synchro toutes les 5 minutes de démo
@@ -644,20 +1063,144 @@ function blocCommande(r) {
   const ferme = h > FERMETURE - 0.5;
   return `<div class="commande"><h2>Commander du réassort</h2><div class="ligne"><button data-act="moins" aria-label="Moins">−</button><b>${q} palettes</b><button data-act="plus" aria-label="Plus">+</button><button class="go" data-act="commander" ${ferme ? 'disabled' : ''}>Commander</button></div><small>${ferme ? 'Plus de livraison possible aujourd\'hui (dernière à 19h30).' : `${FOURNISSEURS[r.id]} · livraison prévue à ${hTxt(h)} · le stock monte à la réception`}</small>${d ? `<div class="fait">✓ Commande de ${d.palettes} palettes envoyée à ${hh(d.passee)}, ${statutLiv(d) === 'déchargée' ? 'reçue' : 'livraison à ' + hTxt(d.heure)}</div>` : ''}</div>`;
 }
+// ================= Décider : alertes calculées, actions, renforts =================
+// Renfort en caisse : une personne libre (rayon ou accueil) ouvre une caisse fermée pendant 1 h au plus
+const RENFORTS = {}; // id -> { caisse, fin, zone }
+const ZONE_NOM = (z) => (/^r\d/.test(z) ? 'rayon ' + RAYON_DE(z).nom.toLowerCase() : /^c\d/.test(z) ? 'caisse ' + (caisseDe({ zone: z }) + 1) : { reserve: 'réserve et quai', accueil: 'accueil', bureau: 'bureau de la direction', 'etage-rh': 'bureau RH (1er étage)', 'etage-compta': 'comptabilité (1er étage)' }[z] || z);
+const libre = (e) => present(e) && !enPause(e) && !objets[e.id].job && !RENFORTS[e.id];
+const PERSONNES_RAYON = () => EQUIPE.filter((e) => /^r\d/.test(e.zone));
+const ouvertesA = (h) => [...new Set(EQUIPE.filter((e) => e.zone.startsWith('c') && e.debut <= h && h < e.fin && (!RENFORTS[e.id] || (RENFORTS[e.id].debut <= h && RENFORTS[e.id].fin > h))).map(caisseDe))];
+const fileA = (a, o) => Math.min(4, Math.max(0, Math.round((a * 10) / Math.max(1, o) * 1.4)));
+const attenteMin = () => Math.max(1, Math.round((affluence() * 9) / Math.max(1, caissesOuvertes().length) * 2));
+const filesCaisses = () => caissesOuvertes().map((i) => ({ i, f: attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length }));
+function propositionCaisse() {
+  const ouv = caissesOuvertes(), fermees = [...Array(NB_CAISSES).keys()].filter((i) => !ouv.includes(i));
+  if (!fermees.length) return { caisse: null, qui: null };
+  const caisse = ouv.length ? fermees.sort((a, b) => Math.min(...ouv.map((o) => Math.abs(o - a))) - Math.min(...ouv.map((o) => Math.abs(o - b))) || a - b)[0] : fermees[0];
+  const accueil = EQUIPE.filter((e) => e.zone === 'accueil' && present(e) && !auRepos(e)).length;
+  const c = CAISSES[caisse];
+  const qui = EQUIPE.filter((e) => libre(e) && (/^r\d/.test(e.zone) && !/^Chef/.test(e.poste) || (e.zone === 'accueil' && accueil > 1)))
+    .map((e) => ({ e, d: Math.hypot(objets[e.id].obj.position.x - c.x, objets[e.id].obj.position.z - c.z) })).sort((a, b) => a.d - b.d)[0];
+  return { caisse, qui: qui ? qui.e : null };
+}
+function ouvrirCaisse() {
+  const { caisse, qui } = propositionCaisse(); if (caisse === null || !qui) return false;
+  const fin = Math.min(qui.fin, quart(t + 1));
+  RENFORTS[qui.id] = { caisse, fin, zone: qui.zone, debut: t };
+  qui.zone = 'c' + caisse; const x = objets[qui.id]; annulerJob(x); x.base = posteDe(qui, EQUIPE.indexOf(qui));
+  annoncer(`Caisse ${caisse + 1} ouverte : ${qui.nom} en renfort jusqu'à ${hTxt(fin)}`);
+  synchroniser(); return { fin, caisse, qui };
+}
+function finRenforts(tout = false) {
+  for (const [id, r] of Object.entries(RENFORTS)) if (tout || t >= r.fin) { const e = EQUIPE.find((x) => x.id === id); e.zone = r.zone; delete RENFORTS[id]; const x = objets[id]; x.base = posteDe(e, EQUIPE.indexOf(e)); if (tout) x.obj.position.copy(x.base); }
+}
+// Envoyer un employé de rayon chercher une palette en réserve pour un rayon donné : le plus proche parmi les libres
+function employePour(rid) {
+  if (!paletteDe(rid)) return null;
+  const g = gondoles[rid];
+  return PERSONNES_RAYON().filter(libre).map((e) => ({ e, d: (e.zone === rid ? -100 : 0) + Math.hypot(objets[e.id].obj.position.x - (g.x0 + g.l / 2), objets[e.id].obj.position.z - g.z) })).sort((a, b) => a.d - b.d)[0]?.e || null;
+}
+function envoyerEnRayon(rid) {
+  const e = employePour(rid); if (!e) return false;
+  const ok = mettreEnRayon(objets[e.id], rid); if (ok) annoncer(`${e.nom} part chercher une palette ${RAYON_DE(rid).nom.toLowerCase()} en réserve`);
+  return ok ? e : false;
+}
+// État de la simulation donné aux règles d'alerte (alertes.js)
+function etatDecision() {
+  const prop = propositionCaisse(), files = filesCaisses(), pire = files.sort((a, b) => b.f - a.f)[0];
+  const a30 = affluence(t + 0.5), o30 = ouvertesA(t + 0.5).length;
+  const rec = (h) => EQUIPE.filter((e) => e.zone === 'reserve' && e.debut <= h && h < e.fin).map((e) => e.nom);
+  const accPres = EQUIPE.filter((e) => e.zone === 'accueil' && present(e) && !auRepos(e));
+  const accPause = EQUIPE.find((e) => e.zone === 'accueil' && auRepos(e)), accSuiv = EQUIPE.filter((e) => e.zone === 'accueil' && e.debut > t).sort((a, b) => a.debut - b.debut)[0];
+  const respRH = EQUIPE.find((e) => e.zone === 'etage-rh');
+  const sol = SLOTS.filter((sl) => sl.rangee === 2 && sl.rayon && !sl.pris);
+  const solRid = sol.length ? Object.entries(sol.reduce((m, sl) => ((m[sl.rayon] = (m[sl.rayon] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1])[0][0] : null;
+  return {
+    t, hh, hTxt, fermeture: FERMETURE, ouvert: t >= OUVERTURE && t < FERMETURE, masque: MASQUE,
+    rayons: RAYONS.map((r) => { const d = commandees[r.id]; return { id: r.id, nom: r.nom, stock: stockDe(r), ruptures: rupturesDe(r), conso: r.conso, suggestion: quantites[r.id] ?? suggestion(r), peutCommander: livraisonPrevue() <= FERMETURE - 0.5, commande: d ? { recue: statutLiv(d) === 'déchargée' } : null, reserve: SLOTS.filter((sl) => sl.rayon === r.id && !sl.pris).length, attendues: LIVRAISONS.filter((d) => d.rayon === r.id && statutLiv(d) !== 'déchargée').map((d) => ({ palettes: d.palettes, heure: d.heure })), employe: employePour(r.id), enRayon: EQUIPE.filter((e) => e.zone === r.id && present(e) && !auRepos(e)).map((e) => e.nom).join(', ') }; }).sort((a, b) => b.conso - a.conso),
+    caisses: { total: NB_CAISSES, ouvertes: caissesOuvertes().length, fileMax: pire ? pire.f : 0, pire: pire ? pire.i : null, attente: attenteMin(), clients: clientsMagasin(), proposition: prop.qui ? { nom: prop.qui.nom, poste: prop.qui.poste, ou: ZONE_NOM(prop.qui.zone) } : null, caisseLibre: prop.caisse, fileDans30: t + 0.5 < FERMETURE ? fileA(a30, o30) : 0, ouvertesDans30: o30, affluenceDans30: a30 },
+    livraisons: LIVRAISONS.map((d) => ({ id: d.id, heure: d.heure, fourn: d.fourn, palettes: d.palettes, lots: lotDe(d), rayonNom: RAYON_DE(d.rayon).nom, statut: statutLiv(d), dechargees: Math.min(d.palettes, d.dechargees || 0), receptionnaires: rec(d.heure), receptionnairesLa: EQUIPE.filter((e) => e.zone === 'reserve' && present(e) && !auRepos(e)).map((e) => e.nom) })),
+    reserve: { libres: SLOTS.filter((sl) => !sl.rayon && !sl.pris).length, libresRack: SLOTS.filter((sl) => sl.rangee < 2 && !sl.rayon && !sl.pris).length, auSol: sol.length, auSolRayon: solRid ? { id: solRid, nom: RAYON_DE(solRid).nom, employe: employePour(solRid) } : null },
+    accueil: { presents: accPres.map((e) => e.nom), raison: accPause ? `${accPause.nom} est en pause jusqu'à ${hTxt(debutPause(accPause) + 0.5)}${accSuiv ? `, ${accSuiv.nom} arrive à ${hTxt(accSuiv.debut)}` : ''}.` : accSuiv ? `Prochaine arrivée : ${accSuiv.nom} à ${hTxt(accSuiv.debut)}.` : 'Plus personne au planning de l\'accueil aujourd\'hui.' },
+    pausesEnRetard: EQUIPE.filter((e) => enPause(e) && objets[e.id].job && t >= debutPause(e) + 1 / 6).map((e) => ({ id: e.id, nom: e.nom, poste: e.poste, debut: debutPause(e), tache: objets[e.id].job.court })),
+    entretiens: rh.rdvDuJour(), rh: { nom: respRH ? respRH.nom : 'La responsable RH', presente: !!respRH && present(respRH) },
+  };
+}
+const MASQUE = {}, TRAITES = [], VU = {};
+let alertes = [];
+function majDecisions() {
+  finRenforts();
+  alertes = calculerAlertes(etatDecision());
+  const cles = new Set(alertes.map((a) => a.cle));
+  for (const k in VU) if (!cles.has(k)) delete VU[k];
+  for (const a of alertes) VU[a.cle] ??= t;
+  for (const k of [...JA]) if (!cles.has(k)) JA.delete(k);
+  for (const a of alertes) if (!JA.has(a.cle)) { JA.add(a.cle); journal.ajouter({ h: t, qui: 'Calcul automatique', role: 'règles d\'alerte', type: 'alerte', texte: `${a.titre} (${NIV_ALERTE[a.niveau].nom.toLowerCase()})` }); }
+  const urg = alertes.filter((a) => a.niveau === 'urgent').length, sur = alertes.filter((a) => a.niveau === 'surveiller').length;
+  void sur; void urg;
+  HIST_ALERTES.set(Math.floor(t * 60 + 1e-6), alertes.length);
+}
+function traiter(cle, label, jusqua = t + 1) {
+  const a = alertes.find((x) => x.cle === cle); // une action faite depuis une fiche, sans alerte ouverte, n'est pas listée
+  MASQUE[cle] = jusqua; if (a) TRAITES.unshift({ cle, titre: a.titre, niveau: a.niveau, label, h: t, qui: ROLE().qui });
+  agir(a ? `${a.titre} · ${label}` : label);
+  majDecisions(); majKpis(); rendrePanneau();
+}
+function faire(act) {
+  const [type, arg] = act.split(':');
+  if (type === 'commander') { const r = RAYON_DE(arg); const q = quantites[arg] ?? suggestion(r); commander(arg); if (commandees[arg]) traiter('stock-' + arg, `Commande de ${q} palettes, livraison à ${hTxt(commandees[arg].heure)}`, commandees[arg].heure + 0.75); }
+  else if (type === 'rayon') { const e = envoyerEnRayon(arg); if (e) { const cle = alertes.find((a) => a.cle === 'sol' && a.actions.some((x) => x.act === act)) ? 'sol' : 'stock-' + arg; traiter(cle, `${e.nom} envoyé·e chercher une palette en réserve`, t + 0.75); } }
+  else if (type === 'caisse') { const o = ouvrirCaisse(); if (o) { MASQUE['caisse-pic'] = MASQUE['caisse-file'] = o.fin; traiter(alertes.find((a) => a.cle.startsWith('caisse'))?.cle || 'caisse-file', `Caisse ${o.caisse + 1} ouverte avec ${o.qui.nom} jusqu'à ${hTxt(o.fin)}`, o.fin); } }
+  else if (type === 'rh') { rh.ouvrirDocument(arg); const r = rh.rdvDuJour().find((x) => x.id === arg); traiter('rdv-' + arg, 'Dossier ouvert avant l\'entretien', r ? r.debut : t + 1); }
+  else if (type === 'noter') traiter(arg, 'Marqué comme traité');
+}
+function voir(cle) {
+  if (/^etage/.test(cle) && vueCourante === 'etage' && !etageVu) montrerEtage(true);
+  choisir(cle);
+}
+// Le panneau est rappelé chaque minute de démo : on ne remplace que ce qui a changé, pour que les boutons restent cliquables
+const poser = (el, html) => { if (el._h !== html) { el.innerHTML = html; el._h = html; } };
+function rendreATraiter(c) {
+  if (!c.querySelector(':scope > .at')) c.innerHTML = '<div class="at"><div class="at-resume"></div><p class="at-note"></p><div class="at-liste"></div><div class="at-traites"></div></div>';
+  const alertes = vues(), n = (k) => alertes.filter((a) => a.niveau === k).length;
+  poser(c.querySelector('.at-resume'), Object.entries(NIV_ALERTE).map(([k, v]) => `<span class="pastille"><i style="background:${v.couleur}"></i>${n(k)} ${v.nom.toLowerCase()}</span>`).join('') + `<span class="pastille">${ICONES.ok} ${TRAITES.length} traité${TRAITES.length > 1 ? 's' : ''}</span>`);
+  c.querySelector('.at-note').textContent = `Calculé à ${hh(t)} sur les données de la démo (stocks, files en caisse, livraisons, planning), mis à jour chaque minute. Les plus urgentes en haut.`;
+  const liste = c.querySelector('.at-liste'), DOUX = { urgent: '#fee2e2', surveiller: '#ffedd5', conseil: '#dbeafe' };
+  const parCle = new Map([...liste.querySelectorAll(':scope > .alerte')].map((el) => [el.dataset.k, el]));
+  const vide = liste.querySelector(':scope > .vide');
+  if (!alertes.length) { if (!vide) { liste.innerHTML = `<div class="vide"><span class="rond">${ICONES.ok}</span><b>Rien à traiter pour l'instant</b><small>Stock, caisses, livraisons et planning sont dans les clous.</small></div>`; } }
+  else {
+    if (vide) vide.remove();
+    alertes.forEach((a, i) => {
+      let el = parCle.get(a.cle);
+      if (!el) { el = document.createElement('article'); el.className = 'alerte entre'; el.dataset.k = a.cle; el.innerHTML = '<div class="al-tete"></div><ul></ul><div class="al-act"></div>'; el.addEventListener('animationend', () => el.classList.remove('entre'), { once: true }); }
+      parCle.delete(a.cle);
+      el.style.setProperty('--c', NIV_ALERTE[a.niveau].couleur); el.style.setProperty('--cd', DOUX[a.niveau]);
+      poser(el.children[0], `<span class="al-ic">${ICONES[a.icone] || ICONES.alerte}</span><div><b>${a.titre}</b><small><span class="prio ${a.niveau}"><i></i>${NIV_ALERTE[a.niveau].nom}</span>depuis ${hh(VU[a.cle] ?? t)}</small></div>`);
+      poser(el.children[1], a.detail.map((d) => `<li>${d}</li>`).join(''));
+      poser(el.children[2], `<button data-al-voir="${a.voir}">${ICONES.voir} Voir</button>${a.actions.map((x) => `<button data-al="${x.act}" class="${x.primaire ? 'prim' : ''}" ${x.off ? 'disabled' : ''}>${x.label}</button>`).join('')}${a.actions.filter((x) => x.off && x.raison).map((x) => `<small>${x.label} : ${x.raison}</small>`).join('')}`);
+      if (liste.children[i] !== el) liste.insertBefore(el, liste.children[i] || null);
+    });
+    for (const el of parCle.values()) el.remove();
+  }
+  poser(c.querySelector('.at-traites'), TRAITES.length ? `<div class="traites"><h2>Traité (${TRAITES.length})</h2><ul>${TRAITES.slice(0, 12).map((x) => `<li>${ICONES.ok}<div><b>${x.titre}</b><small>${x.label} · à ${hh(x.h)}</small></div></li>`).join('')}</ul></div>` : '');
+}
+function oublierDecisions() { finRenforts(true); for (const k in MASQUE) delete MASQUE[k]; for (const k in VU) delete VU[k]; TRAITES.length = 0; }
 function rendreFiche() {
   const f = $('fiche'), c = $('fiche-c'), s = selection;
+  if (ui) ui.fiche(!!s);
   if (!s) { f.classList.remove('vu'); return; }
   f.classList.add('vu');
   if (/^e\d/.test(s)) {
     const e = EQUIPE.find((x) => x.id === s), p = present(e);
-    c.innerHTML = `<h3>${e.nom}</h3><p class="sous">${e.poste}</p><span class="statut ${auRepos(e) ? 'att' : p ? 'ok' : ''}">${auRepos(e) ? 'En pause' : p ? 'Présent·e' : t < e.debut ? 'Arrive à ' + hTxt(e.debut) : 'Service terminé'}</span><ul class="lignes">${li('Horaires', `${hTxt(e.debut)} – ${hTxt(e.fin)}`)}${debutPause(e) !== null ? li('Pause', `${hTxt(debutPause(e))} – ${hTxt(debutPause(e) + 0.5)}`) : ''}${objets[e.id].job ? li('En ce moment', objets[e.id].job.texte) : ''}${li('Heures aujourd\'hui', String(Math.round(Math.max(0, Math.min(t, e.fin) - e.debut) * 10) / 10).replace('.', ',') + ' h')}${li('Coût horaire chargé', euros(e.cout))}${li('Coût du jour', euros(Math.max(0, Math.min(t, e.fin) - e.debut) * e.cout))}</ul>`;
+    c.innerHTML = `<h3>${e.nom}</h3><p class="sous">${e.poste}</p><span class="statut ${auRepos(e) ? 'att' : p ? 'ok' : ''}">${auRepos(e) ? 'En pause' : p ? 'Présent·e' : t < e.debut ? 'Arrive à ' + hTxt(e.debut) : 'Service terminé'}</span><ul class="lignes">${li('Poste', e.poste)}${li('Zone', RENFORTS[e.id] ? `${ZONE_NOM(e.zone)} (renfort, habituellement ${ZONE_NOM(RENFORTS[e.id].zone)})` : ZONE_NOM(e.zone))}${li('Horaires', `${hTxt(e.debut)} – ${hTxt(e.fin)}`)}${debutPause(e) !== null ? li('Pause', `${hTxt(debutPause(e))} – ${hTxt(debutPause(e) + 0.5)}`) : ''}${RENFORTS[e.id] ? li('Renfort en caisse', `jusqu'à ${hTxt(RENFORTS[e.id].fin)}`) : ''}${objets[e.id].job ? li('En ce moment', objets[e.id].job.texte) : ''}${li('Heures faites aujourd\'hui', String(Math.round(Math.max(0, Math.min(t, e.fin) - e.debut) * 10) / 10).replace('.', ',') + ' h')}</ul><p class="synchro" style="color:var(--doux)">Fiche limitée aux informations de travail : poste, horaires, zone, statut.</p>`;
   } else if (/^r\d/.test(s)) {
     const r = RAYON_DE(s), st = stockDe(r), resp = EQUIPE.filter((e) => e.zone === s && present(e)).map((e) => e.nom).join(', ') || 'personne en ce moment';
     const liv = LIVRAISONS.filter((d) => d.rayon === s && d.heure > t)[0];
-    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}`;
+    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Dernière mise en rayon', DERNIERE_MER[r.id] ? `${hh(DERNIERE_MER[r.id].h)}, ${DERNIERE_MER[r.id].nom}` : 'pas encore depuis le début de la démo')}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}${(() => { const em = employePour(r.id), n = SLOTS.filter((sl) => sl.rayon === r.id && !sl.pris).length; return `<div class="actions-fiche"><h2>Mettre en rayon</h2><button data-act="envoyer" ${em ? '' : 'disabled'}>${em ? `Envoyer ${em.nom}` : 'Envoyer un employé'}</button><small>${!n ? 'Aucune palette de ce rayon en réserve : passez une commande.' : em ? `${n} palette${n > 1 ? 's' : ''} en réserve · ${em.poste.toLowerCase()}, le plus proche parmi les personnes libres` : `${n} palette${n > 1 ? 's' : ''} en réserve, mais personne de libre en rayon en ce moment.`}</small></div>`; })()}`;
   } else if (/^c\d/.test(s)) {
     const i = +s.slice(1), e = caissiers().find((x) => caisseDe(x) === i), f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length;
-    c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom) + li('Jusqu\'à', hTxt(e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
+    c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom + (RENFORTS[e.id] ? ' (renfort)' : '')) + li('Jusqu\'à', hTxt(RENFORTS[e.id] ? RENFORTS[e.id].fin : e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
   } else if (/^d\d/.test(s) || s === 'quai') {
     const d = s === 'quai' ? LIVRAISONS.find((x) => statutLiv(x) === 'au quai') || LIVRAISONS.find((x) => x.heure > t) : LIVRAISONS.find((x) => x.id === s);
     c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${statutLiv(d) !== 'prévue' ? li('Déchargées', `${Math.min(d.palettes, d.dechargees || 0)} sur ${d.palettes}`) : ''}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
@@ -668,7 +1211,7 @@ function rendreFiche() {
       reserve: () => `<h3>Réserve</h3><p class="sous">Racks à palettes : réception du camion, puis mise en rayon</p><ul class="lignes">${li('Palettes en rack', `${SLOTS.filter((sl) => sl.rayon && sl.rangee < 2).length} sur 30`)}${li('Palettes au sol', SLOTS.filter((sl) => sl.rayon && sl.rangee === 2).length)}${li('En ce moment', Object.values(objets).filter((x) => x.job).map((x) => `${x.e.nom.split(' ')[0]} : ${x.job.court}`).join(', ') || 'calme')}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>`,
       parking: () => { const n = trafic.occupees(); return `<h3>Parking clients</h3><p class="sous">${PLACES.length} places</p><span class="statut ${PLACES.length - n > 4 ? 'ok' : 'att'}">${PLACES.length - n} places libres</span>`; },
       accueil: () => `<h3>Accueil</h3><p class="sous">Point d'accueil et service client</p><ul class="lignes">${li('À l\'accueil', EQUIPE.filter((e) => e.zone === 'accueil' && present(e)).map((e) => e.nom).join(', ') || 'personne')}${li('Clients dans le magasin', clientsMagasin())}</ul>`,
-      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretien en cours', entretienEnCours() ? `${entretienEnCours().nom} (${entretienEnCours().poste})` : 'aucun')}${li('Entretiens aujourd\'hui', rh.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun')}</ul><p class="synchro">Le détail est dans l'onglet RH, à droite.</p>`; },
+      'etage-rh': () => { const e = EQUIPE.find((x) => x.zone === 'etage-rh'); return `<h3>Bureau RH</h3><p class="sous">1er étage · recrutement et suivi du personnel</p><ul class="lignes">${li('Responsable', e ? e.nom + (present(e) ? '' : ' (absente)') : '-')}${li('Entretien en cours', entretienEnCours() ? `${entretienEnCours().nom} (${entretienEnCours().poste})` : 'aucun')}${li('Entretiens aujourd\'hui', rh.rdvDuJour().map((r) => `${hTxt(r.debut)} ${r.nom}`).join(', ') || 'aucun')}</ul><p class="synchro">Le détail est dans la rubrique RH.</p>`; },
       'etage-compta': () => { const e = EQUIPE.find((x) => x.zone === 'etage-compta'); return `<h3>Comptabilité</h3><p class="sous">1er étage · factures fournisseurs, caisse, paie</p><ul class="lignes">${li('Comptable', e ? e.nom + (present(e) ? '' : ' (absent)') : '-')}${li('Chiffre d\'affaires du jour', euros(caDuJour()))}${li('Livraisons à rapprocher', LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée').length)}</ul>`; },
       'etage-reunion': () => `<h3>Salle de réunion</h3><p class="sous">1er étage · table de 8, écran</p><ul class="lignes">${li('Prochaine réunion', t < 15 ? '15h, point hebdomadaire des chefs de rayon' : 'aucune aujourd\'hui')}</ul>`,
       pause: () => { const n = EQUIPE.filter(auRepos), suiv = EQUIPE.filter((e) => debutPause(e) !== null && debutPause(e) > t).sort((a, b) => debutPause(a) - debutPause(b))[0]; return `<h3>Salle de pause</h3><p class="sous">Table de 6 places, coin cuisine, canapé</p><span class="statut ${n.length ? 'att' : 'ok'}">${n.length ? n.length + ' en pause' : 'Libre'}</span><ul class="lignes">${li('En pause', n.map((e) => e.nom).join(', ') || 'personne')}${li('Prochaine pause', suiv ? `${hTxt(debutPause(suiv))}, ${suiv.nom}` : 'aucune aujourd\'hui')}${li('Durée', '30 min au milieu du service')}</ul>`; },
@@ -683,7 +1226,50 @@ function rendreFiche() {
 // Zoom au clic
 const ZOOMS = { magasin: 1.7, caisses: 2.2, rayons: 1.9, reserve: 2.4, quai: 2.4, parking: 1.7, accueil: 3, bureau: 3.4, pause: 3.2, escalier: 3.4, vestiaires: 3.4, 'etage-rh': 3.4, 'etage-compta': 3.4, 'etage-reunion': 3.2 };
 let vise = null;
-function viser(cible, zoom) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: 0 }; }
+function viser(cible, zoom, dir = null) { vise = { de: controls.target.clone(), vers: cible.clone().setY(0), z0: camera.zoom, z1: zoom, k: REDUIT.matches ? 0.999 : 0, d0: camera.position.clone().sub(controls.target), d1: dir }; }
+// Trois vues : la surface de vente seule (Maquette, par défaut), tout le site, l'étage des bureaux.
+// Chaque vue cadre une boîte dans la place laissée libre par les boutons et les panneaux.
+const VUES = {
+  maquette: { boite: [-40.8, 2.5, 0, 3.4, -30.8, 6.6], dir: DIR_MAQ, etage: false, voile: 0.8, nom: 'Maquette : la surface de vente' },
+  site: { boite: [-40.8, 23, 0, 3.4, -30.8, 6.6], dir: DIR_VUE, etage: true, voile: 0, nom: 'Tout le site : magasin, réserve, quai, parking et bureaux' },
+  etage: { boite: [1.4, 18.8, 0, 6.8, -10.8, 6.8], dir: DIR_VUE, etage: true, voile: 0, nom: 'Étage : bureaux RH, comptabilité, réunion' },
+};
+let vueCourante = 'maquette', voileOp = VUES.maquette.voile;
+const DANS_MAGASIN = (p) => p.x > -41 && p.x < 2 && p.z > -31 && p.z < 7;
+let priseEnMain = false;
+function cadre(nom = vueCourante, boite = null) {
+  const V = boite ? { ...VUES[nom], boite } : VUES[nom], w = conteneur.clientWidth, h = conteneur.clientHeight, a = w / h, s = a < 1.1 ? 40 / a : 30;
+  const L = 16, R = w - 16, T = MOBILE ? 48 : 56, B = h - (MOBILE ? 12 : 16);
+  const tmp = new THREE.OrthographicCamera(); tmp.position.copy(V.dir); tmp.lookAt(0, 0, 0); // une caméra regarde le long de -z
+  const droite = new THREE.Vector3(1, 0, 0).applyQuaternion(tmp.quaternion), dessus = new THREE.Vector3(0, 1, 0).applyQuaternion(tmp.quaternion);
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const p = new THREE.Vector3(), b = V.boite;
+  for (const x of [b[0], b[1]]) for (const y of [b[2], b[3]]) for (const z of [b[4], b[5]]) { p.set(x, y, z); const vx = p.dot(droite), vy = p.dot(dessus); x0 = Math.min(x0, vx); x1 = Math.max(x1, vx); y0 = Math.min(y0, vy); y1 = Math.max(y1, vy); }
+  const zoom = Math.min((R - L) / (x1 - x0), (B - T) / (y1 - y0)) * (2 * s) / h;
+  const k = (zoom * h) / (2 * s), cx = (x0 + x1) / 2 - ((L + R) / 2 - w / 2) / k, cy = (y0 + y1) / 2 + ((T + B) / 2 - h / 2) / k;
+  const c = droite.multiplyScalar(cx).add(dessus.multiplyScalar(cy)); c.addScaledVector(V.dir, -c.y / V.dir.y);
+  return { cible: c, zoom, dir: V.dir };
+}
+let zoomVue = 1;
+function appliquerCadre() { const c = cadre(); zoomVue = c.zoom; controls.target.copy(c.cible); camera.position.copy(c.cible).addScaledVector(c.dir, 160); camera.zoom = c.zoom; camera.updateProjectionMatrix(); }
+function montrerEtage(oui) {
+  etageVu = oui; ETAGE.montrer(oui);
+  const b = $('etage'); b.classList.toggle('actif', !oui); b.querySelector('span').textContent = oui ? 'Rez-de-chaussée' : 'Afficher l\'étage';
+  synchroniser(true);
+}
+// changer de vue ; cadrer = false quand c'est un clic sur un élément qui décide où va la caméra
+function changerVue(nom, cadrer = true) {
+  if (!VUES[nom]) return;
+  const V = VUES[nom]; vueCourante = nom;
+  document.querySelectorAll('[data-vue]').forEach((b) => { const a = b.dataset.vue === nom; b.classList.toggle('actif', a); b.setAttribute('aria-selected', a); });
+  placerCurseur();
+  murMaquette.visible = nom === 'maquette';
+  $('etage').hidden = nom === 'maquette';
+  if (etageVu !== V.etage) montrerEtage(V.etage);
+  if (cadrer) { choisir(null); const c = cadre(); zoomVue = c.zoom; viser(c.cible, c.zoom, c.dir); annoncer(V.nom); }
+}
+function placerCurseur() { const b = document.querySelector('[data-vue].actif'), c = document.querySelector('.vues-curseur'); if (!b || !c) return; c.style.left = b.offsetLeft + 'px'; c.style.width = b.offsetWidth + 'px'; }
+document.querySelectorAll('[data-vue]').forEach((b) => (b.onclick = () => changerVue(b.dataset.vue)));
+addEventListener('resize', placerCurseur);
 function positionDe(s) {
   if (!s) return null;
   if (/^e\d/.test(s)) { const o = objets[s].obj; return o.visible ? [o.position, 3] : null; }
@@ -694,42 +1280,84 @@ function positionDe(s) {
   return P ? [new THREE.Vector3(P[0], 0, P[1]), ZOOMS[s]] : null;
 }
 function choisir(cle) {
-  selection = cle; rendreFiche(); const p = positionDe(cle); if (!p) return;
+  const p = positionDe(cle);
+  // un élément hors de la surface de vente : on passe à la vue qui le montre
+  if (cle && p && /^etage/.test(cle) && vueCourante !== 'etage') changerVue('etage', false);
+  else if (cle && p && vueCourante === 'maquette' && !DANS_MAGASIN(p[0])) changerVue('site', false);
+  selection = cle; rendreFiche();
+  if (!p) return;
   const z = p[1] * (MOBILE ? 1.3 : 1), v = p[0].clone();
   viser(v, z);
-  if (MOBILE && cle) $('fiche').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
-if (MOBILE) $('scene').after($('fiche')); // sur téléphone la fiche s'affiche sous la maquette
+$('fermer').innerHTML = ICONES_UI.fermer;
 $('fermer').onclick = () => choisir(null);
 $('fiche-c').onclick = (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b || !/^r\d/.test(selection || '')) return;
   const r = RAYON_DE(selection), q = quantites[r.id] ?? suggestion(r);
   if (b.dataset.act === 'plus') quantites[r.id] = Math.min(40, q + 2);
   else if (b.dataset.act === 'moins') quantites[r.id] = Math.max(2, q - 2);
-  else if (b.dataset.act === 'commander') return commander(r.id);
+  else if (b.dataset.act === 'commander') { const q = quantites[r.id] ?? suggestion(r); commander(r.id); if (commandees[r.id]) traiter('stock-' + r.id, `Commande de ${q} palettes, livraison à ${hTxt(commandees[r.id].heure)}`, commandees[r.id].heure + 0.75); return; }
+  else if (b.dataset.act === 'envoyer') { const e = envoyerEnRayon(r.id); if (e) traiter('stock-' + r.id, `${e.nom} envoyé·e chercher une palette en réserve`, t + 0.75); return rendreFiche(); }
   rendreFiche();
 };
 const ray = new THREE.Raycaster(), souris = new THREE.Vector2(); let appui = null;
+ray.layers.enableAll(); // les originaux des objets fusionnés restent cliquables sur le calque 1
+const viserSouris = (e) => { const r = renderer.domElement.getBoundingClientRect(); souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(souris, camera); };
+renderer.domElement.addEventListener('pointermove', (e) => { if (e.buttons) return; viserSouris(e); renderer.domElement.style.cursor = pastilles.toucher(ray) ? 'pointer' : ''; });
 renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
 renderer.domElement.addEventListener('pointerup', (e) => {
   if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6) return;
-  const r = renderer.domElement.getBoundingClientRect();
-  souris.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-  ray.setFromCamera(souris, camera);
+  viserSouris(e);
+  const pa = pastilles.toucher(ray); if (pa) { montrerAlerte(pa); return; } // pastille d'alerte : ouvre la liste « À traiter » sur cette alerte
   const hit = ray.intersectObjects(cliquables.filter((o) => { let p = o; while (p) { if (p.visible === false) return false; p = p.parent; } return true; }), false)[0];
   choisir(hit ? hit.object.userData.cle : null);
 });
-$('etage').onclick = (e) => { etageVu = !etageVu; ETAGE.montrer(etageVu); e.target.classList.toggle('actif', etageVu); e.target.textContent = etageVu ? 'Étage' : 'Rez-de-chaussée'; synchroniser(true); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
-$('recentrer').onclick = () => { choisir(null); viser(CIBLE, 1); };
-$('pause').onclick = (e) => { pause = !pause; e.target.textContent = pause ? 'Reprendre' : 'Pause'; e.target.classList.toggle('actif', pause); };
-function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); }
+$('etage').onclick = () => { montrerEtage(!etageVu); annoncer(etageVu ? 'Étage affiché : bureaux RH, comptabilité, réunion' : 'Rez-de-chaussée : salle de pause, vestiaires, direction'); };
+$('recentrer').onclick = () => { choisir(null); const c = cadre(); zoomVue = c.zoom; viser(c.cible, c.zoom, c.dir); };
+// pastille d'alerte : la liste « À traiter » s'ouvre, l'alerte s'éclaire, la caméra s'approche du lieu
+function montrerAlerte(cle) {
+  const a = alertes.find((x) => x.voir === cle || x.cle === cle);
+  if (selection) choisir(null);
+  ui.aller('traiter');
+  const p = positionDe(cle); if (p) viser(p[0], p[1] * (MOBILE ? 1.3 : 1));
+  const el = a && $('contenu').querySelector(`[data-k="${CSS.escape(a.cle)}"]`);
+  if (el) { el.classList.add('eclat'); el.scrollIntoView({ block: 'nearest', behavior: REDUIT.matches ? 'auto' : 'smooth' }); setTimeout(() => el.classList.remove('eclat'), 2200); }
+}
+// Chaque rubrique montre ses calques sur la 3D et recadre la caméra sur sa zone
+const RUB_3D = {
+  accueil: {}, traiter: {}, equipe: {}, chiffres: {},
+  stocks: { vue: 'maquette', boite: [-40, 2.5, 0, 2.5, -30.5, -3.5] },
+  affluence: { vue: 'maquette' },
+  caisses: { vue: 'maquette', boite: [-40, -1, 0, 2.5, -4, 4.5] },
+  livraisons: { vue: 'site', boite: [2, 34, 0, 3.5, -30.5, -10] },
+  rh: { vue: 'etage' },
+};
+function calques(rub) {
+  chaleur.montrer(rub === 'affluence'); chaleur.parcours(rub === 'affluence' && parcoursVu);
+  teinte.visible = rub === 'stocks'; majTeinte();
+}
+function surRubrique(rub) {
+  const c = $('contenu'); c._h = null; if (document.getElementById('page').contains($('kpis-grille')) || c.contains($('kpis-grille'))) $('kpis-reserve').appendChild($('kpis-grille')); c.innerHTML = '';
+  tiroir.fermer();
+  if (ui.plein()) { ui.page().corps.replaceChildren(); ui.page().actions.innerHTML = '<span class="pg-fictif">Données fictives</span>'; if (selection) { selection = null; rendreFiche(); } rendrePage(); return; }
+  calques(rub);
+  const R = RUB_3D[rub] || {};
+  if (R.vue && R.vue !== vueCourante) changerVue(R.vue, false);
+  if (selection) { selection = null; rendreFiche(); }
+  const cd = cadre(vueCourante, R.boite || null); zoomVue = cd.zoom; viser(cd.cible, cd.zoom, cd.dir);
+  rendrePanneau();
+}
+$('pause').onclick = () => { pause = !pause; const b = $('pause'); b.classList.toggle('actif', pause); b.setAttribute('aria-label', pause ? 'Reprendre' : 'Pause'); b.querySelector('.sr').textContent = pause ? 'Reprendre' : 'Pause'; b.querySelector('.ic-pause').style.display = pause ? 'none' : ''; b.querySelector('.ic-lecture').style.display = pause ? '' : 'none'; };
+function taille() { const w = conteneur.clientWidth, h = conteneur.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); const a = w / h, s = a < 1.1 ? 40 / a : 30; Object.assign(camera, { left: -s * a, right: s * a, top: s, bottom: -s }); camera.updateProjectionMatrix(); if (!priseEnMain && !vise && !selection) appliquerCadre(); }
 addEventListener('resize', taille); taille();
 
 // ================= Boucle =================
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
-  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(0.05, ecoule); avant = now;
-  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); } synchroniser(); }
+  // page pleine (RH, Chiffres, Équipe) : la journée continue, mais la 3D n'est plus dessinée (économie de batterie)
+  const cache = !!(ui && ui.plein());
+  const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
+  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); rejouerJournal(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
   for (const c of clients) {
     if (!c.o.visible) continue;
@@ -761,25 +1389,83 @@ function animer(now) {
   }
   if (!pause) trafic.maj(Math.min(ecoule, 0.25));
   fondus(dt);
-  if (vise) { vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv); camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix(); if (vise.k >= 1) vise = null; }
+  if (!pause) { chaleur.minute(Math.floor(t * 60)); chaleur.ajouter(pointsClients(), ecoule); }
+  if (chaleur.visible && now - chaleurDessin > 500) { chaleurDessin = now; chaleur.dessiner(); const z = chaleur.zones(1)[0]; if ($('leg-zone')) $('leg-zone').textContent = z ? `Plus forte affluence : ${NOM_ZONE(z.x, z.z)}.` : 'Pas encore de clients sur la période.'; }
+  if (!cache) {
+  if (vise) { vise.k = Math.min(1, vise.k + Math.min(ecoule, 0.2) / 0.9); const e = doux(vise.k); const nv = vise.de.clone().lerp(vise.vers, e); camera.position.add(nv.clone().sub(controls.target)); controls.target.copy(nv); if (vise.d1) { const l = vise.d0.length(), d = vise.d0.clone().normalize().lerp(vise.d1, e).normalize(); camera.position.copy(nv).addScaledVector(d, l); } camera.zoom = vise.z0 + (vise.z1 - vise.z0) * e; camera.updateProjectionMatrix(); if (vise.k >= 1) { if (vise.d1) priseEnMain = false; vise = null; } }
   const ps = selection && positionDe(selection);
   anneau.visible = !!ps && !/^(magasin|parking|rayons)$/.test(selection);
   if (anneau.visible) { anneau.position.set(ps[0].x, 0.25, ps[0].z); anneau.scale.setScalar((/^e\d/.test(selection) ? 0.4 : 1.2) * (1 + Math.sin(now / 300) * 0.04)); }
   controls.update();
+  pastilles.maj(vues(), positionDe, camera.zoom, REDUIT.matches ? null : now);
+  scene.updateMatrixWorld(); foule.maj();
+  voileOp += (VUES[vueCourante].voile - voileOp) * (REDUIT.matches ? 1 : Math.min(1, ecoule * 4));
+  voile.maj(VUES.maquette.boite, voileOp);
   renderer.render(scene, camera);
   window.maquetteOk = true;
   placer();
+  }
   const m = Math.floor(t * 60);
-  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majKpis(); rendrePanneau(); if (selection) rendreFiche(); }
-  requestAnimationFrame(animer);
+  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); if (t > hJournal) { evenements(hJournal, t); hJournal = t; } majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); }
+  if (cache) setTimeout(() => requestAnimationFrame(animer), 200); else requestAnimationFrame(animer);
+}
+const ICONE_JOURNAL = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>';
+function appliquerRole(r) {
+  roleCourant = r;
+  ui.autoriser(r.rub); if (ui.plein()) ui.page().corps.replaceChildren();
+  rh.droits({ salaires: r.salaires, rh: r.rh, filtre: r.equipe, titre: r.label });
+  const b = document.querySelector('[data-rub="equipe"] .rub-l'); if (b) b.textContent = r.equipeTitre || 'Équipe';
+  if (ui.rubrique() === 'equipe') document.getElementById('page-titre').textContent = r.equipeTitre || 'Équipe du jour';
+  majResume(); rendrePanneau(); if (selection) rendreFiche();
+}
+// « Résumé du jour » : aperçu du rapport du soir, calculé sur la simulation à l'heure de la démo
+function ouvrirResume() {
+  const ca = caDuJour(), cout = coutJour(), passages = Math.round(ca / PANIER), rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0), bas = RAYONS.filter((r) => stockDe(r) < 0.7);
+  const jour = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const recues = LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée'), aVenir = LIVRAISONS.filter((d) => statutLiv(d) !== 'déchargée').sort((a, b) => a.heure - b.heure);
+  const demain = [
+    ...bas.map((r) => `Réassort à vérifier au rayon ${r.nom.toLowerCase()} : stock à ${Math.round(stockDe(r) * 100)} %${commandees[r.id] ? ', commande déjà en route' : ''}`),
+    ...rh.rdvA(1).map((x) => `Entretien d'embauche à ${hTxt(x.debut)} : ${x.nom}, ${x.poste.toLowerCase()}`),
+    ...(t < FERMETURE - 0.01 ? [`${aVenir.length} livraison${aVenir.length > 1 ? 's' : ''} encore attendue${aVenir.length > 1 ? 's' : ''} aujourd'hui${aVenir.length ? ' (' + aVenir.map((d) => hTxt(d.heure)).join(', ') + ')' : ''}`] : []),
+  ];
+  fenetre.ouvrir({
+    titre: 'Résumé du jour', sous: `Aperçu du mail envoyé chaque soir à la direction · arrêté à ${hh(t)} (heure de la démo)`, cle: 'resume',
+    corps: mailResume({
+      de: 'Hyper Modèle · écran du magasin', a: 'Claire Dumont (direction)', objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
+      intro: `Bonsoir, voici la journée du magasin arrêtée à <b>${hh(t)}</b>. Tous les chiffres viennent de la simulation de la démo.`,
+      blocs: [
+        { titre: 'Chiffres de la journée', lignes: [['Chiffre d\'affaires', euros(ca)], ['Hier sur la journée entière', euros(CA_HIER)], ['Passages en caisse (estimés)', nb(passages)], ['Panier moyen', PANIER.toLocaleString('fr-FR') + ' €'], ['Coût de l\'équipe', `${euros(cout)} (${(ca ? (cout / ca) * 100 : 0).toFixed(1).replace('.', ',')} % du CA)`], ['Ruptures de stock', nb(rup)], ['Livraisons reçues', `${recues.length} sur ${LIVRAISONS.length}`]] },
+        { titre: `Alertes traitées (${TRAITES.length})`, items: TRAITES.map((x) => `${hh(x.h)} · ${x.titre} : ${x.label}${x.qui ? ` (${x.qui})` : ''}`), vide: 'Aucune alerte traitée depuis l\'écran pour l\'instant.' },
+        { titre: `Alertes encore ouvertes (${alertes.length})`, items: alertes.map((a) => `${a.titre} · ${NIV_ALERTE[a.niveau].nom.toLowerCase()}`), vide: 'Aucune : tout est traité.' },
+        { titre: 'À prévoir demain', items: demain, vide: 'Rien de particulier.' },
+      ],
+      pied: 'Ce mail est un exemple : dans un vrai déploiement, son contenu, son heure d\'envoi et ses destinataires se règlent avec vous. Données fictives.',
+    }),
+  });
+  agir('Résumé du jour consulté');
 }
 // Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
-const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: (id) => choisir(id) });
+const etatPersonne = (e) => (auRepos(e) ? { cle: 'pause', txt: 'En pause', detail: 'salle de pause' } : present(e) ? { cle: 'present', txt: 'Présent·e', detail: objets[e.id]?.job ? objets[e.id].job.texte : ZONE_NOM(e.zone) } : t < e.debut ? { cle: 'avant', txt: 'Arrive à ' + hTxt(e.debut) } : { cle: 'parti', txt: 'Service terminé' });
+// depuis une page pleine : retour à la 3D, zoom sur le poste de la personne
+const voirPoste = (id) => { tiroir.fermer(); ui.aller('accueil'); choisir(id); };
+const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
 // le candidat attendu vient au bureau RH de l'étage pendant son entretien
 const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
 synchroniser(true);
-window.demo = { temps: () => t, camera, controls, scene, THREE, choisir: (c) => choisir(c), regler: (h) => { t = h; oublierCommandes(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(); }, avancer: (dh) => { t += dh; synchroniser(); } };
+prechauffer();
+const rafraichir = () => { majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); };
+// carte de chaleur et parcours affichés d'entrée, comme un plan d'analyse du magasin
+// RH, Équipe et Chiffres n'ont pas besoin du magasin : pages pleines, la 3D est masquée et mise en pause
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks', 'Stocks'], ['affluence', 'Affluence'], ['caisses', 'Caisses'], ['equipe', 'Équipe', 'Équipe du jour', 'Planning et annuaire de l\'équipe, en direct'], ['livraisons', 'Livraisons', 'Livraisons et réserve'], ['rh', 'RH', 'Ressources humaines', 'Personnel, recrutement, entretiens, anciens salariés et documents'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo'], ['journal', 'Journal', 'Journal', 'Toutes les actions et les événements de la journée, horodatés, avec qui les a faits']];
+const PLEINES = new Set(['rh', 'equipe', 'chiffres', 'journal']);
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id), icone: id === 'journal' ? ICONE_JOURNAL : undefined })), surChangement: surRubrique });
+rejouerJournal();
+installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+appliquerRole(ROLES[0]);
+calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
+if (document.fonts) document.fonts.ready.then(placerCurseur);
+window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), role: (id) => (id ? document.getElementById('role-choix') && (document.getElementById('role-choix').value = id, document.getElementById('role-choix').dispatchEvent(new Event('change'))) : ROLE().id), journal: () => journal.entrees(), resume: () => ouvrirResume(), regler: (h) => { t = h; HIST_ALERTES.clear(); rejouerJournal(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
 requestAnimationFrame(animer);
 </script>
 </body>

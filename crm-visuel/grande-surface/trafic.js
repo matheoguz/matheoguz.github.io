@@ -107,7 +107,8 @@ export function creerTrafic(ctx) {
       v = { o, id: nId++, etat: 'libre' }; voitures.push(v);
     }
     Object.assign(v, { type: null, place: -1, segs: [], k: 0, s: 0, v: 0, pause: 0, x: 0, z: 0, rot: 0, vcap: V_ROUTE, sorti: false, bloque: 0, croiseE: false, avantCede: false });
-    v.o.traverse((m) => { if (m.isMesh && m.geometry.type === 'ExtrudeGeometry' && m.material.metalness > 0.2) m.material = matCaisse(couleurs[Math.floor(rng() * couleurs.length)], m.material); });
+    if (v.o.userData.peindre) v.o.userData.peindre(couleurs[Math.floor(rng() * couleurs.length)]); // voiture dessinée en instances (rendu.js)
+    else v.o.traverse((m) => { if (m.isMesh && m.geometry.type === 'ExtrudeGeometry' && m.material.metalness > 0.2) m.material = matCaisse(couleurs[Math.floor(rng() * couleurs.length)], m.material); });
     return v;
   }
   // une couleur au hasard à chaque voiture (matériau partagé par couleur)
