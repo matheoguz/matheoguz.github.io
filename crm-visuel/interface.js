@@ -10,6 +10,7 @@
 //   ui.badge(id, n, ton)  // pastille de nombre sur une rubrique (ton : 'rouge' | 'orange' | '')
 //   ui.plein()            // la rubrique en cours est une page pleine (rubrique { plein: true, sous })
 //   ui.page()             // { corps, actions } de la page pleine (en-tête : titre et sous-titre de la rubrique)
+//   ui.autoriser(ids)     // rubriques visibles pour le rôle choisi (Set d'ids, null = toutes) ; sinon retour à l'accueil
 //
 // Page pleine : la maquette 3D et le panneau sont masqués (la scène n'est pas recréée), la page prend toute
 // la largeur à droite de la barre de rubriques. La page hôte met son rendu 3D en pause tant que ui.plein().
@@ -95,7 +96,11 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   app.dataset.rubrique = courante;
   nav.querySelector(`[data-rub="${courante}"]`)?.classList.add('actif');
   const pageEl = { corps: document.getElementById('page-corps'), actions: document.getElementById('page-actions') };
-  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl };
+  function autoriser(ids) {
+    nav.querySelectorAll('[data-rub]').forEach((b) => { b.hidden = !!ids && b.dataset.rub !== 'accueil' && !ids.has(b.dataset.rub); });
+    if (ids && courante !== 'accueil' && !ids.has(courante)) aller('accueil');
+  }
+  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl, autoriser };
 }
 
 // Remplace le contenu d'un élément seulement s'il a changé, en gardant les blocs repliables ouverts

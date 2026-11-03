@@ -1,7 +1,10 @@
 // Pages pleines des démos « CRM visuel 3D » (RH, Chiffres, Équipe, Élèves, Moniteurs, Planning) : briques communes.
 // Module ES sans dépendance. Le style est dans interface.css (classes pg-*, pp-*, tiroir).
 //
-//   avatar(nom, { taille, f })      // visage illustré en SVG, toujours le même pour un même nom (pas de photo)
+//   avatar(nom, { taille, f })      // photo crm-visuel/portraits/<slug>.jpg si elle est listée dans portraits/portraits.json,
+//                                   // sinon visage illustré en SVG, toujours le même pour un même nom
+//   slug(nom) · photo(nom)          // « Léa Bonnet » -> « lea-bonnet » · URL de la photo ou null
+//   source(texte)                   // petite icône « Ça vient d'où ? » (survol, clic ou focus)
 //   kpi({ ic, c, cd, label, val, det })
 //   carteGraphe(titre, sous, corps, classe)
 //   barres({ lib, val, coul, format, passe })   // histogramme vertical (passe[i] = false : heure pas encore écoulée)
@@ -11,6 +14,26 @@
 //   tiroir.ouvrir(html, cle) · tiroir.maj(html) · tiroir.fermer() · tiroir.cle()
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- photos (portraits générés, personnes fictives) ----------
+// Les photos sont déclarées dans portraits/portraits.json ({ "disponibles": ["lea-bonnet", …] }) : on ne demande
+// jamais une image absente (pas d'erreur 404 dans la console). Sans le fichier, on garde les avatars dessinés.
+export const slug = (nom) => String(nom).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const DOSSIER_PHOTOS = new URL('./portraits/', import.meta.url);
+let PHOTOS = new Set();
+try { const r = await fetch(new URL('portraits.json', DOSSIER_PHOTOS), { cache: 'no-cache' }); if (r.ok) PHOTOS = new Set((await r.json()).disponibles || []); } catch { /* hors ligne : avatars dessinés */ }
+export const photo = (nom) => (PHOTOS.has(slug(nom)) ? new URL(slug(nom) + '.jpg', DOSSIER_PHOTOS).href : null);
+
+// ---------- « Ça vient d'où ? » ----------
+const IC_SRC = '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.1"/></svg>';
+export const source = (texte) => `<span class="src" tabindex="0" role="note" aria-label="Ça vient d'où ? ${esc(texte)}" data-src="${esc(texte)}">${IC_SRC}</span>`;
+// clic ou toucher : affiche la source sans déclencher la carte qui la contient (capture, avant les autres gestionnaires)
+if (typeof document !== 'undefined') document.addEventListener('click', (ev) => {
+  const s = ev.target.closest && ev.target.closest('.src');
+  document.querySelectorAll('.src.vu').forEach((x) => { if (x !== s) x.classList.remove('vu'); });
+  if (!s) return;
+  ev.stopPropagation(); ev.preventDefault(); s.classList.toggle('vu');
+}, true);
 
 // ---------- avatars illustrés ----------
 function hache(s) { let h = 2166136261; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -23,6 +46,8 @@ const PRENOMS_F = new Set('Claire Laura Sarah Inès Yasmine Nathalie Amandine L�
 export const estFeminin = (nom) => PRENOMS_F.has(nom.split(' ')[0]);
 
 export function avatar(nom, { taille = 48, f = estFeminin(nom) } = {}) {
+  const ph = photo(nom);
+  if (ph) return `<img class="av av-photo" src="${ph}" width="${taille}" height="${taille}" alt="Photo de ${esc(nom)} (personne fictive)" loading="lazy" decoding="async">`;
   const h = hache(nom), r = (n, k) => Math.floor(h / k) % n;
   const fond = FOND[r(FOND.length, 1)], peau = PEAU[r(PEAU.length, 13)];
   let ch = CHEVEUX[r(CHEVEUX.length - 1, 97)];
@@ -52,7 +77,7 @@ export function avatar(nom, { taille = 48, f = estFeminin(nom) } = {}) {
 }
 
 // ---------- briques de page ----------
-export const kpi = ({ ic, c, cd, label, val, det = '', id = '' }) => `<article class="pg-kpi" ${id ? `id="${id}"` : ''} style="--c:${c};--cd:${cd}"><span class="pg-kpi-ic">${ic}</span><div><b>${val}</b><small>${label}</small>${det ? `<em>${det}</em>` : ''}</div></article>`;
+export const kpi = ({ ic, c, cd, label, val, det = '', id = '', src = '' }) => `<article class="pg-kpi" ${id ? `id="${id}"` : ''} style="--c:${c};--cd:${cd}"><span class="pg-kpi-ic">${ic}</span><div><b>${val}</b><small>${label}</small>${det ? `<em>${det}</em>` : ''}</div>${src ? source(src) : ''}</article>`;
 export const carteGraphe = (titre, sous, corps, classe = '') => `<section class="pg-carte ${classe}"><div class="pg-ch"><h3>${titre}</h3>${sous ? `<small>${sous}</small>` : ''}</div>${corps}</section>`;
 export const legende = (l) => `<div class="pg-leg">${l.map(([t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`;
 

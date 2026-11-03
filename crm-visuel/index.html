@@ -231,7 +231,7 @@
 </head>
 <body>
 <div class="app">
-  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives <span>— agence, élèves, moniteurs et montants sont inventés ; les alertes sont calculées sur cette simulation</span></div>
+  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives <span>— agence, élèves, moniteurs et montants sont inventés ; les alertes sont calculées sur cette simulation</span><em class="role-mention" id="role-mention"></em></div>
   <header>
     <div class="marque">
       <div class="logo" aria-hidden="true">M</div>
@@ -239,6 +239,7 @@
     </div>
     <nav class="segment" id="vues" aria-label="Vue de la maquette"></nav>
     <div class="droite">
+      <div id="role"></div>
       <span class="direct" id="direct"><i></i>En direct</span>
       <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="rond" id="pause" aria-label="Mettre en pause" title="Pause"></button>
@@ -274,6 +275,8 @@ import { calculerAlertes, NIVEAUX, SEUILS, ICONES } from './ae-alertes.js';
 import { creerPastilles } from './ae-pastilles.js';
 import { creerInterface, poserGarde, ICONES_UI } from './interface.js';
 import { creerPagesAE } from './ae-pages.js';
+import { source } from './page.js';
+import { creerJournal, installerRoles, fenetre, mailResume } from './commun.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
@@ -313,6 +316,17 @@ const PLANNING = [
 ].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
 const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
 const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000, PLACES_CODE = 12;
+// Historique FICTIF des examens du permis B des six derniers mois : [élève, mois (0 = ce mois-ci, 5 = il y a 5 mois), jour,
+// jours d'attente entre la demande de place d'examen et l'examen, reçu ?]. Sert à calculer le taux de réussite et le délai moyen.
+const HISTO_EXAMENS = [
+  ['Clara Dubois', 5, 4, 52, 1], ['Maxime Lefort', 5, 11, 61, 0], ['Anaïs Perret', 5, 19, 47, 1], ['Bilal Hamdi', 5, 26, 58, 1],
+  ['Océane Marty', 4, 3, 66, 1], ['Kylian Roussel', 4, 12, 49, 0], ['Sofia Benhamou', 4, 18, 55, 1], ['Mathis Caron', 4, 25, 71, 1],
+  ['Eva Lambert', 3, 2, 44, 0], ['Hugo Masse', 3, 9, 63, 1], ['Lilou Fernandes', 3, 17, 57, 1], ['Nolan Brunet', 3, 24, 68, 0], ['Romane Picard', 3, 30, 46, 1],
+  ['Ilyes Guerin', 2, 6, 59, 1], ['Maëlys Royer', 2, 13, 74, 1], ['Axel Fleury', 2, 20, 51, 0], ['Lena Morin', 2, 27, 62, 1],
+  ['Timéo Gaillard', 1, 5, 48, 1], ['Inaya Diallo', 1, 12, 66, 0], ['Sacha Leclerc', 1, 19, 53, 1], ['Elsa Moulin', 1, 26, 70, 1],
+  ['Nina Carpentier', 0, 3, 57, 1], ['Mohamed Aït', 0, 8, 64, 0],
+].map(([nom, m, j, attente, recu]) => ({ nom, m, j, attente, recu: !!recu }));
+const MOIS_FR = (m) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - m); return d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''); };
 
 // ================= Horloge de démo (journée accélérée) =================
 let t = 13.3, pause = false; // 13h18 : la démo démarre juste avant les départs de l'après-midi
@@ -322,6 +336,37 @@ const statut = (l) => (l.fin <= t ? 'fait' : l.debut <= t ? 'occupe' : 'avenir')
 const enCours = (cond) => PLANNING.find((l) => l.debut <= t && t < l.fin && cond(l));
 const euros = (n) => n.toLocaleString('fr-FR') + ' €';
 const virgule = (n) => String(Math.round(n * 10) / 10).replace('.', ',');
+// Examens : historique fictif + résultats saisis aujourd'hui depuis l'écran (« Reçu » / « Ajourné »)
+function examens() {
+  const jour = PLANNING.filter((l) => l.type.startsWith('Examen') && resultats[l.id]).map((l) => ({ nom: l.eleve, m: 0, j: new Date().getDate(), attente: 58, recu: resultats[l.id] === 'recu', aujourdhui: true }));
+  const tous = [...HISTO_EXAMENS, ...jour], recus = tous.filter((x) => x.recu).length;
+  const parMois = [5, 4, 3, 2, 1, 0].map((m) => { const l = tous.filter((x) => x.m === m); return { m, lib: MOIS_FR(m), n: l.length, recus: l.filter((x) => x.recu).length, taux: l.length ? (l.filter((x) => x.recu).length / l.length) * 100 : 0 }; });
+  return { tous, total: tous.length, recus, taux: tous.length ? (recus / tous.length) * 100 : 0, delai: tous.reduce((s, x) => s + x.attente, 0) / (tous.length || 1), parMois };
+}
+// Journal et « Voir en tant que »
+const journal = creerJournal({ hh });
+const ROLES = [
+  { id: 'gerant', label: 'Gérant·e', qui: 'Hélène Carpentier', rub: null, finances: true, paiements: true, alertes: () => true, moniteurs: null },
+  { id: 'secretaire', label: 'Secrétaire', qui: 'Julie Moreau', rub: new Set(['traiter', 'planning', 'vehicules', 'moniteurs', 'eleves', 'code', 'journal']), finances: false, paiements: true, alertes: () => true, moniteurs: null },
+  { id: 'moniteur', label: 'Moniteur·rice', qui: 'Karim Benali', rub: new Set(['planning', 'eleves']), finances: false, paiements: false, alertes: () => false, moniteurs: new Set(['m1']), planningTitre: 'Mon planning', elevesTitre: 'Mes élèves' },
+];
+let roleCourant = ROLES[0];
+const ROLE = () => roleCourant;
+const voitRub = (id) => !ROLE().rub || id === 'accueil' || ROLE().rub.has(id);
+const parQui = (texte) => journal.ajouter({ h: t, qui: ROLE().qui, role: ROLE().label, type: 'action', texte });
+const JA = new Set();
+let hJournal = 0;
+function evenements(h0, h1) {
+  const dans = (h) => h > h0 + 1e-9 && h <= h1 + 1e-9, mon = (id) => MONITEURS.find((m) => m.id === id)?.nom || '';
+  if (dans(OUVERTURE)) journal.ajouter({ h: OUVERTURE, qui: 'Agence', type: 'journee', texte: 'Ouverture de l\'agence et du secrétariat' });
+  if (dans(FERMETURE)) journal.ajouter({ h: FERMETURE, qui: 'Agence', type: 'journee', texte: 'Fermeture de l\'agence' });
+  for (const l of PLANNING) {
+    const veh = [...VOITURES, ...MOTOS].find((v) => v.id === l.veh)?.nom || l.veh;
+    if (dans(l.debut)) journal.ajouter({ h: l.debut, qui: mon(l.m), role: 'moniteur', type: 'journee', texte: `${l.type.startsWith('Examen') ? 'Départ à l\'examen' : 'Début de leçon'} : ${l.eleve} (${l.type}, ${veh})` });
+    if (dans(l.fin)) journal.ajouter({ h: l.fin, qui: mon(l.m), role: 'moniteur', type: 'journee', texte: `${l.type.startsWith('Examen') ? 'Retour d\'examen' : 'Fin de leçon'} : ${l.eleve}, ${veh} de retour au parking` });
+  }
+}
+function rejouerJournal() { journal.vider(); JA.clear(); evenements(-1, t); hJournal = t; }
 const CALME = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ================= État modifié par les actions de « À traiter » =================
@@ -627,6 +672,9 @@ function etatAlertes() {
 }
 function majAlertes() {
   alertes = calculerAlertes(etatAlertes());
+  for (const k of [...JA]) if (!alertes.some((a) => a.cle === k)) JA.delete(k);
+  for (const a of alertes) if (!JA.has(a.cle)) { JA.add(a.cle); journal.ajouter({ h: t, qui: 'Calcul automatique', role: 'règles d\'alerte', type: 'alerte', texte: `${a.titre} (${NIVEAUX[a.niveau].nom.toLowerCase()})` }); }
+  alertes = alertes.filter(ROLE().alertes);
   for (const a of alertes) if (vus[a.cle] === undefined) vus[a.cle] = t;
   for (const k of Object.keys(vus)) if (!alertes.some((a) => a.cle === k)) delete vus[k];
 }
@@ -643,8 +691,9 @@ function spark(vals, couleur, id) {
 }
 const tend = (classe, icone, txt) => `<span class="tend ${classe}">${icone}${txt}</span>`;
 const histAlertes = [];
+const SRC_KPI = { alertes: 'Calculé : règles sur le planning, les forfaits, les paiements et les véhicules', jour: 'Calculé : leçons terminées (planning) et paiements encaissés', mois: 'Calculé : mois déjà encaissé + aujourd\'hui ; objectif saisi à la main', heures: 'Planning du jour · en direct', rempl: 'Calculé : heures vendues ÷ heures possibles des moniteurs', veh: 'Planning du jour · départs et retours en direct', solde: 'Paiements · saisis par le secrétariat', reussite: 'Calculé : résultats d\'examen saisis (historique fictif de 6 mois)', delai: 'Calculé : date de demande de place → date d\'examen (historique fictif)' };
 function carte(id, ic, c, cd, label, valeur, pied, titre = '') {
-  return `<div class="kpi" style="--c:${c};--cd:${cd}" title="${titre}"><div class="kpi-t"><span class="kpi-ic">${ic}</span><span>${label}</span></div><div class="kpi-v" id="k-${id}">${valeur}</div><div class="kpi-p">${pied}</div>${titre ? `<small class="kpi-note">${titre}</small>` : ''}</div>`;
+  return `<div class="kpi" style="--c:${c};--cd:${cd}" title="${titre}"><div class="kpi-t"><span class="kpi-ic">${ic}</span><span>${label}</span>${SRC_KPI[id] ? source(SRC_KPI[id]) : ''}</div><div class="kpi-v" id="k-${id}">${valeur}</div><div class="kpi-p">${pied}</div>${titre ? `<small class="kpi-note">${titre}</small>` : ''}</div>`;
 }
 let dernierKpi = '';
 function majKpis() {
@@ -672,18 +721,26 @@ function majKpis() {
       `${tend(vLecon ? 'att' : 'neutre', '', `${vLecon} en leçon`)}${spark(serie((h) => VOITURES.length - enLecon(h)), '#ea580c', 'v')}`, `${MOTOS.filter((m) => objets[m.id].mode === 'gare').length} / ${MOTOS.length} motos disponibles`),
     carte('solde', I.euro, '#be123c', '#fff1f2', 'À encaisser', euros(resteTotal),
       `${encaisse ? tend('haut', I.tendanceBas, `${euros(encaisse)} reçus`) : tend('att', '', `${dus.length} élève${dus.length > 1 ? 's' : ''}`)}${spark(serie((h) => resteTotal + encaissements.filter((x) => x.t > h).reduce((s, x) => s + x.montant, 0)), '#be123c', 's')}`),
+    (() => { const X = examens(), dern = X.parMois[5], avant = X.parMois[4]; return carte('reussite', I.ok, '#15803d', '#ecfdf3', 'Réussite au permis B', `${Math.round(X.taux)} %`, `${tend('neutre', '', `${X.recus} reçus sur ${X.total}`)}<span class="barres" title="taux de réussite par mois">${X.parMois.map((p) => `<i style="height:${Math.max(3, p.taux / 100 * 24)}px"></i>`).join('')}</span>`, `6 derniers mois · ${MOIS_FR(0)} : ${dern.recus}/${dern.n}, ${MOIS_FR(1)} : ${avant.recus}/${avant.n} (fictif)`); })(),
+    (() => { const X = examens(); return carte('delai', I.horloge, '#0f766e', '#f0fdfa', 'Attente d\'examen', `${Math.round(X.delai)} jours`, tend('neutre', '', 'en moyenne'), `de la demande de place à l'examen · ${X.total} examens (fictif)`); })(),
   ].join('');
   if (html !== dernierKpi) { dernierKpi = html; $('kpis').innerHTML = html; }
   // Accueil : trois chiffres seulement, et la pilule « N choses à traiter »
-  const carteR = (rub, ic, c, cd, label, val, det) => `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span></button>`;
+  const SRC_RC = { traiter: SRC_KPI.alertes, vehicules: SRC_KPI.veh, eleves: SRC_KPI.solde, planning: 'Planning du jour · en direct' };
+  const carteR = (rub, ic, c, cd, label, val, det) => (voitRub(rub) && (rub !== 'eleves' || ROLE().paiements) ? `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span>${source(SRC_RC[rub])}</button>` : '');
+  const mesL = ROLE().moniteurs ? PLANNING.filter((l) => ROLE().moniteurs.has(l.m)).sort((a, b) => a.debut - b.debut) : [];
+  const procL = mesL.find((l) => statut(l) !== 'fait');
   const ton = urg ? '#dc2626' : nAl ? '#ea580c' : '#16a34a';
-  poserGarde($('resume'), carteR('traiter', ICONES_UI.traiter, ton, urg ? '#fef2f2' : nAl ? '#fff7ed' : '#ecfdf3', 'Alertes à traiter', nAl, urg ? `${urg} urgente${urg > 1 ? 's' : ''}` : nAl ? 'rien d\'urgent' : 'tout est en ordre')
+  const R = $('resume');
+  if (!R.querySelector('.rs-c')) R.innerHTML = `<div class="rs-c" style="display:contents"></div><button type="button" class="bt-resume" data-resume title="Aperçu du rapport envoyé chaque soir"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Résumé du jour</span></button>`;
+  R.querySelector('.bt-resume').hidden = !ROLE().finances;
+  poserGarde(R.querySelector('.rs-c'), (ROLE().moniteurs ? carteR('planning', ICONES_UI.planning, '#2563eb', '#eff4ff', 'Mes leçons aujourd\'hui', `${mesL.filter((l) => statut(l) === 'fait').length} / ${mesL.length}`, procL ? `${statut(procL) === 'occupe' ? 'en cours' : 'prochaine à ' + hTxt(procL.debut)} : ${procL.eleve}` : 'journée terminée') : '') + carteR('traiter', ICONES_UI.traiter, ton, urg ? '#fef2f2' : nAl ? '#fff7ed' : '#ecfdf3', 'Alertes à traiter', nAl, urg ? `${urg} urgente${urg > 1 ? 's' : ''}` : nAl ? 'rien d\'urgent' : 'tout est en ordre')
     + carteR('vehicules', ICONES_UI.vehicules, '#ea580c', '#fff7ed', 'Voitures en leçon', `${vLecon} / ${VOITURES.length}`, `${vDispo} au parking`)
     + carteR('eleves', ICONES_UI.eleves, '#be123c', '#fff1f2', 'À encaisser', euros(resteTotal), `${dus.length} élève${dus.length > 1 ? 's' : ''} concerné${dus.length > 1 ? 's' : ''}`)
-    + `<button type="button" class="pilule ${nAl ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${nAl ? `${nAl} chose${nAl > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}</button>`);
-  if (ui) { ui.badge('traiter', nAl, urg ? 'rouge' : nAl ? 'orange' : ''); ui.badge('eleves', dus.length, ''); }
+    + (voitRub('traiter') ? `<button type="button" class="pilule ${nAl ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${nAl ? `${nAl} chose${nAl > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}</button>` : ''));
+  if (ui) { ui.badge('traiter', nAl, urg ? 'rouge' : nAl ? 'orange' : ''); ui.badge('eleves', ROLE().paiements ? dus.length : 0, ''); }
 }
-$('resume').onclick = (ev) => { const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
+$('resume').onclick = (ev) => { if (ev.target.closest('[data-resume]')) { ouvrirResume(); return; } const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
 
 // ================= Panneau « En ce moment » (sur la maquette) =================
 function htmlMaintenant() {
@@ -720,7 +777,7 @@ function htmlTraiter() {
 }
 function rendrePanneau(force = false) {
   const c = $('contenu'), onglet = rubrique();
-  if (ui && ui.plein()) { pages.rendre(onglet, ui.page().corps); return; }
+  if (ui && ui.plein()) { if (onglet === 'journal') journal.rendrePage(ui.page().corps); else pages.rendre(onglet, ui.page().corps); return; }
   let html = '', apres = null;
   const chiffres = (l) => `<div class="chiffres-r">${l.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join('')}</div>`;
   if (onglet === 'accueil') return;
@@ -798,7 +855,8 @@ function agir(act, a) {
     const l = PLANNING.splice(i, 1)[0]; reportees.push(l); if (selection === l.id) selection = null; res = `Leçon de ${hTxt(l.debut)} (${l.eleve}) reportée à demain`;
   } else if (k === 'code-ligne') { codeEnLigne = { jusqua: t + 1, n: 2 }; res = '2 élèves passés en code en ligne pour 1 h'; }
   else return;
-  traites.unshift({ cle: a.cle, titre: a.titre, res, quand: t });
+  traites.unshift({ cle: a.cle, titre: a.titre, res, quand: t, qui: ROLE().qui });
+  parQui(`${a.titre} · ${res}`);
   annoncer(res); majTout(); synchroniser();
 }
 
@@ -954,7 +1012,7 @@ function animer(now) {
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
-    if (t >= FERMETURE) { t = OUVERTURE; VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
+    if (t >= FERMETURE) { t = OUVERTURE; rejouerJournal(); VOITURES.forEach((v) => { const o = objets[v.id]; o.mode = 'gare'; o.recul = null; o.obj.visible = true; o.obj.position.copy(PLACES[o.place]); o.rot = Math.PI; o.obj.rotation.y = Math.PI; }); }
     synchroniser();
   }
   for (const o of Object.values(objets)) {
@@ -979,7 +1037,7 @@ function animer(now) {
   }
   controls.update();
   const minute = Math.floor(t * 60);
-  if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); majTout(); }
+  if (minute !== dernierRendu) { dernierRendu = minute; $('heure').textContent = hh(t); if (t > hJournal) { evenements(hJournal, t); hJournal = t; } majTout(); }
   if (!cache) {
     pastilles.maj(alertes, positionPastille, camera.zoom, now, CALME);
     scene.updateMatrixWorld(); foule.maj();
@@ -992,14 +1050,51 @@ function animer(now) {
 // pour les tests automatiques : état, alertes, actions, dessins
 window.demo = {
   objets, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
-  aller: (h) => { t = h; synchroniser(true); majTout(); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
+  aller: (h) => { t = h; rejouerJournal(); synchroniser(true); majTout(); }, journal: () => journal.entrees(), resume: () => ouvrirResume(), examens,
+  role: (id) => { const s = document.getElementById('role-choix'); if (!id) return ROLE().id; s.value = id; s.dispatchEvent(new Event('change')); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
 };
 // Planning, Moniteurs, Élèves et Chiffres n'ont pas besoin de la maquette : pages pleines (3D masquée et en pause)
-const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['planning', 'Planning', 'Planning du jour', 'Moniteurs × heures, en direct'], ['vehicules', 'Véhicules'], ['moniteurs', 'Moniteurs', 'Moniteurs', 'Leur journée, leurs heures et le remplissage'], ['eleves', 'Élèves', 'Élèves', 'Forfaits, leçons du jour et paiements'], ['code', 'Salle de code'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo']];
-const PLEINES = new Set(['planning', 'moniteurs', 'eleves', 'chiffres']);
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['planning', 'Planning', 'Planning du jour', 'Moniteurs × heures, en direct'], ['vehicules', 'Véhicules'], ['moniteurs', 'Moniteurs', 'Moniteurs', 'Leur journée, leurs heures et le remplissage'], ['eleves', 'Élèves', 'Élèves', 'Forfaits, leçons du jour et paiements'], ['code', 'Salle de code'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo'], ['journal', 'Journal', 'Journal', 'Toutes les actions et les événements de la journée, horodatés, avec qui les a faits']];
+const PLEINES = new Set(['planning', 'moniteurs', 'eleves', 'chiffres', 'journal']);
+const ICONE_JOURNAL = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>';
 const voirSurMaquette = (cle) => { pages.fermer(); ui.aller('accueil'); choisir(cle); };
-const pages = creerPagesAE({ t: () => t, PLANNING, MONITEURS, ELEVES, VOITURES, MOTOS, OUVERTURE, FERMETURE, H_DISPO, hTxt, hh, euros, virgule, statut, caJour, heuresRoulees, relances, reportees, voir: voirSurMaquette, kpisEl: () => $('kpis') });
-ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id) })), surChangement: surRubrique });
+const pages = creerPagesAE({ t: () => t, PLANNING, MONITEURS, ELEVES, VOITURES, MOTOS, OUVERTURE, FERMETURE, H_DISPO, hTxt, hh, euros, virgule, statut, caJour, heuresRoulees, relances, reportees, voir: voirSurMaquette, kpisEl: () => $('kpis'), examens, droits: () => ROLE(), journal });
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id), icone: id === 'journal' ? ICONE_JOURNAL : undefined })), surChangement: surRubrique });
+function appliquerRole(r) {
+  roleCourant = r; ui.autoriser(r.rub); if (ui.plein()) ui.page().corps.replaceChildren();
+  for (const [id, lib, titre] of [['planning', 'Planning', r.planningTitre], ['eleves', 'Élèves', r.elevesTitre]]) { const b = document.querySelector(`[data-rub="${id}"] .rub-l`); if (b) b.textContent = titre || lib; if (ui.rubrique() === id) document.getElementById('page-titre').textContent = titre || (id === 'planning' ? 'Planning du jour' : 'Élèves'); }
+  dernierKpi = ''; majTout();
+}
+// « Résumé du jour » : aperçu du rapport du soir, calculé sur la simulation à l'heure de la démo
+function ouvrirResume() {
+  const ca = caJour(t), fait = PLANNING.filter((l) => l.fin <= t), hF = heuresRoulees(t), hP = PLANNING.reduce((s, l) => s + l.duree, 0);
+  const dus = Object.entries(ELEVES).filter(([, e]) => e[2] > 0), X = examens(), exJ = PLANNING.filter((l) => l.type.startsWith('Examen'));
+  const jour = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const demain = [
+    ...reportees.map((l) => `Leçon reportée à replacer : ${l.eleve} (${l.type})`),
+    ...Object.entries(rdvGarage).map(([id, q]) => `${vehicule(id).nom} au garage ${q}`),
+    ...dus.map(([n, e]) => `Paiement à demander : ${n}, ${euros(e[2])}${relances[n] !== undefined ? ' (déjà relancé aujourd\'hui)' : ''}`),
+    ...Object.entries(ELEVES).filter(([, e]) => e[0] / e[1] >= 0.9 && e[2] === 0).map(([n, e]) => `Fin de forfait : ${n} (${e[0]} / ${e[1]} h), proposer une date d'examen ou des heures`),
+  ];
+  fenetre.ouvrir({
+    titre: 'Résumé du jour', sous: `Aperçu du mail envoyé chaque soir à la gérance · arrêté à ${hh(t)} (heure de la démo)`, cle: 'resume',
+    corps: mailResume({
+      de: 'Auto-école Modèle · écran de l\'agence', a: 'Hélène Carpentier (gérance)', objet: `Résumé du ${jour} · Auto-école Modèle (démo)`,
+      intro: `Bonsoir, voici la journée de l'agence arrêtée à <b>${hh(t)}</b>. Tous les chiffres viennent de la simulation de la démo.`,
+      blocs: [
+        { titre: 'Chiffres de la journée', lignes: [['Encaissé aujourd\'hui', euros(ca)], ['Ce mois-ci', `${euros(CA_MOIS_AVANT + ca)} sur ${euros(OBJECTIF_MOIS)} d'objectif`], ['Leçons terminées', `${fait.length} sur ${PLANNING.length}`], ['Heures de conduite', `${virgule(hF)} h faites sur ${virgule(hP)} h prévues`], ['Reste à encaisser', `${euros(dus.reduce((s, [, e]) => s + e[2], 0))} (${dus.length} élève${dus.length > 1 ? 's' : ''})`], ['Examens du jour', exJ.map((l) => `${l.eleve} : ${resultats[l.id] === 'recu' ? 'reçu' : resultats[l.id] ? 'ajourné' : 'résultat à saisir'}`).join(', ') || 'aucun'], ['Réussite au permis B (6 mois)', `${Math.round(X.taux)} % · attente moyenne ${Math.round(X.delai)} jours`]] },
+        { titre: `Alertes traitées (${traites.length})`, items: traites.map((x) => `${hh(x.quand)} · ${x.titre} : ${x.res}${x.qui ? ` (${x.qui})` : ''}`), vide: 'Aucune alerte traitée depuis l\'écran pour l\'instant.' },
+        { titre: `Alertes encore ouvertes (${alertes.length})`, items: alertes.map((a) => `${a.titre} · ${NIVEAUX[a.niveau].nom.toLowerCase()}`), vide: 'Aucune : tout est traité.' },
+        { titre: 'À prévoir demain', items: demain, vide: 'Rien de particulier.' },
+      ],
+      pied: 'Ce mail est un exemple : dans un vrai déploiement, son contenu, son heure d\'envoi et ses destinataires se règlent avec vous. Données fictives (y compris l\'historique des examens).',
+    }),
+  });
+  parQui('Résumé du jour consulté');
+}
+rejouerJournal();
+installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+appliquerRole(ROLES[0]);
 window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
 requestAnimationFrame(animer);

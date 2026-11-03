@@ -7,9 +7,12 @@
 //   cartes = [{ id, label, icone (SVG), couleur, doux, sens: 1 (monter = bien) | -1 (monter = mal) | 0,
 //               valeur(h) -> nombre | null (null = pas connu à cette heure), maintenant() -> nombre (facultatif),
 //               format(n) -> texte, ecart(n) -> texte (facultatif), detail() -> texte, enPlus (dans le menu « Plus »),
-//               pas (heures entre deux points de la courbe, 0,25 par défaut), couleurDyn() (facultatif) }]
+//               pas (heures entre deux points de la courbe, 0,25 par défaut), couleurDyn() (facultatif),
+//               source (« Ça vient d'où ? » : texte affiché au survol de l'icône info, facultatif) }]
 //   K.maj(t)        // à appeler chaque minute de démo
 //   K.valeurs()     // { id: valeur affichée } (tests)
+
+import { source as iconeSource } from '../page.js';
 
 const FLECHE = {
   haut: '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>',
@@ -23,7 +26,7 @@ export function creerKpis({ cartes, rangee, plus, ouverture, hTxt, reduit = () =
     const el = document.createElement('article');
     el.className = 'kpi'; el.id = `k-${c.id}-c`;
     el.style.setProperty('--k', c.couleur); el.style.setProperty('--kd', c.doux);
-    el.innerHTML = `<div class="kpi-h"><span class="kpi-ic">${c.icone}</span><span class="kpi-l">${c.label}</span></div>`
+    el.innerHTML = `<div class="kpi-h"><span class="kpi-ic">${c.icone}</span><span class="kpi-l">${c.label}</span>${c.source ? iconeSource(c.source) : ''}</div>`
       + `<div class="kpi-m"><b id="k-${c.id}">-</b><svg class="spark" width="84" height="30" viewBox="0 0 84 30" aria-hidden="true"><defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".22"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><path class="aire" fill="url(#g-${c.id})"/><path class="ligne" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle r="2.4" fill="currentColor"/></svg></div>`
       + `<div class="kpi-b"><span class="tend" id="k-${c.id}-t"></span><em id="k-${c.id}-d"></em></div>`;
     (c.enPlus ? plus : rangee).appendChild(el);

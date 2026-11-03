@@ -343,3 +343,76 @@ body.tiroir-ouvert { overflow: hidden; }
 @media (max-width: 900px) { .app.plein .vues, .app.plein #vues { display: none; } }
 .frise-l > .pg-qui > div { min-width: 0; }
 @media (max-width: 900px) { .frise-l.tete .frise-piste span.imp { display: none; } }
+
+/* ---------- photos de visage (portraits fictifs) ---------- */
+img.av-photo { display: block; flex: none; border-radius: 50%; object-fit: cover; background: #e2e8f0; }
+
+/* ---------- « Ça vient d'où ? » ---------- */
+.src { position: relative; display: inline-grid; place-items: center; flex: none; width: 18px; height: 18px; border-radius: 50%; color: #94a3b8; cursor: help; vertical-align: middle; outline: none; }
+.src:hover, .src:focus-visible, .src.vu { color: #2563eb; background: #eff6ff; }
+.src::after { content: attr(data-src); position: absolute; top: calc(100% + 6px); right: -6px; z-index: 60; width: max-content; max-width: 210px; padding: 6px 9px; border-radius: 8px; background: #0f172a; color: #fff; font: 500 11.5px/1.35 Inter, system-ui, sans-serif; letter-spacing: 0; text-align: left; white-space: normal; box-shadow: 0 6px 18px rgba(15,23,42,.25); opacity: 0; visibility: hidden; transform: translateY(-2px); transition: opacity .12s, transform .12s; pointer-events: none; }
+.src:hover::after, .src:focus-visible::after, .src.vu::after { opacity: 1; visibility: visible; transform: none; }
+.pg-kpi { position: relative; } .pg-kpi > .src { position: absolute; top: 8px; right: 8px; }
+.ti-chiffres .src, .ti-s h3 .src { margin-left: 4px; }
+
+/* ---------- fenêtre (aperçu PDF, résumé du jour) ---------- */
+.fen-voile { position: fixed; inset: 0; z-index: 1200; background: rgba(15,23,42,.5); display: flex; align-items: center; justify-content: center; padding: 24px; animation: voile-ui .2s ease-out; }
+.fen-voile[hidden] { display: none; }
+.fen { width: min(680px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--carte, #fff); color: var(--texte, #0f172a); border-radius: 16px; box-shadow: 0 24px 60px rgba(15,23,42,.3); overflow: hidden; font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+.fen.large { width: min(900px, 100%); height: 100%; }
+.fen-tete { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--ligne, #e5e7eb); }
+.fen-tete > div { flex: 1; min-width: 0; } .fen-tete h2 { margin: 0; font-size: 17px; } .fen-sous { margin: 2px 0 0; color: var(--doux, #64748b); font-size: 12.5px; }
+.fen-x { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--ligne, #e5e7eb); border-radius: 10px; background: var(--carte, #fff); color: inherit; cursor: pointer; }
+.fen-corps { flex: 1; min-height: 0; overflow: auto; background: #f8fafc; }
+.fen.large .fen-corps { overflow: hidden; display: flex; }
+.fen-pied { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; padding: 12px 20px; border-top: 1px solid var(--ligne, #e5e7eb); }
+.fen-pied .pg-bt { text-decoration: none; }
+.pdf-cadre { flex: 1; width: 100%; min-height: 0; border: 0; background: #525659; }
+@media (max-width: 900px) { .fen-voile { padding: 0; } .fen { border-radius: 0; height: 100%; } .fen-tete { padding: 12px 14px; } .fen-pied { padding: 10px 14px; justify-content: stretch; } .fen-pied .pg-bt { flex: 1 1 auto; justify-content: center; } }
+
+/* boutons PDF dans les fiches et les listes */
+.pdf-bts { display: flex; flex-wrap: wrap; gap: 6px; }
+.pdf-bt { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 8px; background: var(--carte, #fff); color: var(--texte, #0f172a); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.pdf-bt:hover { background: var(--gris-doux, #f1f5f9); } .pdf-bt.prim { background: #1e3a8a; border-color: #1e3a8a; color: #fff; }
+.pdf-bt svg { flex: none; }
+
+/* ---------- « Voir en tant que » ---------- */
+.role-sel { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 4px 0 10px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 10px; background: var(--carte, #fff); font-size: 12px; color: var(--doux, #64748b); }
+.role-sel .role-ic { display: none; }
+.role-sel select { height: 32px; border: 0; background: transparent; color: var(--texte, #0f172a); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; max-width: 190px; }
+.role-mention { font-weight: 500; color: #6d28d9; }
+.role-mention b { font-weight: 700; }
+@media (max-width: 1240px) { .role-sel .role-l { display: none; } .role-sel .role-ic { display: block; } }
+@media (max-width: 900px) { .role-sel { height: 34px; padding-left: 8px; } .role-sel select { max-width: 112px; font-size: 12.5px; } }
+
+/* ---------- journal ---------- */
+.jr-outils .jr-compte { margin-left: auto; color: var(--doux); font-size: 12.5px; }
+.jr-table td { vertical-align: top; } .jr-h { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.jr-type { display: inline-block; padding: 2px 8px; border-radius: 99px; background: var(--cd); color: var(--c); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+@media (max-width: 900px) { .jr-table thead { display: none; } .jr-table tr { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; padding: 10px 12px; border-bottom: 1px solid var(--ligne); } .jr-table td { padding: 0; border: 0; } .jr-table td:nth-child(3), .jr-table td:nth-child(4) { grid-column: 1 / -1; } .jr-outils .jr-compte { margin-left: 0; } }
+
+/* ---------- résumé du jour (aperçu de mail) ---------- */
+.bt-resume { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 99px; background: var(--carte, #fff); color: var(--texte, #0f172a); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px rgba(15,23,42,.06); white-space: nowrap; }
+.bt-resume:hover { background: #f8fafc; }
+.mail { margin: 16px; background: #fff; border: 1px solid var(--ligne, #e5e7eb); border-radius: 12px; overflow: hidden; }
+.mail-tete { margin: 0; padding: 12px 16px; border-bottom: 1px solid var(--ligne, #e5e7eb); font-size: 13px; }
+.mail-tete div { display: flex; gap: 10px; padding: 2px 0; } .mail-tete dt { width: 48px; flex: none; color: var(--doux, #64748b); } .mail-tete dd { margin: 0; min-width: 0; }
+.mail-corps { padding: 14px 16px 18px; font-size: 13.5px; }
+.mail-corps > p { margin: 0 0 12px; }
+.mail-fictif { display: inline-block; padding: 4px 9px; border-radius: 8px; background: #fffbeb; border: 1px dashed #fcd34d; color: #92400e; font-size: 12px; font-weight: 600; }
+.mail-bloc { margin: 0 0 14px; } .mail-bloc h3 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #1e3a8a; }
+.mail-t { width: 100%; border-collapse: collapse; } .mail-t td { padding: 5px 0; border-bottom: 1px solid #f1f5f9; } .mail-t td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mail-bloc ul { margin: 0; padding-left: 18px; } .mail-bloc li { margin: 3px 0; } .mail-vide { margin: 0; color: var(--doux, #64748b); }
+.mail-pied { margin: 14px 0 0 !important; color: var(--doux, #64748b); font-size: 12px; }
+@media (max-width: 900px) { .mail { margin: 10px; } }
+.kpi-h .src, .kpi-t .src { margin-left: auto; overflow: visible; font-size: 0; }
+.rc { position: relative; } .rc > .src { position: absolute; top: 5px; right: 5px; }
+em.role-mention { font-style: normal; }
+.bt-resume[hidden] { display: none; }
+.fen-tete h2 { text-transform: none; letter-spacing: -.01em; color: var(--texte, #0f172a); font-weight: 700; }
+.pdf-sans { margin: auto; max-width: 420px; padding: 32px 20px; text-align: center; color: var(--doux, #64748b); }
+.pdf-sans svg { color: #1e3a8a; } .pdf-sans b { display: block; margin: 10px 0 6px; color: var(--texte, #0f172a); word-break: break-word; } .pdf-sans p { margin: 0; font-size: 13px; }
+td .pdf-bts { flex-wrap: nowrap; }
+#rubriques [data-rub][hidden] { display: none !important; }
+.role-sel .role-l { white-space: nowrap; }
+@media (max-width: 480px) { .entete .marque > div:not(.logo) { display: none; } }

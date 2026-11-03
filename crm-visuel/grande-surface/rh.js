@@ -7,8 +7,11 @@
 //   rh.rendre(conteneur);   // contenu de l'onglet RH
 //   rh.rdvDuJour();         // [{ id, nom, poste, debut, fin }] entretiens d'aujourd'hui (heures décimales)
 //   rh.ouvrirDocument(id);  // ouvre le CV / la lettre / le suivi d'un candidat
+//   rh.droits({ salaires, rh, filtre(e), titre })  // ce que voit le rôle choisi (« Voir en tant que »)
+//   rh.pdf('cv' | 'lettre' | 'cv-salarie', id, 'voir' | 'telecharger')  // CV et lettres en PDF (cv.js)
 
-import { avatar, kpi, tiroir } from '../page.js';
+import { avatar, kpi, tiroir, source } from '../page.js';
+import { cvPdf, lettrePdf, ouvrirPdf, telechargerPdf } from '../cv.js';
 
 const CSS = `
 .rh-fictif { border: 1px dashed #fca5a5; background: var(--accent-doux, #fee2e2); color: var(--accent, #b91c1c); border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-weight: 600; margin: 0 0 10px; }
@@ -464,7 +467,7 @@ function anciennete(debut, fin = aujourdhui()) {
   return [a ? `${a} an${a > 1 ? 's' : ''}` : '', r ? `${r} mois` : ''].filter(Boolean).join(' et ');
 }
 
-export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {}, etat = () => ({ cle: 'present', txt: 'Présent·e' }), pauseDe = () => null, coutJour = () => 0, voirPoste = choisirPersonne } = {}) {
+export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = () => {}, etat = () => ({ cle: 'present', txt: 'Présent·e' }), pauseDe = () => null, coutJour = () => 0, voirPoste = choisirPersonne, surAction = () => {} } = {}) {
   if (!document.getElementById('rh-css')) { const s = document.createElement('style'); s.id = 'rh-css'; s.textContent = CSS; document.head.appendChild(s); }
 
   // état de la démo (copie : les boutons changent l'étape sans toucher aux données d'origine)
@@ -474,6 +477,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   const dateRdv = (k) => ouvre(k.rdv[0]);
 
   const tousRdv = () => cands.filter((k) => k.rdv && k.etape !== 'refuse').sort((a, b) => a.rdv[0] - b.rdv[0] || a.rdv[1] - b.rdv[1]);
+  const rdvA = (j) => tousRdv().filter((k) => k.rdv[0] === j && k.etape === 'entretien').map((k) => ({ id: k.id, nom: nomK(k), poste: posteDe(k.poste).titre, debut: k.rdv[1], fin: k.rdv[2] }));
   function rdvDuJour() { return tousRdv().filter((k) => k.rdv[0] === 0).map((k) => ({ id: k.id, nom: nomK(k), poste: posteDe(k.poste).titre, debut: k.rdv[1], fin: k.rdv[2] })); }
 
   // ---------- sous-onglets ----------
@@ -500,7 +504,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   }
 
   function vueAnciens() {
-    return `<h2>Ils ont travaillé chez nous (${ANCIENS.length})</h2>${ANCIENS.map((a) => `<div class="rh-carte"><div class="tete"><div><b>${a.nom}</b><br><small class="d">${a.poste} · ${a.contrat}</small></div><span class="statut ${a.reemb ? 'ok' : 'rh-gris'}">${a.reemb ? 'Réembauchable' : 'Non réembauchable'}</span></div><ul class="lignes">${li('Entrée', dCourt(dIso(a.entree)))}${li('Sortie', dCourt(dIso(a.sortie)))}${li('Durée', anciennete(dIso(a.entree), dIso(a.sortie)))}${li('Motif du départ', a.motif)}</ul><p>${a.note}</p></div>`).join('')}`;
+    return `<h2>Ils ont travaillé chez nous (${ANCIENS.length})</h2>${ANCIENS.map((a) => `<div class="rh-carte"><div class="tete"><div class="pg-qui">${avatar(a.nom, { taille: 36 })}<div><b>${a.nom}</b><br><small class="d">${a.poste} · ${a.contrat}</small></div></div><span class="statut ${a.reemb ? 'ok' : 'rh-gris'}">${a.reemb ? 'Réembauchable' : 'Non réembauchable'}</span></div><ul class="lignes">${li('Entrée', dCourt(dIso(a.entree)))}${li('Sortie', dCourt(dIso(a.sortie)))}${li('Durée', anciennete(dIso(a.entree), dIso(a.sortie)))}${li('Motif du départ', a.motif)}</ul><p>${a.note}</p></div>`).join('')}`;
   }
 
   function vuePersonnel() {
@@ -573,7 +577,7 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     const k = cands.find((x) => x.id === st.doc); if (!k) return;
     const m = voile.firstElementChild, p = posteDe(k.poste), fini = ['retenu', 'refuse'].includes(k.etape);
     const corps = st.vue === 'lettre' ? lettre(k) : st.vue === 'suivi' ? suivi(k) : cv(k);
-    m.innerHTML = `<div class="rh-m-tete"><div><h3 id="rh-m-titre">${nomK(k)}</h3><p>${p.titre} · ${etape(k)}</p></div><button class="x" data-m="fermer" aria-label="Fermer">×</button></div><nav class="rh-m-onglets">${[['cv', 'CV'], ['lettre', 'Lettre de motivation'], ['suivi', 'Suivi']].map(([v, t]) => `<button data-m="${v}" class="${st.vue === v ? 'actif' : ''}">${t}</button>`).join('')}</nav><div class="rh-m-corps">${corps}</div><div class="rh-m-pied"><small>Démo : les boutons changent l'étape, rien n'est envoyé au candidat.</small><button class="rh-bt" data-m="refuser" ${fini ? 'disabled' : ''}>Refuser</button>${k.etape === 'entretien' ? `<button class="rh-bt go" data-m="retenir">Retenir</button>` : `<button class="rh-bt go" data-m="inviter" ${fini ? 'disabled' : ''}>Inviter en entretien</button>`}</div>`;
+    m.innerHTML = `<div class="rh-m-tete"><div><h3 id="rh-m-titre">${nomK(k)}</h3><p>${p.titre} · ${etape(k)}</p></div><button class="x" data-m="fermer" aria-label="Fermer">×</button></div><nav class="rh-m-onglets">${[['cv', 'CV'], ['lettre', 'Lettre de motivation'], ['suivi', 'Suivi']].map(([v, t]) => `<button data-m="${v}" class="${st.vue === v ? 'actif' : ''}">${t}</button>`).join('')}</nav><div class="rh-m-corps">${corps}</div><div class="rh-m-pied">${btsPdf(k.id, true)}<small>Démo : les boutons changent l'étape, rien n'est envoyé au candidat.</small><button class="rh-bt" data-m="refuser" ${fini ? 'disabled' : ''}>Refuser</button>${k.etape === 'entretien' ? `<button class="rh-bt go" data-m="retenir">Retenir</button>` : `<button class="rh-bt go" data-m="inviter" ${fini ? 'disabled' : ''}>Inviter en entretien</button>`}</div>`;
   }
   function creneauLibre() {
     const pris = new Set(cands.filter((k) => k.rdv && k.etape === 'entretien').map((k) => `${k.rdv[0]}-${k.rdv[1]}`));
@@ -596,7 +600,8 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
       k.suivi.push([0, 'Décision : candidature retenue. Proposition d\'embauche à préparer (démo : rien n\'est envoyé).', 'ok']);
       st.vue = 'suivi';
     } else return;
-    dessinerDoc(); redessiner();
+    surAction(`${{ inviter: 'Invitation en entretien préparée', refuser: 'Candidature refusée', retenir: 'Candidature retenue' }[a]} : ${nomK(k)} (${posteDe(k.poste).titre})`);
+    dessinerDoc(); redessiner(); majPage();
   }
 
   function ouvrirDocument(id) {
@@ -646,11 +651,11 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     const pres = equipe.filter((e) => ['present', 'pause'].includes(etat(e).cle)), pz = equipe.filter((e) => etat(e).cle === 'pause').length;
     const ouverts = cands.filter((k) => !['retenu', 'refuse'].includes(k.etape)).length;
     return [
-      kpi({ ic: ICK.gens, c: '#2563eb', cd: '#dbeafe', label: 'Effectif', val: equipe.length, det: `${equipe.filter((e) => /^CDI/.test(typeContrat(e))).length} CDI · ${equipe.filter((e) => !/^CDI/.test(typeContrat(e))).length} autres contrats` }),
-      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${equipe.length}`, det: pz ? `dont ${pz} en pause` : 'personne en pause' }),
-      kpi({ ic: ICK.euro, c: '#7c3aed', cd: '#ede9fe', label: 'Masse salariale du mois', val: eur(masse()), det: `brut · ${eur(masse() * CHARGES)} chargé` }),
-      kpi({ ic: ICK.jour, c: '#ea580c', cd: '#ffedd5', label: 'Coût du jour', val: eur(coutJour()), det: `à ${hTxt(Math.floor(heure() * 4) / 4)}, heures faites` }),
-      kpi({ ic: ICK.poste, c: '#be123c', cd: '#ffe4e6', label: 'Postes ouverts', val: POSTES.length, det: `${ouverts} candidature${ouverts > 1 ? 's' : ''} en cours` }),
+      kpi({ ic: ICK.gens, c: '#2563eb', cd: '#dbeafe', label: 'Effectif', val: equipe.length, det: `${equipe.filter((e) => /^CDI/.test(typeContrat(e))).length} CDI · ${equipe.filter((e) => !/^CDI/.test(typeContrat(e))).length} autres contrats`, src: 'Dossiers du personnel · saisi par les RH' }),
+      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${equipe.length}`, det: pz ? `dont ${pz} en pause` : 'personne en pause', src: 'Planning du jour · en direct' }),
+      kpi({ ic: ICK.euro, c: '#7c3aed', cd: '#ede9fe', label: 'Masse salariale du mois', val: eur(masse()), det: `brut · ${eur(masse() * CHARGES)} chargé`, src: 'Calculé : salaires bruts des contrats (paie)' }),
+      kpi({ ic: ICK.jour, c: '#ea580c', cd: '#ffedd5', label: 'Coût du jour', val: eur(coutJour()), det: `à ${hTxt(Math.floor(heure() * 4) / 4)}, heures faites`, src: 'Calculé : heures faites (planning) × coût horaire chargé' }),
+      kpi({ ic: ICK.poste, c: '#be123c', cd: '#ffe4e6', label: 'Postes ouverts', val: POSTES.length, det: `${ouverts} candidature${ouverts > 1 ? 's' : ''} en cours`, src: 'Saisi par les RH (annonces publiées)' }),
     ].join('');
   }
   const filtres = () => {
@@ -688,7 +693,8 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   }
   function corpsDocuments() {
     return `<div class="pg-grille"><section class="pg-carte">${vuePersonnel().replace(/<h2>Dossiers du personnel \((\d+)\)<\/h2>/, '<div class="pg-ch"><h3>Dossiers du personnel</h3><small>$1 salariés</small></div>')}</section>`
-      + `<section class="pg-carte"><div class="pg-ch"><h3>CV et lettres des candidats</h3><small>${cands.length} candidatures</small></div><table class="pg-table"><tbody>${cands.map((k) => `<tr data-rh-doc="${k.id}"><td><div class="pg-qui">${avatar(nomK(k), { taille: 32 })}<div><b>${nomK(k)}</b><small>${posteDe(k.poste).titre}</small></div></div></td><td>${etape(k)}</td><td class="num"><small>CV · lettre · suivi</small></td></tr>`).join('')}</tbody></table></section></div>`;
+      + `<section class="pg-carte"><div class="pg-ch"><h3>CV et lettres des candidats</h3><small>${cands.length} candidatures</small></div><table class="pg-table"><tbody>${cands.map((k) => `<tr data-rh-doc="${k.id}"><td><div class="pg-qui">${avatar(nomK(k), { taille: 32 })}<div><b>${nomK(k)}</b><small>${posteDe(k.poste).titre}</small></div></div></td><td>${etape(k)}</td><td class="num">${btsPdf(k.id)}</td></tr>`).join('')}</tbody></table><p class="pg-note">« CV » et « Lettre » fabriquent le PDF à l'instant dans le navigateur, à partir de la fiche (documents fictifs).</p></section>`
+      + `<section class="pg-carte"><div class="pg-ch"><h3>CV du personnel (PDF)</h3><small>${equipe.length} salariés</small></div><table class="pg-table"><tbody>${equipe.map((e) => `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 32 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td class="num">${btsPdfSalarie(e.id)}</td></tr>`).join('')}</tbody></table></section></div>`;
   }
   const SOUS = [['personnel', 'Personnel', () => equipe.length], ['recrutement', 'Recrutement', () => cands.filter((k) => !['retenu', 'refuse'].includes(k.etape)).length], ['entretiens', 'Entretiens', () => rdvDuJour().length], ['anciens', 'Anciens salariés', () => ANCIENS.length], ['documents', 'Documents', () => '']];
   const corpsSous = () => ({
@@ -747,15 +753,15 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
     const docs = [['Contrat de travail', contrat], ['Fiche de poste', e.poste], ...formations.map((f) => ['Attestation de formation', f]), ['Aptitude (visite médicale)', visite ? dCourt(dIso(visite)) : '-'], ['Bulletins de paie', 'consultables par la comptabilité']];
     return `<div class="ti-tete">${avatar(e.nom, { taille: 72 })}<div><h2>${esc(e.nom)}</h2><p>${esc(e.poste)} · ${serviceDe(e)}</p>${pill(e)}</div></div>`
       + `<p class="ti-role"><b>Rôle :</b> ${ROLES[idx(e)] || ''}</p>`
-      + `<div class="ti-chiffres"><div><small>Brut mensuel</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Coût chargé / h</small><b>${eur2(e.cout)}</b></div></div>`
+      + (D.salaires ? `<div class="ti-chiffres"><div><small>Brut mensuel${source('Contrat de travail · saisi par les RH')}</small><b>${eur(brutMois(e))}</b></div><div><small>Taux horaire brut${source('Calculé : brut mensuel ÷ heures du contrat')}</small><b>${eur2(tauxBrut(e))}</b></div><div><small>Coût chargé / h${source('Calculé : taux brut + charges patronales')}</small><b>${eur2(e.cout)}</b></div></div>` : '')
       + `<div class="ti-actions"><button type="button" class="pg-bt prim" data-ti-voir="${e.id}">Voir son poste sur la maquette</button></div>`
-      + `<section class="ti-s"><h3>Aujourd'hui</h3><ul class="ti-l"><li><span>Horaires</span><b>${hTxt(e.debut)} – ${hTxt(e.fin)}</b></li>${pz !== null ? `<li><span>Pause</span><b>${hTxt(pz)} – ${hTxt(pz + 0.5)}</b></li>` : ''}<li><span>Statut</span><b>${s.txt}${s.detail ? ` · ${s.detail}` : ''}</b></li><li><span>Heures faites</span><b>${nb(Math.round(Math.max(0, Math.min(heure(), e.fin) - e.debut) * 10) / 10)} h</b></li></ul></section>`
-      + `<section class="ti-s"><h3>Contrat</h3><ul class="ti-l"><li><span>Contrat</span><b>${contrat}</b></li><li><span>Durée du travail</span><b>${typeof perso(e)[3] === 'number' ? perso(e)[3] + ' h par semaine' : perso(e)[3]}</b></li><li><span>Entrée</span><b>${dCourt(dIso(entree))}</b></li>${fin ? `<li><span>Fin prévue</span><b>${dCourt(dIso(fin))}</b></li>` : ''}<li><span>Ancienneté</span><b>${anciennete(dIso(entree))}</b></li><li><span>Congés restants</span><b>${nb(conges)} jours</b></li></ul></section>`
+      + `<section class="ti-s"><h3>Aujourd'hui${source('Planning du jour · en direct')}</h3><ul class="ti-l"><li><span>Horaires</span><b>${hTxt(e.debut)} – ${hTxt(e.fin)}</b></li>${pz !== null ? `<li><span>Pause</span><b>${hTxt(pz)} – ${hTxt(pz + 0.5)}</b></li>` : ''}<li><span>Statut</span><b>${s.txt}${s.detail ? ` · ${s.detail}` : ''}</b></li><li><span>Heures faites</span><b>${nb(Math.round(Math.max(0, Math.min(heure(), e.fin) - e.debut) * 10) / 10)} h</b></li></ul></section>`
+      + (!D.rh ? '' : `<section class="ti-s"><h3>Contrat${source('Dossier du personnel · saisi à la main par les RH')}</h3><ul class="ti-l"><li><span>Contrat</span><b>${contrat}</b></li><li><span>Durée du travail</span><b>${typeof perso(e)[3] === 'number' ? perso(e)[3] + ' h par semaine' : perso(e)[3]}</b></li><li><span>Entrée</span><b>${dCourt(dIso(entree))}</b></li>${fin ? `<li><span>Fin prévue</span><b>${dCourt(dIso(fin))}</b></li>` : ''}<li><span>Ancienneté</span><b>${anciennete(dIso(entree))}</b></li><li><span>Congés restants</span><b>${nb(conges)} jours</b></li></ul></section>`)
       + `<section class="ti-s"><h3>Planning de la semaine</h3><div class="ti-sem">${sem}</div><p class="pg-note">Semaine type, magasin fermé le dimanche. Barre : de 6h à 21h.</p></section>`
       + `<section class="ti-s"><h3>Compétences et formations</h3><div class="ti-tags">${formations.map((f) => `<span>${f}</span>`).join('')}</div></section>`
-      + `<section class="ti-s"><h3>Entretiens annuels</h3><ul class="ti-l"><li><span>Prochain entretien</span><b>${dA ? (dA < auj ? `${dCourt(dA)}, à reprogrammer` : dCourt(dA)) : 'après la fin du contrat'}</b></li><li><span>Avec</span><b>${RH.nom} (RH)</b></li><li><span>Visite médicale</span><b>${visite ? dCourt(dIso(visite)) : '-'}</b></li></ul></section>`
-      + `<section class="ti-s"><h3>Documents</h3><ul class="ti-docs">${docs.map(([a, b]) => `<li>${ICK.doc}<span>${a}</span><small>${b}</small></li>`).join('')}</ul></section>`
-      + `<p class="ti-rgpd">Données fictives · accès réservé RH (RGPD). Fiche limitée aux informations professionnelles ; salaire inventé, déduit du coût horaire chargé de la démo.</p>`;
+      + (!D.rh ? '' : `<section class="ti-s"><h3>Entretiens annuels</h3><ul class="ti-l"><li><span>Prochain entretien</span><b>${dA ? (dA < auj ? `${dCourt(dA)}, à reprogrammer` : dCourt(dA)) : 'après la fin du contrat'}</b></li><li><span>Avec</span><b>${RH.nom} (RH)</b></li><li><span>Visite médicale</span><b>${visite ? dCourt(dIso(visite)) : '-'}</b></li></ul></section>`)
+      + (!D.rh ? '' : `<section class="ti-s"><h3>Documents</h3><div class="pdf-bts" style="margin:0 0 10px">${btsPdfSalarie(e.id, true)}</div><ul class="ti-docs">${docs.map(([a, b]) => `<li>${ICK.doc}<span>${a}</span><small>${b}</small></li>`).join('')}</ul></section>`)
+      + (D.rh ? `<p class="ti-rgpd">Données fictives · accès réservé RH (RGPD). Fiche limitée aux informations professionnelles ; salaire inventé, déduit du coût horaire chargé de la démo.</p>` : `<p class="ti-rgpd">Données fictives · vue « ${esc(D.titre)} » : contrat, salaire et documents sont réservés à la direction et aux RH (accès par rôle, RGPD).</p>`);
   }
   function ouvrirFiche(id) {
     const e = equipe.find((x) => x.id === id); if (!e) return;
@@ -781,31 +787,73 @@ export function installerRH({ equipe = [], heure = () => 12, choisirPersonne = (
   }
   function majEquipe() {
     if (!rootE) return;
-    const pres = equipe.filter((e) => ['present', 'pause'].includes(etat(e).cle)), pz = equipe.filter((e) => etat(e).cle === 'pause');
+    const eqv = equipe.filter((e) => D.filtre(e)), pres = eqv.filter((e) => ['present', 'pause'].includes(etat(e).cle)), pz = eqv.filter((e) => etat(e).cle === 'pause');
     const enCaisse = pres.filter((e) => /^c\d/.test(e.zone) && etat(e).cle === 'present').length;
     poser(rootE.querySelector('[data-z="kpis"]'), [
-      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${equipe.length}`, det: `à ${hTxt(Math.floor(heure() * 4) / 4)}` }),
-      kpi({ ic: ICK.pause, c: '#ea580c', cd: '#ffedd5', label: 'En pause', val: pz.length, det: pz.map((e) => e.nom.split(' ')[0]).join(', ') || 'personne' }),
-      kpi({ ic: ICK.caisse, c: '#7c3aed', cd: '#ede9fe', label: 'En caisse', val: enCaisse, det: 'renforts compris' }),
-      kpi({ ic: ICK.euro, c: '#2563eb', cd: '#dbeafe', label: 'Coût du jour', val: eur(coutJour()), det: 'heures faites × coût chargé' }),
+      kpi({ ic: ICK.ok, c: '#16a34a', cd: '#dcfce7', label: 'Présents', val: `${pres.length} / ${eqv.length}`, det: `à ${hTxt(Math.floor(heure() * 4) / 4)}`, src: 'Planning du jour · en direct' }),
+      kpi({ ic: ICK.pause, c: '#ea580c', cd: '#ffedd5', label: 'En pause', val: pz.length, det: pz.map((e) => e.nom.split(' ')[0]).join(', ') || 'personne', src: 'Planning (pauses prévues) · en direct' }),
+      kpi({ ic: ICK.caisse, c: '#7c3aed', cd: '#ede9fe', label: 'En caisse', val: enCaisse, det: 'renforts compris', src: 'Caisses ouvertes · en direct' }),
+      kpi({ ic: ICK.jour, c: '#2563eb', cd: '#dbeafe', label: 'Arrivent plus tard', val: eqv.filter((e) => etat(e).cle === 'avant').length, det: (() => { const a = eqv.filter((e) => etat(e).cle === 'avant').sort((x, y) => x.debut - y.debut)[0]; return a ? `prochaine arrivée : ${a.nom.split(' ')[0]} à ${hTxt(a.debut)}` : 'tout le monde est arrivé'; })(), src: 'Planning du jour' }),
     ].join(''));
     rootE.querySelectorAll('[data-eq]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.eq === P.eq));
     const pct = (h) => ((Math.min(21, Math.max(6, h)) - 6) / 15) * 100, h0 = heure();
     let corps;
     if (P.eq === 'annuaire') {
-      corps = `<div class="pg-carte pg-table-l"><table class="pg-table"><thead><tr><th>Personne</th><th>Service</th><th>Horaires</th><th>Statut</th><th>En ce moment</th><th></th></tr></thead><tbody>${[...equipe].sort((a, b) => ORDRE_SERV.indexOf(serviceDe(a)) - ORDRE_SERV.indexOf(serviceDe(b))).map((e) => { const s = etat(e); return `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 36 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td>${serviceDe(e)}</td><td>${hTxt(e.debut)}–${hTxt(e.fin)}</td><td>${pill(e)}</td><td><small>${s.detail || '-'}</small></td><td class="num"><button type="button" class="pg-bt" data-rh-voirposte="${e.id}" ${['present', 'pause'].includes(s.cle) ? '' : 'disabled'}>Voir sur la maquette</button></td></tr>`; }).join('')}</tbody></table></div>`;
+      corps = `<div class="pg-carte pg-table-l"><table class="pg-table"><thead><tr><th>Personne</th><th>Service</th><th>Horaires</th><th>Statut</th><th>En ce moment</th><th></th></tr></thead><tbody>${[...eqv].sort((a, b) => ORDRE_SERV.indexOf(serviceDe(a)) - ORDRE_SERV.indexOf(serviceDe(b))).map((e) => { const s = etat(e); return `<tr data-rh-fiche="${e.id}"><td><div class="pg-qui">${avatar(e.nom, { taille: 36 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div></td><td>${serviceDe(e)}</td><td>${hTxt(e.debut)}–${hTxt(e.fin)}</td><td>${pill(e)}</td><td><small>${s.detail || '-'}</small></td><td class="num"><button type="button" class="pg-bt" data-rh-voirposte="${e.id}" ${['present', 'pause'].includes(s.cle) ? '' : 'disabled'}>Voir sur la maquette</button></td></tr>`; }).join('')}</tbody></table></div>`;
     } else {
       const heures = []; for (let h = 6; h <= 21; h += 3) heures.push(`<span style="left:${pct(h)}%">${h}h</span>`);
       const traits = []; for (let h = 6; h <= 21; h++) traits.push(`<b class="h" style="left:${pct(h)}%"></b>`);
-      const lignes = servicesListe().map((sv) => `<div class="frise-l groupe">${sv}</div>` + equipe.filter((e) => serviceDe(e) === sv).map((e) => {
+      const lignes = servicesListe().filter((sv) => eqv.some((e) => serviceDe(e) === sv)).map((sv) => `<div class="frise-l groupe">${sv}</div>` + eqv.filter((e) => serviceDe(e) === sv).map((e) => {
         const s = etat(e), pz = pauseDe(e), fait = h0 >= e.fin, cours = h0 >= e.debut && !fait;
         const fond = s.cle === 'pause' ? '#ffedd5' : cours ? '#dbeafe' : fait ? '#eef1f5' : '#f1f5f9', bord = cours ? '#93c5fd' : '#e2e8f0', coul = cours ? '#1d4ed8' : '#64748b';
         return `<div class="frise-l"><div class="pg-qui" data-rh-fiche="${e.id}">${avatar(e.nom, { taille: 32 })}<div><b>${esc(e.nom)}</b><small>${esc(e.poste)}</small></div></div><div class="frise-piste">${traits.join('')}<div class="bloc-f" data-rh-fiche="${e.id}" style="left:${pct(e.debut)}%;width:${pct(e.fin) - pct(e.debut)}%;background:${fond};border-color:${bord};color:${coul}" title="${hTxt(e.debut)}–${hTxt(e.fin)}">${hTxt(e.debut)}–${hTxt(e.fin)}</div>${pz !== null ? `<div class="bloc-f" style="left:${pct(pz)}%;width:${pct(pz + 0.5) - pct(pz)}%;background:#fed7aa;border-color:#fdba74;top:14px;bottom:14px;padding:0" title="Pause ${hTxt(pz)}"></div>` : ''}<i class="maint" style="left:${pct(h0)}%"></i></div></div>`;
       }).join('')).join('');
-      corps = `<div class="frise"><div class="frise-l tete"><div style="padding-left:16px">Personne</div><div class="frise-piste">${heures.join('')}</div></div>${lignes}</div><p class="pg-note">Clic sur une personne : sa fiche (poste, horaires, salaire fictif). Depuis l'annuaire, « Voir sur la maquette » revient à la 3D et zoome sur son poste.</p>`;
+      corps = `<div class="frise"><div class="frise-l tete"><div style="padding-left:16px">Personne</div><div class="frise-piste">${heures.join('')}</div></div>${lignes}</div><p class="pg-note">Clic sur une personne : sa fiche (poste, horaires${D.salaires ? ", salaire fictif" : ""}). Depuis l'annuaire, « Voir sur la maquette » revient à la 3D et zoome sur son poste.</p>`;
     }
     poser(rootE.querySelector('[data-z="corps"]'), corps);
   }
 
-  return { rendre, rdvDuJour, ouvrirDocument, rendrePage, majPage, rendreEquipe, majEquipe, ouvrirFiche };
+  // ---------- CV et lettres en PDF (fabriqués dans le navigateur, cv.js) ----------
+  const IC_PDF = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>';
+  const IC_DL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
+  function btsPdf(id, long = false) {
+    return `<span class="pdf-bts" style="justify-content:${long ? 'flex-start' : 'flex-end'}"><button type="button" class="pdf-bt ${long ? 'prim' : ''}" data-pdf="cv:${id}" data-pdf-mode="voir">${IC_PDF}${long ? 'Voir le CV (PDF)' : 'CV'}</button><button type="button" class="pdf-bt" data-pdf="lettre:${id}" data-pdf-mode="voir">${IC_PDF}${long ? 'Lettre de motivation (PDF)' : 'Lettre'}</button><button type="button" class="pdf-bt" data-pdf="cv:${id}" data-pdf-mode="telecharger" aria-label="Télécharger le CV">${IC_DL}${long ? 'Télécharger le CV' : ''}</button></span>`;
+  }
+  function btsPdfSalarie(id, long = false) {
+    return `<span class="pdf-bts" style="justify-content:${long ? 'flex-start' : 'flex-end'}"><button type="button" class="pdf-bt ${long ? 'prim' : ''}" data-pdf="cv-salarie:${id}" data-pdf-mode="voir">${IC_PDF}${long ? 'Voir le CV (PDF)' : 'CV'}</button><button type="button" class="pdf-bt" data-pdf="cv-salarie:${id}" data-pdf-mode="telecharger" aria-label="Télécharger le CV">${IC_DL}${long ? 'Télécharger' : ''}</button></span>`;
+  }
+  const moisAn = (d) => d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const mailE = (n) => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z ]/g, '').trim().replace(/ +/g, '.') + '@exemple.fr';
+  async function fabriquer(type, id) {
+    if (type === 'cv' || type === 'lettre') {
+      const k = cands.find((x) => x.id === id); if (!k) return null; const p = posteDe(k.poste), n = nomK(k);
+      if (type === 'cv') return { fichier: `CV - ${n} (fictif).pdf`, titre: `CV de ${n}`, blob: await cvPdf({ nom: n, titre: k.titre, pour: `Candidature au poste « ${p.titre} » (${p.contrat}) · reçue le ${dCourt(decale(k.recu))} par « ${k.source} »`, ville: k.ville, email: mail(k), telephone: 'Téléphone : sur demande (démo)', profil: k.profil, xp: k.xp, formation: k.formation, competences: k.competences, langues: k.langues, permis: k.permis }) };
+      return { fichier: `Lettre de motivation - ${n} (fictive).pdf`, titre: `Lettre de motivation de ${n}`, blob: await lettrePdf({ nom: n, ville: k.ville, email: mail(k), dest: [MAGASIN, `À l'attention de ${RH.nom}`, RH.titre], lieuDate: `${k.ville}, le ${decale(k.recu).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`, objet: `Objet : candidature au poste de ${p.titre.toLowerCase()}`, salutation: 'Madame,', paragraphes: k.lettre }) };
+    }
+    const e = equipe.find((x) => x.id === id); if (!e) return null;
+    const [contrat, entree, fin, , , , , formations] = perso(e), dE = dIso(entree);
+    return { fichier: `CV - ${e.nom} (fictif).pdf`, titre: `CV de ${e.nom}`, blob: await cvPdf({
+      nom: e.nom, titre: e.poste, pour: `Dossier du personnel · ${MAGASIN} (magasin fictif) · ${serviceDe(e)}`, ville: 'Orléans (Loiret)', email: mailE(e.nom), telephone: 'Téléphone : non communiqué (démo)',
+      profil: `${e.poste} chez ${MAGASIN} depuis ${anciennete(dE)}, service ${serviceDe(e).toLowerCase()} (${contrat}).`,
+      xp: [[maj(moisAn(dE)), fin ? maj(moisAn(dIso(fin))) : 'aujourd\'hui', e.poste, `${MAGASIN} (magasin fictif) · ${serviceDe(e)} · ${contrat}`, (() => { const r = ROLES[idx(e)] || ''; return (r.includes(' : ') ? r.split(' : ').slice(1).join(' : ') : r).split(/ ?; ?|, (?=[a-zé])/).filter((x) => x.length > 3).map((x) => maj(x.replace(/\.$/, ''))); })()]],
+      formation: formations.map((f) => ['', f, 'Formation suivie dans l\'entreprise (organisme fictif)']),
+      competences: formations.slice(0, 5), langues: ['Français'], permis: '',
+    }) };
+  }
+  async function pdf(type, id, mode = 'voir') {
+    const x = await fabriquer(type, id); if (!x) return null;
+    if (mode === 'telecharger') telechargerPdf(x.blob, x.fichier); else ouvrirPdf(x.blob, x.fichier, x.titre);
+    surAction(`${x.titre} ${mode === 'telecharger' ? 'téléchargé' : 'ouvert'} en PDF`);
+    return x;
+  }
+  document.addEventListener('click', (ev) => {
+    const b = ev.target.closest && ev.target.closest('[data-pdf]'); if (!b) return;
+    ev.stopPropagation(); ev.preventDefault();
+    const [type, id] = b.dataset.pdf.split(':'); pdf(type, id, b.dataset.pdfMode);
+  }, true);
+  // ---------- ce que voit le rôle choisi ----------
+  const D = { salaires: true, rh: true, filtre: () => true, titre: 'Direction' };
+  function droits(d) { Object.assign(D, d); if (tiroir.cle() && equipe.some((e) => e.id === tiroir.cle())) tiroir.maj(fiche(equipe.find((e) => e.id === tiroir.cle()))); }
+
+  return { rendre, rdvDuJour, ouvrirDocument, rendrePage, majPage, rendreEquipe, majEquipe, ouvrirFiche, droits, pdf, rdvA };
 }

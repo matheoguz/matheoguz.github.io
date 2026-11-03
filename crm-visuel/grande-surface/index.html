@@ -246,7 +246,7 @@
 </head>
 <body>
 <div class="app">
-  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives<span>— magasin, personnes, stocks et chiffres sont inventés, les alertes sont calculées sur cette simulation</span></div>
+  <div class="bandeau-demo" role="note"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h0"/></svg>Démonstration · données fictives<span>— magasin, personnes, stocks et chiffres sont inventés, les alertes sont calculées sur cette simulation</span><em class="role-mention" id="role-mention"></em></div>
   <header class="entete">
     <div class="marque">
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v7h14v-7M10 20v-4h4v4"/></svg></div>
@@ -259,6 +259,7 @@
       <button role="tab" data-vue="etage" aria-selected="false"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"/></svg>Étage</button>
     </div>
     <div class="droite">
+      <div id="role"></div>
       <span class="direct"><i></i>En direct</span>
       <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="bouton-ic" id="pause" aria-label="Pause" title="Mettre la journée en pause"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="ic-pause" d="M9 6v12M15 6v12"/><path class="ic-lecture" d="M8 5l11 7-11 7z" fill="currentColor" stroke="none" style="display:none"/></svg><span class="sr">Pause</span></button>
@@ -303,7 +304,8 @@ import { creerPastilles } from './pastilles.js';
 import { ombresContact, halo, creerVoile } from './decor.js';
 import { creerKpis } from './tableau.js';
 import { creerInterface, poserGarde, ICONES_UI } from '../interface.js';
-import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende } from '../page.js';
+import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende, source } from '../page.js';
+import { creerJournal, installerRoles, fenetre, mailResume } from '../commun.js';
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
@@ -357,6 +359,39 @@ let t = 11.7, pause = false;
 const hh = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60 + 1e-6)).padStart(2, '0')}`;
 const hTxt = (h) => `${Math.floor(h)}h${h % 1 ? String(Math.round((h % 1) * 60)).padStart(2, '0') : ''}`;
 const euros = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+// Journal des actions et des événements de la journée (rubrique Journal)
+const journal = creerJournal({ hh });
+const ZONE0 = Object.fromEntries(EQUIPE.map((e) => [e.id, e.zone]));
+// « Voir en tant que » : ce que chaque rôle voit (rubriques, alertes, équipe, salaires, chiffres financiers)
+const ROLES = [
+  { id: 'direction', label: 'Directeur·rice', qui: 'Claire Dumont', rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
+  { id: 'rh', label: 'Responsable RH', qui: 'Sophie Marchand', rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
+  { id: 'rayon', label: 'Chef de rayon', qui: 'Mehdi Larbi', rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
+  { id: 'caisse', label: 'Hôte·sse de caisse', qui: 'Léa Bonnet', rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === 'Léa Bonnet', equipeTitre: 'Mon planning' },
+];
+let roleCourant = ROLES[0];
+const ROLE = () => roleCourant;
+const voitRub = (id) => !ROLE().rub || id === 'accueil' || ROLE().rub.has(id);
+const vues = () => alertes.filter(ROLE().alertes);
+const agir = (texte) => journal.ajouter({ h: t, qui: ROLE().qui, role: ROLE().label, type: 'action', texte });
+// événements de la simulation entre deux heures (prises de service, caisses, camions) : rejouables, donc le journal du matin existe dès l'ouverture de la démo
+function evenements(h0, h1) {
+  const dans = (h) => h > h0 + 1e-9 && h <= h1 + 1e-9;
+  if (dans(OUVERTURE)) journal.ajouter({ h: OUVERTURE, qui: 'Magasin', type: 'journee', texte: 'Ouverture des portes aux clients' });
+  if (dans(FERMETURE)) journal.ajouter({ h: FERMETURE, qui: 'Magasin', type: 'journee', texte: 'Fermeture des portes' });
+  for (const e of EQUIPE) {
+    const z = ZONE0[e.id];
+    if (dans(e.debut)) journal.ajouter({ h: e.debut, qui: e.nom, role: e.poste, type: 'journee', texte: /^c\d/.test(z) ? `Prise de service et ouverture de la caisse ${+z.slice(1, 2) + 1}` : 'Prise de service (planning)' });
+    if (dans(e.fin)) journal.ajouter({ h: e.fin, qui: e.nom, role: e.poste, type: 'journee', texte: /^c\d/.test(z) ? `Fin de service, caisse ${+z.slice(1, 2) + 1} clôturée` : 'Fin de service' });
+  }
+  for (const d of LIVRAISONS) {
+    if (dans(d.heure)) journal.ajouter({ h: d.heure, qui: 'Quai de réception', type: 'journee', texte: `Camion au quai : ${d.fourn}, ${d.palettes} palettes${d.commande ? ' (commande passée depuis l\'écran)' : ''}` });
+    if (dans(d.heure + 0.75)) journal.ajouter({ h: d.heure + 0.75, qui: 'Quai de réception', type: 'journee', texte: `Livraison déchargée et rangée en réserve : ${d.fourn}` });
+  }
+}
+let hJournal = 0;
+function rejouerJournal() { journal.vider(); hJournal = 0; evenements(-1, t); hJournal = t; JA.clear(); }
+const JA = new Set(); // alertes déjà notées dans le journal
 const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
 const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
@@ -869,26 +904,26 @@ const NIV_COUL = { urgent: ['#dc2626', '#fee2e2'], surveiller: ['#ea580c', '#ffe
 const kpis = creerKpis({
   rangee: $('kpis-grille'), plus: $('kpis-grille'), ouverture: OUVERTURE, reduit: () => REDUIT.matches, hTxt: (h) => hh(h).replace(':', 'h'),
   cartes: [
-    { id: 'alertes', label: 'Alertes ouvertes', icone: IC('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1, pas: 1 / 12,
+    { id: 'alertes', label: 'Alertes ouvertes', source: 'Calculé : règles sur les stocks, les caisses, les livraisons et le planning', icone: IC('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1, pas: 1 / 12,
       valeur: (h) => { const m = Math.floor(h * 60 + 1e-6); return HIST_ALERTES.has(m) ? HIST_ALERTES.get(m) : null; }, maintenant: () => alertes.length, format: nb,
       detail: () => { const u = alertes.filter((a) => a.niveau === 'urgent').length; return `${u} urgente${u > 1 ? 's' : ''} · ${TRAITES.length} traitée${TRAITES.length > 1 ? 's' : ''}`; },
       couleurDyn: () => NIV_COUL[alertes.some((a) => a.niveau === 'urgent') ? 'urgent' : alertes.some((a) => a.niveau === 'surveiller') ? 'surveiller' : alertes.length ? 'conseil' : 'ok'] },
-    { id: 'ca', label: "Chiffre d'affaires", icone: IC('<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>'), couleur: '#16a34a', doux: '#dcfce7', sens: 1,
+    { id: 'ca', label: "Chiffre d'affaires", source: 'Caisse · mis à jour en direct', icone: IC('<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>'), couleur: '#16a34a', doux: '#dcfce7', sens: 1,
       valeur: (h) => caDuJour(h), format: euros, detail: () => `panier moyen ${PANIER.toLocaleString('fr-FR')} € · hier ${euros(CA_HIER)}` },
-    { id: 'clients', label: 'Clients dans le magasin', icone: IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.7c1.8.8 3 2.5 3 5.3"/>'), couleur: '#2563eb', doux: '#dbeafe', sens: 0,
+    { id: 'clients', label: 'Clients dans le magasin', source: 'Calculé à partir des passages en caisse · en direct', icone: IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.7c1.8.8 3 2.5 3 5.3"/>'), couleur: '#2563eb', doux: '#dbeafe', sens: 0,
       valeur: (h) => Math.round(clientsEn(h)), format: nb, detail: () => (affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme') },
-    { id: 'caisses', label: 'Caisses ouvertes', icone: IC('<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V5h10v5M7 15h4"/>'), couleur: '#7c3aed', doux: '#ede9fe', sens: 0,
+    { id: 'caisses', label: 'Caisses ouvertes', source: 'Caisse · ouverture des caisses en direct', icone: IC('<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V5h10v5M7 15h4"/>'), couleur: '#7c3aed', doux: '#ede9fe', sens: 0,
       valeur: ouvertesHist, format: (n) => `${Math.round(n)} / ${NB_CAISSES}`, ecart: nb, detail: () => `attente moyenne ${attenteMin()} min` },
-    { id: 'attente', label: "Taux d'attente en caisse", icone: IC('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1,
+    { id: 'attente', label: "Taux d'attente en caisse", source: 'Calculé : clients en file à chaque caisse', icone: IC('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'), couleur: '#ea580c', doux: '#ffedd5', sens: -1,
       valeur: pctAttente, maintenant: () => { const fc = filesCaisses(); return fc.length ? Math.round((fc.filter((x) => x.f >= 3).length / fc.length) * 100) : 0; }, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts',
       detail: () => { const fc = filesCaisses(), sat = fc.filter((x) => x.f >= 3).length; return `${sat} caisse${sat > 1 ? 's' : ''} sur ${fc.length} à 3 clients et plus`; } },
-    { id: 'stock', label: 'Rayons en stock', icone: IC('<path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'), couleur: '#0891b2', doux: '#cffafe', sens: 1,
+    { id: 'stock', label: 'Rayons en stock', source: 'Logiciel de stock · synchronisé toutes les 5 min', icone: IC('<path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'), couleur: '#0891b2', doux: '#cffafe', sens: 1,
       valeur: pctRayons, format: (n) => nb(n) + ' %', ecart: (n) => nb(n) + ' pts', detail: () => `${RAYONS.filter((r) => stockDe(r) >= 0.7).length} sur ${RAYONS.length} au-dessus de 70 % de stock` },
-    { id: 'ruptures', label: 'Ruptures de stock', enPlus: true, icone: IC('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h0"/>'), couleur: '#dc2626', doux: '#fee2e2', sens: -1,
+    { id: 'ruptures', label: 'Ruptures de stock', source: 'Logiciel de stock · synchronisé toutes les 5 min', enPlus: true, icone: IC('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h0"/>'), couleur: '#dc2626', doux: '#fee2e2', sens: -1,
       valeur: (h) => RAYONS.reduce((s, r) => s + rupturesDe(r, h), 0), format: nb, detail: () => `sur ${RAYONS.reduce((s, r) => s + r.refs, 0).toLocaleString('fr-FR')} produits` },
-    { id: 'equipe', label: 'Équipe présente', enPlus: true, icone: IC('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'), couleur: '#0f766e', doux: '#ccfbf1', sens: 0,
+    { id: 'equipe', label: 'Équipe présente', source: 'Planning du jour', enPlus: true, icone: IC('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'), couleur: '#0f766e', doux: '#ccfbf1', sens: 0,
       valeur: presentsA, format: (n) => `${Math.round(n)} / ${EQUIPE.length}`, ecart: nb, detail: () => { const pz = EQUIPE.filter(auRepos).length; return `${caissiers().length} en caisse${pz ? `, ${pz} en pause` : ''}`; } },
-    { id: 'salaires', label: "Coût de l'équipe aujourd'hui", enPlus: true, icone: IC('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>'), couleur: '#475569', doux: '#f1f5f9', sens: 0,
+    { id: 'salaires', label: "Coût de l'équipe aujourd'hui", source: 'Calculé : heures faites (planning) × coût horaire saisi par les RH', enPlus: true, icone: IC('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>'), couleur: '#475569', doux: '#f1f5f9', sens: 0,
       valeur: (h) => coutJour(h), format: euros, detail: () => { const ca = caDuJour(), p = ca ? (coutJour() / ca) * 100 : 0; return `${p.toFixed(1).replace('.', ',')} % du chiffre d'affaires`; } },
   ],
 });
@@ -900,16 +935,20 @@ function majKpis() {
 }
 // Accueil : trois chiffres seulement, et la pilule « N choses à traiter »
 function majResume() {
-  const n = alertes.length, u = alertes.filter((a) => a.niveau === 'urgent').length, ouv = caissesOuvertes().length;
-  const carteR = (rub, ic, c, cd, label, val, det) => `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span></button>`;
+  const A = vues(), n = A.length, u = A.filter((a) => a.niveau === 'urgent').length, ouv = caissesOuvertes().length;
+  const SRC = { traiter: 'Calculé : règles sur les stocks, les caisses, les livraisons et le planning', affluence: 'Calculé à partir des passages en caisse · en direct', caisses: 'Caisse · mis à jour en direct' };
+  const carteR = (rub, ic, c, cd, label, val, det) => (voitRub(rub) ? `<button type="button" class="rc" data-rub-aller="${rub}" style="--rcc:${c};--rcd:${cd}"><span class="rc-ic">${ic}</span><span class="rc-t"><small>${label}</small><b>${val}</b><em>${det}</em></span>${source(SRC[rub])}</button>` : '');
   const ton = u ? '#dc2626' : n ? '#ea580c' : '#16a34a';
-  poser($('resume'), carteR('traiter', ICONES_UI.traiter, ton, u ? '#fee2e2' : n ? '#ffedd5' : '#dcfce7', 'Alertes à traiter', nb(n), u ? `${u} urgente${u > 1 ? 's' : ''}` : n ? 'rien d\'urgent' : 'tout est en ordre')
+  const R = $('resume');
+  if (!R.querySelector('.rs-c')) R.innerHTML = `<div class="rs-c" style="display:contents"></div><button type="button" class="bt-resume" data-resume title="Aperçu du rapport envoyé chaque soir"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Résumé du jour</span></button>`;
+  R.querySelector('.bt-resume').hidden = !ROLE().finances;
+  poser(R.querySelector('.rs-c'), carteR('traiter', ICONES_UI.traiter, ton, u ? '#fee2e2' : n ? '#ffedd5' : '#dcfce7', 'Alertes à traiter', nb(n), u ? `${u} urgente${u > 1 ? 's' : ''}` : n ? 'rien d\'urgent' : 'tout est en ordre')
     + carteR('affluence', ICONES_UI.equipe, '#2563eb', '#dbeafe', 'Clients dans le magasin', nb(clientsMagasin()), affluence() > 0.7 ? 'forte affluence' : affluence() > 0.4 ? 'affluence moyenne' : 'magasin calme')
     + carteR('caisses', ICONES_UI.caisses, '#7c3aed', '#ede9fe', 'Caisses ouvertes', `${ouv} / ${NB_CAISSES}`, `attente moyenne ${attenteMin()} min`)
-    + `<button type="button" class="pilule ${n ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${n ? `${n} chose${n > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}<span>${n ? '' : ''}</span></button>`);
+    + (voitRub('traiter') ? `<button type="button" class="pilule ${n ? '' : 'calme'}" data-rub-aller="traiter" style="--pc:${ton}"><i></i>${n ? `${n} chose${n > 1 ? 's' : ''} à traiter` : 'Rien à traiter'}<span>${n ? '' : ''}</span></button>` : ''));
   if (ui) { ui.badge('traiter', n, u ? 'rouge' : n ? 'orange' : ''); const rup = RAYONS.filter((r) => stockDe(r) < 0.7).length; ui.badge('stocks', rup, rup ? 'orange' : ''); }
 }
-$('resume').onclick = (ev) => { const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
+$('resume').onclick = (ev) => { if (ev.target.closest('[data-resume]')) { ouvrirResume(); return; } const b = ev.target.closest('[data-rub-aller]'); if (b) ui.aller(b.dataset.rubAller); };
 let selection = null, ui = null, parcoursVu = true;
 const rubrique = () => (ui ? ui.rubrique() : 'accueil');
 const service = (e) => `<span class="service"><i style="left:${((e.debut - 6) / 15) * 100}%;width:${((e.fin - e.debut) / 15) * 100}%"></i><b style="left:${((Math.min(Math.max(t, 6), 21) - 6) / 15) * 100}%"></b></span>`;
@@ -956,6 +995,7 @@ function rendrePage() {
   if (rub === 'rh') return rh.rendrePage(corps);
   if (rub === 'equipe') return rh.rendreEquipe(corps);
   if (rub === 'chiffres') return rendreChiffres(corps);
+  if (rub === 'journal') return journal.rendrePage(corps);
 }
 // Tableau de bord : tout est recalculé à partir de la simulation (affluence, ventes, stocks, horaires de l'équipe)
 function rendreChiffres(corps) {
@@ -1094,13 +1134,16 @@ function majDecisions() {
   const cles = new Set(alertes.map((a) => a.cle));
   for (const k in VU) if (!cles.has(k)) delete VU[k];
   for (const a of alertes) VU[a.cle] ??= t;
+  for (const k of [...JA]) if (!cles.has(k)) JA.delete(k);
+  for (const a of alertes) if (!JA.has(a.cle)) { JA.add(a.cle); journal.ajouter({ h: t, qui: 'Calcul automatique', role: 'règles d\'alerte', type: 'alerte', texte: `${a.titre} (${NIV_ALERTE[a.niveau].nom.toLowerCase()})` }); }
   const urg = alertes.filter((a) => a.niveau === 'urgent').length, sur = alertes.filter((a) => a.niveau === 'surveiller').length;
-  void sur; if (ui) ui.badge('traiter', alertes.length, urg ? 'rouge' : alertes.length ? 'orange' : '');
+  void sur; void urg;
   HIST_ALERTES.set(Math.floor(t * 60 + 1e-6), alertes.length);
 }
 function traiter(cle, label, jusqua = t + 1) {
   const a = alertes.find((x) => x.cle === cle); // une action faite depuis une fiche, sans alerte ouverte, n'est pas listée
-  MASQUE[cle] = jusqua; if (a) TRAITES.unshift({ cle, titre: a.titre, niveau: a.niveau, label, h: t });
+  MASQUE[cle] = jusqua; if (a) TRAITES.unshift({ cle, titre: a.titre, niveau: a.niveau, label, h: t, qui: ROLE().qui });
+  agir(a ? `${a.titre} · ${label}` : label);
   majDecisions(); majKpis(); rendrePanneau();
 }
 function faire(act) {
@@ -1119,7 +1162,7 @@ function voir(cle) {
 const poser = (el, html) => { if (el._h !== html) { el.innerHTML = html; el._h = html; } };
 function rendreATraiter(c) {
   if (!c.querySelector(':scope > .at')) c.innerHTML = '<div class="at"><div class="at-resume"></div><p class="at-note"></p><div class="at-liste"></div><div class="at-traites"></div></div>';
-  const n = (k) => alertes.filter((a) => a.niveau === k).length;
+  const alertes = vues(), n = (k) => alertes.filter((a) => a.niveau === k).length;
   poser(c.querySelector('.at-resume'), Object.entries(NIV_ALERTE).map(([k, v]) => `<span class="pastille"><i style="background:${v.couleur}"></i>${n(k)} ${v.nom.toLowerCase()}</span>`).join('') + `<span class="pastille">${ICONES.ok} ${TRAITES.length} traité${TRAITES.length > 1 ? 's' : ''}</span>`);
   c.querySelector('.at-note').textContent = `Calculé à ${hh(t)} sur les données de la démo (stocks, files en caisse, livraisons, planning), mis à jour chaque minute. Les plus urgentes en haut.`;
   const liste = c.querySelector('.at-liste'), DOUX = { urgent: '#fee2e2', surveiller: '#ffedd5', conseil: '#dbeafe' };
@@ -1314,7 +1357,7 @@ function animer(now) {
   // page pleine (RH, Chiffres, Équipe) : la journée continue, mais la 3D n'est plus dessinée (économie de batterie)
   const cache = !!(ui && ui.plein());
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
-  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); } synchroniser(); }
+  if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); rejouerJournal(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
   for (const c of clients) {
     if (!c.o.visible) continue;
@@ -1354,7 +1397,7 @@ function animer(now) {
   anneau.visible = !!ps && !/^(magasin|parking|rayons)$/.test(selection);
   if (anneau.visible) { anneau.position.set(ps[0].x, 0.25, ps[0].z); anneau.scale.setScalar((/^e\d/.test(selection) ? 0.4 : 1.2) * (1 + Math.sin(now / 300) * 0.04)); }
   controls.update();
-  pastilles.maj(alertes, positionDe, camera.zoom, REDUIT.matches ? null : now);
+  pastilles.maj(vues(), positionDe, camera.zoom, REDUIT.matches ? null : now);
   scene.updateMatrixWorld(); foule.maj();
   voileOp += (VUES[vueCourante].voile - voileOp) * (REDUIT.matches ? 1 : Math.min(1, ecoule * 4));
   voile.maj(VUES.maquette.boite, voileOp);
@@ -1363,14 +1406,49 @@ function animer(now) {
   placer();
   }
   const m = Math.floor(t * 60);
-  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); }
+  if (m !== derniereMinute) { derniereMinute = m; $('heure').textContent = hh(t); if (t > hJournal) { evenements(hJournal, t); hJournal = t; } majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); }
   if (cache) setTimeout(() => requestAnimationFrame(animer), 200); else requestAnimationFrame(animer);
+}
+const ICONE_JOURNAL = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>';
+function appliquerRole(r) {
+  roleCourant = r;
+  ui.autoriser(r.rub); if (ui.plein()) ui.page().corps.replaceChildren();
+  rh.droits({ salaires: r.salaires, rh: r.rh, filtre: r.equipe, titre: r.label });
+  const b = document.querySelector('[data-rub="equipe"] .rub-l'); if (b) b.textContent = r.equipeTitre || 'Équipe';
+  if (ui.rubrique() === 'equipe') document.getElementById('page-titre').textContent = r.equipeTitre || 'Équipe du jour';
+  majResume(); rendrePanneau(); if (selection) rendreFiche();
+}
+// « Résumé du jour » : aperçu du rapport du soir, calculé sur la simulation à l'heure de la démo
+function ouvrirResume() {
+  const ca = caDuJour(), cout = coutJour(), passages = Math.round(ca / PANIER), rup = RAYONS.reduce((s, r) => s + rupturesDe(r), 0), bas = RAYONS.filter((r) => stockDe(r) < 0.7);
+  const jour = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const recues = LIVRAISONS.filter((d) => statutLiv(d) === 'déchargée'), aVenir = LIVRAISONS.filter((d) => statutLiv(d) !== 'déchargée').sort((a, b) => a.heure - b.heure);
+  const demain = [
+    ...bas.map((r) => `Réassort à vérifier au rayon ${r.nom.toLowerCase()} : stock à ${Math.round(stockDe(r) * 100)} %${commandees[r.id] ? ', commande déjà en route' : ''}`),
+    ...rh.rdvA(1).map((x) => `Entretien d'embauche à ${hTxt(x.debut)} : ${x.nom}, ${x.poste.toLowerCase()}`),
+    ...(t < FERMETURE - 0.01 ? [`${aVenir.length} livraison${aVenir.length > 1 ? 's' : ''} encore attendue${aVenir.length > 1 ? 's' : ''} aujourd'hui${aVenir.length ? ' (' + aVenir.map((d) => hTxt(d.heure)).join(', ') + ')' : ''}`] : []),
+  ];
+  fenetre.ouvrir({
+    titre: 'Résumé du jour', sous: `Aperçu du mail envoyé chaque soir à la direction · arrêté à ${hh(t)} (heure de la démo)`, cle: 'resume',
+    corps: mailResume({
+      de: 'Hyper Modèle · écran du magasin', a: 'Claire Dumont (direction)', objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
+      intro: `Bonsoir, voici la journée du magasin arrêtée à <b>${hh(t)}</b>. Tous les chiffres viennent de la simulation de la démo.`,
+      blocs: [
+        { titre: 'Chiffres de la journée', lignes: [['Chiffre d\'affaires', euros(ca)], ['Hier sur la journée entière', euros(CA_HIER)], ['Passages en caisse (estimés)', nb(passages)], ['Panier moyen', PANIER.toLocaleString('fr-FR') + ' €'], ['Coût de l\'équipe', `${euros(cout)} (${(ca ? (cout / ca) * 100 : 0).toFixed(1).replace('.', ',')} % du CA)`], ['Ruptures de stock', nb(rup)], ['Livraisons reçues', `${recues.length} sur ${LIVRAISONS.length}`]] },
+        { titre: `Alertes traitées (${TRAITES.length})`, items: TRAITES.map((x) => `${hh(x.h)} · ${x.titre} : ${x.label}${x.qui ? ` (${x.qui})` : ''}`), vide: 'Aucune alerte traitée depuis l\'écran pour l\'instant.' },
+        { titre: `Alertes encore ouvertes (${alertes.length})`, items: alertes.map((a) => `${a.titre} · ${NIV_ALERTE[a.niveau].nom.toLowerCase()}`), vide: 'Aucune : tout est traité.' },
+        { titre: 'À prévoir demain', items: demain, vide: 'Rien de particulier.' },
+      ],
+      pied: 'Ce mail est un exemple : dans un vrai déploiement, son contenu, son heure d\'envoi et ses destinataires se règlent avec vous. Données fictives.',
+    }),
+  });
+  agir('Résumé du jour consulté');
 }
 // Côté RH (rh.js) : recrutement, CV et lettres, rendez-vous, anciens salariés, dossiers du personnel
 const etatPersonne = (e) => (auRepos(e) ? { cle: 'pause', txt: 'En pause', detail: 'salle de pause' } : present(e) ? { cle: 'present', txt: 'Présent·e', detail: objets[e.id]?.job ? objets[e.id].job.texte : ZONE_NOM(e.zone) } : t < e.debut ? { cle: 'avant', txt: 'Arrive à ' + hTxt(e.debut) } : { cle: 'parti', txt: 'Service terminé' });
 // depuis une page pleine : retour à la 3D, zoom sur le poste de la personne
 const voirPoste = (id) => { tiroir.fermer(); ui.aller('accueil'); choisir(id); };
-const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour() });
+const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
 // le candidat attendu vient au bureau RH de l'étage pendant son entretien
 const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
@@ -1379,12 +1457,15 @@ prechauffer();
 const rafraichir = () => { majDecisions(); majKpis(); majTeinte(); rendrePanneau(); if (selection) rendreFiche(); };
 // carte de chaleur et parcours affichés d'entrée, comme un plan d'analyse du magasin
 // RH, Équipe et Chiffres n'ont pas besoin du magasin : pages pleines, la 3D est masquée et mise en pause
-const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks', 'Stocks'], ['affluence', 'Affluence'], ['caisses', 'Caisses'], ['equipe', 'Équipe', 'Équipe du jour', 'Planning et annuaire de l\'équipe, en direct'], ['livraisons', 'Livraisons', 'Livraisons et réserve'], ['rh', 'RH', 'Ressources humaines', 'Personnel, recrutement, entretiens, anciens salariés et documents'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo']];
-const PLEINES = new Set(['rh', 'equipe', 'chiffres']);
-ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id) })), surChangement: surRubrique });
+const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks', 'Stocks'], ['affluence', 'Affluence'], ['caisses', 'Caisses'], ['equipe', 'Équipe', 'Équipe du jour', 'Planning et annuaire de l\'équipe, en direct'], ['livraisons', 'Livraisons', 'Livraisons et réserve'], ['rh', 'RH', 'Ressources humaines', 'Personnel, recrutement, entretiens, anciens salariés et documents'], ['chiffres', 'Chiffres', 'Tableau de bord', 'Les chiffres de la journée, recalculés chaque minute de démo'], ['journal', 'Journal', 'Journal', 'Toutes les actions et les événements de la journée, horodatés, avec qui les a faits']];
+const PLEINES = new Set(['rh', 'equipe', 'chiffres', 'journal']);
+ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id), icone: id === 'journal' ? ICONE_JOURNAL : undefined })), surChangement: surRubrique });
+rejouerJournal();
+installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+appliquerRole(ROLES[0]);
 calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
 if (document.fonts) document.fonts.ready.then(placerCurseur);
-window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), regler: (h) => { t = h; HIST_ALERTES.clear(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
+window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), role: (id) => (id ? document.getElementById('role-choix') && (document.getElementById('role-choix').value = id, document.getElementById('role-choix').dispatchEvent(new Event('change'))) : ROLE().id), journal: () => journal.entrees(), resume: () => ouvrirResume(), regler: (h) => { t = h; HIST_ALERTES.clear(); rejouerJournal(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
 requestAnimationFrame(animer);
 </script>
 </body>
