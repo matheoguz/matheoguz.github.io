@@ -848,17 +848,17 @@ $('contenu').onclick = (ev) => {
 // ================= Actions de « À traiter » : elles changent vraiment l'état de la démo =================
 function agir(act, a) {
   const [k, ...r] = act.split(':'); let res = '';
-  if (k === 'encaisser') { const e = ELEVES[r[0]], m = e[2]; encaissements.push({ nom: r[0], montant: m, t }); e[2] = 0; res = `${euros(m)} encaissés`; }
+  if (k === 'encaisser') { const e = ELEVES[r[0]], m = e[2]; encaissements.push({ nom: r[0], montant: m, t }); e[2] = 0; res = `Paiement de ${euros(m)} noté comme reçu`; }
   else if (k === 'relancer') { relances[r[0]] = t; const nl = PLANNING.filter((l) => l.eleve === r[0] && l.fin > t).sort((x, y) => x.debut - y.debut)[0]; masque['impaye-' + r[0]] = nl ? nl.debut : FERMETURE; res = 'Relancé, rappel à son arrivée'; }
   else if (k === 'forfait') { const e = ELEVES[r[0]]; e[1] += 5; e[2] += 5 * PRIX_HEURE; res = `Forfait passé à ${e[1]} h (+${euros(5 * PRIX_HEURE)} à encaisser)`; }
   else if (k === 'noter') { masque[r[0]] = FERMETURE + 1; res = 'Noté'; }
   else if (k === 'laisser') { masque[r[0]] = +r[1]; res = 'Laissé tel quel'; }
   else if (k === 'examen') { resultats[r[0]] = r[1]; res = r[1] === 'recu' ? 'Reçu : permis obtenu' : 'Ajourné : nouvel examen à prévoir'; }
-  else if (k === 'garage') { rdvGarage[r[0]] = 'demain 8h'; res = 'RDV garage demain 8h, avant les leçons'; }
+  else if (k === 'garage') { rdvGarage[r[0]] = 'demain 8h'; res = 'RDV garage à prendre noté (créneau visé : demain 8h, avant les leçons), à confirmer avec le garage'; }
   else if (k === 'reserver') {
     const [m, veh, g0, eleve] = r, d = +g0; nbAjouts++;
     PLANNING.push({ id: 'l' + (100 + nbAjouts), m, debut: d, fin: d + 1, duree: 1, eleve, type: 'Conduite 1 h', veh, prix: PRIX_HEURE, ajout: true });
-    res = `Leçon réservée à ${hTxt(d)} : ${eleve}, ${vehicule(veh).nom}`;
+    res = `Leçon inscrite au planning à ${hTxt(d)} : ${eleve}, ${vehicule(veh).nom} (à confirmer à l'élève)`;
   } else if (k === 'reporter') {
     const i = PLANNING.findIndex((l) => l.id === r[0]); if (i < 0) return;
     const l = PLANNING.splice(i, 1)[0]; reportees.push(l); if (selection === l.id) selection = null; res = `Leçon de ${hTxt(l.debut)} (${l.eleve}) reportée à demain`;
@@ -886,7 +886,7 @@ function htmlFiche(s) {
   if (/^l\d/.test(s)) {
     const l = PLANNING.find((x) => x.id === s); if (!l) return null;
     const e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data, res = resultats[l.id];
-    html = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span>${res ? ` <span class="statut ${res === 'recu' ? 'dispo' : 'ko'}">${res === 'recu' ? 'Reçu' : 'Ajourné'}</span>` : ''}<ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}${relances[l.eleve] !== undefined ? li('Relancé', 'à ' + hTxt(relances[l.eleve])) : ''}</ul>${e[2] ? `<div class="actions"><button class="btn prim" data-fiche="encaisser:${l.eleve}">Encaisser ${euros(e[2])}</button></div>` : ''}`;
+    html = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span>${res ? ` <span class="statut ${res === 'recu' ? 'dispo' : 'ko'}">${res === 'recu' ? 'Reçu' : 'Ajourné'}</span>` : ''}<ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}${relances[l.eleve] !== undefined ? li('Relancé', 'à ' + hTxt(relances[l.eleve])) : ''}</ul>${e[2] ? `<div class="actions"><button class="btn prim" data-fiche="encaisser:${l.eleve}">Noter le paiement reçu (${euros(e[2])})</button></div>` : ''}`;
   } else if (s === 'agence') {
     const n = attente.filter((p) => p.visible).length;
     html = `<h3>L'agence</h3><p class="sous">Accueil, salle d'attente, salle de code (${PLACES_CODE} postes), bureau des moniteurs</p><ul class="lignes">${li('Secrétaire', 'Julie Moreau')}${li('Moniteurs à l\'agence', MONITEURS.filter((m) => dispo(m)).map((m) => m.nom).join(', ') || 'aucun')}${li('Élèves en attente', n)}${li('En salle de code', `${nbCode()} / ${PLACES_CODE}`)}${li('Prochaine leçon', (() => { const l = PLANNING.filter((x) => x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return l ? `${hTxt(l.debut)} · ${l.eleve}` : 'aucune'; })())}</ul>`;
@@ -1081,7 +1081,7 @@ function ouvrirResume() {
   const jour = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
   const demain = [
     ...reportees.map((l) => `Leçon reportée à replacer : ${l.eleve} (${l.type})`),
-    ...Object.entries(rdvGarage).map(([id, q]) => `${vehicule(id).nom} au garage ${q}`),
+    ...Object.entries(rdvGarage).map(([id, q]) => `${vehicule(id).nom} : RDV garage à prendre (visé ${q})`),
     ...dus.map(([n, e]) => `Paiement à demander : ${n}, ${euros(e[2])}${relances[n] !== undefined ? ' (déjà relancé aujourd\'hui)' : ''}`),
     ...Object.entries(ELEVES).filter(([, e]) => e[0] / e[1] >= 0.9 && e[2] === 0).map(([n, e]) => `Fin de forfait : ${n} (${e[0]} / ${e[1]} h), proposer une date d'examen ou des heures`),
   ];
@@ -1115,7 +1115,7 @@ installerVisite({
   etapes: [
     { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur le planning, les forfaits, les paiements et les véhicules. Les plus urgentes en haut.', avant: () => ui.aller('traiter'), cible: () => alerteVisite() || $('contenu') },
     { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous montre l\'endroit concerné : la voiture, le moniteur ou l\'accueil.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-voir]') },
-    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-act].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : l'écran fait le nécessaire et le note.` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-act].prim:not([disabled])') },
+    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-act].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : l'écran met la journée à jour et le note (rien ne part à l'extérieur).` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-act].prim:not([disabled])') },
     { titre: 'C\'est traité', texte: 'L\'alerte passe dans « Traité aujourd\'hui », avec l\'heure. L\'action est aussi notée dans le Journal.', avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); setTimeout(() => $('contenu').querySelector('.traites')?.scrollIntoView({ block: 'nearest' }), 50); }, cible: () => $('contenu').querySelector('.traites')?.parentElement || $('contenu') },
     { titre: MOBILE ? 'Vos rubriques, en bas' : 'Vos rubriques, à gauche', texte: 'Planning, véhicules, moniteurs, élèves, code, chiffres : chaque rubrique montre sa zone sur la maquette.', avant: () => ui.aller('accueil'), cible: () => $('rubriques') },
     { titre: 'Essayez avec vos données', texte: 'Déposez un fichier CSV ou Excel avec vos moniteurs, vos véhicules et vos élèves : la démo se recalcule avec, sans rien envoyer sur Internet.', cible: () => $('btn-import') },

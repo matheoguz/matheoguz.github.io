@@ -476,3 +476,119 @@ td .pdf-bts { flex-wrap: nowrap; }
 .imp-defile th { background: #f8fafc; color: #475569; font-weight: 600; }
 .imp-garder { display: inline-flex; align-items: center; gap: 6px; margin-right: auto; font-size: 13px; color: #334155; }
 @media (max-width: 900px) { .imp { padding: 12px 14px 16px; } .imp-exemple { margin-left: 0; } .imp-garder { width: 100%; } }
+
+/* ---------- bon de commande (démo supermarché) : préparé à l'écran, envoyé par le magasin ---------- */
+.bc { padding: 20px; display: grid; gap: 16px; }
+.bc-tete { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bc-tete > div { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 12px; background: var(--carte, #fff); min-width: 0; }
+.bc-tete small { color: var(--doux, #64748b); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.bc-tete b { font-size: 14.5px; }
+.bc-tete span { color: #475569; font-size: 12.5px; overflow-wrap: anywhere; }
+.bc-t { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--carte, #fff); border: 1px solid var(--ligne, #e5e7eb); border-radius: 12px; overflow: hidden; }
+.bc-t th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--doux, #64748b); padding: 10px 12px; border-bottom: 1px solid var(--ligne, #e5e7eb); }
+.bc-t td { padding: 8px 12px; border-bottom: 1px solid var(--ligne, #e5e7eb); }
+.bc-t tfoot td { border-bottom: 0; font-weight: 700; }
+.bc-t .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bc-t td:first-child { color: #475569; font-size: 12px; white-space: nowrap; }
+.bc-q { width: 72px; height: 34px; padding: 0 8px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 8px; font: inherit; font-weight: 600; text-align: right; background: #fff; color: inherit; }
+.bc-liv { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
+.bc-liv select { height: 36px; padding: 0 10px; border: 1px solid var(--ligne, #e5e7eb); border-radius: 10px; background: #fff; font: inherit; font-size: 13px; color: inherit; }
+.bc-note { margin: 0; color: var(--doux, #64748b); font-size: 12px; line-height: 1.5; }
+.bc-mention { margin: 0; padding: 10px 12px; border-radius: 10px; background: #fff7ed; color: #9a3412; font-size: 12.5px; font-weight: 600; }
+.bc-ok { display: flex; gap: 10px; margin: 0; padding: 14px; border-radius: 12px; background: #dcfce7; color: #14532d; font-size: 13.5px; line-height: 1.5; }
+.bc-ok svg { flex: none; margin-top: 2px; }
+.fen-pied .pg-bt svg { flex: none; }
+@media (max-width: 640px) {
+  .bc { padding: 14px; gap: 12px; }
+  .bc-tete { grid-template-columns: 1fr; }
+  .bc-t td:first-child, .bc-t th:first-child { display: none; }
+  .bc-t td, .bc-t th { padding: 8px; }
+}
+.fourn-r li { align-items: center; }
+.fourn-r li > span small + small { margin-top: 0; }
+
+/* ---------- bouton Clair / Verre (en-tête des pages pleines) ---------- */
+.page-tete { position: relative; }
+.page-tete > .page-actions { margin-left: auto; }
+.page-theme { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid var(--ligne); border-radius: 99px; background: var(--carte); color: var(--texte); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .2s, border-color .2s; }
+.page-theme:hover { background: var(--gris-doux); }
+.pt-ic { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.page-theme[aria-pressed="true"] .pt-ic { background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.95), rgba(255,255,255,.25) 60%, transparent 70%); }
+.page-theme:focus-visible { outline: 2px solid var(--ui, #2563eb); outline-offset: 2px; }
+
+/* ---------- thème « Verre » des pages pleines (façon visionOS) ----------
+   Fond : vue de la maquette 3D capturée (--verre-img), floutée, assombrie et légèrement réchauffée.
+   Cartes : verre dépoli (backdrop-filter), liseré blanc, coins 24 px. Les couleurs passent par les variables. */
+.app.plein.verre > .page {
+  --texte: #ffffff; --doux: rgba(255,255,255,.78); --doux2: rgba(255,255,255,.6); --carte: rgba(255,255,255,.13); --ligne: rgba(255,255,255,.2); --ligne2: rgba(255,255,255,.14); --gris-doux: rgba(255,255,255,.1);
+  --verre-flou: blur(32px) saturate(150%);
+  color: #fff; color-scheme: dark;
+  background: linear-gradient(180deg, rgba(34,22,12,.62), rgba(16,11,8,.76)), radial-gradient(120% 90% at 15% 0%, rgba(255,160,80,.22), transparent 60%), linear-gradient(rgba(120,70,30,.18), rgba(120,70,30,.18)), var(--verre-img, none) center / cover no-repeat, linear-gradient(160deg, #3b2f27, #1d1814 60%, #141821);
+}
+.app.plein.verre .page-tete h1 { color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+.app.plein.verre .page-tete p { color: rgba(255,255,255,.8); }
+.app.plein.verre .page-theme, .app.plein.verre .pg-bt, .app.plein.verre .pg-fictif { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.app.plein.verre .page-theme:hover, .app.plein.verre .pg-bt:hover { background: rgba(255,255,255,.24); }
+.app.plein.verre .pg-bt.prim { background: #fff; border-color: #fff; color: #0f172a; } .app.plein.verre .pg-bt.prim:hover { background: rgba(255,255,255,.88); }
+/* les cartes */
+.app.plein.verre :is(.pg-kpi, .pg-carte, .pg-bande, .pp, .frise, .pg-vide, .rh-carte, .kpi) {
+  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.25); border-radius: 24px;
+  box-shadow: 0 10px 34px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.18);
+  -webkit-backdrop-filter: var(--verre-flou); backdrop-filter: var(--verre-flou);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, background .35s;
+}
+.app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: translateY(-5px); background: rgba(255,255,255,.17); box-shadow: 0 18px 44px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.22); border-color: rgba(255,255,255,.32); }
+.app.plein.verre .pg-carte.large:hover, .app.plein.verre .frise:hover { transform: none; }
+.app.plein.verre .pg-kpi { padding: 20px 18px; gap: 14px; }
+.app.plein.verre .pg-kpi-ic { width: 42px; height: 42px; }
+.app.plein.verre .pg-kpi b { font-size: 26px; font-weight: 600; letter-spacing: -.03em; color: #fff; }
+.app.plein.verre .pg-kpi small { color: rgba(255,255,255,.86); }
+.app.plein.verre .pg-kpi-ic { background: rgba(255,255,255,.18); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+.app.plein.verre .pg-carte { padding: 22px 24px 20px; }
+/* textes et petits éléments aux couleurs fixes du thème clair */
+.app.plein.verre :is(.pg-bh li span, .pp-role, .pp-tags span, .ti-role, .pg-st, .rh-carte, .rh-carte p, .rh-carte span) { color: rgba(255,255,255,.88); }
+.app.plein.verre .pp-tags span, .app.plein.verre .pg-onglets button small { background: rgba(255,255,255,.14); color: #fff; }
+.app.plein.verre .pg-st { background: rgba(255,255,255,.14); }
+.app.plein.verre .pg-st.ok { background: rgba(34,197,94,.24); color: #bbf7d0; } .app.plein.verre .pg-st.att { background: rgba(251,146,60,.26); color: #fed7aa; }
+.app.plein.verre .pg-st.ko { background: rgba(248,113,113,.26); color: #fecaca; } .app.plein.verre .pg-st.bleu { background: rgba(96,165,250,.26); color: #dbeafe; }
+.app.plein.verre .pg-svg text { fill: rgba(255,255,255,.72); }
+.app.plein.verre .pg-grille-l { stroke: rgba(255,255,255,.14); }
+.app.plein.verre .pg-svg rect[fill="#e2e8f0"] { fill: rgba(255,255,255,.18); }
+.app.plein.verre .pg-anneau circle:first-child { stroke: rgba(255,255,255,.16); }
+.app.plein.verre .pg-anneau b { color: #fff !important; text-shadow: 0 0 18px rgba(255,255,255,.25); }
+.app.plein.verre .pg-bh li i, .app.plein.verre .pp-barre, .app.plein.verre .ti-sem i { background: rgba(255,255,255,.14); }
+.app.plein.verre .pg-onglets { border-color: rgba(255,255,255,.2); }
+.app.plein.verre .pg-onglets button.actif { border-color: #fff; }
+.app.plein.verre .pg-seg { background: rgba(255,255,255,.12); }
+.app.plein.verre .pg-seg button[aria-pressed="true"] { background: rgba(255,255,255,.9); color: #0f172a; }
+.app.plein.verre :is(.pg-outils input[type="search"], .pg-outils select, .page select, .page input[type="search"]) { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; }
+.app.plein.verre .pg-outils input::placeholder { color: rgba(255,255,255,.7); }
+.app.plein.verre .page option { color: #0f172a; background: #fff; }
+.app.plein.verre .pg-table th { color: rgba(255,255,255,.75); }
+.app.plein.verre .pg-table tr[data-cle]:hover td, .app.plein.verre .lignes-r li[data-cle]:hover { background: rgba(255,255,255,.08); }
+.app.plein.verre .frise-l.tete, .app.plein.verre .frise-l.groupe { background: rgba(255,255,255,.08); }
+.app.plein.verre .frise-piste .h { border-color: rgba(255,255,255,.1); }
+.app.plein.verre .frise-piste .maint { background: #fb7185; box-shadow: 0 0 8px rgba(251,113,133,.7); }
+.app.plein.verre .pg-pile .av { border-color: rgba(255,255,255,.35); }
+.app.plein.verre .src { color: rgba(255,255,255,.7); }
+.app.plein.verre a { color: #bfdbfe; }
+/* sans backdrop-filter : verre plus opaque, pour garder le contraste */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app.plein.verre :is(.pg-kpi, .pg-carte, .pg-bande, .pp, .frise, .pg-vide, .rh-carte, .kpi) { background: rgba(38,32,28,.86); }
+}
+.app.plein.verre > .page { --vert: #86efac; --rouge: #fca5a5; --orange: #fdba74; --bleu: #93c5fd; }
+.app.plein.verre .page .tend.neutre { color: rgba(255,255,255,.8); }
+.app.plein.verre .page .kpi-ic { background: rgba(255,255,255,.18); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi) { transition: none; }
+  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; }
+}
+@media (max-width: 900px) {
+  .app.plein.verre > .page { --verre-flou: blur(24px) saturate(140%); }
+  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .frise, .pg-bande) { border-radius: 20px; }
+  .app.plein.verre .pg-kpi { padding: 14px; }
+  .app.plein.verre .pg-kpi b { font-size: 22px; }
+  .page-theme .pt-l { display: none; } .page-theme { padding: 0 9px; }
+}
+@media (hover: none) { .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; } }
+.vg-active .fen-voile { z-index: 1050; }

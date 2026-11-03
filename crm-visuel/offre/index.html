@@ -92,7 +92,7 @@
       <img src="demo-a-traiter.jpg" width="1200" height="750" loading="lazy" alt="Démo grande surface : la liste « À traiter » à côté de la maquette">
       <div>
         <div class="alertes">
-          <div class="alerte"><p><b>Ruptures : frais et surgelés</b><span>6 références vides, et c'est le rayon qui se vide le plus vite. La commande de réassort est prête.</span></p><em>Commander</em></div>
+          <div class="alerte"><p><b>Ruptures : frais et surgelés</b><span>6 références vides, et c'est le rayon qui se vide le plus vite. Le bon de commande est prêt.</span></p><em>Préparer la commande</em></div>
           <div class="alerte orange"><p><b>File d'attente en caisse</b><span>Trop de clients par caisse ouverte : une hôtesse est disponible pour ouvrir la caisse 5.</span></p><em>Ouvrir</em></div>
           <div class="alerte orange"><p><b>Livraison au quai</b><span>Palettes déchargées à mettre en rayon avant l'affluence de midi.</span></p><em>Affecter</em></div>
           <div class="alerte bleu"><p><b>Entretien à 14 h</b><span>Le candidat au poste de caissier arrive bientôt au bureau RH.</span></p><em>Voir</em></div>
@@ -105,7 +105,7 @@
   <section class="sec">
     <div class="sec-h rv"><h2>Et tout <em>le reste</em>.</h2><p>Ce que les deux démos savent déjà faire, avec des noms et des chiffres inventés.</p></div>
     <div class="bento">
-      <div class="tile w4 rv"><span class="tag">Stocks</span><h3>Le stock exact de chaque rayon.</h3><p class="muted">Ruptures, rayons sous 70 %, palettes en réserve, et la commande de réassort prête en un clic.</p><div class="shot droite"><img src="demo-stocks.jpg" width="1200" height="750" loading="lazy" alt="Démo grande surface : la rubrique Stocks, stock par rayon et ruptures"></div></div>
+      <div class="tile w4 rv"><span class="tag">Stocks</span><h3>Le stock exact de chaque rayon.</h3><p class="muted">Ruptures, rayons sous 70 %, palettes en réserve, et la commande de réassort préparée en un clic, envoyée depuis votre outil habituel.</p><div class="shot droite"><img src="demo-stocks.jpg" width="1200" height="750" loading="lazy" alt="Démo grande surface : la rubrique Stocks, stock par rayon et ruptures"></div></div>
       <div class="tile w2 dark rv"><span class="tag">Les fiches</span><h3>Un clic, une fiche.</h3><p class="muted">Une personne, un véhicule, un rayon : un clic zoome dessus et ouvre sa fiche. Une petite icône dit d'où vient chaque chiffre.</p><span class="big">1 clic</span></div>
       <div class="tile w2 teinte rv"><span class="tag">Partout</span><h3>Ordinateur, tablette, téléphone.</h3><p>Le même écran, à l'accueil, au bureau ou dans votre poche.</p>
         <div class="ecrans" aria-hidden="true"><svg width="74" height="56" viewBox="0 0 74 56" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="68" height="42" rx="4"/><path d="M26 53h22M37 45v8"/></svg><svg width="40" height="52" viewBox="0 0 40 52" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="36" height="48" rx="5"/><path d="M17 44h6"/></svg><svg width="24" height="42" viewBox="0 0 24 42" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="38" rx="4"/><path d="M9 35h6"/></svg></div></div>
@@ -230,7 +230,7 @@
       <details><summary>Faut-il un GPS dans les véhicules ?</summary><p>Non. Les statuts (en leçon, disponible, en pause) viennent de votre planning ou se mettent en un clic. Aucun suivi de trajet.</p></details>
       <details><summary>Faut-il des caméras ou des capteurs ?</summary><p>Non. Les stocks, les caisses et le planning viennent de vos fichiers ou de votre logiciel ; les statuts (en pause, en caisse) se mettent en un clic. Aucune caméra.</p></details>
       <details><summary>J'ai déjà un logiciel de gestion.</summary><p>L'écran 3D peut reprendre votre planning existant (export iCal ou Google Agenda) pour éviter de tout saisir deux fois. On regarde ça ensemble pendant la démo.</p></details>
-      <details><summary>Et mon logiciel de caisse ou de stock ?</summary><p>Le branchement à votre logiciel actuel (caisse, stock, commandes) est possible, sur devis. On regarde d'abord ce que votre logiciel permet (export de fichiers, accès prévu par l'éditeur), puis on vous dit ce qui est faisable et à quel prix. Rien n'est promis avant cette étude.</p></details>
+      <details><summary>Et mon logiciel de caisse ou de stock ?</summary><p>Le branchement à votre logiciel actuel (caisse, stock, commandes) est possible, sur devis. On regarde d'abord ce que votre logiciel permet (export de fichiers, accès prévu par l'éditeur), puis on vous dit ce qui est faisable et à quel prix. Rien n'est promis avant cette étude. Sans branchement, l'écran prépare le bon de commande (PDF, mail ou fichier CSV pour votre logiciel) et vous l'envoyez depuis votre outil habituel : l'écran prépare et suit, il n'envoie rien à votre place.</p></details>
       <details><summary>Les chiffres des démos sont-ils réels ?</summary><p>Non. Les deux démos (« Auto-école Modèle » et « Hyper Modèle ») tournent avec des noms, des salaires et des chiffres inventés. Votre écran affiche uniquement les vôtres.</p></details>
     </div>
   </section>
@@ -256,7 +256,7 @@
 
 <script>
 window.SITE = {
-  fil: [['10:42', 'Sophie L. part en leçon avec la voiture 2'], ['10:43', 'Caisse 5 ouverte par Emma L.'], ['10:45', 'Salle de code : 6 élèves'], ['10:46', 'Surgelés : commande de 18 palettes'], ['10:48', 'Voiture 3 de retour au parking'], ['10:50', 'Livraison Boissons au quai']],
+  fil: [['10:42', 'Sophie L. part en leçon avec la voiture 2'], ['10:43', 'Caisse 5 ouverte par Emma L.'], ['10:45', 'Salle de code : 6 élèves'], ['10:46', 'Surgelés : commande de 18 palettes préparée'], ['10:48', 'Voiture 3 de retour au parking'], ['10:50', 'Livraison Boissons au quai']],
   quizImg: { depart: 'demo-grande-surface.jpg', ae: 'demo-auto-ecole.jpg', commerce: 'demo-stocks.jpg', gs: 'demo-grande-surface.jpg', autre: 'demo-chiffres.jpg' },
 };
 </script>

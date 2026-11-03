@@ -11,6 +11,10 @@
 //   ui.plein()            // la rubrique en cours est une page pleine (rubrique { plein: true, sous })
 //   ui.page()             // { corps, actions } de la page pleine (en-tête : titre et sous-titre de la rubrique)
 //   ui.autoriser(ids)     // rubriques visibles pour le rôle choisi (Set d'ids, null = toutes) ; sinon retour à l'accueil
+//   ui.theme(t)           // thème des pages pleines : 'verre' (défaut) ou 'clair' ; mémorisé (localStorage), bouton dans l'en-tête
+//
+// Thème « Verre » : cartes en verre dépoli posées sur une vue floutée et assombrie de la maquette 3D, capturée
+// à l'entrée d'une page pleine (le renderer garde son image : preserveDrawingBuffer). Style : interface.css.
 //
 // Page pleine : la maquette 3D et le panneau sont masqués (la scène n'est pas recréée), la page prend toute
 // la largeur à droite de la barre de rubriques. La page hôte met son rendu 3D en pause tant que ui.plein().
@@ -49,8 +53,35 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   let page = document.getElementById('page');
   if (!page) {
     page = document.createElement('section'); page.className = 'page'; page.id = 'page'; page.setAttribute('aria-labelledby', 'page-titre');
-    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div></div><div class="page-corps" id="page-corps"></div>';
+    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div><button type="button" class="page-theme" id="page-theme" aria-pressed="true" title="Changer l\'apparence des pages"><span class="pt-ic" aria-hidden="true"></span><span class="pt-l">Verre</span></button></div><div class="page-corps" id="page-corps"></div>';
     nav.after(page);
+  }
+  // ---------- thème des pages pleines ----------
+  const CLE_THEME = 'crm-visuel-theme';
+  let theme = 'verre';
+  try { const m = localStorage.getItem(CLE_THEME); if (m === 'clair' || m === 'verre') theme = m; } catch { /* stockage indisponible */ }
+  const btTheme = document.getElementById('page-theme');
+  function poserTheme(t, garder = false) {
+    theme = t === 'clair' ? 'clair' : 'verre';
+    app.classList.toggle('verre', theme === 'verre');
+    if (btTheme) { btTheme.setAttribute('aria-pressed', theme === 'verre'); btTheme.querySelector('.pt-l').textContent = theme === 'verre' ? 'Verre' : 'Clair'; btTheme.title = theme === 'verre' ? 'Apparence : verre. Passer en clair' : 'Apparence : clair. Passer en verre'; btTheme.setAttribute('aria-label', btTheme.title); }
+    if (garder) try { localStorage.setItem(CLE_THEME, theme); } catch { /* navigation privée */ }
+  }
+  if (btTheme) btTheme.onclick = () => poserTheme(theme === 'verre' ? 'clair' : 'verre', true);
+  poserTheme(theme);
+  // fond du thème verre : image réduite de la maquette 3D, adoucie (le flou et la teinte finissent en CSS)
+  function capturerFond() {
+    const gl = app.querySelector('.centre canvas');
+    if (!gl || !gl.width || !gl.height || !gl.offsetWidth) return;
+    try {
+      const r = gl.height / gl.width, p = document.createElement('canvas'); p.width = 48; p.height = Math.max(1, Math.round(48 * r));
+      p.getContext('2d').drawImage(gl, 0, 0, p.width, p.height);
+      const g = document.createElement('canvas'); g.width = 480; g.height = Math.max(1, Math.round(480 * r));
+      const c = g.getContext('2d'); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+      if ('filter' in c) c.filter = 'blur(6px)';
+      c.drawImage(p, -12, -12, g.width + 24, g.height + 24);
+      app.style.setProperty('--verre-img', `url("${g.toDataURL('image/jpeg', 0.82)}")`);
+    } catch { /* canvas illisible : le dégradé de secours reste */ }
   }
   let courante = defaut;
   const redimensionner = () => dispatchEvent(new Event('resize')); // la maquette 3D se recale sur sa nouvelle place
@@ -63,6 +94,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   function aller(id) {
     if (!rubriques.some((r) => r.id === id)) return;
     const R = rubriques.find((r) => r.id === id), plein = !!R.plein, change = app.classList.contains('plein') !== plein;
+    if (plein && !app.classList.contains('plein')) capturerFond(); // la 3D est encore visible : on garde son image
     courante = id; app.dataset.rubrique = id;
     app.classList.toggle('plein', plein);
     if (plein) { document.getElementById('page-titre').textContent = R.titre || R.label; document.getElementById('page-sous').textContent = R.sous || ''; document.getElementById('page-actions').innerHTML = ''; page.scrollTop = 0; }
@@ -100,7 +132,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
     nav.querySelectorAll('[data-rub]').forEach((b) => { b.hidden = !!ids && b.dataset.rub !== 'accueil' && !ids.has(b.dataset.rub); });
     if (ids && courante !== 'accueil' && !ids.has(courante)) aller('accueil');
   }
-  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl, autoriser };
+  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl, autoriser, theme: (t) => { if (t) poserTheme(t, true); return theme; } };
 }
 
 // Remplace le contenu d'un élément seulement s'il a changé, en gardant les blocs repliables ouverts

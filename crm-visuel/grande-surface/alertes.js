@@ -31,7 +31,7 @@ export function calculerAlertes(e) {
     if (r.attendues.length) detail.push(`Déjà attendu : ${r.attendues.map((d) => `${d.palettes} palettes à ${hTxt(d.heure)}`).join(', ')}.`);
     detail.push(r.enRayon ? `En rayon : ${r.enRayon}.` : 'Personne en rayon en ce moment.');
     detail.push(r.reserve ? `${pl(r.reserve, 'palette')} en réserve pour ce rayon.` : 'Aucune palette en réserve pour ce rayon.');
-    const actions = [{ act: 'commander:' + r.id, label: `Commander ${r.suggestion} palettes`, primaire: true, off: !r.peutCommander, raison: r.peutCommander ? '' : 'plus de livraison possible aujourd\'hui' }];
+    const actions = [{ act: 'commander:' + r.id, label: `Préparer la commande (${r.suggestion} palettes)`, primaire: true, off: !r.peutCommander, raison: r.peutCommander ? '' : 'plus de livraison possible aujourd\'hui' }];
     if (r.reserve) actions.push({ act: 'rayon:' + r.id, label: r.employe ? `Envoyer ${prenom(r.employe.nom)} en rayon` : 'Envoyer en rayon', off: !r.employe, raison: r.employe ? '' : 'personne de libre en ce moment' });
     A.push({ cle: 'stock-' + r.id, niveau, icone: 'rayon', titre: `${r.stock < 0.5 ? 'Stock critique' : 'Stock bas'} : ${r.nom}`, detail, voir: r.id, actions, score: r.conso * 10 + (1 - r.stock) });
   }
