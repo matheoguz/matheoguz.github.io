@@ -44,7 +44,8 @@
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
   .horloge { text-align: right; line-height: 1.15; }
   .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-  .horloge small { color: var(--doux); font-size: 11px; }
+  .horloge small { display: block; color: var(--doux); font-size: 11px; white-space: nowrap; }
+  @media (max-width: 1600px) { .horloge small { display: none; } } /* le sous-texte reste en info-bulle (title) */
   .bouton-ic { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--ligne); background: #fff; border-radius: 10px; cursor: pointer; color: #334155; }
   .bouton-ic:hover { background: var(--gris-doux); }
   .bouton-ic.actif { background: var(--bleu-doux); border-color: #bfdbfe; color: var(--bleu); }
@@ -199,7 +200,9 @@
     .marque b .demo, .marque > div > span, .lien-offre span, .horloge small { display: none; }
     .lien-offre { width: 34px; height: 34px; padding: 0; justify-content: center; }
     .bouton-ic { width: 34px; height: 34px; }
-    .direct { padding: 2px 8px; font-size: 11px; }
+    .direct { display: none; } /* la pause dit déjà si la journée tourne : l'en-tête tient sur la largeur d'un téléphone */
+    .marque { flex: 1 1 100%; }
+    .droite { margin-left: auto; }
     .horloge b { font-size: 18px; }
     .droite { gap: 8px; }
     .vues { order: 3; width: 100%; margin: 0; }
@@ -261,7 +264,7 @@
     <div class="droite">
       <div id="role"></div>
       <span class="direct"><i></i>En direct</span>
-      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <div class="horloge" title="Journée accélérée : 1 seconde = 1 minute de démo"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="bouton-ic" id="pause" aria-label="Pause" title="Mettre la journée en pause"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="ic-pause" d="M9 6v12M15 6v12"/><path class="ic-lecture" d="M8 5l11 7-11 7z" fill="currentColor" stroke="none" style="display:none"/></svg><span class="sr">Pause</span></button>
       <a class="lien-offre" href="../offre/" aria-label="L'offre"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>L'offre</span></a>
     </div>
@@ -306,12 +309,17 @@ import { creerKpis } from './tableau.js';
 import { creerInterface, poserGarde, ICONES_UI } from '../interface.js';
 import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, legende, source } from '../page.js';
 import { creerJournal, installerRoles, fenetre, mailResume } from '../commun.js';
+import { lireImport, installerImport } from '../import.js';
+import { installerVisite } from '../visite.js';
+import { installerTerrain } from '../terrain.js';
+import { TABLEAUX_GS, appliquerGS } from './donnees.js';
+import { creerBons, FOURNISSEURS_FICHES, MENTION as MENTION_BC } from './commande.js';
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
 
 // ================= Données fictives =================
 const OUVERTURE = 8.5, FERMETURE = 20;
 // [nom, poste, début, fin, coût horaire chargé (fictif), zone]
-const EQUIPE = [
+const EQUIPE_DEMO = [
   ['Claire Dumont', 'Directrice du magasin', 8, 18, 38, 'bureau'],
   ['Mehdi Larbi', 'Chef de rayon frais', 6, 14, 24, 'r3'],
   ['Laura Pineau', 'Cheffe de rayon épicerie', 9, 17, 24, 'r1'],
@@ -335,7 +343,7 @@ const EQUIPE = [
   ['Sophie Marchand', 'Responsable RH', 9, 17, 30, 'etage-rh'],
   ['Marc Lemoine', 'Comptable', 8.5, 16.5, 26, 'etage-compta'],
 ].map(([nom, poste, debut, fin, cout, zone], i) => ({ id: 'e' + i, nom, poste, debut, fin, cout, zone }));
-const RAYONS = [
+const RAYONS_DEMO = [
   { id: 'r0', nom: 'Fruits et légumes', couleur: 0x65a30d, refs: 310, stock: 0.82, ruptures: 2, conso: 0.035 },
   { id: 'r1', nom: 'Épicerie', couleur: 0xd97706, refs: 1840, stock: 0.9, ruptures: 5, conso: 0.012 },
   { id: 'r2', nom: 'Boissons', couleur: 0x2563eb, refs: 620, stock: 0.76, ruptures: 3, conso: 0.02 },
@@ -350,9 +358,17 @@ const LIVRAISONS = [
   { id: 'd3', heure: 14.75, fourn: 'Maraîcher local (fictif)', palettes: 6, rayon: 'r0' },
   { id: 'd4', heure: 17, fourn: 'Plateforme frais (fictive)', palettes: 12, rayon: 'r3' },
 ];
-const FOURNISSEURS = { r0: 'Maraîcher local (fictif)', r1: 'Grossiste épicerie (fictif)', r2: 'Boissons du Centre (fictif)', r3: 'Plateforme frais (fictive)', r4: 'Droguerie Centrale (fictive)', r5: 'Bazar Distribution (fictif)' };
+const FOURNISSEURS = Object.fromEntries(Object.entries(FOURNISSEURS_FICHES).map(([k, f]) => [k, f.nom])); // fiches fictives : commande.js
 const PAR_PALETTE = 0.01; // part du rayon remplie par une palette reçue
-const NB_CAISSES = 8, PANIER = 41.6;
+const PANIER = 41.6;
+// « Essayez avec vos données » : rayons, équipe et nombre de caisses importés par le visiteur (restés dans son navigateur)
+const DEMO = { EQUIPE: EQUIPE_DEMO, RAYONS: RAYONS_DEMO, NB_CAISSES: 8 };
+const IMPORT = lireImport('grande-surface');
+let appli = DEMO;
+if (IMPORT) { try { appli = appliquerGS(IMPORT.donnees, DEMO); } catch { appli = DEMO; } }
+const { EQUIPE, RAYONS, NB_CAISSES } = appli;
+const QUI = (f, d) => (EQUIPE.find(f) || {}).nom || d;
+const QUI_CAISSE = QUI((e) => /^c\d/.test(e.zone), 'Hôte·sse de caisse');
 
 // ================= Horloge de démo =================
 let t = 11.7, pause = false;
@@ -364,10 +380,10 @@ const journal = creerJournal({ hh });
 const ZONE0 = Object.fromEntries(EQUIPE.map((e) => [e.id, e.zone]));
 // « Voir en tant que » : ce que chaque rôle voit (rubriques, alertes, équipe, salaires, chiffres financiers)
 const ROLES = [
-  { id: 'direction', label: 'Directeur·rice', qui: 'Claire Dumont', rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
-  { id: 'rh', label: 'Responsable RH', qui: 'Sophie Marchand', rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
-  { id: 'rayon', label: 'Chef de rayon', qui: 'Mehdi Larbi', rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
-  { id: 'caisse', label: 'Hôte·sse de caisse', qui: 'Léa Bonnet', rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === 'Léa Bonnet', equipeTitre: 'Mon planning' },
+  { id: 'direction', label: 'Directeur·rice', qui: QUI((e) => e.zone === 'bureau', 'Direction'), rub: null, salaires: true, rh: true, finances: true, alertes: () => true, equipe: () => true },
+  { id: 'rh', label: 'Responsable RH', qui: QUI((e) => e.zone === 'etage-rh', 'Responsable RH'), rub: new Set(['traiter', 'equipe', 'rh', 'journal']), salaires: true, rh: true, finances: false, alertes: (a) => /^(rdv|pause|accueil)/.test(a.cle), equipe: () => true },
+  { id: 'rayon', label: 'Chef de rayon', qui: QUI((e) => /^r\d/.test(e.zone) && /chef/i.test(e.poste), QUI((e) => /^r\d/.test(e.zone), 'Chef de rayon')), rub: new Set(['traiter', 'stocks', 'livraisons', 'equipe', 'journal']), salaires: false, rh: false, finances: false, alertes: (a) => /^(stock|sol|liv|quai)/.test(a.cle), equipe: (e) => /^r\d|^reserve/.test(ZONE0[e.id]), equipeTitre: 'Mon équipe' },
+  { id: 'caisse', label: 'Hôte·sse de caisse', qui: QUI_CAISSE, rub: new Set(['caisses', 'equipe']), salaires: false, rh: false, finances: false, alertes: (a) => /^caisse/.test(a.cle), equipe: (e) => e.nom === QUI_CAISSE, equipeTitre: 'Mon planning' },
 ];
 let roleCourant = ROLES[0];
 const ROLE = () => roleCourant;
@@ -385,7 +401,7 @@ function evenements(h0, h1) {
     if (dans(e.fin)) journal.ajouter({ h: e.fin, qui: e.nom, role: e.poste, type: 'journee', texte: /^c\d/.test(z) ? `Fin de service, caisse ${+z.slice(1, 2) + 1} clôturée` : 'Fin de service' });
   }
   for (const d of LIVRAISONS) {
-    if (dans(d.heure)) journal.ajouter({ h: d.heure, qui: 'Quai de réception', type: 'journee', texte: `Camion au quai : ${d.fourn}, ${d.palettes} palettes${d.commande ? ' (commande passée depuis l\'écran)' : ''}` });
+    if (dans(d.heure)) journal.ajouter({ h: d.heure, qui: 'Quai de réception', type: 'journee', texte: `Camion au quai : ${d.fourn}, ${d.palettes} palettes${d.commande ? ' (commande préparée depuis l\'écran)' : ''}` });
     if (dans(d.heure + 0.75)) journal.ajouter({ h: d.heure + 0.75, qui: 'Quai de réception', type: 'journee', texte: `Livraison déchargée et rangée en réserve : ${d.fourn}` });
   }
 }
@@ -394,7 +410,7 @@ function rejouerJournal() { journal.vider(); hJournal = 0; evenements(-1, t); hJ
 const JA = new Set(); // alertes déjà notées dans le journal
 const present = (e) => e.debut <= t && t < e.fin;
 // Pause de 30 min au milieu du service (sauf en caisse, remplacée par la caisse voisine) : données fictives
-const debutPause = (e) => (e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
+const debutPause = (e) => (e.pause != null ? e.pause : e.fin - e.debut >= 5 && !e.zone.startsWith('c') && !e.zone.startsWith('etage') ? Math.round(((e.debut + e.fin) / 2 - 0.25) * 4) / 4 : null);
 const enPause = (e) => { const d = debutPause(e); return d !== null && present(e) && t >= d && t < d + 0.5; };
 const auRepos = (e) => enPause(e) && !objets[e.id]?.job; // la pause commence une fois la tâche en cours finie
 const SIEGES = [[12.3, -6.95, 0], [13.5, -5.05, Math.PI], [14.7, -6.95, 0], [12.3, -5.05, Math.PI], [14.7, -5.05, Math.PI], [13.5, -6.95, 0]];
@@ -984,8 +1000,8 @@ function rendrePanneau() {
   } else if (rub === 'livraisons') {
     const proch = LIVRAISONS.filter((d) => statutLiv(d) !== 'déchargée').sort((a, b) => a.heure - b.heure)[0];
     h = chiffres([['Prochaine', proch ? hTxt(proch.heure) : 'aucune'], ['Au quai', LIVRAISONS.some((d) => statutLiv(d) === 'au quai') ? 'oui' : 'non'], ['Palettes en réserve', slotsPleins()]])
-      + `<div class="bloc-r"><p class="titre-r">Livraisons du jour</p><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commandée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table></div>`
-      + `<div class="bloc-r"><p class="titre-r">Réserve et quai</p><div class="bascules"><button type="button" class="bouton-r" data-cle-aller="reserve">Voir la réserve</button><button type="button" class="bouton-r" data-cle-aller="quai">Voir le quai</button></div></div>`;
+      + `<div class="bloc-r"><p class="titre-r">Livraisons du jour</p><table><thead><tr><th>Heure</th><th>Fournisseur</th><th class="num">Palettes</th></tr></thead><tbody>${LIVRAISONS.map((d) => { const s = statutLiv(d); return `<tr class="clic" data-cle="${d.id}"><td>${hTxt(d.heure)}</td><td><b>${d.fourn}</b><br><span class="statut ${s === 'au quai' ? 'att' : s === 'déchargée' ? 'ok' : ''}">${s}</span>${d.commande ? ` <small class="d">commande envoyée à ${hh(d.passee)}</small>` : ''}</td><td class="num">${d.palettes}</td></tr>`; }).join('')}</tbody></table></div>`
+      + `${pli('fournisseurs', 'Fournisseurs', `${Object.keys(FOURNISSEURS_FICHES).length} fiches (fictives)`, `<p class="intro-r">Un fournisseur par famille de rayons. ${MENTION_BC}</p><ul class="lignes-r fourn-r">${Object.entries(FOURNISSEURS_FICHES).map(([rid, f]) => `<li><span>${f.nom}<small>${f.famille} · ${f.contact}</small><small>${f.mail}</small><small>${f.delai}</small></span><button type="button" class="bouton-r" data-al="commander:${rid}" ${livraisonPrevue() > FERMETURE - 0.5 ? 'disabled' : ''}>Préparer</button></li>`).join('')}</ul>`)}<div class="bloc-r"><p class="titre-r">Réserve et quai</p><div class="bascules"><button type="button" class="bouton-r" data-cle-aller="reserve">Voir la réserve</button><button type="button" class="bouton-r" data-cle-aller="quai">Voir le quai</button></div></div>`;
   }
   poserGarde(c, h);
 }
@@ -1048,20 +1064,35 @@ const suggestion = (r) => Math.min(30, Math.max(2, Math.ceil((0.92 - stockDe(r) 
 const quart = (h) => Math.ceil(h * 4) / 4;
 const livraisonPrevue = () => quart(t + 1.5);
 let numCommande = 0;
-function commander(rid) {
-  const h = livraisonPrevue();
+// L'écran ne commande rien lui-même : il prépare le bon (commande.js), le gérant l'envoie depuis son outil habituel,
+// puis le marque comme envoyé ; à partir de là, la livraison est attendue et suivie dans Livraisons.
+const creneauxLivraison = () => { const o = []; for (let h = livraisonPrevue(); h <= FERMETURE - 0.5 + 1e-6; h += 0.25) o.push(h); return o; };
+function commander(rid, { palettes, heure, numero } = {}) {
+  const h = heure ?? livraisonPrevue();
   if (h > FERMETURE - 0.5) return;
-  const d = { id: 'k' + ++numCommande, heure: h, fourn: FOURNISSEURS[rid], palettes: quantites[rid] ?? suggestion(RAYON_DE(rid)), rayon: rid, commande: true, passee: t };
+  const d = { id: 'k' + ++numCommande, heure: h, fourn: FOURNISSEURS[rid], palettes: palettes ?? quantites[rid] ?? suggestion(RAYON_DE(rid)), rayon: rid, commande: true, passee: t, numero };
   LIVRAISONS.push(d); LIVRAISONS.sort((a, b) => a.heure - b.heure);
   commandees[rid] = d; delete quantites[rid];
-  annoncer(`Commande envoyée : ${d.palettes} palettes, livraison à ${hTxt(h)}`);
+  annoncer(`Commande marquée comme envoyée : ${d.palettes} palettes, livraison attendue à ${hTxt(h)}`);
   rendreFiche(); rendrePanneau();
 }
+const bons = creerBons({
+  hh, hTxt, rayon: (rid) => ({ ...RAYON_DE(rid), stock: stockDe(RAYON_DE(rid)) }), creneaux: creneauxLivraison,
+  surEnvoi(rid, o) {
+    if (o.heure > FERMETURE - 0.5) return null;
+    commander(rid, o); if (!commandees[rid]) return null;
+    traiter('stock-' + rid, `Commande ${o.numero} de ${o.palettes} palettes marquée comme envoyée, livraison attendue à ${hTxt(o.heure)}`, o.heure + 0.75);
+    return t;
+  },
+  voir: () => { if (selection) choisir(null); ui.aller('livraisons'); },
+  surModif(rid, q) { quantites[rid] = q; majDecisions(); rendreFiche(); rendrePanneau(); }, // le bouton de l'alerte affiche le même total que le bon
+});
+const preparerCommande = (rid) => bons.ouvrir(rid, quantites[rid] ?? suggestion(RAYON_DE(rid)));
 function oublierCommandes() { for (let i = LIVRAISONS.length - 1; i >= 0; i--) if (LIVRAISONS[i].commande) LIVRAISONS.splice(i, 1); for (const k in commandees) delete commandees[k]; }
 function blocCommande(r) {
   const q = quantites[r.id] ?? suggestion(r), h = livraisonPrevue(), d = commandees[r.id];
   const ferme = h > FERMETURE - 0.5;
-  return `<div class="commande"><h2>Commander du réassort</h2><div class="ligne"><button data-act="moins" aria-label="Moins">−</button><b>${q} palettes</b><button data-act="plus" aria-label="Plus">+</button><button class="go" data-act="commander" ${ferme ? 'disabled' : ''}>Commander</button></div><small>${ferme ? 'Plus de livraison possible aujourd\'hui (dernière à 19h30).' : `${FOURNISSEURS[r.id]} · livraison prévue à ${hTxt(h)} · le stock monte à la réception`}</small>${d ? `<div class="fait">✓ Commande de ${d.palettes} palettes envoyée à ${hh(d.passee)}, ${statutLiv(d) === 'déchargée' ? 'reçue' : 'livraison à ' + hTxt(d.heure)}</div>` : ''}</div>`;
+  return `<div class="commande"><h2>Préparer du réassort</h2><div class="ligne"><button data-act="moins" aria-label="Moins">−</button><b>${q} palettes</b><button data-act="plus" aria-label="Plus">+</button><button class="go" data-act="commander" ${ferme ? 'disabled' : ''}>Préparer la commande</button></div><small>${ferme ? 'Plus de livraison possible aujourd\'hui (dernière à 19h30).' : `${FOURNISSEURS[r.id]} · livraison possible dès ${hTxt(h)} · bon de commande pré-rempli`}</small><small>${MENTION_BC}</small>${d ? `<div class="fait">✓ Commande de ${d.palettes} palettes marquée comme envoyée à ${hh(d.passee)}, ${statutLiv(d) === 'déchargée' ? 'reçue' : 'livraison attendue à ' + hTxt(d.heure)}</div>` : ''}</div>`;
 }
 // ================= Décider : alertes calculées, actions, renforts =================
 // Renfort en caisse : une personne libre (rayon ou accueil) ouvre une caisse fermée pendant 1 h au plus
@@ -1148,7 +1179,7 @@ function traiter(cle, label, jusqua = t + 1) {
 }
 function faire(act) {
   const [type, arg] = act.split(':');
-  if (type === 'commander') { const r = RAYON_DE(arg); const q = quantites[arg] ?? suggestion(r); commander(arg); if (commandees[arg]) traiter('stock-' + arg, `Commande de ${q} palettes, livraison à ${hTxt(commandees[arg].heure)}`, commandees[arg].heure + 0.75); }
+  if (type === 'commander') preparerCommande(arg);
   else if (type === 'rayon') { const e = envoyerEnRayon(arg); if (e) { const cle = alertes.find((a) => a.cle === 'sol' && a.actions.some((x) => x.act === act)) ? 'sol' : 'stock-' + arg; traiter(cle, `${e.nom} envoyé·e chercher une palette en réserve`, t + 0.75); } }
   else if (type === 'caisse') { const o = ouvrirCaisse(); if (o) { MASQUE['caisse-pic'] = MASQUE['caisse-file'] = o.fin; traiter(alertes.find((a) => a.cle.startsWith('caisse'))?.cle || 'caisse-file', `Caisse ${o.caisse + 1} ouverte avec ${o.qui.nom} jusqu'à ${hTxt(o.fin)}`, o.fin); } }
   else if (type === 'rh') { rh.ouvrirDocument(arg); const r = rh.rdvDuJour().find((x) => x.id === arg); traiter('rdv-' + arg, 'Dossier ouvert avant l\'entretien', r ? r.debut : t + 1); }
@@ -1197,13 +1228,13 @@ function rendreFiche() {
   } else if (/^r\d/.test(s)) {
     const r = RAYON_DE(s), st = stockDe(r), resp = EQUIPE.filter((e) => e.zone === s && present(e)).map((e) => e.nom).join(', ') || 'personne en ce moment';
     const liv = LIVRAISONS.filter((d) => d.rayon === s && d.heure > t)[0];
-    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Dernière mise en rayon', DERNIERE_MER[r.id] ? `${hh(DERNIERE_MER[r.id].h)}, ${DERNIERE_MER[r.id].nom}` : 'pas encore depuis le début de la démo')}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}${(() => { const em = employePour(r.id), n = SLOTS.filter((sl) => sl.rayon === r.id && !sl.pris).length; return `<div class="actions-fiche"><h2>Mettre en rayon</h2><button data-act="envoyer" ${em ? '' : 'disabled'}>${em ? `Envoyer ${em.nom}` : 'Envoyer un employé'}</button><small>${!n ? 'Aucune palette de ce rayon en réserve : passez une commande.' : em ? `${n} palette${n > 1 ? 's' : ''} en réserve · ${em.poste.toLowerCase()}, le plus proche parmi les personnes libres` : `${n} palette${n > 1 ? 's' : ''} en réserve, mais personne de libre en rayon en ce moment.`}</small></div>`; })()}`;
+    c.innerHTML = `<h3>${r.nom}</h3><p class="sous">${r.refs.toLocaleString('fr-FR')} produits en rayon</p><span class="statut ${st < 0.5 ? 'ko' : st < 0.7 ? 'att' : 'ok'}">Stock ${Math.round(st * 100)} %</span><ul class="lignes">${li('Stock exact', `${unites(r).toLocaleString('fr-FR')} articles`)}${li('En réserve', `${SLOTS.filter((sl) => sl.rayon === r.id).length} palettes`)}${li('Mises en rayon aujourd\'hui', `${MER[r.id] || 0} palettes`)}${li('Dernière mise en rayon', DERNIERE_MER[r.id] ? `${hh(DERNIERE_MER[r.id].h)}, ${DERNIERE_MER[r.id].nom}` : 'pas encore depuis le début de la démo')}${li('Ruptures', rupturesDe(r))}${li('En rayon', resp)}${li('Prochaine livraison', liv ? `${hTxt(liv.heure)}, ${liv.palettes} palettes` : 'aucune aujourd\'hui')}</ul><p class="synchro">● Logiciel de stock synchronisé à ${hh(derniereSynchro())}</p>${blocCommande(r)}${(() => { const em = employePour(r.id), n = SLOTS.filter((sl) => sl.rayon === r.id && !sl.pris).length; return `<div class="actions-fiche"><h2>Mettre en rayon</h2><button data-act="envoyer" ${em ? '' : 'disabled'}>${em ? `Envoyer ${em.nom}` : 'Envoyer un employé'}</button><small>${!n ? 'Aucune palette de ce rayon en réserve : préparez une commande.' : em ? `${n} palette${n > 1 ? 's' : ''} en réserve · ${em.poste.toLowerCase()}, le plus proche parmi les personnes libres` : `${n} palette${n > 1 ? 's' : ''} en réserve, mais personne de libre en rayon en ce moment.`}</small></div>`; })()}`;
   } else if (/^c\d/.test(s)) {
     const i = +s.slice(1), e = caissiers().find((x) => caisseDe(x) === i), f = attenteCaisse.filter((a) => a.c === i && a.o.userData.cible === 1).length;
     c.innerHTML = `<h3>Caisse ${i + 1}</h3><p class="sous">Caisse traditionnelle</p><span class="statut ${e ? 'ok' : ''}">${e ? 'Ouverte' : 'Fermée'}</span><ul class="lignes">${e ? li('Hôte ou hôtesse', e.nom + (RENFORTS[e.id] ? ' (renfort)' : '')) + li('Jusqu\'à', hTxt(RENFORTS[e.id] ? RENFORTS[e.id].fin : e.fin)) + li('Clients en file', f) : li('Prochaine ouverture', (() => { const n = EQUIPE.filter((x) => x.zone.startsWith('c') && caisseDe(x) === i && x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return n ? `${hTxt(n.debut)}, ${n.nom}` : 'aucune aujourd\'hui'; })())}</ul>`;
   } else if (/^d\d/.test(s) || s === 'quai') {
     const d = s === 'quai' ? LIVRAISONS.find((x) => statutLiv(x) === 'au quai') || LIVRAISONS.find((x) => x.heure > t) : LIVRAISONS.find((x) => x.id === s);
-    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commandée depuis l\'écran', hh(d.passee)) : ''}${li('Palettes', d.palettes)}${statutLiv(d) !== 'prévue' ? li('Déchargées', `${Math.min(d.palettes, d.dechargees || 0)} sur ${d.palettes}`) : ''}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
+    c.innerHTML = d ? `<h3>Livraison de ${hTxt(d.heure)}</h3><p class="sous">${d.fourn}</p><span class="statut ${statutLiv(d) === 'au quai' ? 'att' : statutLiv(d) === 'déchargée' ? 'ok' : ''}">${statutLiv(d)}</span><ul class="lignes">${d.commande ? li('Commande préparée à l\'écran', `${d.numero || ''} · marquée envoyée à ${hh(d.passee)}`) : ''}${li('Palettes', d.palettes)}${statutLiv(d) !== 'prévue' ? li('Déchargées', `${Math.min(d.palettes, d.dechargees || 0)} sur ${d.palettes}`) : ''}${li('Rayon', RAYON_DE(d.rayon).nom)}${li('Réceptionnaires présents', EQUIPE.filter((e) => e.zone === 'reserve' && present(e)).map((e) => e.nom).join(', ') || 'aucun')}</ul>` : '<h3>Quai de livraison</h3><p class="sous">Plus de livraison aujourd\'hui</p>';
   } else {
     const T = {
       caisses: () => `<h3>Ligne de caisses</h3><p class="sous">${NB_CAISSES} caisses</p><ul class="lignes">${li('Ouvertes', caissesOuvertes().map((i) => i + 1).join(', ') || 'aucune')}${li('Hôtes et hôtesses en caisse', caissiers().map((e) => e.nom).join(', ') || 'personne')}</ul>`,
@@ -1296,7 +1327,7 @@ $('fiche-c').onclick = (ev) => {
   const r = RAYON_DE(selection), q = quantites[r.id] ?? suggestion(r);
   if (b.dataset.act === 'plus') quantites[r.id] = Math.min(40, q + 2);
   else if (b.dataset.act === 'moins') quantites[r.id] = Math.max(2, q - 2);
-  else if (b.dataset.act === 'commander') { const q = quantites[r.id] ?? suggestion(r); commander(r.id); if (commandees[r.id]) traiter('stock-' + r.id, `Commande de ${q} palettes, livraison à ${hTxt(commandees[r.id].heure)}`, commandees[r.id].heure + 0.75); return; }
+  else if (b.dataset.act === 'commander') { preparerCommande(r.id); return; }
   else if (b.dataset.act === 'envoyer') { const e = envoyerEnRayon(r.id); if (e) traiter('stock-' + r.id, `${e.nom} envoyé·e chercher une palette en réserve`, t + 0.75); return rendreFiche(); }
   rendreFiche();
 };
@@ -1355,7 +1386,7 @@ addEventListener('resize', taille); taille();
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
   // page pleine (RH, Chiffres, Équipe) : la journée continue, mais la 3D n'est plus dessinée (économie de batterie)
-  const cache = !!(ui && ui.plein());
+  const cache = !!(ui && ui.plein()) || document.documentElement.classList.contains('terrain-on'); // mode terrain : la maquette est cachée dessous
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); rejouerJournal(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
@@ -1431,7 +1462,7 @@ function ouvrirResume() {
   fenetre.ouvrir({
     titre: 'Résumé du jour', sous: `Aperçu du mail envoyé chaque soir à la direction · arrêté à ${hh(t)} (heure de la démo)`, cle: 'resume',
     corps: mailResume({
-      de: 'Hyper Modèle · écran du magasin', a: 'Claire Dumont (direction)', objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
+      de: 'Hyper Modèle · écran du magasin', a: `${ROLES[0].qui} (direction)`, objet: `Résumé du ${jour} · Hyper Modèle (démo)`,
       intro: `Bonsoir, voici la journée du magasin arrêtée à <b>${hh(t)}</b>. Tous les chiffres viennent de la simulation de la démo.`,
       blocs: [
         { titre: 'Chiffres de la journée', lignes: [['Chiffre d\'affaires', euros(ca)], ['Hier sur la journée entière', euros(CA_HIER)], ['Passages en caisse (estimés)', nb(passages)], ['Panier moyen', PANIER.toLocaleString('fr-FR') + ' €'], ['Coût de l\'équipe', `${euros(cout)} (${(ca ? (cout / ca) * 100 : 0).toFixed(1).replace('.', ',')} % du CA)`], ['Ruptures de stock', nb(rup)], ['Livraisons reçues', `${recues.length} sur ${LIVRAISONS.length}`]] },
@@ -1448,7 +1479,7 @@ function ouvrirResume() {
 const etatPersonne = (e) => (auRepos(e) ? { cle: 'pause', txt: 'En pause', detail: 'salle de pause' } : present(e) ? { cle: 'present', txt: 'Présent·e', detail: objets[e.id]?.job ? objets[e.id].job.texte : ZONE_NOM(e.zone) } : t < e.debut ? { cle: 'avant', txt: 'Arrive à ' + hTxt(e.debut) } : { cle: 'parti', txt: 'Service terminé' });
 // depuis une page pleine : retour à la 3D, zoom sur le poste de la personne
 const voirPoste = (id) => { tiroir.fermer(); ui.aller('accueil'); choisir(id); };
-const rh = installerRH({ equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
+const rh = installerRH({ services: Object.fromEntries(RAYONS.map((r) => [r.id, r.nom])), fichesDemo: !IMPORT || EQUIPE === EQUIPE_DEMO, equipe: EQUIPE, heure: () => t, choisirPersonne: voirPoste, voirPoste, etat: etatPersonne, pauseDe: debutPause, coutJour: () => coutJour(), surAction: agir });
 // le candidat attendu vient au bureau RH de l'étage pendant son entretien
 const entretienEnCours = () => rh.rdvDuJour().find((r) => t >= r.debut && t < r.fin);
 initReserve();
@@ -1461,11 +1492,66 @@ const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks',
 const PLEINES = new Set(['rh', 'equipe', 'chiffres', 'journal']);
 ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id), icone: id === 'journal' ? ICONE_JOURNAL : undefined })), surChangement: surRubrique });
 rejouerJournal();
-installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+const roles = installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
 appliquerRole(ROLES[0]);
 calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
 if (document.fonts) document.fonts.ready.then(placerCurseur);
 window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => (v ? changerVue(v) : vueCourante), kpis: () => kpis.valeurs(), temps: () => t, camera, controls, scene, THREE, renderer, fusion: FUSION, pastilles, foule, positionDe: (c) => positionDe(c), choisir: (c) => choisir(c), role: (id) => (id ? document.getElementById('role-choix') && (document.getElementById('role-choix').value = id, document.getElementById('role-choix').dispatchEvent(new Event('change'))) : ROLE().id), journal: () => journal.entrees(), resume: () => ouvrirResume(), regler: (h) => { t = h; HIST_ALERTES.clear(); rejouerJournal(); oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); synchroniser(true); prechauffer(); rafraichir(); }, avancer: (dh) => { t += dh; finRenforts(); synchroniser(); prechauffer(); rafraichir(); }, alertes: () => alertes.map((a) => ({ cle: a.cle, niveau: a.niveau, titre: a.titre, actions: a.actions.map((x) => x.act) })), faire: (act) => faire(act), traites: () => TRAITES.slice() };
+// « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
+const droite = document.querySelector('.entete .droite');
+installerImport({ cle: 'grande-surface', nom: 'Démo supermarché', tableaux: TABLEAUX_GS, apercu: (d) => appliquerGS(d, DEMO).notes, hote: droite });
+// ================= Mode terrain (téléphone) : la journée, les alertes et l'équipe de la personne choisie =================
+const moi = () => EQUIPE.find((e) => e.nom === ROLE().qui) || null;
+const etatH = (d, f = d + 0.25) => (t >= f ? 'fait' : t >= d ? 'encours' : 'avenir');
+const nomCaisse = (z) => (/^c\d/.test(z) ? `Caisse ${parseInt(z.slice(1), 10) + 1}` : ZONE_NOM(z));
+function contenuTerrain() {
+  const r = ROLE(), p = moi(), mes = vues();
+  const alertesT = mes.map((a) => ({ ...a, couleur: NIV_ALERTE[a.niveau].couleur, niveau: NIV_ALERTE[a.niveau].nom }));
+  const traitesT = TRAITES.filter((x) => r.alertes({ cle: x.cle })).map((x) => ({ titre: x.titre, res: x.label, h: hTxt(x.h) }));
+  const dp = p ? debutPause(p) : null;
+  const horaires = p ? `${hTxt(p.debut)} – ${hTxt(p.fin)}${dp !== null ? ` · pause à ${hTxt(dp)}` : ''}` : 'Horaires non renseignés';
+  const etat = p ? etatPersonne(p).txt + (p.zone ? ` · ${nomCaisse(p.zone)}` : '') : '';
+  // ma journée : ce qui me concerne aujourd'hui, dans l'ordre
+  let journee = [];
+  if (p) journee.push({ h: hTxt(p.debut), texte: 'Prise de service', etat: etatH(p.debut) }, ...(dp !== null ? [{ h: hTxt(dp), texte: 'Pause de 30 min', etat: etatH(dp, dp + 0.5) }] : []), { h: hTxt(p.fin), texte: 'Fin de service', etat: etatH(p.fin) });
+  if (r.id === 'rayon' || r.id === 'direction') {
+    const mesRayons = r.id === 'rayon' ? new Set(EQUIPE.filter(r.equipe).map((e) => ZONE0[e.id]).filter((z) => /^r\d/.test(z))) : null;
+    journee.push(...LIVRAISONS.filter((d) => (!mesRayons || mesRayons.has(d.rayon))).map((d) => ({ h: hTxt(d.heure), texte: `Livraison : ${d.palettes} palettes, ${RAYONS.find((x) => x.id === d.rayon)?.nom || ''} (${d.fourn})`, etat: etatH(d.heure, d.heure + 0.5) })));
+  }
+  if (r.id === 'rh' || r.id === 'direction') journee.push(...rh.rdvDuJour().map((k) => ({ h: hTxt(k.debut), texte: `Entretien : ${k.nom}, ${k.poste}`, etat: etatH(k.debut, k.fin) })));
+  journee = journee.sort((a, b) => parseFloat(a.h.replace('h', '.')) - parseFloat(b.h.replace('h', '.')));
+  const suiv = journee.find((x) => x.etat !== 'fait');
+  const prochaine = alertesT[0] ? { titre: alertesT[0].titre, detail: 'La plus urgente de vos alertes : voir « Mes alertes ».' } : suiv ? { titre: `${suiv.h} : ${suiv.texte}`, detail: suiv.etat === 'encours' ? 'En cours' : '' } : null;
+  const equipe = (r.id === 'caisse' ? EQUIPE.filter((e) => /^c\d/.test(e.zone)) : EQUIPE.filter(r.equipe)).map((e) => {
+    const s = etatPersonne(e);
+    return { nom: e.nom + (e.nom === r.qui ? ' (moi)' : ''), detail: `${e.poste} · ${s.txt}${s.cle === 'present' ? ' · ' + (r.id === 'caisse' ? nomCaisse(e.zone) : s.detail || '') : ''} · ${hTxt(e.debut)} – ${hTxt(e.fin)}`, etat: s.cle === 'present' ? 'ok' : s.cle === 'pause' ? 'pause' : 'off' };
+  });
+  return { qui: r.qui, poste: `${p ? p.poste : r.label} · Hyper Modèle`, heure: hh(t), horaires, etat, prochaine, journee, alertes: alertesT, traites: traitesT,
+    equipeTitre: r.id === 'caisse' ? 'Les caisses du jour' : r.id === 'direction' ? 'L\'équipe du jour' : 'Mon équipe', equipe, zone: p ? nomCaisse(p.zone) : 'le magasin' };
+}
+const terrain = installerTerrain({
+  cle: 'grande-surface', hote: document.querySelector('.entete .droite'), roles: ROLES, role: () => ROLE().id, choisirRole: (id) => roles.choisir(id),
+  contenu: contenuTerrain,
+  agir: (cle, act) => faire(act),
+  voirPlan: () => { ui.aller('accueil'); const p = moi(), z = ROLE().id === 'direction' ? 'magasin' : p ? p.zone : 'magasin'; voir(z); },
+});
+const alerteCaisse = () => $('contenu').querySelector('.alerte[data-k^="caisse"]:has([data-al="caisse"]:not([disabled]))');
+const alerteVisite = () => alerteCaisse() || $('contenu').querySelector('.alerte:has([data-al].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
+installerVisite({
+  cle: 'grande-surface', hote: droite, auto: !IMPORT && !terrain.ouvert(),
+  etapes: [
+    { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur les stocks, les files en caisse, les livraisons et le planning. Les plus urgentes en haut.', avant: () => { if (selection) choisir(null); ui.aller('traiter'); }, cible: () => $('contenu').querySelector('.at-liste') },
+    { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous emmène à l\'endroit concerné, dans le magasin.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-al-voir]') },
+    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-al].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : ${b.dataset.al === 'caisse' ? 'la personne la plus proche part en renfort' : b.dataset.al.startsWith('commander') ? 'le bon de commande s\'ouvre, pré-rempli ; vous l\'envoyez depuis votre outil habituel, puis « Marquer comme envoyée »' : 'l\'écran fait le nécessaire'}, et c'est noté.` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); }, cible: () => alerteVisite()?.querySelector('[data-al].prim:not([disabled])') },
+    // si l'action était « Préparer la commande », le bon est ouvert : l'étape montre « Marquer comme envoyée »
+    { get titre() { return fenetre.cle() === 'bc' ? 'Le bon de commande est prêt' : 'C\'est traité'; }, get action() { return fenetre.cle() === 'bc'; },
+      texte: () => (fenetre.cle() === 'bc' ? 'Téléchargez-le en PDF, préparez le mail au fournisseur ou exportez-le pour votre logiciel : vous l\'envoyez depuis votre outil habituel. Puis « Marquer comme envoyée » : la livraison est suivie et l\'alerte passe dans « Traité ».' : 'L\'alerte passe dans « Traité », avec l\'heure et la personne. L\'action est aussi notée dans le Journal.'),
+      avant: () => { if (fenetre.cle() === 'bc') return; if (ui.rubrique() !== 'traiter') ui.aller('traiter'); setTimeout(() => $('contenu').querySelector('.at-traites')?.scrollIntoView({ block: 'nearest' }), 50); },
+      cible: () => (fenetre.cle() === 'bc' ? document.querySelector('.fen [data-bc="envoyee"]') : $('contenu').querySelector('.at-traites .traites') || $('contenu').querySelector('.at-liste')) },
+    { titre: MOBILE ? 'Vos rubriques, en bas' : 'Vos rubriques, à gauche', texte: 'Stocks, affluence, caisses, équipe, livraisons, RH, chiffres : chaque rubrique montre sa zone sur la maquette.', avant: () => { if (fenetre.cle()) fenetre.fermer(); ui.aller('accueil'); }, cible: () => $('rubriques') },
+    { titre: 'Essayez avec vos données', texte: 'Déposez un fichier CSV ou Excel avec vos rayons, votre équipe et vos caisses : la démo se recalcule avec, sans rien envoyer sur Internet.', cible: () => $('btn-import') },
+  ],
+});
 requestAnimationFrame(animer);
 </script>
 </body>

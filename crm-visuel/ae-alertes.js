@@ -14,7 +14,7 @@
 //
 //   calculerAlertes(e) -> [{ cle, niveau, icone, titre, detail: [..], voir, lieu, actions: [{ act, label, primaire, off, raison }], score }]
 
-export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626', doux: '#fef2f2' }, surveiller: { rang: 1, nom: 'À surveiller', couleur: '#ea580c', doux: '#fff7ed' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb', doux: '#eff6ff' } };
+export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626', doux: '#fef2f2' }, surveiller: { rang: 1, nom: 'À prévoir', couleur: '#ea580c', doux: '#fff7ed' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb', doux: '#eff6ff' } };
 export const SEUILS = { impayeUrgent: 300, creneauMax: 2, pauseMidi: 1.5, impayeAvant: 1.5, forfaitMarge: 1, forfaitAvant: 3, examenAvant: 2, revisionPas: 10000, kmParHeure: 25, revisionAlerte: 2000, revisionUrgent: 500, creneauHorizon: 4.5, chargeMax: 8, codeAlerte: 11 };
 
 const prenom = (nom) => nom.split(' ')[0];
@@ -37,7 +37,7 @@ export function calculerAlertes(e) {
       detail: [enCours ? `En leçon jusqu'à ${hTxt(nl.fin)} avec ${moniteur(nl.m).nom} : à encaisser au retour.` : `Leçon à ${hTxt(nl.debut)} avec ${moniteur(nl.m).nom} : à encaisser à son arrivée à l'accueil.`,
         `Forfait ${faites} h faites sur ${forfait} h · ${e.relances[nom] ? 'relancé à ' + hTxt(e.relances[nom]) : 'pas encore relancé'}.`],
       voir: nl.id, lieu: enCours ? nl.veh : 'accueil',
-      actions: [{ act: 'encaisser:' + nom, label: `Encaisser ${euros(reste)}`, primaire: true }, { act: 'relancer:' + nom, label: 'Marquer relancé' }],
+      actions: [{ act: 'encaisser:' + nom, label: `Noter le paiement reçu (${euros(reste)})`, primaire: true }, { act: 'relancer:' + nom, label: 'Marquer relancé' }],
       score: reste / 100 + (S.impayeAvant - Math.max(0, nl.debut - t)),
     });
   }
@@ -80,7 +80,7 @@ export function calculerAlertes(e) {
       titre: `Révision des ${cap.toLocaleString('fr-FR')} km : ${v.nom}`,
       detail: [`${km.toLocaleString('fr-FR')} km au compteur, révision dans ${reste.toLocaleString('fr-FR')} km (≈ ${Math.round(reste / S.kmParHeure)} h de leçon).`, libre ? `${v.nom} est libre de ${hTxt(libre[0])} à ${hTxt(libre[1])} aujourd'hui.` : `${v.nom} n'a plus de créneau libre de 2 h aujourd'hui.`],
       voir: v.id, lieu: v.id,
-      actions: [{ act: 'garage:' + v.id, label: 'Prendre RDV au garage', primaire: true }],
+      actions: [{ act: 'garage:' + v.id, label: 'Noter un RDV garage à prendre', primaire: true }],
       score: 1 - reste / S.revisionAlerte });
   }
 
@@ -106,7 +106,7 @@ export function calculerAlertes(e) {
       titre: `Créneau libre : ${m.nom} à ${hTxt(g0)}`,
       detail: [`Aucune leçon de ${debut > t ? hTxt(debut) : 'maintenant'} à ${hTxt(fin)} · ${voiture.nom} libre aussi.`, `Proposé : ${eleve.nom}, encore ${String(eleve.restant).replace('.', ',')} h à faire sur son forfait, libre à cette heure.`],
       voir: m.id, lieu: m.id,
-      actions: [{ act: `reserver:${m.id}:${voiture.id}:${g0}:${eleve.nom}`, label: `Réserver ${hTxt(g0)} avec ${prenom(eleve.nom)}`, primaire: true }, { act: 'laisser:creneau-' + m.id + ':' + fin, label: 'Laisser libre' }],
+      actions: [{ act: `reserver:${m.id}:${voiture.id}:${g0}:${eleve.nom}`, label: `Inscrire ${prenom(eleve.nom)} à ${hTxt(g0)} au planning`, primaire: true }, { act: 'laisser:creneau-' + m.id + ':' + fin, label: 'Laisser libre' }],
       score: 1 / (1 + g0 - t) });
   }
 

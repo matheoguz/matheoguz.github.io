@@ -11,6 +11,11 @@
 //   ui.plein()            // la rubrique en cours est une page pleine (rubrique { plein: true, sous })
 //   ui.page()             // { corps, actions } de la page pleine (en-tête : titre et sous-titre de la rubrique)
 //   ui.autoriser(ids)     // rubriques visibles pour le rôle choisi (Set d'ids, null = toutes) ; sinon retour à l'accueil
+//   ui.theme(t)           // thème des pages pleines : 'nuit' (défaut) ou 'clair' ; mémorisé (localStorage), bouton dans l'en-tête
+//
+// Thème « Nuit » : fond quasi noir bleuté, cartes nettes à liseré fin, accents vifs (style : interface.css).
+// À l'entrée d'une page pleine, les cartes apparaissent en cascade et les chiffres clés défilent jusqu'à leur valeur
+// (rien de tout ça si l'utilisateur a demandé moins d'animations).
 //
 // Page pleine : la maquette 3D et le panneau sont masqués (la scène n'est pas recréée), la page prend toute
 // la largeur à droite de la barre de rubriques. La page hôte met son rendu 3D en pause tant que ui.plein().
@@ -49,8 +54,47 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   let page = document.getElementById('page');
   if (!page) {
     page = document.createElement('section'); page.className = 'page'; page.id = 'page'; page.setAttribute('aria-labelledby', 'page-titre');
-    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div></div><div class="page-corps" id="page-corps"></div>';
+    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div><button type="button" class="page-theme" id="page-theme" aria-pressed="true" title="Changer l\'apparence des pages"><span class="pt-ic" aria-hidden="true"></span><span class="pt-l">Nuit</span></button></div><div class="page-corps" id="page-corps"></div>';
     nav.after(page);
+  }
+  // ---------- thème des pages pleines ----------
+  const CLE_THEME = 'crm-visuel-theme';
+  let theme = 'nuit';
+  try { const m = localStorage.getItem(CLE_THEME); if (m === 'clair') theme = m; } catch { /* stockage indisponible */ }
+  const btTheme = document.getElementById('page-theme');
+  function poserTheme(t, garder = false) {
+    theme = t === 'clair' ? 'clair' : 'nuit';
+    app.classList.toggle('nuit', theme === 'nuit');
+    if (btTheme) { btTheme.setAttribute('aria-pressed', theme === 'nuit'); btTheme.querySelector('.pt-l').textContent = theme === 'nuit' ? 'Nuit' : 'Clair'; btTheme.title = theme === 'nuit' ? 'Apparence : nuit. Passer en clair' : 'Apparence : clair. Passer en nuit'; btTheme.setAttribute('aria-label', btTheme.title); }
+    if (garder) try { localStorage.setItem(CLE_THEME, theme); } catch { /* navigation privée */ }
+  }
+  if (btTheme) btTheme.onclick = () => poserTheme(theme === 'nuit' ? 'clair' : 'nuit', true);
+  poserTheme(theme);
+  // entrée d'une page pleine : cartes en cascade, chiffres clés qui défilent (une seule fois par entrée)
+  const calme = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animerEntree() {
+    const corps = document.getElementById('page-corps'); if (!corps || calme()) return;
+    corps.classList.remove('cascade');
+    corps.querySelectorAll(':scope :is(.pg-kpi, .pg-carte, .pp, .pg-bande, .frise)').forEach((el, i) => el.style.setProperty('--i', Math.min(i, 14)));
+    void corps.offsetWidth; corps.classList.add('cascade');
+    clearTimeout(animerEntree.t); animerEntree.t = setTimeout(() => corps.classList.remove('cascade'), 1400);
+    corps.querySelectorAll('.pg-kpi b').forEach(defiler);
+  }
+  // fait défiler le premier nombre du texte (« 44 296 € », « 14 / 22 ») de 0 à sa valeur, puis remet le texte exact
+  function defiler(b) {
+    const n = [...b.childNodes].find((x) => x.nodeType === 3 && /\d/.test(x.data)); if (!n) return;
+    const fin = n.data, m = fin.match(/\d[\d\s\u202f\u00a0]*(?:,\d+)?/); if (!m) return;
+    const brut = m[0].replace(/[\s\u202f\u00a0]/g, ''), dec = (brut.split(',')[1] || '').length, v = parseFloat(brut.replace(',', '.'));
+    if (!Number.isFinite(v) || v === 0) return;
+    const fmt = (x) => x.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    const t0 = performance.now(), duree = 700;
+    const pas = (t) => {
+      if (!n.isConnected || n.data !== n._vu && n._vu !== undefined) return; // la page a été redessinée entre-temps
+      const k = Math.min(1, (t - t0) / duree), e = 1 - (1 - k) ** 3;
+      n.data = k < 1 ? fin.replace(m[0], fmt(v * e) + (/\s$/.test(m[0]) ? ' ' : '')) : fin; n._vu = n.data;
+      if (k < 1) requestAnimationFrame(pas);
+    };
+    requestAnimationFrame(pas);
   }
   let courante = defaut;
   const redimensionner = () => dispatchEvent(new Event('resize')); // la maquette 3D se recale sur sa nouvelle place
@@ -74,6 +118,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
     if (change) redimensionner();
     const b = nav.querySelector(`[data-rub="${id}"]`); if (b && nav.scrollWidth > nav.clientWidth) b.scrollIntoView({ block: 'nearest', inline: 'center' });
     surChangement(id);
+    if (plein) animerEntree();
     const c = document.getElementById('contenu'); if (c) c.scrollTop = 0;
   }
   function fiche(oui) {
@@ -100,7 +145,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
     nav.querySelectorAll('[data-rub]').forEach((b) => { b.hidden = !!ids && b.dataset.rub !== 'accueil' && !ids.has(b.dataset.rub); });
     if (ids && courante !== 'accueil' && !ids.has(courante)) aller('accueil');
   }
-  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl, autoriser };
+  return { aller, rubrique: () => courante, fiche, badge, plein: () => app.classList.contains('plein'), page: () => pageEl, autoriser, theme: (t) => { if (t) poserTheme(t, true); return theme; } };
 }
 
 // Remplace le contenu d'un élément seulement s'il a changé, en gardant les blocs repliables ouverts

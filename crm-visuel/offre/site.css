@@ -239,6 +239,35 @@ footer .legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
 .rv.vu{opacity:1;transform:none}
 
+/* Métiers, calculateur, qui est derrière */
+.metiers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metier{border-radius:var(--r);padding:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:4px}
+.metier span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.metier.demo span{color:var(--accent);font-weight:600}
+.metier b{font-weight:500;font-size:1.02rem}
+.metier p{color:var(--muted);font-size:.88rem;font-weight:300}
+.metier .link{margin-top:auto;align-self:flex-start;font-size:.88rem;padding-top:8px}
+.metier.demo{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.calc-e{border-radius:var(--r);padding:28px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);display:grid;gap:18px}
+.calc-e label{display:grid;gap:8px;font-size:.92rem;font-weight:500}
+.calc-e output{font-weight:600;color:var(--accent);justify-self:start}
+.calc-e input[type=number]{font:inherit;font-weight:400;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;min-height:48px;width:100%}
+.calc-e input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
+.calc-r{border-radius:var(--r);padding:28px;background:var(--dark);color:#efebe3;display:flex;flex-direction:column;gap:10px}
+.calc-r .qui{font-size:.82rem;color:#b8b2a7}
+.calc-big b{font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,4vw,3.4rem);line-height:1;color:#fff}
+.calc-big small{display:block;color:#b8b2a7;font-size:.9rem}
+.calc-comp{font-size:.98rem;margin-top:6px;color:#efebe3}
+.calc-comp b{color:var(--accent-clair);font-weight:500}
+.calc-mention{margin-top:auto;font-size:.8rem;color:#b8b2a7;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+.qui-box{max-width:72ch;border-left:2px solid var(--accent);padding:4px 0 4px 22px;display:grid;gap:12px}
+.qui-box p{font-weight:300}
+.qui-box b{font-weight:500}
+.qui-box .link{justify-self:start}
+@media(max-width:960px){.metiers{grid-template-columns:1fr 1fr}.calc{grid-template-columns:1fr}}
+@media(max-width:520px){.metiers{grid-template-columns:1fr}}
+
 @media(max-width:960px){
   .wrap{padding:0 18px}
   nav.main{display:none}
@@ -310,3 +339,4 @@ footer .legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap
 @media(max-width:960px){.after.quatre{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.after.quatre{grid-template-columns:1fr}}
 .rd-tete svg{width:16px;height:16px;flex:none}
+#vos-donnees .ctas{display:flex;flex-direction:column;gap:12px;align-items:flex-start}

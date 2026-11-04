@@ -46,7 +46,8 @@
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
   .horloge { text-align: right; line-height: 1.15; }
   .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-  .horloge small { color: var(--doux); font-size: 11px; }
+  .horloge small { display: block; color: var(--doux); font-size: 11px; white-space: nowrap; }
+  @media (max-width: 1600px) { .horloge small { display: none; } } /* le sous-texte reste en info-bulle (title) */
   .rond { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--ligne); background: var(--carte); display: grid; place-items: center; cursor: pointer; color: var(--texte); transition: background .2s; }
   .rond:hover { background: var(--gris-doux); }
 
@@ -241,7 +242,7 @@
     <div class="droite">
       <div id="role"></div>
       <span class="direct" id="direct"><i></i>En direct</span>
-      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <div class="horloge" title="Journée accélérée : 1 seconde = 1 minute de démo"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="rond" id="pause" aria-label="Mettre en pause" title="Pause"></button>
     </div>
   </header>
@@ -277,34 +278,38 @@ import { creerInterface, poserGarde, ICONES_UI } from './interface.js';
 import { creerPagesAE } from './ae-pages.js';
 import { source } from './page.js';
 import { creerJournal, installerRoles, fenetre, mailResume } from './commun.js';
+import { lireImport, installerImport } from './import.js';
+import { installerVisite } from './visite.js';
+import { installerTerrain } from './terrain.js';
+import { TABLEAUX_AE, appliquerAE } from './ae-donnees.js';
 
 // ================= Données fictives =================
 const PRIX = { 'Conduite 1 h': 56, 'Conduite 2 h': 112, 'Examen permis B': 78, 'Plateau moto 2 h': 124, 'Conduite boîte auto 1 h': 58 };
-const MONITEURS = [
+const MONITEURS_DEMO = [
   { id: 'm1', nom: 'Karim Benali', permis: 'B, A2', couleur: 0x1d4ed8 },
   { id: 'm2', nom: 'Sophie Lambert', permis: 'B', couleur: 0x15803d },
   { id: 'm3', nom: 'Thomas Renaud', permis: 'B, BE', couleur: 0xc2410c },
   { id: 'm4', nom: 'Nadia Kaci', permis: 'B, boîte auto', couleur: 0x7c3aed },
 ];
-const VOITURES = [
+const VOITURES_DEMO = [
   { id: 'v1', nom: 'Voiture 1', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-01', km: 48210, entretien: '12 nov.', couleur: 0xf1f1ee },
   { id: 'v2', nom: 'Voiture 2', modele: '208, boîte manuelle', plaque: 'DÉMO-02', km: 31560, entretien: '3 déc.', couleur: 0x374151 },
   { id: 'v3', nom: 'Voiture 3', modele: 'Clio, boîte manuelle', plaque: 'DÉMO-03', km: 61030, entretien: '28 oct.', couleur: 0x9ca3af },
   { id: 'v4', nom: 'Voiture 4', modele: 'Yaris, boîte manuelle', plaque: 'DÉMO-04', km: 22940, entretien: '19 nov.', couleur: 0xb91c1c },
   { id: 'v5', nom: 'Voiture 5', modele: 'Zoé, électrique automatique', plaque: 'DÉMO-05', km: 17480, entretien: '7 janv.', couleur: 0x1e3a8a },
 ];
-const MOTOS = [
+const MOTOS_DEMO = [
   { id: 'mo1', nom: 'Moto 1', modele: 'Permis A2, 35 kW', couleur: 0x111827, entretien: '15 nov.' },
   { id: 'mo2', nom: 'Moto 2', modele: 'Permis A2, 35 kW', couleur: 0xb91c1c, entretien: '2 déc.' },
 ];
 // [heures faites, forfait, reste à payer en €]
-const ELEVES = {
+const ELEVES_DEMO = {
   'Léa Martin': [14, 20, 0], 'Hugo Durand': [18, 20, 112], 'Inès Toumi': [6, 20, 0], 'Yanis Petit': [18, 25, 336], 'Chloé Roux': [9, 20, 0], 'Lucas Girard': [27, 30, 0],
   'Manon Faure': [3, 20, 0], 'Rayan Saidi': [12, 20, 224], 'Emma Vidal': [16, 20, 0], 'Noah Colin': [20, 20, 0], 'Jade Lefèvre': [8, 13, 0], 'Adam Bernard': [11, 20, 168],
   'Sarah Nicolas': [5, 20, 0], 'Tom Henry': [19, 20, 0], 'Lina Amrani': [2, 20, 0], 'Enzo Marchal': [24, 25, 400],
 };
 // Planning du jour : [moniteur, début (h), durée (h), élève, type, véhicule]
-const PLANNING = [
+const PLANNING_DEMO = [
   ['m1', 8, 1, 'Léa Martin', 'Conduite 1 h', 'v1'], ['m1', 9, 2, 'Hugo Durand', 'Conduite 2 h', 'v1'], ['m1', 11, 1, 'Manon Faure', 'Conduite 1 h', 'v1'],
   ['m1', 14, 2, 'Rayan Saidi', 'Plateau moto 2 h', 'mo1'], ['m1', 16, 1, 'Jade Lefèvre', 'Conduite 1 h', 'v1'], ['m1', 17, 1, 'Adam Bernard', 'Conduite 1 h', 'v1'],
   ['m2', 8, 2, 'Inès Toumi', 'Conduite 2 h', 'v2'], ['m2', 10, 1, 'Chloé Roux', 'Conduite 1 h', 'v2'], ['m2', 11.5, 1, 'Sarah Nicolas', 'Conduite 1 h', 'v2'],
@@ -314,6 +319,12 @@ const PLANNING = [
   ['m4', 9, 1, 'Jade Lefèvre', 'Conduite boîte auto 1 h', 'v5'], ['m4', 10.5, 1, 'Emma Vidal', 'Conduite boîte auto 1 h', 'v5'], ['m4', 11.5, 1, 'Tom Henry', 'Conduite boîte auto 1 h', 'v5'],
   ['m4', 14, 1, 'Sarah Nicolas', 'Conduite boîte auto 1 h', 'v5'], ['m4', 15, 2, 'Enzo Marchal', 'Conduite 2 h', 'v4'], ['m4', 17.5, 1, 'Hugo Durand', 'Conduite boîte auto 1 h', 'v5'],
 ].map(([m, debut, duree, eleve, type, veh], i) => ({ id: 'l' + i, m, debut, fin: debut + duree, duree, eleve, type, veh, prix: PRIX[type] }));
+// « Essayez avec vos données » : moniteurs, véhicules et élèves importés par le visiteur (restés dans son navigateur)
+const DEMO = { MONITEURS: MONITEURS_DEMO, VOITURES: VOITURES_DEMO, MOTOS: MOTOS_DEMO, ELEVES: ELEVES_DEMO, PLANNING: PLANNING_DEMO };
+const IMPORT = lireImport('auto-ecole');
+let appli = DEMO;
+if (IMPORT) { try { appli = appliquerAE(IMPORT.donnees, DEMO); } catch { appli = DEMO; } }
+const { MONITEURS, VOITURES, MOTOS, ELEVES, PLANNING } = appli;
 const OUVERTURE = 8, FERMETURE = 19, H_DISPO = MONITEURS.length * 10; // 10 h de conduite possibles par moniteur
 const CA_MOIS_AVANT = 18420, OBJECTIF_MOIS = 24000, PLACES_CODE = 12;
 // Historique FICTIF des examens du permis B des six derniers mois : [élève, mois (0 = ce mois-ci, 5 = il y a 5 mois), jour,
@@ -348,7 +359,7 @@ const journal = creerJournal({ hh });
 const ROLES = [
   { id: 'gerant', label: 'Gérant·e', qui: 'Hélène Carpentier', rub: null, finances: true, paiements: true, alertes: () => true, moniteurs: null },
   { id: 'secretaire', label: 'Secrétaire', qui: 'Julie Moreau', rub: new Set(['traiter', 'planning', 'vehicules', 'moniteurs', 'eleves', 'code', 'journal']), finances: false, paiements: true, alertes: () => true, moniteurs: null },
-  { id: 'moniteur', label: 'Moniteur·rice', qui: 'Karim Benali', rub: new Set(['planning', 'eleves']), finances: false, paiements: false, alertes: () => false, moniteurs: new Set(['m1']), planningTitre: 'Mon planning', elevesTitre: 'Mes élèves' },
+  { id: 'moniteur', label: 'Moniteur·rice', qui: MONITEURS[0].nom, rub: new Set(['planning', 'eleves']), finances: false, paiements: false, alertes: () => false, moniteurs: new Set(['m1']), planningTitre: 'Mon planning', elevesTitre: 'Mes élèves' },
 ];
 let roleCourant = ROLES[0];
 const ROLE = () => roleCourant;
@@ -665,7 +676,7 @@ function eleveAPlacer(debut, fin) { // l'élève à qui il reste le plus d'heure
   }).filter((e) => e.libre && !e.exam && e.restant >= 1 && e.reste === 0 && !reportees.some((l) => l.eleve === e.nom)).sort((a, b) => b.restant - a.restant);
   return c[0] || null;
 }
-let alertes = [];
+let alertes = [], alertesTout = []; // alertesTout : avant le filtre du rôle (le mode terrain du moniteur y prend les siennes)
 function etatAlertes() {
   return { t, ouverture: OUVERTURE, fermeture: FERMETURE, hTxt, hh, euros, prixHeure: PRIX_HEURE, planning: PLANNING, moniteurs: MONITEURS, voitures: VOITURES, eleves: ELEVES,
     vehicule, kmDuJour, fenetreLibre, voituresPour, eleveAPlacer, resultats, relances, rdvGarage, masque, code: { presents: nbCode(), places: PLACES_CODE } };
@@ -674,6 +685,7 @@ function majAlertes() {
   alertes = calculerAlertes(etatAlertes());
   for (const k of [...JA]) if (!alertes.some((a) => a.cle === k)) JA.delete(k);
   for (const a of alertes) if (!JA.has(a.cle)) { JA.add(a.cle); journal.ajouter({ h: t, qui: 'Calcul automatique', role: 'règles d\'alerte', type: 'alerte', texte: `${a.titre} (${NIVEAUX[a.niveau].nom.toLowerCase()})` }); }
+  alertesTout = alertes;
   alertes = alertes.filter(ROLE().alertes);
   for (const a of alertes) if (vus[a.cle] === undefined) vus[a.cle] = t;
   for (const k of Object.keys(vus)) if (!alertes.some((a) => a.cle === k)) delete vus[k];
@@ -761,7 +773,7 @@ const hex = (c) => '#' + c.toString(16).padStart(6, '0');
 const initiales = (n) => n.split(' ').map((x) => x[0]).join('');
 function htmlTraiter() {
   const n = (k) => alertes.filter((a) => a.niveau === k).length;
-  let h = `<div class="filtres"><span class="chip"><i style="background:#dc2626"></i>${n('urgent')} urgent${n('urgent') > 1 ? 's' : ''}</span><span class="chip"><i style="background:#ea580c"></i>${n('surveiller')} à surveiller</span><span class="chip"><i style="background:#2563eb"></i>${n('conseil')} conseil${n('conseil') > 1 ? 's' : ''}</span><span class="chip">${I.ok}${traites.length} traité${traites.length > 1 ? 's' : ''}</span></div>
+  let h = `<div class="filtres"><span class="chip"><i style="background:#dc2626"></i>${n('urgent')} urgent${n('urgent') > 1 ? 's' : ''}</span><span class="chip"><i style="background:#ea580c"></i>${n('surveiller')} à prévoir</span><span class="chip"><i style="background:#2563eb"></i>${n('conseil')} conseil${n('conseil') > 1 ? 's' : ''}</span><span class="chip">${I.ok}${traites.length} traité${traites.length > 1 ? 's' : ''}</span></div>
     <p class="at-note">Calculé à ${hh(t)} sur les données de la démo (planning, forfaits, paiements, kilométrage, salle de code), mis à jour chaque minute. Les plus urgentes en haut.</p>`;
   if (!alertes.length) h += `<div class="vide"><div class="rond-ok">${I.ok}</div><b>Rien à traiter</b>Toutes les alertes du moment sont traitées. Les nouvelles apparaîtront ici.</div>`;
   const nouveaux = new Set();
@@ -839,17 +851,17 @@ $('contenu').onclick = (ev) => {
 // ================= Actions de « À traiter » : elles changent vraiment l'état de la démo =================
 function agir(act, a) {
   const [k, ...r] = act.split(':'); let res = '';
-  if (k === 'encaisser') { const e = ELEVES[r[0]], m = e[2]; encaissements.push({ nom: r[0], montant: m, t }); e[2] = 0; res = `${euros(m)} encaissés`; }
+  if (k === 'encaisser') { const e = ELEVES[r[0]], m = e[2]; encaissements.push({ nom: r[0], montant: m, t }); e[2] = 0; res = `Paiement de ${euros(m)} noté comme reçu`; }
   else if (k === 'relancer') { relances[r[0]] = t; const nl = PLANNING.filter((l) => l.eleve === r[0] && l.fin > t).sort((x, y) => x.debut - y.debut)[0]; masque['impaye-' + r[0]] = nl ? nl.debut : FERMETURE; res = 'Relancé, rappel à son arrivée'; }
   else if (k === 'forfait') { const e = ELEVES[r[0]]; e[1] += 5; e[2] += 5 * PRIX_HEURE; res = `Forfait passé à ${e[1]} h (+${euros(5 * PRIX_HEURE)} à encaisser)`; }
   else if (k === 'noter') { masque[r[0]] = FERMETURE + 1; res = 'Noté'; }
   else if (k === 'laisser') { masque[r[0]] = +r[1]; res = 'Laissé tel quel'; }
   else if (k === 'examen') { resultats[r[0]] = r[1]; res = r[1] === 'recu' ? 'Reçu : permis obtenu' : 'Ajourné : nouvel examen à prévoir'; }
-  else if (k === 'garage') { rdvGarage[r[0]] = 'demain 8h'; res = 'RDV garage demain 8h, avant les leçons'; }
+  else if (k === 'garage') { rdvGarage[r[0]] = 'demain 8h'; res = 'RDV garage à prendre noté (créneau visé : demain 8h, avant les leçons), à confirmer avec le garage'; }
   else if (k === 'reserver') {
     const [m, veh, g0, eleve] = r, d = +g0; nbAjouts++;
     PLANNING.push({ id: 'l' + (100 + nbAjouts), m, debut: d, fin: d + 1, duree: 1, eleve, type: 'Conduite 1 h', veh, prix: PRIX_HEURE, ajout: true });
-    res = `Leçon réservée à ${hTxt(d)} : ${eleve}, ${vehicule(veh).nom}`;
+    res = `Leçon inscrite au planning à ${hTxt(d)} : ${eleve}, ${vehicule(veh).nom} (à confirmer à l'élève)`;
   } else if (k === 'reporter') {
     const i = PLANNING.findIndex((l) => l.id === r[0]); if (i < 0) return;
     const l = PLANNING.splice(i, 1)[0]; reportees.push(l); if (selection === l.id) selection = null; res = `Leçon de ${hTxt(l.debut)} (${l.eleve}) reportée à demain`;
@@ -877,7 +889,7 @@ function htmlFiche(s) {
   if (/^l\d/.test(s)) {
     const l = PLANNING.find((x) => x.id === s); if (!l) return null;
     const e = ELEVES[l.eleve], st = statut(l), veh = objets[l.veh].data, res = resultats[l.id];
-    html = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span>${res ? ` <span class="statut ${res === 'recu' ? 'dispo' : 'ko'}">${res === 'recu' ? 'Reçu' : 'Ajourné'}</span>` : ''}<ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}${relances[l.eleve] !== undefined ? li('Relancé', 'à ' + hTxt(relances[l.eleve])) : ''}</ul>${e[2] ? `<div class="actions"><button class="btn prim" data-fiche="encaisser:${l.eleve}">Encaisser ${euros(e[2])}</button></div>` : ''}`;
+    html = `<h3>${l.eleve}</h3><p class="sous">${l.type} · ${hTxt(l.debut)} – ${hTxt(l.fin)}</p><span class="statut ${st}">${statutTxt[st]}</span>${res ? ` <span class="statut ${res === 'recu' ? 'dispo' : 'ko'}">${res === 'recu' ? 'Reçu' : 'Ajourné'}</span>` : ''}<ul class="lignes">${li('Moniteur', objets[l.m].data.nom)}${li('Véhicule', veh.nom + ' · ' + veh.modele.split(',')[0])}${li('Prix de la leçon', euros(l.prix))}${li('Forfait', `${e[0]} h faites sur ${e[1]} h`)}${li('Reste à payer', e[2] ? euros(e[2]) : 'à jour')}${relances[l.eleve] !== undefined ? li('Relancé', 'à ' + hTxt(relances[l.eleve])) : ''}</ul>${e[2] ? `<div class="actions"><button class="btn prim" data-fiche="encaisser:${l.eleve}">Noter le paiement reçu (${euros(e[2])})</button></div>` : ''}`;
   } else if (s === 'agence') {
     const n = attente.filter((p) => p.visible).length;
     html = `<h3>L'agence</h3><p class="sous">Accueil, salle d'attente, salle de code (${PLACES_CODE} postes), bureau des moniteurs</p><ul class="lignes">${li('Secrétaire', 'Julie Moreau')}${li('Moniteurs à l\'agence', MONITEURS.filter((m) => dispo(m)).map((m) => m.nom).join(', ') || 'aucun')}${li('Élèves en attente', n)}${li('En salle de code', `${nbCode()} / ${PLACES_CODE}`)}${li('Prochaine leçon', (() => { const l = PLANNING.filter((x) => x.debut > t).sort((a, b) => a.debut - b.debut)[0]; return l ? `${hTxt(l.debut)} · ${l.eleve}` : 'aucune'; })())}</ul>`;
@@ -1008,7 +1020,7 @@ $('recentrer').onclick = () => { choisir(null); const z = RUB_3D[rubrique()]; if
 let avant = performance.now(), dernierRendu = -1;
 function animer(now) {
   // page pleine (Planning, Moniteurs, Élèves, Chiffres) : la journée continue, la 3D n'est plus dessinée (économie de batterie)
-  const cache = !!(ui && ui.plein());
+  const cache = !!(ui && ui.plein()) || document.documentElement.classList.contains('terrain-on'); // mode terrain : la maquette est cachée dessous
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
@@ -1049,7 +1061,7 @@ function animer(now) {
 }
 // pour les tests automatiques : état, alertes, actions, dessins
 window.demo = {
-  objets, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
+  objets, camera, controls, temps: () => t, alertes: () => alertes, traites: () => traites, agir: (act) => { const a = alertes.find((x) => x.actions.some((y) => y.act === act)); if (a) agir(act, a); return !!a; },
   aller: (h) => { t = h; rejouerJournal(); synchroniser(true); majTout(); }, journal: () => journal.entrees(), resume: () => ouvrirResume(), examens,
   role: (id) => { const s = document.getElementById('role-choix'); if (!id) return ROLE().id; s.value = id; s.dispatchEvent(new Event('change')); }, pause: (oui) => { pause = oui; }, info: () => ({ ...renderer.info.render, ...DESSINS }), choisir,
 };
@@ -1072,7 +1084,7 @@ function ouvrirResume() {
   const jour = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
   const demain = [
     ...reportees.map((l) => `Leçon reportée à replacer : ${l.eleve} (${l.type})`),
-    ...Object.entries(rdvGarage).map(([id, q]) => `${vehicule(id).nom} au garage ${q}`),
+    ...Object.entries(rdvGarage).map(([id, q]) => `${vehicule(id).nom} : RDV garage à prendre (visé ${q})`),
     ...dus.map(([n, e]) => `Paiement à demander : ${n}, ${euros(e[2])}${relances[n] !== undefined ? ' (déjà relancé aujourd\'hui)' : ''}`),
     ...Object.entries(ELEVES).filter(([, e]) => e[0] / e[1] >= 0.9 && e[2] === 0).map(([n, e]) => `Fin de forfait : ${n} (${e[0]} / ${e[1]} h), proposer une date d'examen ou des heures`),
   ];
@@ -1093,10 +1105,64 @@ function ouvrirResume() {
   parQui('Résumé du jour consulté');
 }
 rejouerJournal();
-installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+const roles = installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
 appliquerRole(ROLES[0]);
 window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
+// « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
+const droite = document.querySelector('header .droite');
+installerImport({ cle: 'auto-ecole', nom: 'Démo auto-école', tableaux: TABLEAUX_AE, apercu: (d) => appliquerAE(d, DEMO).notes, hote: droite });
+// ================= Mode terrain (téléphone) : la journée, les alertes et l'équipe de la personne choisie =================
+const lecon = (id) => PLANNING.find((l) => l.id === id);
+const monMoniteur = () => (ROLE().moniteurs ? [...ROLE().moniteurs][0] : null);
+const prenomNom = (n) => { const [p, ...r] = n.split(' '); return r.length ? `${p} ${r.join(' ')[0]}.` : p; };
+const pourMoniteur = (a, m) => {
+  if (/^(impaye|forfait)/.test(a.cle)) return false; // l'argent reste au secrétariat et à la gérance
+  if (a.voir === m) return true;
+  const l = lecon(a.voir); if (l && l.m === m) return true;
+  return /^revision-/.test(a.cle) && PLANNING.some((x) => x.m === m && x.veh === a.voir && x.fin > t);
+};
+const etatLecon = (l) => ({ fait: 'fait', occupe: 'encours', avenir: 'avenir' }[statut(l)]);
+const ligneLecon = (l, avecMoniteur) => ({ h: hTxt(l.debut), texte: `${avecMoniteur ? prenomNom(MONITEURS.find((m) => m.id === l.m)?.nom || '') + ' · ' : ''}${l.eleve} · ${l.type} · ${vehicule(l.veh).nom}`, etat: etatLecon(l) });
+function contenuTerrain() {
+  const r = ROLE(), m = monMoniteur();
+  const mesAlertes = (m ? alertesTout.filter((a) => pourMoniteur(a, m)) : alertes).map((a) => ({ ...a, couleur: NIVEAUX[a.niveau].couleur, niveau: NIVEAUX[a.niveau].nom }));
+  const base = { qui: r.qui, poste: r.label + ' · Auto-école Modèle', heure: hh(t), alertes: mesAlertes, traites: traites.filter((x) => !m || mesAlertes.some((a) => a.cle === x.cle) || x.qui === r.qui).map((x) => ({ titre: x.titre, res: x.res, h: hTxt(x.quand) })) };
+  if (m) {
+    const mes = PLANNING.filter((l) => l.m === m).sort((a, b) => a.debut - b.debut), ec = mes.find((l) => statut(l) === 'occupe'), suiv = mes.find((l) => l.debut > t);
+    const prochaine = ec ? { titre: `En leçon avec ${ec.eleve} jusqu'à ${hTxt(ec.fin)}`, detail: `${ec.type} · ${vehicule(ec.veh).nom}${suiv ? ` · ensuite ${hTxt(suiv.debut)} : ${suiv.eleve}` : ''}` }
+      : suiv ? { titre: `${hTxt(suiv.debut)} : ${suiv.eleve}`, detail: `${suiv.type} · ${vehicule(suiv.veh).nom} · départ de l'agence` } : null;
+    const vus = new Set();
+    return { ...base, horaires: mes.length ? `${hTxt(mes[0].debut)} – ${hTxt(Math.max(...mes.map((l) => l.fin)))}` : 'Pas de leçon aujourd\'hui', etat: `${mes.filter((l) => l.fin <= t).length} leçon(s) faite(s) sur ${mes.length}`, prochaine,
+      journee: mes.map((l) => ligneLecon(l, false)), equipeTitre: 'Mes élèves du jour', zone: ec ? vehicule(ec.veh).nom : 'l\'agence',
+      equipe: mes.filter((l) => !vus.has(l.eleve) && vus.add(l.eleve)).map((l) => { const e = ELEVES[l.eleve]; const st = statut(l); return { nom: l.eleve, detail: `${hTxt(l.debut)} · ${l.type}${e ? ` · ${e[0]} h faites sur ${e[1]}` : ''}`, etat: st === 'occupe' ? 'occupe' : st === 'fait' ? 'off' : 'ok' }; }) };
+  }
+  const aVenir = PLANNING.filter((l) => l.fin > t).sort((a, b) => a.debut - b.debut);
+  const top = mesAlertes[0], dep = aVenir.find((l) => l.debut > t);
+  return { ...base, horaires: `Agence ouverte ${hTxt(OUVERTURE)} – ${hTxt(FERMETURE)}`, etat: r.id === 'secretaire' ? 'Accueil et secrétariat' : 'Gérance',
+    prochaine: top ? { titre: top.titre, detail: 'La plus urgente de vos alertes : voir « Mes alertes ».' } : dep ? { titre: `${hTxt(dep.debut)} : départ de ${dep.eleve}`, detail: `${MONITEURS.find((x) => x.id === dep.m)?.nom} · ${vehicule(dep.veh).nom}` } : null,
+    journee: aVenir.slice(0, 8).map((l) => ligneLecon(l, true)), equipeTitre: 'Mon équipe : les moniteurs', zone: r.id === 'secretaire' ? 'l\'accueil' : 'l\'agence',
+    equipe: MONITEURS.map((x) => { const ec = enCours((l) => l.m === x.id), su = PLANNING.filter((l) => l.m === x.id && l.debut > t).sort((a, b) => a.debut - b.debut)[0];
+      return { nom: x.nom, detail: ec ? `En leçon avec ${ec.eleve} jusqu'à ${hTxt(ec.fin)} · ${vehicule(ec.veh).nom}` : su ? `Disponible · prochaine leçon à ${hTxt(su.debut)}` : 'Plus de leçon aujourd\'hui', etat: ec ? 'occupe' : su ? 'ok' : 'off' }; }) };
+}
+const terrain = installerTerrain({
+  cle: 'auto-ecole', hote: document.querySelector('header .droite'), roles: ROLES, role: () => ROLE().id, choisirRole: (id) => roles.choisir(id),
+  contenu: contenuTerrain,
+  agir: (cle, act) => { const a = alertesTout.find((x) => x.cle === cle); if (a) agir(act, a); },
+  voirPlan: () => { ui.aller('accueil'); const m = monMoniteur(); if (m) { const ec = enCours((l) => l.m === m); choisir(ec ? ec.id : m); } else choisir(ROLE().id === 'secretaire' ? 'accueil' : 'agence'); },
+});
+const alerteVisite = () => $('contenu').querySelector('.alerte[data-alerte^="impaye"]:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
+installerVisite({
+  cle: 'auto-ecole', hote: droite, auto: !IMPORT && !terrain.ouvert(),
+  etapes: [
+    { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur le planning, les forfaits, les paiements et les véhicules. Les plus urgentes en haut.', avant: () => ui.aller('traiter'), cible: () => alerteVisite() || $('contenu') },
+    { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous montre l\'endroit concerné : la voiture, le moniteur ou l\'accueil.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-voir]') },
+    { titre: 'Passez à l\'action', texte: () => { const b = alerteVisite()?.querySelector('[data-act].prim:not([disabled])'); return b ? `Cliquez sur « ${b.textContent.trim()} » : l'écran met la journée à jour et le note (rien ne part à l'extérieur).` : 'Cliquez sur l\'action proposée.'; }, action: true, avant: () => { if (selection) choisir(null); if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-act].prim:not([disabled])') },
+    { titre: 'C\'est traité', texte: 'L\'alerte passe dans « Traité aujourd\'hui », avec l\'heure. L\'action est aussi notée dans le Journal.', avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); setTimeout(() => $('contenu').querySelector('.traites')?.scrollIntoView({ block: 'nearest' }), 50); }, cible: () => $('contenu').querySelector('.traites')?.parentElement || $('contenu') },
+    { titre: MOBILE ? 'Vos rubriques, en bas' : 'Vos rubriques, à gauche', texte: 'Planning, véhicules, moniteurs, élèves, code, chiffres : chaque rubrique montre sa zone sur la maquette.', avant: () => ui.aller('accueil'), cible: () => $('rubriques') },
+    { titre: 'Essayez avec vos données', texte: 'Déposez un fichier CSV ou Excel avec vos moniteurs, vos véhicules et vos élèves : la démo se recalcule avec, sans rien envoyer sur Internet.', cible: () => $('btn-import') },
+  ],
+});
 requestAnimationFrame(animer);
 </script>
 </body>
