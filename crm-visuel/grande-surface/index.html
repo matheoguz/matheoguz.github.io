@@ -311,6 +311,7 @@ import { tiroir, carteGraphe, barres, courbes, barresH, anneau as anneauPct, leg
 import { creerJournal, installerRoles, fenetre, mailResume } from '../commun.js';
 import { lireImport, installerImport } from '../import.js';
 import { installerVisite } from '../visite.js';
+import { installerTerrain } from '../terrain.js';
 import { TABLEAUX_GS, appliquerGS } from './donnees.js';
 import { creerBons, FOURNISSEURS_FICHES, MENTION as MENTION_BC } from './commande.js';
 const REDUIT = matchMedia('(prefers-reduced-motion: reduce)'); // animations réduites si l'utilisateur le demande
@@ -1385,7 +1386,7 @@ addEventListener('resize', taille); taille();
 let avant = performance.now(), derniereMinute = -1;
 function animer(now) {
   // page pleine (RH, Chiffres, Équipe) : la journée continue, mais la 3D n'est plus dessinée (économie de batterie)
-  const cache = !!(ui && ui.plein());
+  const cache = !!(ui && ui.plein()) || document.documentElement.classList.contains('terrain-on'); // mode terrain : la maquette est cachée dessous
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) { t += ecoule / 60; if (t >= FERMETURE) { t = OUVERTURE; oublierCommandes(); oublierDecisions(); Object.values(objets).forEach(annulerJob); initReserve(); chaleur.vider(); rejouerJournal(); } synchroniser(); }
   // clients : marche continue sur des boucles lissées, orientation sur la tangente
@@ -1491,7 +1492,7 @@ const RUBRIQUES = [['accueil', 'Accueil'], ['traiter', 'À traiter'], ['stocks',
 const PLEINES = new Set(['rh', 'equipe', 'chiffres', 'journal']);
 ui = creerInterface({ rubriques: RUBRIQUES.map(([id, label, titre, sous]) => ({ id, label, titre, sous, plein: PLEINES.has(id), icone: id === 'journal' ? ICONE_JOURNAL : undefined })), surChangement: surRubrique });
 rejouerJournal();
-installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+const roles = installerRoles({ roles: ROLES, defaut: 'direction', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
 appliquerRole(ROLES[0]);
 calques('accueil'); appliquerCadre(); placerCurseur(); majResume();
 if (document.fonts) document.fonts.ready.then(placerCurseur);
@@ -1499,10 +1500,45 @@ window.demo = { rubrique: (r) => (r ? ui.aller(r) : ui.rubrique()), vue: (v) => 
 // « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
 const droite = document.querySelector('.entete .droite');
 installerImport({ cle: 'grande-surface', nom: 'Démo supermarché', tableaux: TABLEAUX_GS, apercu: (d) => appliquerGS(d, DEMO).notes, hote: droite });
+// ================= Mode terrain (téléphone) : la journée, les alertes et l'équipe de la personne choisie =================
+const moi = () => EQUIPE.find((e) => e.nom === ROLE().qui) || null;
+const etatH = (d, f = d + 0.25) => (t >= f ? 'fait' : t >= d ? 'encours' : 'avenir');
+const nomCaisse = (z) => (/^c\d/.test(z) ? `Caisse ${parseInt(z.slice(1), 10) + 1}` : ZONE_NOM(z));
+function contenuTerrain() {
+  const r = ROLE(), p = moi(), mes = vues();
+  const alertesT = mes.map((a) => ({ ...a, couleur: NIV_ALERTE[a.niveau].couleur, niveau: NIV_ALERTE[a.niveau].nom }));
+  const traitesT = TRAITES.filter((x) => r.alertes({ cle: x.cle })).map((x) => ({ titre: x.titre, res: x.label, h: hTxt(x.h) }));
+  const dp = p ? debutPause(p) : null;
+  const horaires = p ? `${hTxt(p.debut)} – ${hTxt(p.fin)}${dp !== null ? ` · pause à ${hTxt(dp)}` : ''}` : 'Horaires non renseignés';
+  const etat = p ? etatPersonne(p).txt + (p.zone ? ` · ${nomCaisse(p.zone)}` : '') : '';
+  // ma journée : ce qui me concerne aujourd'hui, dans l'ordre
+  let journee = [];
+  if (p) journee.push({ h: hTxt(p.debut), texte: 'Prise de service', etat: etatH(p.debut) }, ...(dp !== null ? [{ h: hTxt(dp), texte: 'Pause de 30 min', etat: etatH(dp, dp + 0.5) }] : []), { h: hTxt(p.fin), texte: 'Fin de service', etat: etatH(p.fin) });
+  if (r.id === 'rayon' || r.id === 'direction') {
+    const mesRayons = r.id === 'rayon' ? new Set(EQUIPE.filter(r.equipe).map((e) => ZONE0[e.id]).filter((z) => /^r\d/.test(z))) : null;
+    journee.push(...LIVRAISONS.filter((d) => (!mesRayons || mesRayons.has(d.rayon))).map((d) => ({ h: hTxt(d.heure), texte: `Livraison : ${d.palettes} palettes, ${RAYONS.find((x) => x.id === d.rayon)?.nom || ''} (${d.fourn})`, etat: etatH(d.heure, d.heure + 0.5) })));
+  }
+  if (r.id === 'rh' || r.id === 'direction') journee.push(...rh.rdvDuJour().map((k) => ({ h: hTxt(k.debut), texte: `Entretien : ${k.nom}, ${k.poste}`, etat: etatH(k.debut, k.fin) })));
+  journee = journee.sort((a, b) => parseFloat(a.h.replace('h', '.')) - parseFloat(b.h.replace('h', '.')));
+  const suiv = journee.find((x) => x.etat !== 'fait');
+  const prochaine = alertesT[0] ? { titre: alertesT[0].titre, detail: 'La plus urgente de vos alertes : voir « Mes alertes ».' } : suiv ? { titre: `${suiv.h} : ${suiv.texte}`, detail: suiv.etat === 'encours' ? 'En cours' : '' } : null;
+  const equipe = (r.id === 'caisse' ? EQUIPE.filter((e) => /^c\d/.test(e.zone)) : EQUIPE.filter(r.equipe)).map((e) => {
+    const s = etatPersonne(e);
+    return { nom: e.nom + (e.nom === r.qui ? ' (moi)' : ''), detail: `${e.poste} · ${s.txt}${s.cle === 'present' ? ' · ' + (r.id === 'caisse' ? nomCaisse(e.zone) : s.detail || '') : ''} · ${hTxt(e.debut)} – ${hTxt(e.fin)}`, etat: s.cle === 'present' ? 'ok' : s.cle === 'pause' ? 'pause' : 'off' };
+  });
+  return { qui: r.qui, poste: `${p ? p.poste : r.label} · Hyper Modèle`, heure: hh(t), horaires, etat, prochaine, journee, alertes: alertesT, traites: traitesT,
+    equipeTitre: r.id === 'caisse' ? 'Les caisses du jour' : r.id === 'direction' ? 'L\'équipe du jour' : 'Mon équipe', equipe, zone: p ? nomCaisse(p.zone) : 'le magasin' };
+}
+const terrain = installerTerrain({
+  cle: 'grande-surface', hote: document.querySelector('.entete .droite'), roles: ROLES, role: () => ROLE().id, choisirRole: (id) => roles.choisir(id),
+  contenu: contenuTerrain,
+  agir: (cle, act) => faire(act),
+  voirPlan: () => { ui.aller('accueil'); const p = moi(), z = ROLE().id === 'direction' ? 'magasin' : p ? p.zone : 'magasin'; voir(z); },
+});
 const alerteCaisse = () => $('contenu').querySelector('.alerte[data-k^="caisse"]:has([data-al="caisse"]:not([disabled]))');
 const alerteVisite = () => alerteCaisse() || $('contenu').querySelector('.alerte:has([data-al].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
 installerVisite({
-  cle: 'grande-surface', hote: droite, auto: !IMPORT,
+  cle: 'grande-surface', hote: droite, auto: !IMPORT && !terrain.ouvert(),
   etapes: [
     { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur les stocks, les files en caisse, les livraisons et le planning. Les plus urgentes en haut.', avant: () => { if (selection) choisir(null); ui.aller('traiter'); }, cible: () => $('contenu').querySelector('.at-liste') },
     { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous emmène à l\'endroit concerné, dans le magasin.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-al-voir]') },

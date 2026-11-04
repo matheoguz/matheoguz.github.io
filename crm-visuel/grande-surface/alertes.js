@@ -11,7 +11,7 @@
 //   pauses     pause prévue repoussée de plus de 10 min par une tâche en cours = conseil
 //   RH         entretien qui commence dans les 30 min = conseil (à surveiller si la responsable RH est absente)
 
-export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626' }, surveiller: { rang: 1, nom: 'À surveiller', couleur: '#ea580c' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb' } };
+export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626' }, surveiller: { rang: 1, nom: 'À prévoir', couleur: '#ea580c' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb' } };
 
 const pc = (x) => Math.round(x * 100) + ' %';
 const pl = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;

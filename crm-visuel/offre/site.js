@@ -124,4 +124,24 @@
     }
     rendre();
   }
+  // Ce que ça vous rapporte : calcul fait sur l'appareil, rien n'est envoyé
+  const calc = $('#calc');
+  if (calc) {
+    const nb = (id) => { const v = parseFloat(String($(id).value).replace(',', '.')); return isFinite(v) && v > 0 ? v : 0; };
+    const fmt = (n, d = 0) => n.toLocaleString('fr-FR', { maximumFractionDigits: d, minimumFractionDigits: 0 });
+    const ABO = 99;
+    const maj = () => {
+      const pers = nb('#cPers'), min = nb('#cMin'), taux = nb('#cTaux'), jours = nb('#cJours');
+      const heures = pers * min * jours / 60, cout = heures * taux;
+      $('#cMinV').textContent = fmt(min) + ' min';
+      $('#cHeures').textContent = fmt(heures, heures < 10 ? 1 : 0) + ' h';
+      $('#cCout').textContent = fmt(Math.round(cout)) + ' €';
+      const c = $('#cComp');
+      if (cout <= 0) c.textContent = 'Indiquez vos chiffres pour voir le résultat.';
+      else if (cout >= ABO) c.innerHTML = 'Soit <b>' + fmt(cout / ABO, 1) + ' fois</b> le prix de départ de l\'abonnement (99 €/mois).';
+      else c.textContent = 'C\'est moins que le prix de départ de l\'abonnement (99 €/mois) : avec ces hypothèses, le temps gagné seul ne le justifie pas.';
+    };
+    $$('input', calc).forEach((x) => x.addEventListener('input', maj));
+    maj();
+  }
 })();

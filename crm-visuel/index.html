@@ -280,6 +280,7 @@ import { source } from './page.js';
 import { creerJournal, installerRoles, fenetre, mailResume } from './commun.js';
 import { lireImport, installerImport } from './import.js';
 import { installerVisite } from './visite.js';
+import { installerTerrain } from './terrain.js';
 import { TABLEAUX_AE, appliquerAE } from './ae-donnees.js';
 
 // ================= Données fictives =================
@@ -675,7 +676,7 @@ function eleveAPlacer(debut, fin) { // l'élève à qui il reste le plus d'heure
   }).filter((e) => e.libre && !e.exam && e.restant >= 1 && e.reste === 0 && !reportees.some((l) => l.eleve === e.nom)).sort((a, b) => b.restant - a.restant);
   return c[0] || null;
 }
-let alertes = [];
+let alertes = [], alertesTout = []; // alertesTout : avant le filtre du rôle (le mode terrain du moniteur y prend les siennes)
 function etatAlertes() {
   return { t, ouverture: OUVERTURE, fermeture: FERMETURE, hTxt, hh, euros, prixHeure: PRIX_HEURE, planning: PLANNING, moniteurs: MONITEURS, voitures: VOITURES, eleves: ELEVES,
     vehicule, kmDuJour, fenetreLibre, voituresPour, eleveAPlacer, resultats, relances, rdvGarage, masque, code: { presents: nbCode(), places: PLACES_CODE } };
@@ -684,6 +685,7 @@ function majAlertes() {
   alertes = calculerAlertes(etatAlertes());
   for (const k of [...JA]) if (!alertes.some((a) => a.cle === k)) JA.delete(k);
   for (const a of alertes) if (!JA.has(a.cle)) { JA.add(a.cle); journal.ajouter({ h: t, qui: 'Calcul automatique', role: 'règles d\'alerte', type: 'alerte', texte: `${a.titre} (${NIVEAUX[a.niveau].nom.toLowerCase()})` }); }
+  alertesTout = alertes;
   alertes = alertes.filter(ROLE().alertes);
   for (const a of alertes) if (vus[a.cle] === undefined) vus[a.cle] = t;
   for (const k of Object.keys(vus)) if (!alertes.some((a) => a.cle === k)) delete vus[k];
@@ -771,7 +773,7 @@ const hex = (c) => '#' + c.toString(16).padStart(6, '0');
 const initiales = (n) => n.split(' ').map((x) => x[0]).join('');
 function htmlTraiter() {
   const n = (k) => alertes.filter((a) => a.niveau === k).length;
-  let h = `<div class="filtres"><span class="chip"><i style="background:#dc2626"></i>${n('urgent')} urgent${n('urgent') > 1 ? 's' : ''}</span><span class="chip"><i style="background:#ea580c"></i>${n('surveiller')} à surveiller</span><span class="chip"><i style="background:#2563eb"></i>${n('conseil')} conseil${n('conseil') > 1 ? 's' : ''}</span><span class="chip">${I.ok}${traites.length} traité${traites.length > 1 ? 's' : ''}</span></div>
+  let h = `<div class="filtres"><span class="chip"><i style="background:#dc2626"></i>${n('urgent')} urgent${n('urgent') > 1 ? 's' : ''}</span><span class="chip"><i style="background:#ea580c"></i>${n('surveiller')} à prévoir</span><span class="chip"><i style="background:#2563eb"></i>${n('conseil')} conseil${n('conseil') > 1 ? 's' : ''}</span><span class="chip">${I.ok}${traites.length} traité${traites.length > 1 ? 's' : ''}</span></div>
     <p class="at-note">Calculé à ${hh(t)} sur les données de la démo (planning, forfaits, paiements, kilométrage, salle de code), mis à jour chaque minute. Les plus urgentes en haut.</p>`;
   if (!alertes.length) h += `<div class="vide"><div class="rond-ok">${I.ok}</div><b>Rien à traiter</b>Toutes les alertes du moment sont traitées. Les nouvelles apparaîtront ici.</div>`;
   const nouveaux = new Set();
@@ -1018,7 +1020,7 @@ $('recentrer').onclick = () => { choisir(null); const z = RUB_3D[rubrique()]; if
 let avant = performance.now(), dernierRendu = -1;
 function animer(now) {
   // page pleine (Planning, Moniteurs, Élèves, Chiffres) : la journée continue, la 3D n'est plus dessinée (économie de batterie)
-  const cache = !!(ui && ui.plein());
+  const cache = !!(ui && ui.plein()) || document.documentElement.classList.contains('terrain-on'); // mode terrain : la maquette est cachée dessous
   const ecoule = Math.max(0, Math.min(1, (now - avant) / 1000)), dt = Math.min(cache ? 0.25 : 0.05, ecoule); avant = now;
   if (!pause) {
     t += ecoule / 60; // 1 s réelle = 1 min de la journée, quelle que soit la vitesse de l'appareil
@@ -1103,16 +1105,55 @@ function ouvrirResume() {
   parQui('Résumé du jour consulté');
 }
 rejouerJournal();
-installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
+const roles = installerRoles({ roles: ROLES, defaut: 'gerant', surChangement: (r) => { appliquerRole(r); journal.ajouter({ h: t, qui: r.qui, role: r.label, type: 'acces', texte: `Écran ouvert avec le rôle « ${r.label} »` }); } });
 appliquerRole(ROLES[0]);
 window.demo.rubrique = (r) => (r ? ui.aller(r) : ui.rubrique());
 synchroniser(true);
 // « Essayez avec vos données » (import CSV / Excel, tout reste dans le navigateur) et visite guidée
 const droite = document.querySelector('header .droite');
 installerImport({ cle: 'auto-ecole', nom: 'Démo auto-école', tableaux: TABLEAUX_AE, apercu: (d) => appliquerAE(d, DEMO).notes, hote: droite });
+// ================= Mode terrain (téléphone) : la journée, les alertes et l'équipe de la personne choisie =================
+const lecon = (id) => PLANNING.find((l) => l.id === id);
+const monMoniteur = () => (ROLE().moniteurs ? [...ROLE().moniteurs][0] : null);
+const prenomNom = (n) => { const [p, ...r] = n.split(' '); return r.length ? `${p} ${r.join(' ')[0]}.` : p; };
+const pourMoniteur = (a, m) => {
+  if (/^(impaye|forfait)/.test(a.cle)) return false; // l'argent reste au secrétariat et à la gérance
+  if (a.voir === m) return true;
+  const l = lecon(a.voir); if (l && l.m === m) return true;
+  return /^revision-/.test(a.cle) && PLANNING.some((x) => x.m === m && x.veh === a.voir && x.fin > t);
+};
+const etatLecon = (l) => ({ fait: 'fait', occupe: 'encours', avenir: 'avenir' }[statut(l)]);
+const ligneLecon = (l, avecMoniteur) => ({ h: hTxt(l.debut), texte: `${avecMoniteur ? prenomNom(MONITEURS.find((m) => m.id === l.m)?.nom || '') + ' · ' : ''}${l.eleve} · ${l.type} · ${vehicule(l.veh).nom}`, etat: etatLecon(l) });
+function contenuTerrain() {
+  const r = ROLE(), m = monMoniteur();
+  const mesAlertes = (m ? alertesTout.filter((a) => pourMoniteur(a, m)) : alertes).map((a) => ({ ...a, couleur: NIVEAUX[a.niveau].couleur, niveau: NIVEAUX[a.niveau].nom }));
+  const base = { qui: r.qui, poste: r.label + ' · Auto-école Modèle', heure: hh(t), alertes: mesAlertes, traites: traites.filter((x) => !m || mesAlertes.some((a) => a.cle === x.cle) || x.qui === r.qui).map((x) => ({ titre: x.titre, res: x.res, h: hTxt(x.quand) })) };
+  if (m) {
+    const mes = PLANNING.filter((l) => l.m === m).sort((a, b) => a.debut - b.debut), ec = mes.find((l) => statut(l) === 'occupe'), suiv = mes.find((l) => l.debut > t);
+    const prochaine = ec ? { titre: `En leçon avec ${ec.eleve} jusqu'à ${hTxt(ec.fin)}`, detail: `${ec.type} · ${vehicule(ec.veh).nom}${suiv ? ` · ensuite ${hTxt(suiv.debut)} : ${suiv.eleve}` : ''}` }
+      : suiv ? { titre: `${hTxt(suiv.debut)} : ${suiv.eleve}`, detail: `${suiv.type} · ${vehicule(suiv.veh).nom} · départ de l'agence` } : null;
+    const vus = new Set();
+    return { ...base, horaires: mes.length ? `${hTxt(mes[0].debut)} – ${hTxt(Math.max(...mes.map((l) => l.fin)))}` : 'Pas de leçon aujourd\'hui', etat: `${mes.filter((l) => l.fin <= t).length} leçon(s) faite(s) sur ${mes.length}`, prochaine,
+      journee: mes.map((l) => ligneLecon(l, false)), equipeTitre: 'Mes élèves du jour', zone: ec ? vehicule(ec.veh).nom : 'l\'agence',
+      equipe: mes.filter((l) => !vus.has(l.eleve) && vus.add(l.eleve)).map((l) => { const e = ELEVES[l.eleve]; const st = statut(l); return { nom: l.eleve, detail: `${hTxt(l.debut)} · ${l.type}${e ? ` · ${e[0]} h faites sur ${e[1]}` : ''}`, etat: st === 'occupe' ? 'occupe' : st === 'fait' ? 'off' : 'ok' }; }) };
+  }
+  const aVenir = PLANNING.filter((l) => l.fin > t).sort((a, b) => a.debut - b.debut);
+  const top = mesAlertes[0], dep = aVenir.find((l) => l.debut > t);
+  return { ...base, horaires: `Agence ouverte ${hTxt(OUVERTURE)} – ${hTxt(FERMETURE)}`, etat: r.id === 'secretaire' ? 'Accueil et secrétariat' : 'Gérance',
+    prochaine: top ? { titre: top.titre, detail: 'La plus urgente de vos alertes : voir « Mes alertes ».' } : dep ? { titre: `${hTxt(dep.debut)} : départ de ${dep.eleve}`, detail: `${MONITEURS.find((x) => x.id === dep.m)?.nom} · ${vehicule(dep.veh).nom}` } : null,
+    journee: aVenir.slice(0, 8).map((l) => ligneLecon(l, true)), equipeTitre: 'Mon équipe : les moniteurs', zone: r.id === 'secretaire' ? 'l\'accueil' : 'l\'agence',
+    equipe: MONITEURS.map((x) => { const ec = enCours((l) => l.m === x.id), su = PLANNING.filter((l) => l.m === x.id && l.debut > t).sort((a, b) => a.debut - b.debut)[0];
+      return { nom: x.nom, detail: ec ? `En leçon avec ${ec.eleve} jusqu'à ${hTxt(ec.fin)} · ${vehicule(ec.veh).nom}` : su ? `Disponible · prochaine leçon à ${hTxt(su.debut)}` : 'Plus de leçon aujourd\'hui', etat: ec ? 'occupe' : su ? 'ok' : 'off' }; }) };
+}
+const terrain = installerTerrain({
+  cle: 'auto-ecole', hote: document.querySelector('header .droite'), roles: ROLES, role: () => ROLE().id, choisirRole: (id) => roles.choisir(id),
+  contenu: contenuTerrain,
+  agir: (cle, act) => { const a = alertesTout.find((x) => x.cle === cle); if (a) agir(act, a); },
+  voirPlan: () => { ui.aller('accueil'); const m = monMoniteur(); if (m) { const ec = enCours((l) => l.m === m); choisir(ec ? ec.id : m); } else choisir(ROLE().id === 'secretaire' ? 'accueil' : 'agence'); },
+});
 const alerteVisite = () => $('contenu').querySelector('.alerte[data-alerte^="impaye"]:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte:has([data-act].prim:not([disabled]))') || $('contenu').querySelector('.alerte');
 installerVisite({
-  cle: 'auto-ecole', hote: droite, auto: !IMPORT,
+  cle: 'auto-ecole', hote: droite, auto: !IMPORT && !terrain.ouvert(),
   etapes: [
     { titre: 'Voici vos alertes', texte: 'Elles sont calculées en direct sur le planning, les forfaits, les paiements et les véhicules. Les plus urgentes en haut.', avant: () => ui.aller('traiter'), cible: () => alerteVisite() || $('contenu') },
     { titre: 'Cliquez sur « Voir »', texte: 'La caméra vous montre l\'endroit concerné : la voiture, le moniteur ou l\'accueil.', action: true, avant: () => { if (ui.rubrique() !== 'traiter') ui.aller('traiter'); alerteVisite()?.scrollIntoView({ block: 'nearest' }); }, cible: () => alerteVisite()?.querySelector('[data-voir]') },

@@ -14,7 +14,7 @@
 //
 //   calculerAlertes(e) -> [{ cle, niveau, icone, titre, detail: [..], voir, lieu, actions: [{ act, label, primaire, off, raison }], score }]
 
-export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626', doux: '#fef2f2' }, surveiller: { rang: 1, nom: 'À surveiller', couleur: '#ea580c', doux: '#fff7ed' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb', doux: '#eff6ff' } };
+export const NIVEAUX = { urgent: { rang: 0, nom: 'Urgent', couleur: '#dc2626', doux: '#fef2f2' }, surveiller: { rang: 1, nom: 'À prévoir', couleur: '#ea580c', doux: '#fff7ed' }, conseil: { rang: 2, nom: 'Conseil', couleur: '#2563eb', doux: '#eff6ff' } };
 export const SEUILS = { impayeUrgent: 300, creneauMax: 2, pauseMidi: 1.5, impayeAvant: 1.5, forfaitMarge: 1, forfaitAvant: 3, examenAvant: 2, revisionPas: 10000, kmParHeure: 25, revisionAlerte: 2000, revisionUrgent: 500, creneauHorizon: 4.5, chargeMax: 8, codeAlerte: 11 };
 
 const prenom = (nom) => nom.split(' ')[0];
