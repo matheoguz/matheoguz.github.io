@@ -38,7 +38,7 @@ const IC = {
   ok: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
 };
 
-export function creerBons({ hh, hTxt, rayon, creneaux, surEnvoi, voir = () => {} }) {
+export function creerBons({ hh, hTxt, rayon, creneaux, surEnvoi, voir = () => {}, surModif = () => {} }) {
   const bons = {}; let num = 0, ouvert = null;
   const jour = () => new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const jourIso = () => { const d = new Date(); return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`; };
@@ -48,7 +48,7 @@ export function creerBons({ hh, hTxt, rayon, creneaux, surEnvoi, voir = () => {}
     const f = FOURNISSEURS_FICHES[rid], c = creneaux();
     let reste = suggestion;
     const lignes = f.refs.map(([ref, lib, part], i) => { const q = i === f.refs.length - 1 ? Math.max(0, reste) : Math.round(suggestion * part); reste -= q; return { ref, lib, q }; });
-    return { rid, numero: `BC-${jourIso()}-${String(++num).padStart(3, '0')}`, lignes, heure: c[0], envoye: null };
+    return { rid, numero: `BC-${jourIso()}-${String(++num).padStart(3, '0')}`, lignes, heure: c[0], envoye: null, sugg: suggestion };
   }
   const bon = (rid) => bons[rid];
 
@@ -142,7 +142,10 @@ export function creerBons({ hh, hTxt, rayon, creneaux, surEnvoi, voir = () => {}
     fenetre.ouvrir({ titre: bons[rid].envoye ? 'Commande envoyée' : 'Préparer la commande', sous: `Bon de commande pré-rempli · ${rayon(rid).nom} · données fictives`, corps: corps(rid), pied: pied(rid), cle: 'bc' });
   }
   function ouvrir(rid, suggestion) {
-    if (!bons[rid] || bons[rid].envoye) bons[rid] = preparer(rid, suggestion);
+    // même calcul que le bouton de l'alerte : le bon suit la quantité du moment (une retouche devient cette quantité)
+    const b0 = bons[rid];
+    if (!b0 || b0.envoye) bons[rid] = preparer(rid, suggestion);
+    else if (b0.sugg !== suggestion) { const n = preparer(rid, suggestion); n.numero = b0.numero; num--; bons[rid] = n; }
     const c = creneaux(); if (!c.includes(bons[rid].heure)) bons[rid].heure = c[0];
     afficher(rid);
   }
@@ -154,7 +157,7 @@ export function creerBons({ hh, hTxt, rayon, creneaux, surEnvoi, voir = () => {}
   }
   document.addEventListener('input', (ev) => {
     if (fenetre.cle() !== 'bc' || !bons[ouvert]) return;
-    const q = ev.target.closest('.bc-q'); if (q) { bons[ouvert].lignes[+q.dataset.i].q = Math.max(0, Math.min(40, Math.round(+q.value || 0))); majPied(); }
+    const q = ev.target.closest('.bc-q'); if (q) { bons[ouvert].lignes[+q.dataset.i].q = Math.max(0, Math.min(40, Math.round(+q.value || 0))); bons[ouvert].sugg = total(bons[ouvert]); majPied(); surModif(ouvert, total(bons[ouvert])); }
   });
   document.addEventListener('change', (ev) => {
     if (fenetre.cle() !== 'bc' || !bons[ouvert]) return;

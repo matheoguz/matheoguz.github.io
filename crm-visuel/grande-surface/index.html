@@ -44,7 +44,8 @@
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
   .horloge { text-align: right; line-height: 1.15; }
   .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-  .horloge small { color: var(--doux); font-size: 11px; }
+  .horloge small { display: block; color: var(--doux); font-size: 11px; white-space: nowrap; }
+  @media (max-width: 1600px) { .horloge small { display: none; } } /* le sous-texte reste en info-bulle (title) */
   .bouton-ic { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--ligne); background: #fff; border-radius: 10px; cursor: pointer; color: #334155; }
   .bouton-ic:hover { background: var(--gris-doux); }
   .bouton-ic.actif { background: var(--bleu-doux); border-color: #bfdbfe; color: var(--bleu); }
@@ -199,7 +200,9 @@
     .marque b .demo, .marque > div > span, .lien-offre span, .horloge small { display: none; }
     .lien-offre { width: 34px; height: 34px; padding: 0; justify-content: center; }
     .bouton-ic { width: 34px; height: 34px; }
-    .direct { padding: 2px 8px; font-size: 11px; }
+    .direct { display: none; } /* la pause dit déjà si la journée tourne : l'en-tête tient sur la largeur d'un téléphone */
+    .marque { flex: 1 1 100%; }
+    .droite { margin-left: auto; }
     .horloge b { font-size: 18px; }
     .droite { gap: 8px; }
     .vues { order: 3; width: 100%; margin: 0; }
@@ -261,7 +264,7 @@
     <div class="droite">
       <div id="role"></div>
       <span class="direct"><i></i>En direct</span>
-      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <div class="horloge" title="Journée accélérée : 1 seconde = 1 minute de démo"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="bouton-ic" id="pause" aria-label="Pause" title="Mettre la journée en pause"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="ic-pause" d="M9 6v12M15 6v12"/><path class="ic-lecture" d="M8 5l11 7-11 7z" fill="currentColor" stroke="none" style="display:none"/></svg><span class="sr">Pause</span></button>
       <a class="lien-offre" href="../offre/" aria-label="L'offre"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>L'offre</span></a>
     </div>
@@ -1081,6 +1084,7 @@ const bons = creerBons({
     return t;
   },
   voir: () => { if (selection) choisir(null); ui.aller('livraisons'); },
+  surModif(rid, q) { quantites[rid] = q; majDecisions(); rendreFiche(); rendrePanneau(); }, // le bouton de l'alerte affiche le même total que le bon
 });
 const preparerCommande = (rid) => bons.ouvrir(rid, quantites[rid] ?? suggestion(RAYON_DE(rid)));
 function oublierCommandes() { for (let i = LIVRAISONS.length - 1; i >= 0; i--) if (LIVRAISONS[i].commande) LIVRAISONS.splice(i, 1); for (const k in commandees) delete commandees[k]; }

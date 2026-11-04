@@ -46,7 +46,8 @@
   @keyframes pouls { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
   .horloge { text-align: right; line-height: 1.15; }
   .horloge b { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-  .horloge small { color: var(--doux); font-size: 11px; }
+  .horloge small { display: block; color: var(--doux); font-size: 11px; white-space: nowrap; }
+  @media (max-width: 1600px) { .horloge small { display: none; } } /* le sous-texte reste en info-bulle (title) */
   .rond { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--ligne); background: var(--carte); display: grid; place-items: center; cursor: pointer; color: var(--texte); transition: background .2s; }
   .rond:hover { background: var(--gris-doux); }
 
@@ -241,7 +242,7 @@
     <div class="droite">
       <div id="role"></div>
       <span class="direct" id="direct"><i></i>En direct</span>
-      <div class="horloge"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
+      <div class="horloge" title="Journée accélérée : 1 seconde = 1 minute de démo"><b id="heure">--:--</b><small>journée accélérée · 1 s = 1 min</small></div>
       <button class="rond" id="pause" aria-label="Mettre en pause" title="Pause"></button>
     </div>
   </header>

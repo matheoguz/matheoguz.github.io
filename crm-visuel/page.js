@@ -35,6 +35,22 @@ if (typeof document !== 'undefined') document.addEventListener('click', (ev) => 
   ev.stopPropagation(); ev.preventDefault(); s.classList.toggle('vu');
 }, true);
 
+// ---------- info-bulle des graphiques (data-tip) ----------
+if (typeof document !== 'undefined') {
+  let tip = null;
+  const montrer = (ev) => {
+    const el = ev.target.closest && ev.target.closest('.pg-svg [data-tip]');
+    if (!el) { if (tip) tip.hidden = true; return; }
+    if (!tip) { tip = document.createElement('div'); tip.className = 'pg-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
+    tip.textContent = el.dataset.tip; tip.hidden = false;
+    tip.classList.toggle('nuit', !!el.closest('.app.nuit'));
+    const r = el.getBoundingClientRect(), x = ev.clientX || r.left + r.width / 2, y = el.classList.contains('pg-zone') ? ev.clientY : r.top;
+    tip.style.left = Math.max(60, Math.min(innerWidth - 60, x)) + 'px'; tip.style.top = Math.max(40, y) + 'px';
+  };
+  document.addEventListener('pointermove', montrer, { passive: true });
+  document.addEventListener('pointerleave', () => { if (tip) tip.hidden = true; });
+}
+
 // ---------- avatars illustrés ----------
 function hache(s) { let h = 2166136261; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
 const FOND = ['#dbeafe', '#dcfce7', '#fef3c7', '#fce7f3', '#ede9fe', '#cffafe', '#ffedd5', '#e2e8f0', '#fee2e2', '#d1fae5', '#e0e7ff', '#fae8ff'];
@@ -77,7 +93,9 @@ export function avatar(nom, { taille = 48, f = estFeminin(nom) } = {}) {
 }
 
 // ---------- briques de page ----------
-export const kpi = ({ ic, c, cd, label, val, det = '', id = '', src = '' }) => `<article class="pg-kpi" ${id ? `id="${id}"` : ''} style="--c:${c};--cd:${cd}"><span class="pg-kpi-ic">${ic}</span><div><b>${val}</b><small>${label}</small>${det ? `<em>${det}</em>` : ''}</div>${src ? source(src) : ''}</article>`;
+// « 44 296 € » -> nombre en grand, unité plus petite (seulement pour un texte simple, sans balise)
+const unite = (v) => { const m = typeof v === 'string' && !/[<>]/.test(v) && v.match(/^(.*\d)\s*(€|%|h|min|j|jours?|ans?|km|palettes?)$/); return m ? `${m[1]}<span class="u">${m[2]}</span>` : v; };
+export const kpi = ({ ic, c, cd, label, val, det = '', id = '', src = '' }) => `<article class="pg-kpi" ${id ? `id="${id}"` : ''} style="--c:${c};--cd:${cd}"><span class="pg-kpi-ic">${ic}</span><div><b>${unite(val)}</b><small>${label}</small>${det ? `<em>${det}</em>` : ''}</div>${src ? source(src) : ''}</article>`;
 export const carteGraphe = (titre, sous, corps, classe = '') => `<section class="pg-carte ${classe}"><div class="pg-ch"><h3>${titre}</h3>${sous ? `<small>${sous}</small>` : ''}</div>${corps}</section>`;
 export const legende = (l) => `<div class="pg-leg">${l.map(([t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`;
 
@@ -90,11 +108,12 @@ const arrondiMax = (m) => { if (m <= 0) return 1; const p = 10 ** Math.floor(Mat
 
 export function barres({ lib, val, coul = '#2563eb', format = (n) => Math.round(n), passe = null, max = null, titreBarre = null }) {
   const m = arrondiMax(max ?? Math.max(...val, 0)), n = val.length, l = (W - G) / n, bw = Math.min(28, l * 0.6);
-  const bars = val.map((v, i) => { const hh = Math.max(0, (v / m) * (H - B - 12)), x = G + i * l + (l - bw) / 2, ok = !passe || passe[i]; return `<rect x="${x.toFixed(1)}" y="${(H - B - hh).toFixed(1)}" width="${bw.toFixed(1)}" height="${hh.toFixed(1)}" rx="3" fill="${ok ? coul : '#e2e8f0'}"><title>${titreBarre ? titreBarre(i) : lib[i] + ' : ' + format(v)}</title></rect>`; }).join('');
+  const bars = val.map((v, i) => { const hh = Math.max(0, (v / m) * (H - B - 12)), x = G + i * l + (l - bw) / 2, ok = !passe || passe[i]; return `<rect x="${x.toFixed(1)}" y="${(H - B - hh).toFixed(1)}" width="${bw.toFixed(1)}" height="${hh.toFixed(1)}" rx="${Math.min(6, bw / 2.5).toFixed(1)}" fill="${ok ? coul : '#e2e8f0'}" data-tip="${esc(titreBarre ? titreBarre(i) : lib[i] + ' : ' + format(v))}"></rect>`; }).join('');
   const libs = lib.map((t, i) => (n > 12 && i % 2 ? '' : `<text x="${(G + i * l + l / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle">${t}</text>`)).join('');
   return `<svg class="pg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">${axeY(m, format)}${bars}${libs}</svg>`;
 }
 
+let numDeg = 0;
 export function courbes({ x, xLib, series, format = (n) => Math.round(n), max = null }) {
   const m = arrondiMax(max ?? Math.max(...series.flatMap((s) => s.val), 0)), x0 = x[0], x1 = x[x.length - 1] || x0 + 1;
   const px = (v) => G + ((v - x0) / (x1 - x0 || 1)) * (W - G - 8), py = (v) => H - B - (v / m) * (H - B - 12);
@@ -102,12 +121,22 @@ export function courbes({ x, xLib, series, format = (n) => Math.round(n), max = 
     const pts = s.val.map((v, i) => [px(s.x ? s.x[i] : x[i]), py(v)]).filter((p) => !Number.isNaN(p[1]));
     if (!pts.length) return '';
     const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-    const aire = s.aire ? `<path d="${d} L${pts[pts.length - 1][0].toFixed(1)} ${H - B} L${pts[0][0].toFixed(1)} ${H - B}Z" fill="${s.coul}" opacity=".12"/>` : '';
+    const gid = 'pgd' + (++numDeg);
+    const aire = s.aire ? `<defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.coul}" stop-opacity=".32"/><stop offset="1" stop-color="${s.coul}" stop-opacity="0"/></linearGradient></defs><path d="${d} L${pts[pts.length - 1][0].toFixed(1)} ${H - B} L${pts[0][0].toFixed(1)} ${H - B}Z" fill="url(#${gid})"/>` : '';
     const [lx, ly] = pts[pts.length - 1];
     return `${aire}<path d="${d}" fill="none" stroke="${s.coul}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.5" fill="${s.coul}"/>`;
   }).join('');
   const libs = xLib.map(([v, t]) => `<text x="${px(v).toFixed(1)}" y="${H - 8}" text-anchor="${px(v) > W - 24 ? 'end' : 'middle'}">${t}</text>`).join('');
-  return `<svg class="pg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">${axeY(m, format)}${traces}${libs}</svg>`;
+  // zones de survol : une colonne par point, info-bulle avec la valeur de chaque série
+  const proche = (v) => { let best = null; for (const [xv, t] of xLib) if (best === null || Math.abs(xv - v) < Math.abs(best[0] - v)) best = [xv, t]; return best && Math.abs(best[0] - v) < 1e-9 ? best[1] : null; };
+  const pas = (W - G - 8) / Math.max(1, x.length - 1);
+  const zones = x.map((xv, i) => {
+    const vals = series.map((s) => [s.nom, s.x ? null : s.val[i]]).filter(([, v]) => v != null && !Number.isNaN(v));
+    if (!vals.length) return '';
+    const tip = [proche(xv), ...vals.map(([nom, v]) => (nom ? nom + ' : ' : '') + format(v))].filter(Boolean).join('\n');
+    return `<rect class="pg-zone" x="${(px(xv) - pas / 2).toFixed(1)}" y="12" width="${pas.toFixed(1)}" height="${H - B - 12}" data-tip="${esc(tip)}"/>`;
+  }).join('');
+  return `<svg class="pg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">${axeY(m, format)}${traces}${libs}${zones}</svg>`;
 }
 
 export const barresH = (lignes) => `<ul class="pg-bh">${lignes.map((l) => `<li ${l.cle ? `data-cle="${l.cle}"` : ''}><span>${l.label}</span><b>${l.txt}</b><i><u style="width:${Math.max(0, Math.min(100, (l.val / (l.max || 1)) * 100)).toFixed(1)}%;background:${l.coul}"></u></i></li>`).join('')}</ul>`;

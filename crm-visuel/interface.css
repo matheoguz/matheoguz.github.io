@@ -170,14 +170,14 @@ details[data-pli][open] > summary { margin-bottom: 12px; }
 .pg-bt { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 1px solid var(--ligne); border-radius: 10px; background: var(--carte); color: var(--texte); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .pg-bt:hover { background: var(--gris-doux); }
 .pg-bt.prim { background: var(--texte); border-color: var(--texte); color: #fff; } .pg-bt.prim:hover { background: #1e293b; }
-.pg-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 0 0 24px; }
+.pg-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(172px, 1fr)); gap: 16px; margin: 0 0 24px; }
 .pg-kpi { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: 1px solid var(--ligne); border-radius: 16px; background: var(--carte); box-shadow: 0 1px 2px rgba(15,23,42,.04); min-width: 0; }
 .pg-kpi-ic { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; }
 .pg-kpi-ic svg { width: 22px; height: 22px; }
 .pg-kpi > div { min-width: 0; display: flex; flex-direction: column; }
 .pg-kpi b { font-size: 24px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pg-kpi small { color: var(--texte); font-size: 12.5px; font-weight: 500; }
-.pg-kpi em { font-style: normal; color: var(--doux); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-kpi em { font-style: normal; color: var(--doux); font-size: 11.5px; line-height: 1.4; }
 .pg-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0 0 16px; }
 .pg-grille.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .pg-carte { padding: 18px 20px 16px; border: 1px solid var(--ligne); border-radius: 16px; background: var(--carte); box-shadow: 0 1px 2px rgba(15,23,42,.04); min-width: 0; }
@@ -507,88 +507,170 @@ td .pdf-bts { flex-wrap: nowrap; }
 .fourn-r li { align-items: center; }
 .fourn-r li > span small + small { margin-top: 0; }
 
-/* ---------- bouton Clair / Verre (en-tête des pages pleines) ---------- */
+/* ---------- chiffres des cartes : jamais coupés (taille adaptée à la largeur de la carte) ---------- */
+.pg-kpi > div { flex: 1; align-self: stretch; container-type: inline-size; }
+.pg-kpi b { overflow: visible; text-overflow: clip; font-size: clamp(16px, 19cqi, 24px); }
+.pg-kpi b .u { font-size: .62em; font-weight: 600; letter-spacing: 0; margin-left: .18em; opacity: .72; }
+.pg-tip { position: fixed; z-index: 1200; pointer-events: none; padding: 7px 10px; border-radius: 9px; background: #0f172a; color: #fff; font: 600 12px/1.35 Inter, system-ui, sans-serif; white-space: pre; box-shadow: 0 8px 24px rgba(15,23,42,.25); transform: translate(-50%, calc(-100% - 12px)); }
+.pg-tip[hidden] { display: none; }
+.pg-svg [data-tip] { cursor: default; }
+.pg-svg .pg-zone { fill: transparent; }
+.pg-svg .pg-zone:hover { fill: rgba(148,163,184,.08); }
+
+/* ---------- bouton Clair / Nuit (en-tête des pages pleines) ---------- */
 .page-tete { position: relative; }
 .page-tete > .page-actions { margin-left: auto; }
 .page-theme { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid var(--ligne); border-radius: 99px; background: var(--carte); color: var(--texte); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .2s, border-color .2s; }
 .page-theme:hover { background: var(--gris-doux); }
-.pt-ic { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
-.page-theme[aria-pressed="true"] .pt-ic { background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.95), rgba(255,255,255,.25) 60%, transparent 70%); }
+.pt-ic { width: 16px; height: 16px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.2); transition: background .3s, box-shadow .3s; }
+.page-theme[aria-pressed="true"] .pt-ic { background: radial-gradient(circle at 70% 30%, transparent 5px, #c7d2fe 5.5px); box-shadow: 0 0 10px rgba(124,140,255,.6); }
 .page-theme:focus-visible { outline: 2px solid var(--ui, #2563eb); outline-offset: 2px; }
 
-/* ---------- thème « Verre » des pages pleines (façon visionOS) ----------
-   Fond : vue de la maquette 3D capturée (--verre-img), floutée, assombrie et légèrement réchauffée.
-   Cartes : verre dépoli (backdrop-filter), liseré blanc, coins 24 px. Les couleurs passent par les variables. */
-.app.plein.verre > .page {
-  --texte: #ffffff; --doux: rgba(255,255,255,.78); --doux2: rgba(255,255,255,.6); --carte: rgba(255,255,255,.13); --ligne: rgba(255,255,255,.2); --ligne2: rgba(255,255,255,.14); --gris-doux: rgba(255,255,255,.1);
-  --verre-flou: blur(32px) saturate(150%);
-  color: #fff; color-scheme: dark;
-  background: linear-gradient(180deg, rgba(34,22,12,.62), rgba(16,11,8,.76)), radial-gradient(120% 90% at 15% 0%, rgba(255,160,80,.22), transparent 60%), linear-gradient(rgba(120,70,30,.18), rgba(120,70,30,.18)), var(--verre-img, none) center / cover no-repeat, linear-gradient(160deg, #3b2f27, #1d1814 60%, #141821);
+/* ---------- thème « Nuit » des pages pleines (façon Linear / Vercel) ----------
+   Fond quasi noir bleuté, halos très doux dans les coins et léger grain ; cartes nettes à liseré fin. */
+.app.plein.nuit > .page {
+  --texte: rgba(255,255,255,.92); --doux: #8b93a7; --doux2: #6b7386; --carte: rgba(18,22,32,.9); --ligne: rgba(255,255,255,.07); --ligne2: rgba(255,255,255,.05); --gris-doux: rgba(255,255,255,.05);
+  --indigo: #7c8cff; --vert: #34d399; --orange: #fbbf24; --rouge: #fb7185; --bleu: #7c8cff; --ui: #7c8cff;
+  color: var(--texte); color-scheme: dark; position: relative; isolation: isolate;
 }
-.app.plein.verre .page-tete h1 { color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
-.app.plein.verre .page-tete p { color: rgba(255,255,255,.8); }
-.app.plein.verre .page-theme, .app.plein.verre .pg-bt, .app.plein.verre .pg-fictif { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-.app.plein.verre .page-theme:hover, .app.plein.verre .pg-bt:hover { background: rgba(255,255,255,.24); }
-.app.plein.verre .pg-bt.prim { background: #fff; border-color: #fff; color: #0f172a; } .app.plein.verre .pg-bt.prim:hover { background: rgba(255,255,255,.88); }
+.app.plein.nuit > .page { /* grain très léger + halos indigo, violet, cyan */ background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(600px 420px at 0% 0%, rgba(124,140,255,.13), transparent 70%),
+    radial-gradient(560px 460px at 100% 8%, rgba(168,85,247,.08), transparent 70%),
+    radial-gradient(700px 520px at 85% 100%, rgba(34,211,238,.06), transparent 70%);
+  background-color: #0c0e14; }
+.app.plein.nuit .page-tete h1 { color: #fff; letter-spacing: -.025em; }
+.app.plein.nuit .page-tete p { color: var(--doux); }
+.app.plein.nuit :is(.page-theme, .pg-bt, .pg-fictif) { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); color: rgba(255,255,255,.88); }
+.app.plein.nuit :is(.page-theme, .pg-bt):hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); }
+.app.plein.nuit .pg-bt.prim { background: #fff; border-color: #fff; color: #0b0d12; } .app.plein.nuit .pg-bt.prim:hover { background: #e5e7f0; }
+.app.plein.nuit .pg-fictif { color: var(--doux); }
 /* les cartes */
-.app.plein.verre :is(.pg-kpi, .pg-carte, .pg-bande, .pp, .frise, .pg-vide, .rh-carte, .kpi) {
-  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.25); border-radius: 24px;
-  box-shadow: 0 10px 34px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.18);
-  -webkit-backdrop-filter: var(--verre-flou); backdrop-filter: var(--verre-flou);
-  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, background .35s;
+.app.plein.nuit :is(.pg-kpi, .pg-carte, .pg-bande, .pp, .frise, .rh-carte, .kpi) {
+  position: relative; background: rgba(18,22,32,.9); border: 1px solid rgba(255,255,255,.07); border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s;
 }
-.app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: translateY(-5px); background: rgba(255,255,255,.17); box-shadow: 0 18px 44px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.22); border-color: rgba(255,255,255,.32); }
-.app.plein.verre .pg-carte.large:hover, .app.plein.verre .frise:hover { transform: none; }
-.app.plein.verre .pg-kpi { padding: 20px 18px; gap: 14px; }
-.app.plein.verre .pg-kpi-ic { width: 42px; height: 42px; }
-.app.plein.verre .pg-kpi b { font-size: 26px; font-weight: 600; letter-spacing: -.03em; color: #fff; }
-.app.plein.verre .pg-kpi small { color: rgba(255,255,255,.86); }
-.app.plein.verre .pg-kpi-ic { background: rgba(255,255,255,.18); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
-.app.plein.verre .pg-carte { padding: 22px 24px 20px; }
+.app.plein.nuit .pg-vide { background: rgba(18,22,32,.6); border: 1px dashed rgba(255,255,255,.1); color: var(--doux); }
+/* bordure qui s'éclaire au survol : dégradé tournant, masqué au centre */
+@property --nuit-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi)::after {
+  content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0; transition: opacity .3s;
+  background: conic-gradient(from var(--nuit-a), rgba(124,140,255,.0), rgba(124,140,255,.75), rgba(34,211,238,.5), rgba(168,85,247,.6), rgba(124,140,255,.0) 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover::after { opacity: 1; animation: nuit-tour 4s linear infinite; }
+@keyframes nuit-tour { to { --nuit-a: 360deg; } }
+.app.plein.nuit :is(.pg-kpi, .pp, .rh-carte, .kpi):hover { transform: translateY(-3px); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 18px 40px -16px rgba(0,0,0,.7), 0 0 0 1px rgba(124,140,255,.08); }
+.app.plein.nuit .pg-carte:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 18px 40px -18px rgba(0,0,0,.7); }
+.app.plein.nuit .pg-carte.large::after, .app.plein.nuit .frise::after { display: none; }
+/* apparition en cascade */
+.app.plein.nuit .page-corps.cascade :is(.pg-kpi, .pg-carte, .pp, .pg-bande, .frise) { animation: nuit-entre .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+@keyframes nuit-entre { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* chiffres clés */
+.app.plein.nuit .pg-kpi { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
+.app.plein.nuit .pg-kpi-ic { width: 34px; height: 34px; border-radius: 10px; background: color-mix(in srgb, var(--c) 18%, transparent); color: color-mix(in srgb, var(--c) 45%, #fff); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent); }
+.app.plein.nuit .pg-kpi-ic svg { width: 17px; height: 17px; }
+.app.plein.nuit .pg-kpi > div { gap: 2px; width: 100%; }
+.app.plein.nuit .pg-kpi b { order: -1; font-size: clamp(20px, 15cqi, 30px); font-weight: 600; letter-spacing: -.035em; color: #fff; line-height: 1.1; margin-bottom: 4px; }
+.app.plein.nuit .pg-kpi small { color: rgba(255,255,255,.82); font-size: 12.5px; }
+.app.plein.nuit .pg-kpi em { color: var(--doux); white-space: normal; line-height: 1.4; }
+.app.plein.nuit .pg-kpi > .src { top: 14px; right: 14px; }
+.app.plein.nuit .pg-carte { padding: 20px 22px 18px; }
+.app.plein.nuit .pg-carte h3, .app.plein.nuit .pg-bande h3 { color: rgba(255,255,255,.92); font-weight: 600; }
 /* textes et petits éléments aux couleurs fixes du thème clair */
-.app.plein.verre :is(.pg-bh li span, .pp-role, .pp-tags span, .ti-role, .pg-st, .rh-carte, .rh-carte p, .rh-carte span) { color: rgba(255,255,255,.88); }
-.app.plein.verre .pp-tags span, .app.plein.verre .pg-onglets button small { background: rgba(255,255,255,.14); color: #fff; }
-.app.plein.verre .pg-st { background: rgba(255,255,255,.14); }
-.app.plein.verre .pg-st.ok { background: rgba(34,197,94,.24); color: #bbf7d0; } .app.plein.verre .pg-st.att { background: rgba(251,146,60,.26); color: #fed7aa; }
-.app.plein.verre .pg-st.ko { background: rgba(248,113,113,.26); color: #fecaca; } .app.plein.verre .pg-st.bleu { background: rgba(96,165,250,.26); color: #dbeafe; }
-.app.plein.verre .pg-svg text { fill: rgba(255,255,255,.72); }
-.app.plein.verre .pg-grille-l { stroke: rgba(255,255,255,.14); }
-.app.plein.verre .pg-svg rect[fill="#e2e8f0"] { fill: rgba(255,255,255,.18); }
-.app.plein.verre .pg-anneau circle:first-child { stroke: rgba(255,255,255,.16); }
-.app.plein.verre .pg-anneau b { color: #fff !important; text-shadow: 0 0 18px rgba(255,255,255,.25); }
-.app.plein.verre .pg-bh li i, .app.plein.verre .pp-barre, .app.plein.verre .ti-sem i { background: rgba(255,255,255,.14); }
-.app.plein.verre .pg-onglets { border-color: rgba(255,255,255,.2); }
-.app.plein.verre .pg-onglets button.actif { border-color: #fff; }
-.app.plein.verre .pg-seg { background: rgba(255,255,255,.12); }
-.app.plein.verre .pg-seg button[aria-pressed="true"] { background: rgba(255,255,255,.9); color: #0f172a; }
-.app.plein.verre :is(.pg-outils input[type="search"], .pg-outils select, .page select, .page input[type="search"]) { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; }
-.app.plein.verre .pg-outils input::placeholder { color: rgba(255,255,255,.7); }
-.app.plein.verre .page option { color: #0f172a; background: #fff; }
-.app.plein.verre .pg-table th { color: rgba(255,255,255,.75); }
-.app.plein.verre .pg-table tr[data-cle]:hover td, .app.plein.verre .lignes-r li[data-cle]:hover { background: rgba(255,255,255,.08); }
-.app.plein.verre .frise-l.tete, .app.plein.verre .frise-l.groupe { background: rgba(255,255,255,.08); }
-.app.plein.verre .frise-piste .h { border-color: rgba(255,255,255,.1); }
-.app.plein.verre .frise-piste .maint { background: #fb7185; box-shadow: 0 0 8px rgba(251,113,133,.7); }
-.app.plein.verre .pg-pile .av { border-color: rgba(255,255,255,.35); }
-.app.plein.verre .src { color: rgba(255,255,255,.7); }
-.app.plein.verre a { color: #bfdbfe; }
-/* sans backdrop-filter : verre plus opaque, pour garder le contraste */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .app.plein.verre :is(.pg-kpi, .pg-carte, .pg-bande, .pp, .frise, .pg-vide, .rh-carte, .kpi) { background: rgba(38,32,28,.86); }
+.app.plein.nuit :is(.pg-bh li span, .pp-role, .ti-role, .lignes-r li span, .rh-carte p, .rh-carte span) { color: #a3abbd; }
+.app.plein.nuit .pp-tags span { background: rgba(255,255,255,.05); color: #b4bccd; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.app.plein.nuit .pg-onglets button small { background: rgba(255,255,255,.07); color: #b4bccd; }
+.app.plein.nuit .pg-onglets button.actif small { background: rgba(124,140,255,.2); color: #c7cfff; }
+/* pastilles de statut lumineuses */
+.app.plein.nuit .pg-st { background: rgba(255,255,255,.05); color: #b4bccd; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.app.plein.nuit .pg-st::before { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent), 0 0 8px currentColor; }
+.app.plein.nuit .pg-st.ok { background: rgba(52,211,153,.1); color: #6ee7b7; box-shadow: inset 0 0 0 1px rgba(52,211,153,.22); }
+.app.plein.nuit .pg-st.att { background: rgba(251,191,36,.1); color: #fcd34d; box-shadow: inset 0 0 0 1px rgba(251,191,36,.22); }
+.app.plein.nuit .pg-st.ko { background: rgba(251,113,133,.1); color: #fda4af; box-shadow: inset 0 0 0 1px rgba(251,113,133,.24); }
+.app.plein.nuit .pg-st.bleu { background: rgba(124,140,255,.12); color: #b4bfff; box-shadow: inset 0 0 0 1px rgba(124,140,255,.26); }
+/* avatars : anneau de la couleur du statut */
+.app.plein.nuit .pp .av { box-shadow: 0 0 0 2px #121620, 0 0 0 3.5px rgba(255,255,255,.14); }
+.app.plein.nuit .pp:has(> .pg-st.ok) .av { box-shadow: 0 0 0 2px #121620, 0 0 0 3.5px #34d399, 0 0 14px rgba(52,211,153,.35); }
+.app.plein.nuit .pp:has(> .pg-st.att) .av { box-shadow: 0 0 0 2px #121620, 0 0 0 3.5px #fbbf24, 0 0 14px rgba(251,191,36,.3); }
+.app.plein.nuit .pp:has(> .pg-st.ko) .av { box-shadow: 0 0 0 2px #121620, 0 0 0 3.5px #fb7185, 0 0 14px rgba(251,113,133,.3); }
+.app.plein.nuit .pp:has(> .pg-st.bleu) .av { box-shadow: 0 0 0 2px #121620, 0 0 0 3.5px #7c8cff, 0 0 14px rgba(124,140,255,.35); }
+.app.plein.nuit .pp-pied { border-color: rgba(255,255,255,.06); }
+.app.plein.nuit .pp-pied b { color: rgba(255,255,255,.92); }
+/* graphiques */
+.app.plein.nuit .pg-svg text { fill: #7d8599; }
+.app.plein.nuit .pg-grille-l { stroke: rgba(255,255,255,.06); stroke-dasharray: 2 4; }
+.app.plein.nuit .pg-svg rect[fill="#e2e8f0"] { fill: rgba(255,255,255,.07); }
+.app.plein.nuit .pg-svg .pg-zone:hover { fill: rgba(255,255,255,.035); }
+.app.plein.nuit .pg-anneau circle:first-child { stroke: rgba(255,255,255,.07); }
+.app.plein.nuit .pg-anneau b { color: #fff !important; font-weight: 600; letter-spacing: -.03em; }
+.app.plein.nuit :is(.pg-bh li i, .pp-barre, .ti-sem i) { background: rgba(255,255,255,.06); }
+.app.plein.nuit .pg-bh li u { box-shadow: 0 0 12px -2px currentColor; }
+.app.plein.nuit .pg-leg { color: var(--doux); }
+/* onglets, filtres, champs */
+.app.plein.nuit .pg-onglets { border-color: rgba(255,255,255,.07); }
+.app.plein.nuit .pg-onglets button { color: var(--doux); }
+.app.plein.nuit .pg-onglets button:hover, .app.plein.nuit .pg-onglets button.actif { color: #fff; }
+.app.plein.nuit .pg-onglets button.actif { border-color: #7c8cff; box-shadow: 0 1px 0 #7c8cff, 0 6px 14px -8px rgba(124,140,255,.8); }
+.app.plein.nuit .pg-seg { background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+.app.plein.nuit .pg-seg button { color: var(--doux); }
+.app.plein.nuit .pg-seg button[aria-pressed="true"] { background: rgba(255,255,255,.1); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.app.plein.nuit :is(.page select, .page input[type="search"], .page input[type="number"], .page input[type="text"]) {
+  background-color: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.09); color: rgba(255,255,255,.92); border-radius: 10px; transition: border-color .2s, box-shadow .2s;
 }
-.app.plein.verre > .page { --vert: #86efac; --rouge: #fca5a5; --orange: #fdba74; --bleu: #93c5fd; }
-.app.plein.verre .page .tend.neutre { color: rgba(255,255,255,.8); }
-.app.plein.verre .page .kpi-ic { background: rgba(255,255,255,.18); color: #fff; }
+.app.plein.nuit .page select { -webkit-appearance: none; appearance: none; padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b93a7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center; }
+.app.plein.nuit :is(.page select, .page input):hover { border-color: rgba(255,255,255,.16); }
+.app.plein.nuit :is(.page select, .page input):focus { outline: none; border-color: rgba(124,140,255,.7); box-shadow: 0 0 0 3px rgba(124,140,255,.2); }
+.app.plein.nuit .page input::placeholder { color: #7d8599; }
+.app.plein.nuit .page option { color: #e5e7ef; background: #151923; }
+.app.plein.nuit .pg-compte, .app.plein.nuit .jr-compte { color: var(--doux); }
+/* tableaux, listes, frise */
+.app.plein.nuit .pg-table th { color: #7d8599; border-color: rgba(255,255,255,.07); }
+.app.plein.nuit .pg-table td { border-color: rgba(255,255,255,.05); }
+.app.plein.nuit .pg-table tr[data-cle]:hover td, .app.plein.nuit .lignes-r li[data-cle]:hover { background: rgba(255,255,255,.03); }
+.app.plein.nuit .jr-type, .app.plein.nuit .page .kpi-ic { background: color-mix(in srgb, var(--c) 18%, transparent); color: color-mix(in srgb, var(--c) 40%, #fff); }
+.app.plein.nuit .frise-l { border-color: rgba(255,255,255,.05); }
+.app.plein.nuit .frise-l.tete, .app.plein.nuit .frise-l.groupe { background: rgba(255,255,255,.025); }
+.app.plein.nuit .frise-piste .h { border-color: rgba(255,255,255,.05); }
+.app.plein.nuit .frise-piste .bloc-f { filter: saturate(1.1) brightness(.95); }
+.app.plein.nuit .frise-piste .maint { background: #fb7185; box-shadow: 0 0 10px rgba(251,113,133,.8); }
+.app.plein.nuit .pg-pile .av { border-color: #121620; }
+.app.plein.nuit .src { color: #7d8599; }
+.app.plein.nuit .page a { color: #a5b4fc; }
+.app.plein.nuit .page .tend.neutre { color: var(--doux); }
+.app.plein.nuit .page ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
+.app.plein.nuit > .page { scrollbar-color: rgba(255,255,255,.12) transparent; }
+.app.plein.nuit .pg-tip, .pg-tip.nuit { background: #1a1f2b; color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 12px 32px rgba(0,0,0,.5); }
+/* en Nuit, la barre de rubriques et l'en-tête passent aussi en sombre (un seul produit, pas un cadre clair autour) */
+.app.plein.nuit > :is(header, .rubriques) { --texte: rgba(255,255,255,.92); --doux: #8b93a7; --carte: #0a0c11; --ligne: rgba(255,255,255,.07); --gris-doux: rgba(255,255,255,.05); --ui-doux: rgba(124,140,255,.12); --ui: #7c8cff; color-scheme: dark; color: var(--texte); background: #0a0c11; border-color: rgba(255,255,255,.07); }
+.app.plein.nuit .rubriques button.actif { box-shadow: inset 0 0 0 1px rgba(124,140,255,.18); }
+.app.plein.nuit > header :is(.bouton-ic, .role-sel, button:not(.lien-offre)) { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09); color: rgba(255,255,255,.88); }
+.app.plein.nuit > header :is(.bouton-ic, button:not(.lien-offre)):hover { background: rgba(255,255,255,.08); }
+.app.plein.nuit > header .role-sel select { color: #fff; } .app.plein.nuit > header .role-sel option { background: #151923; color: #e5e7ef; }
+.app.plein.nuit > header .direct { background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.25); color: #6ee7b7; } .app.plein.nuit > header .direct i { background: #34d399; box-shadow: 0 0 8px #34d399; }
+.app.plein.nuit > header .lien-offre { background: #fff; color: #0b0d12; } .app.plein.nuit > header .lien-offre:hover { background: #e5e7f0; }
+.app.plein.nuit > header .demo { background: rgba(251,191,36,.14); color: #fcd34d; }
+.app.plein.nuit > header .logo { box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 6px 18px -6px rgba(239,68,68,.6); }
+/* couleurs des graphiques : versions plus lumineuses des teintes du thème clair */
+.app.plein.nuit .pg-svg [stroke="#2563eb"] { stroke: #7c8cff; } .app.plein.nuit .pg-svg [fill="#2563eb"] { fill: #7c8cff; } .app.plein.nuit .pg-svg [stop-color="#2563eb"] { stop-color: #7c8cff; }
+.app.plein.nuit .pg-svg [stroke="#16a34a"] { stroke: #34d399; } .app.plein.nuit .pg-svg [fill="#16a34a"] { fill: #34d399; } .app.plein.nuit .pg-svg [stop-color="#16a34a"] { stop-color: #34d399; }
+.app.plein.nuit .pg-svg [stroke="#dc2626"] { stroke: #fb7185; } .app.plein.nuit .pg-svg [fill="#dc2626"] { fill: #fb7185; } .app.plein.nuit .pg-svg [stop-color="#dc2626"] { stop-color: #fb7185; }
+.app.plein.nuit .pg-svg [stroke="#ea580c"] { stroke: #fbbf24; } .app.plein.nuit .pg-svg [fill="#ea580c"] { fill: #fbbf24; } .app.plein.nuit .pg-svg [stop-color="#ea580c"] { stop-color: #fbbf24; }
+.app.plein.nuit .pg-svg [stroke="#7c3aed"] { stroke: #a78bfa; } .app.plein.nuit .pg-svg [fill="#7c3aed"] { fill: #a78bfa; } .app.plein.nuit .pg-svg [stop-color="#7c3aed"] { stop-color: #a78bfa; }
+.app.plein.nuit .pg-svg rect[data-tip] { transition: opacity .2s; } .app.plein.nuit .pg-svg:hover rect[data-tip]:not(:hover) { opacity: .55; }
 @media (prefers-reduced-motion: reduce) {
-  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi) { transition: none; }
-  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; }
+  .app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi) { transition: none; }
+  .app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; }
+  .app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover::after { animation: none; }
+  .app.plein.nuit .page-corps.cascade * { animation: none !important; }
 }
 @media (max-width: 900px) {
-  .app.plein.verre > .page { --verre-flou: blur(24px) saturate(140%); }
-  .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .frise, .pg-bande) { border-radius: 20px; }
-  .app.plein.verre .pg-kpi { padding: 14px; }
-  .app.plein.verre .pg-kpi b { font-size: 22px; }
-  .page-theme .pt-l { display: none; } .page-theme { padding: 0 9px; }
+  .app.plein.nuit .pg-kpi { padding: 14px; gap: 10px; }
+  .app.plein.nuit .pg-kpi b { font-size: clamp(18px, 14cqi, 24px); }
+  .page-theme .pt-l { display: none; } .page-theme { padding: 0 10px; }
 }
-@media (hover: none) { .app.plein.verre :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; } }
+@media (hover: none) { .app.plein.nuit :is(.pg-kpi, .pg-carte, .pp, .rh-carte, .kpi):hover { transform: none; } }
 .vg-active .fen-voile { z-index: 1050; }

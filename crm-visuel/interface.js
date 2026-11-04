@@ -11,10 +11,11 @@
 //   ui.plein()            // la rubrique en cours est une page pleine (rubrique { plein: true, sous })
 //   ui.page()             // { corps, actions } de la page pleine (en-tête : titre et sous-titre de la rubrique)
 //   ui.autoriser(ids)     // rubriques visibles pour le rôle choisi (Set d'ids, null = toutes) ; sinon retour à l'accueil
-//   ui.theme(t)           // thème des pages pleines : 'verre' (défaut) ou 'clair' ; mémorisé (localStorage), bouton dans l'en-tête
+//   ui.theme(t)           // thème des pages pleines : 'nuit' (défaut) ou 'clair' ; mémorisé (localStorage), bouton dans l'en-tête
 //
-// Thème « Verre » : cartes en verre dépoli posées sur une vue floutée et assombrie de la maquette 3D, capturée
-// à l'entrée d'une page pleine (le renderer garde son image : preserveDrawingBuffer). Style : interface.css.
+// Thème « Nuit » : fond quasi noir bleuté, cartes nettes à liseré fin, accents vifs (style : interface.css).
+// À l'entrée d'une page pleine, les cartes apparaissent en cascade et les chiffres clés défilent jusqu'à leur valeur
+// (rien de tout ça si l'utilisateur a demandé moins d'animations).
 //
 // Page pleine : la maquette 3D et le panneau sont masqués (la scène n'est pas recréée), la page prend toute
 // la largeur à droite de la barre de rubriques. La page hôte met son rendu 3D en pause tant que ui.plein().
@@ -53,35 +54,47 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   let page = document.getElementById('page');
   if (!page) {
     page = document.createElement('section'); page.className = 'page'; page.id = 'page'; page.setAttribute('aria-labelledby', 'page-titre');
-    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div><button type="button" class="page-theme" id="page-theme" aria-pressed="true" title="Changer l\'apparence des pages"><span class="pt-ic" aria-hidden="true"></span><span class="pt-l">Verre</span></button></div><div class="page-corps" id="page-corps"></div>';
+    page.innerHTML = '<div class="page-tete"><div><h1 id="page-titre"></h1><p id="page-sous"></p></div><div class="page-actions" id="page-actions"></div><button type="button" class="page-theme" id="page-theme" aria-pressed="true" title="Changer l\'apparence des pages"><span class="pt-ic" aria-hidden="true"></span><span class="pt-l">Nuit</span></button></div><div class="page-corps" id="page-corps"></div>';
     nav.after(page);
   }
   // ---------- thème des pages pleines ----------
   const CLE_THEME = 'crm-visuel-theme';
-  let theme = 'verre';
-  try { const m = localStorage.getItem(CLE_THEME); if (m === 'clair' || m === 'verre') theme = m; } catch { /* stockage indisponible */ }
+  let theme = 'nuit';
+  try { const m = localStorage.getItem(CLE_THEME); if (m === 'clair') theme = m; } catch { /* stockage indisponible */ }
   const btTheme = document.getElementById('page-theme');
   function poserTheme(t, garder = false) {
-    theme = t === 'clair' ? 'clair' : 'verre';
-    app.classList.toggle('verre', theme === 'verre');
-    if (btTheme) { btTheme.setAttribute('aria-pressed', theme === 'verre'); btTheme.querySelector('.pt-l').textContent = theme === 'verre' ? 'Verre' : 'Clair'; btTheme.title = theme === 'verre' ? 'Apparence : verre. Passer en clair' : 'Apparence : clair. Passer en verre'; btTheme.setAttribute('aria-label', btTheme.title); }
+    theme = t === 'clair' ? 'clair' : 'nuit';
+    app.classList.toggle('nuit', theme === 'nuit');
+    if (btTheme) { btTheme.setAttribute('aria-pressed', theme === 'nuit'); btTheme.querySelector('.pt-l').textContent = theme === 'nuit' ? 'Nuit' : 'Clair'; btTheme.title = theme === 'nuit' ? 'Apparence : nuit. Passer en clair' : 'Apparence : clair. Passer en nuit'; btTheme.setAttribute('aria-label', btTheme.title); }
     if (garder) try { localStorage.setItem(CLE_THEME, theme); } catch { /* navigation privée */ }
   }
-  if (btTheme) btTheme.onclick = () => poserTheme(theme === 'verre' ? 'clair' : 'verre', true);
+  if (btTheme) btTheme.onclick = () => poserTheme(theme === 'nuit' ? 'clair' : 'nuit', true);
   poserTheme(theme);
-  // fond du thème verre : image réduite de la maquette 3D, adoucie (le flou et la teinte finissent en CSS)
-  function capturerFond() {
-    const gl = app.querySelector('.centre canvas');
-    if (!gl || !gl.width || !gl.height || !gl.offsetWidth) return;
-    try {
-      const r = gl.height / gl.width, p = document.createElement('canvas'); p.width = 48; p.height = Math.max(1, Math.round(48 * r));
-      p.getContext('2d').drawImage(gl, 0, 0, p.width, p.height);
-      const g = document.createElement('canvas'); g.width = 480; g.height = Math.max(1, Math.round(480 * r));
-      const c = g.getContext('2d'); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
-      if ('filter' in c) c.filter = 'blur(6px)';
-      c.drawImage(p, -12, -12, g.width + 24, g.height + 24);
-      app.style.setProperty('--verre-img', `url("${g.toDataURL('image/jpeg', 0.82)}")`);
-    } catch { /* canvas illisible : le dégradé de secours reste */ }
+  // entrée d'une page pleine : cartes en cascade, chiffres clés qui défilent (une seule fois par entrée)
+  const calme = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animerEntree() {
+    const corps = document.getElementById('page-corps'); if (!corps || calme()) return;
+    corps.classList.remove('cascade');
+    corps.querySelectorAll(':scope :is(.pg-kpi, .pg-carte, .pp, .pg-bande, .frise)').forEach((el, i) => el.style.setProperty('--i', Math.min(i, 14)));
+    void corps.offsetWidth; corps.classList.add('cascade');
+    clearTimeout(animerEntree.t); animerEntree.t = setTimeout(() => corps.classList.remove('cascade'), 1400);
+    corps.querySelectorAll('.pg-kpi b').forEach(defiler);
+  }
+  // fait défiler le premier nombre du texte (« 44 296 € », « 14 / 22 ») de 0 à sa valeur, puis remet le texte exact
+  function defiler(b) {
+    const n = [...b.childNodes].find((x) => x.nodeType === 3 && /\d/.test(x.data)); if (!n) return;
+    const fin = n.data, m = fin.match(/\d[\d\s\u202f\u00a0]*(?:,\d+)?/); if (!m) return;
+    const brut = m[0].replace(/[\s\u202f\u00a0]/g, ''), dec = (brut.split(',')[1] || '').length, v = parseFloat(brut.replace(',', '.'));
+    if (!Number.isFinite(v) || v === 0) return;
+    const fmt = (x) => x.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    const t0 = performance.now(), duree = 700;
+    const pas = (t) => {
+      if (!n.isConnected || n.data !== n._vu && n._vu !== undefined) return; // la page a été redessinée entre-temps
+      const k = Math.min(1, (t - t0) / duree), e = 1 - (1 - k) ** 3;
+      n.data = k < 1 ? fin.replace(m[0], fmt(v * e) + (/\s$/.test(m[0]) ? ' ' : '')) : fin; n._vu = n.data;
+      if (k < 1) requestAnimationFrame(pas);
+    };
+    requestAnimationFrame(pas);
   }
   let courante = defaut;
   const redimensionner = () => dispatchEvent(new Event('resize')); // la maquette 3D se recale sur sa nouvelle place
@@ -94,7 +107,6 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
   function aller(id) {
     if (!rubriques.some((r) => r.id === id)) return;
     const R = rubriques.find((r) => r.id === id), plein = !!R.plein, change = app.classList.contains('plein') !== plein;
-    if (plein && !app.classList.contains('plein')) capturerFond(); // la 3D est encore visible : on garde son image
     courante = id; app.dataset.rubrique = id;
     app.classList.toggle('plein', plein);
     if (plein) { document.getElementById('page-titre').textContent = R.titre || R.label; document.getElementById('page-sous').textContent = R.sous || ''; document.getElementById('page-actions').innerHTML = ''; page.scrollTop = 0; }
@@ -106,6 +118,7 @@ export function creerInterface({ rubriques, surChangement = () => {}, defaut = '
     if (change) redimensionner();
     const b = nav.querySelector(`[data-rub="${id}"]`); if (b && nav.scrollWidth > nav.clientWidth) b.scrollIntoView({ block: 'nearest', inline: 'center' });
     surChangement(id);
+    if (plein) animerEntree();
     const c = document.getElementById('contenu'); if (c) c.scrollTop = 0;
   }
   function fiche(oui) {
