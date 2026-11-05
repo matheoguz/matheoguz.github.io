@@ -1,0 +1,12 @@
+Fichiers tiers utilisés par la démo « Transports Modèle »
+
+assets/quarry_01_1k.hdr
+  Ciel HDRI « Quarry 01 » de Poly Haven (https://polyhaven.com/a/quarry_01), licence CC0 (domaine public).
+  Copie prise dans le dépôt three.js r160 (examples/textures/equirectangular/).
+
+../vendor/jsm/ (RGBELoader, RoundedBoxGeometry, EffectComposer, RenderPass, ShaderPass, MaskPass, Pass,
+GTAOPass, UnrealBloomPass, OutputPass, shaders, SimplexNoise)
+  three.js r160, licence MIT (voir ../vendor/LICENSE-three.txt).
+
+Toutes les autres textures (enrobé, béton, herbe, bardage, portes, vitrages, bâches, enseignes) sont dessinées
+dans le navigateur par tr-decor.js. Le logo « Transports Modèle » est fictif.

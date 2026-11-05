@@ -212,7 +212,7 @@ export function construireDecor(ctx) {
   const { THREE, scene, T } = ctx;
   const D = details(THREE), [sx0, sz0, sW, sH] = PLAN.site, r = hasard(5);
   const M = {}, std = (o) => new THREE.MeshStandardMaterial(o);
-  M.herbe = std({ map: rep(THREE, D.herbe, 160), normalMap: rep(THREE, D.herbeN.clone(), 160), roughness: 0.95 }); M.herbe.normalMap.needsUpdate = true;
+  M.herbe = std({ map: rep(THREE, D.herbe, 160), normalMap: rep(THREE, D.herbeN.clone(), 160), color: 0xb4b8a6, roughness: 0.95 }); M.herbe.normalMap.needsUpdate = true;
   M.site = std({ map: T.site, normalMap: D.asphalteN, roughness: 0.9 }); M.site.normalMap = rep(THREE, D.asphalteN.clone(), sW / 3, sH / 3); M.site.normalMap.needsUpdate = true;
   M.route = std({ map: rep(THREE, T.route, 12, 1), roughness: 0.88 }); M.route.normalMap = rep(THREE, D.asphalteN.clone(), 1600 / 3, 3); M.route.normalMap.needsUpdate = true;
   M.beton = std({ map: rep(THREE, D.beton), normalMap: rep(THREE, D.betonN), roughness: 0.85 });
@@ -430,7 +430,7 @@ export function construireDecor(ctx) {
 
   // ---- voisinage : autres entrepôts de la zone d'activité ----
   const voisin = (x, z, l, p, h, mB) => { bloc(l, h, p, M.bardage, x, 0, z, { e: 1 }); bloc(l + 0.2, 1.2, p + 0.2, mB, x, h - 1.2, z); bloc(l - 0.6, 0.15, p - 0.6, M.toit, x, h - 0.4, z, { ombre: false }); sol(l + 16, p + 22, M.site, x, 0.03, z + 6); };
-  voisin(-30, -112, 70, 30, 11, M.bardageG); voisin(125, -80, 55, 38, 10, M.bardageB); voisin(-165, -40, 40, 60, 11, M.bardageG);
+  voisin(-20, -150, 60, 26, 9, M.bardageG); voisin(125, -80, 55, 38, 10, M.bardageB); voisin(-165, -40, 40, 60, 11, M.bardageG);
   voisin(110, 85, 70, 36, 9, M.bardageG); voisin(-60, 90, 54, 30, 10, M.bardageB);
   for (const [x, z] of [[-60, 70], [110, 64]]) sol(10, 26, M.route, x, 0.04, z);
 

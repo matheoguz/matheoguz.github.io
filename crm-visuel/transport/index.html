@@ -265,7 +265,7 @@
     <div class="pan-tete"><button class="pan-retour" id="pan-retour" type="button"></button><h2 id="pan-titre"></h2><button class="pan-fermer" id="pan-fermer" type="button" aria-label="Fermer le panneau"></button></div>
     <div class="fiche" id="fiche" role="region" aria-live="polite"><button class="fermer" id="fermer" aria-label="Fermer la fiche"></button><div id="fiche-c"></div></div>
     <div class="contenu" id="contenu"></div>
-    <p class="note">Démo avec des données inventées : aucune vraie entreprise, aucun vrai chauffeur. Un clic sur un véhicule, une personne ou une zone de la maquette ouvre sa fiche.</p>
+    <p class="note">Démo avec des données inventées : aucune vraie entreprise, aucun vrai chauffeur. Un clic sur un véhicule, une personne ou une zone de la maquette ouvre sa fiche. <small>Rendu 3D : three.js (MIT), ciel HDRI « Quarry 01 » de Poly Haven (CC0).</small></p>
   </aside>
   <div hidden id="kpis-reserve"><div class="grille-kpi" id="kpis"></div></div>
 </div>
@@ -969,7 +969,7 @@ function taille() {
   const w = conteneur.clientWidth, h = conteneur.clientHeight; if (!w || !h) return;
   renderer.setSize(w, h, false);
   // en portrait, on élargit le champ (jusqu'à 55°) puis on recule, pour garder la même largeur de dépôt à l'écran
-  const a = w / h, k = a < 1.1 ? 1.1 / a : 1, zv = zoomVue(), tanV = Math.min(TAN0 * k, Math.tan(THREE.MathUtils.degToRad(27.5)));
+  const a = w / h, k = a < 1.1 ? 0.8 / a : 1, zv = zoomVue(), tanV = Math.min(TAN0 * k, Math.tan(THREE.MathUtils.degToRad(27.5)));
   camera.aspect = a; camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(tanV)); camera.updateProjectionMatrix();
   D0 = (50 / TAN0) * (TAN0 * k) / tanV; controls.minDistance = D0 / 5; controls.maxDistance = D0 / 0.8;
   camera.position.sub(controls.target).setLength(D0 / zv).add(controls.target);
