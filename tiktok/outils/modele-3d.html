@@ -293,8 +293,8 @@ const P = (beat, d = 0) => fin(beat, d);
 const FP = (beat, d = 0) => finPhrase(beat) + d;
 // Caméra : [temps, position, cible, durée du mouvement]
 const PLANS = [
-  [0, [-9.3, 2.6, 4.6], [-10, 2.0, 1.2], 0.01],
-  [0.2, [-9.0, 2.7, 5.4], [-10, 1.9, 1.2], 1.6],
+  [0, [-7.6, 3.6, 11], [-10, 1.9, 1.2], 0.01],
+  [0.02, [-9.0, 2.7, 5.4], [-10, 1.9, 1.2], 0.6],
   [P("hudFam") - 1.6, [-2, 9, 24], [0, 0.6, -1], 2.4],
   [P("hudAll"), [1, 10, 27], [1, 0.2, -1], 4],
   [P("pan"), [-7, 2.3, 6.2], [-5, 0.9, 0], 0.8],
@@ -318,13 +318,18 @@ const PLANS = [
 ];
 function plan(t) {
   const pos = new THREE.Vector3(...PLANS[0][1]), cib = new THREE.Vector3(...PLANS[0][2]);
-  for (const [kt, kp, kc, kd] of PLANS) {
+  for (const [kt, kp, kc, kd0] of PLANS) {
     if (t < kt) break;
+    const kd = kd0 <= 1.2 ? kd0 * 0.5 : kd0;
     const p = ease(t, kt, kd);
     pos.lerp(new THREE.Vector3(...kp), p); cib.lerp(new THREE.Vector3(...kc), p);
   }
   pos.x += Math.sin(t * 0.7) * 0.06; pos.y += Math.sin(t * 0.9 + 1) * 0.04;
-  return { pos, cib };
+  // punch sur les mots clés (couleur) ; secousse sur les mauvaises nouvelles (rouge)
+  let punch = 0, choc = 0;
+  for (const w of WORDS) { if (w.c === "w" || t < w.t || t > w.t + 0.45) continue; const k = Math.exp(-(t - w.t) * 9); punch = Math.max(punch, k); if (w.c === "r") choc = Math.max(choc, k); }
+  pos.x += Math.sin(t * 71) * 0.06 * choc; pos.y += Math.cos(t * 63) * 0.05 * choc;
+  return { pos, cib, fov: 50 - 6 * punch - 3 * choc };
 }
 // Trajets [temps, x, z, durée]
 const TRAJ_MALO = [
@@ -462,6 +467,24 @@ function decor(t) {
   vapeur.forEach((m, i) => { const c = (t * 0.6 + i / vapeur.length) % 1; m.material.opacity = vap * 0.55 * (1 - c); m.position.set(0.15 + Math.sin(c * 6 + i) * 0.12, 0.6 + c * 1.6, 0.45); m.scale.setScalar(0.6 + c * 1.6); });
 }
 
+/* ---------- Temps forts : flashs + bruitages ---------- */
+const FIN_DEBLAI = P("calc2", 0.3) + (FP("calc2") - P("calc2") + 0.4);
+const FLASHS = [FP("calc1", 0.1), FIN_DEBLAI, FP("calc3", 0.1), P("ok")];
+const EVENEMENTS = [];
+const ev = (t, type, d = 0) => { if (t >= 0) EVENEMENTS.push({ t: +t.toFixed(3), type, d }); };
+PLANS.forEach(([kt, , , kd], i) => { if (i > 1 && kd <= 1.2) ev(kt, "whoosh"); });
+ev(0.02, "whoosh");
+[P("hudFam"), P("hudAll"), P("p1"), P("p2"), P("p3"), P("calc1"), P("calc2"), P("calc3"), P("liste"), P("bilan"), P("choix"), P("choix", 1.0), P("comment")].forEach((t) => ev(t, "pop"));
+[0.4, P("presque") - 2.4, P("p1", 1.2), P("ok"), P("roger", 1.0)].forEach((t) => ev(t, "bulle"));
+[P("wouf", 1.4), P("ok", 1.3)].forEach((t) => ev(t, "wouf"));
+[FP("calc1"), FP("calc2"), FP("calc3")].forEach((t) => ev(t, "kaching"));
+FLASHS.forEach((t) => ev(t, "ding"));
+[0, 1, 2].forEach((i) => ev(P("bilan", 0.6 + i * 0.4), "coche"));
+ev(P("verif"), "tampon"); ev(P("verif", 1.0), "eau", P("bilan") - P("verif", 1.0));
+ev(P("calc2", 0.3), "moteur", FIN_DEBLAI - P("calc2", 0.3));
+ev(DUREE - 2.6, "fin");
+window.EVENEMENTS = EVENEMENTS;
+
 /* ---------- Interface par-dessus la 3D ---------- */
 const v3 = new THREE.Vector3();
 function ecran(obj, dy) { obj.updateMatrixWorld(); v3.set(0, dy, 0).applyMatrix4(obj.matrixWorld).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * H, v3.z < 1]; }
@@ -499,6 +522,7 @@ function interface_(t) {
   s += carteCalcul(t, P("calc3"), P("verif", 0.2), [["PLOMBERIE", "14 000 €"], ["CARRELAGE", "12 000 €"], ["CHAUFFE-EAU", "8 000 €"]], "34 000 €", 3);
   s += liste(t) + choix(t) + sousTitres(t);
   s += `<text x="1040" y="1868" text-anchor="end" font-family="Inter" font-weight="800" font-size="24" fill="#ffffff" opacity=".55" letter-spacing="2">LES PINS PERDUS · ÉP. 1</text>`;
+  for (const ft of FLASHS) { const o = 0.6 * clamp(1 - (t - ft) / 0.3); if (t >= ft && o > 0) s += `<rect width="1080" height="1920" fill="#fff6e3" opacity="${o.toFixed(3)}"/>`; }
   s += carteFin(t);
   document.getElementById("ui").innerHTML = s;
 }
@@ -508,7 +532,7 @@ let tPrec = 0;
 function rendre(t) {
   const dt = Math.max(0, Math.min(0.1, t - tPrec)) || 1 / 30; tPrec = t;
   ambiance(t); decor(t); animerMalo(t, dt); animerRoger(t, dt);
-  const { pos, cib } = plan(t); camera.position.copy(pos); camera.lookAt(cib);
+  const { pos, cib, fov } = plan(t); camera.position.copy(pos); camera.lookAt(cib); if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
   renderer.render(scene, camera);
   interface_(t);
 }
