@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Malo 3D</title>
+<style>html,body{margin:0;height:100%;background:#070a14;display:flex;align-items:center;justify-content:center}canvas{display:block;height:100vh!important;width:auto!important;max-width:100vw}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+const W = 1080, H = 1920;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color("#0b1020");
+scene.fog = new THREE.Fog("#0b1020", 9, 22);
+
+/* ---------- Outils low poly ---------- */
+const mat = (c, e = 0) => new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: 0.85, metalness: 0, emissive: e ? c : 0x000000, emissiveIntensity: e });
+let graine = 3;
+const alea = () => { graine = (graine * 16807) % 2147483647; return graine / 2147483647; };
+// Facettes : fusionne les sommets puis les bouge un peu (formes taillées)
+function facettes(geo, force = 0.04, sphere = 0) {
+  geo.deleteAttribute("normal"); geo.deleteAttribute("uv");
+  geo = mergeVertices(geo);
+  const p = geo.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    if (sphere) { const l = v.length(); const n = v.clone().normalize().multiplyScalar(0.5 * Math.max(Math.abs(v.x), Math.abs(v.y), Math.abs(v.z)) * 2); v.lerp(n.setLength(Math.max(l * 0.9, n.length())), sphere); }
+    v.x += (alea() - 0.5) * force; v.y += (alea() - 0.5) * force; v.z += (alea() - 0.5) * force;
+    p.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+const bloc = (w, h, d, c, f = 0.03, seg = 1) => { const m = new THREE.Mesh(facettes(new THREE.BoxGeometry(w, h, d, seg, seg, seg), f), mat(c)); m.castShadow = m.receiveShadow = true; return m; };
+const pose = (m, x, y, z, rx = 0, ry = 0, rz = 0) => { m.position.set(x, y, z); m.rotation.set(rx, ry, rz); return m; };
+
+/* ---------- Malo ---------- */
+const PEAU = "#e9b48e", CHEV = "#6b3b1f", VESTE = "#2f6b4f", TSHIRT = "#efe8d8", JEAN = "#33476e", BASKET = "#d8432f";
+function creerMalo() {
+  const g = new THREE.Group();
+  // jambes
+  for (const s of [-1, 1]) {
+    g.add(pose(bloc(0.26, 0.85, 0.28, JEAN, 0.02), s * 0.17, 0.62, 0));
+    g.add(pose(bloc(0.3, 0.16, 0.44, BASKET, 0.02), s * 0.17, 0.1, 0.06));
+    g.add(pose(bloc(0.31, 0.05, 0.45, "#f2f2f2", 0.0), s * 0.17, 0.02, 0.06));
+  }
+  // buste : t-shirt + veste ouverte
+  g.add(pose(bloc(0.62, 0.78, 0.36, TSHIRT, 0.03, 2), 0, 1.42, 0));
+  for (const s of [-1, 1]) g.add(pose(bloc(0.24, 0.82, 0.4, VESTE, 0.03, 2), s * 0.24, 1.43, 0.0));
+  g.add(pose(bloc(0.7, 0.14, 0.42, VESTE, 0.02), 0, 1.05, 0)); // bas de veste
+  // col
+  for (const s of [-1, 1]) g.add(pose(bloc(0.16, 0.18, 0.06, "#24543e", 0.01), s * 0.14, 1.78, 0.19, 0.2, 0, s * 0.35));
+  // petit logo sapin sur le t-shirt
+  const sapin = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), mat("#2e8b57")); g.add(pose(sapin, 0, 1.5, 0.19, 0, Math.PI / 4));
+  // bras
+  const bras = [];
+  for (const s of [-1, 1]) {
+    const b = new THREE.Group(); b.position.set(s * 0.43, 1.74, 0);
+    b.add(pose(bloc(0.2, 0.5, 0.22, VESTE, 0.02), 0, -0.24, 0));
+    b.add(pose(bloc(0.16, 0.4, 0.17, PEAU, 0.02), 0, -0.64, 0));
+    b.add(pose(bloc(0.19, 0.18, 0.2, PEAU, 0.03), 0, -0.9, 0.01));
+    b.rotation.z = s * 0.09; g.add(b); bras.push(b);
+  }
+  // cou
+  g.add(pose(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.2, 6), mat(PEAU)), 0, 1.88, 0));
+  // tête
+  const tete = new THREE.Group(); tete.position.set(0, 2.25, 0);
+  const gc = facettes(new THREE.BoxGeometry(0.68, 0.76, 0.66, 3, 3, 3), 0.03, 0.45);
+  { const p = gc.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i); const k = y < 0 ? 1 + y * 0.75 : 1 - y * 0.12; p.setX(i, p.getX(i) * k); if (y < -0.1) p.setZ(i, p.getZ(i) * (1 + y * 0.35) + 0.03); } gc.computeVertexNormals(); }
+  const crane = new THREE.Mesh(gc, mat(PEAU));
+  crane.castShadow = true; tete.add(crane);
+  // menton / mâchoire
+  tete.add(pose(bloc(0.26, 0.1, 0.3, PEAU, 0.02), 0, -0.37, 0.06));
+  // oreilles
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.08, 0.17, 0.12, "#dda27c", 0.02), s * 0.36, -0.02, -0.02));
+  // yeux : grands, en losange, avec reflet
+  const yeux = [];
+  for (const s of [-1, 1]) {
+    const oeil = new THREE.Group(); oeil.position.set(s * 0.14, 0.03, 0.335);
+    const blanc = pose(bloc(0.15, 0.17, 0.03, "#fbf6ee", 0.0), 0, 0, 0); oeil.add(blanc);
+    const iris = pose(bloc(0.09, 0.12, 0.03, "#3b2a1e", 0.0), s * -0.005, -0.005, 0.012); oeil.add(iris);
+    const reflet = pose(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.02), mat("#ffffff", 1)), 0.02, 0.025, 0.03); oeil.add(reflet);
+    tete.add(oeil); yeux.push(oeil);
+    // sourcil
+    tete.add(pose(bloc(0.17, 0.045, 0.04, "#4a2814", 0.0), s * 0.14, 0.15, 0.34, 0, 0, s * -0.12));
+  }
+  // nez + bouche + taches de rousseur
+  tete.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), mat("#e0a07a")), 0, -0.08, 0.36, Math.PI / 2, Math.PI / 4, 0));
+  const bouche = pose(bloc(0.13, 0.035, 0.03, "#6e2a24", 0.0), 0, -0.21, 0.335); tete.add(bouche);
+  for (const [x, y] of [[-0.2, -0.08], [-0.16, -0.1], [-0.22, -0.11], [0.2, -0.08], [0.16, -0.1], [0.22, -0.11]])
+    tete.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.018, 0.01), mat("#b8714f")), x, y, 0.335));
+  // cheveux : calotte + mèches à facettes
+  const calotte = new THREE.Mesh(facettes(new THREE.BoxGeometry(0.76, 0.34, 0.74, 3, 1, 3), 0.05, 0.3), mat(CHEV));
+  calotte.position.set(0, 0.29, -0.02); calotte.castShadow = true; tete.add(calotte);
+  tete.add(pose(bloc(0.74, 0.42, 0.18, CHEV, 0.05, 2), 0, 0.06, -0.3)); // arrière
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.1, 0.32, 0.5, CHEV, 0.04), s * 0.36, 0.12, -0.08)); // côtés
+  const meches = [[-0.25, 0.42, 0.2, -0.5, 0.4], [-0.05, 0.5, 0.25, -0.7, 0.1], [0.18, 0.46, 0.22, -0.6, -0.3], [0.3, 0.38, 0.05, -0.2, -0.6],
+    [-0.3, 0.4, -0.15, 0.3, 0.6], [0.0, 0.52, -0.1, 0.2, 0], [0.22, 0.45, -0.25, 0.4, -0.4], [-0.12, 0.48, 0.05, -0.2, 0.3], [0.1, 0.5, 0.0, 0, -0.2],
+    [-0.2, 0.28, 0.33, -1.2, 0.2], [0.08, 0.3, 0.35, -1.25, -0.15], [0.26, 0.26, 0.3, -1.1, -0.4]];
+  for (const [x, y, z, rx, rz] of meches) {
+    const c = new THREE.Mesh(facettes(new THREE.ConeGeometry(0.15, 0.42, 4, 1), 0.02), mat(alea() > 0.5 ? CHEV : "#7a4626"));
+    c.castShadow = true; tete.add(pose(c, x, y, z, rx, alea(), rz));
+  }
+  g.add(tete);
+  g.userData = { tete, bras, yeux, bouche };
+  return g;
+}
+
+/* ---------- Roger ---------- */
+function creerRoger() {
+  const g = new THREE.Group(), ROUX = "#c27a3a", CREME = "#f0dcc0";
+  g.add(pose(bloc(0.8, 0.42, 0.44, ROUX, 0.04, 2), 0, 0.55, 0));
+  g.add(pose(bloc(0.5, 0.2, 0.4, CREME, 0.03), 0.05, 0.4, 0));
+  for (const [x, z] of [[-0.28, -0.14], [-0.28, 0.14], [0.28, -0.14], [0.28, 0.14]]) g.add(pose(bloc(0.13, 0.4, 0.13, "#a8662f", 0.02), x, 0.2, z));
+  const tete = new THREE.Group(); tete.position.set(0.5, 0.92, 0);
+  tete.add(new THREE.Mesh(facettes(new THREE.BoxGeometry(0.44, 0.42, 0.42, 2, 2, 2), 0.04, 0.35), mat(ROUX)));
+  tete.add(pose(bloc(0.26, 0.2, 0.26, CREME, 0.03), 0.27, -0.08, 0));
+  tete.add(pose(bloc(0.09, 0.08, 0.1, "#1b1410", 0.01), 0.42, -0.02, 0));
+  for (const s of [-1, 1]) {
+    tete.add(pose(bloc(0.07, 0.09, 0.03, "#1b1410", 0), 0.14, 0.07, s * 0.2));
+    tete.add(pose(bloc(0.14, 0.3, 0.07, "#6e3d1c", 0.03), -0.04, 0.02, s * 0.24, s * 0.2, 0, 0));
+  }
+  g.add(tete);
+  // foulard
+  g.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.22, 3), mat("#c8342b")), 0.42, 0.64, 0, 0, 0, Math.PI));
+  const queue = pose(bloc(0.08, 0.36, 0.08, ROUX, 0.02), -0.45, 0.8, 0, 0, 0, 0.7); g.add(queue);
+  g.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; });
+  g.userData = { queue, tete };
+  return g;
+}
+
+/* ---------- Décor : camping de nuit ---------- */
+const sol = new THREE.Mesh(facettes(new THREE.PlaneGeometry(40, 40, 30, 30), 0.12), mat("#2d4a2b"));
+sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+function sapin(x, z, h) {
+  const g = new THREE.Group();
+  g.add(pose(bloc(0.18, 0.6, 0.18, "#4a2f1c", 0.02), 0, 0.3, 0));
+  for (let i = 0; i < 3; i++) g.add(pose(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.9 - i * 0.22, 1.1, 6, 1), 0.08), mat(i % 2 ? "#1f4a32" : "#245a3a")), 0, 0.9 + i * 0.6, 0));
+  g.scale.setScalar(h); g.position.set(x, 0, z); g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+[[-3.2, -3, 1.6], [2.8, -4.5, 2], [-1.5, -6, 1.8], [4.5, -2, 1.4], [-5, -5, 2.2], [1, -8, 2.4]].forEach(([x, z, h]) => scene.add(sapin(x, z, h)));
+// lanterne posée au sol (source chaude)
+const lanterne = new THREE.Group();
+lanterne.add(pose(bloc(0.2, 0.28, 0.2, "#ffcf7a", 0.01), 0, 0.2, 0)); lanterne.children[0].material = mat("#ffcf7a", 1.4);
+lanterne.add(pose(bloc(0.26, 0.05, 0.26, "#2b2b2b", 0), 0, 0.37, 0));
+lanterne.position.set(-0.9, 0, 1.1); scene.add(lanterne);
+const feu = new THREE.PointLight("#ffb257", 9, 7, 1.6); feu.position.set(-0.9, 0.55, 1.1); feu.castShadow = true; scene.add(feu);
+// lune bleue + ambiance
+const lune = new THREE.DirectionalLight("#7fa2ff", 1.2); lune.position.set(-4, 6, 3); lune.castShadow = true; scene.add(lune);
+scene.add(new THREE.HemisphereLight("#4a5f9a", "#1a2414", 0.8));
+const cle = new THREE.SpotLight("#ffd9a8", 18, 12, 0.5, 0.6); cle.position.set(-1.5, 3.5, 4); cle.target.position.set(0, 2, 0); scene.add(cle, cle.target);
+const contre = new THREE.DirectionalLight("#9fb8ff", 1.4); contre.position.set(-2, 3, -4); scene.add(contre);
+// étoiles
+const etoiles = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 900 }, (_, i) => i % 3 === 1 ? 4 + alea() * 10 : (alea() - 0.5) * 30).map((v, i) => i % 3 === 2 ? -12 - Math.abs(v) : v), 3)), new THREE.PointsMaterial({ color: "#ffffff", size: 0.06 }));
+scene.add(etoiles);
+
+const malo = creerMalo(); scene.add(malo);
+const roger = creerRoger(); roger.position.set(1.05, 0, 0.2); roger.rotation.y = -2.5; scene.add(roger);
+
+const camera = new THREE.PerspectiveCamera(32, W / H, 0.1, 100);
+function vue(nom) {
+  if (nom === "portrait") { camera.position.set(0.5, 2.3, 3.4); camera.lookAt(0.05, 2.0, 0); malo.rotation.y = 0.15; }
+  if (nom === "pied") { camera.position.set(1.6, 1.6, 6.2); camera.lookAt(0.3, 1.05, 0); malo.rotation.y = 0.3; }
+  if (nom === "trois-quarts") { camera.position.set(-1.4, 2.25, 3.6); camera.lookAt(0, 2.0, 0); malo.rotation.y = -0.45; }
+  renderer.render(scene, camera);
+}
+window.vue = vue;
+window.pret = true;
+if (!location.search.includes("rendu")) {
+  const tourner = (ms) => { malo.rotation.y = Math.sin(ms / 1800) * 0.6; malo.userData.tete.rotation.y = Math.sin(ms / 900) * 0.15; roger.userData.queue.rotation.x = Math.sin(ms / 120) * 0.5;
+    const v = Math.floor(ms / 4000) % 2; if (v) { camera.position.set(0.5, 2.3, 3.4); camera.lookAt(0.05, 2.0, 0); } else { camera.position.set(1.6, 1.6, 6.2); camera.lookAt(0.3, 1.05, 0); }
+    renderer.render(scene, camera); requestAnimationFrame(tourner); };
+  requestAnimationFrame(tourner);
+}
+</script></body></html>
