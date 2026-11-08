@@ -548,11 +548,7 @@ function plan(t) {
     pos.lerp(new THREE.Vector3(...kp), p); cib.lerp(new THREE.Vector3(...kc), p);
   }
   pos.x += Math.sin(t * 0.7) * 0.06; pos.y += Math.sin(t * 0.9 + 1) * 0.04;
-  // punch sur les mots clés (couleur) ; secousse sur les mauvaises nouvelles (rouge)
-  let punch = 0, choc = 0;
-  for (const w of WORDS) { if (w.c === "w" || t < w.t || t > w.t + 0.45) continue; const k = Math.exp(-(t - w.t) * 9); punch = Math.max(punch, k); if (w.c === "r") choc = Math.max(choc, k); }
-  pos.x += Math.sin(t * 71) * 0.06 * choc; pos.y += Math.cos(t * 63) * 0.05 * choc;
-  return { pos, cib, fov: 50 - 6 * punch - 3 * choc };
+  return { pos, cib, fov: 50 };
 }
 // Trajets [temps, x, z, durée]
 const TRAJ_MALO = [
