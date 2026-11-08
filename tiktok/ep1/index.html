@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les Pins Perdus · Épisode 1</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --fond: #0b0f1c; }
+  html, body { margin: 0; height: 100%; background: var(--fond); }
+  body { display: flex; align-items: center; justify-content: center; font-family: Inter, "Inter Display", system-ui, sans-serif; }
+  #cadre { height: 100vh; aspect-ratio: 9 / 16; max-width: 100vw; position: relative; }
+  #scene { width: 100%; height: 100%; display: block; }
+  body.rendu #cadre { height: 1920px; width: 1080px; }
+</style>
+</head>
+<body>
+<div id="cadre"><svg id="scene" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<script>
+/* =========================================================
+   LES PINS PERDUS — Épisode 1
+   Série originale : tu hérites d'un camping abandonné.
+   Marquage des mots : *jaune  !rouge  +vert  ~bleu
+   ========================================================= */
+const SCRIPT = [
+  ["Ton grand-oncle t'a laissé un +camping.", "intro"],
+  ["Abandonné depuis !12 !ans.", ""],
+  ["Le notaire est clair : *50 *familles cet été.", "hudFam"],
+  ["Sinon, la mairie le !récupère.", ""],
+  ["Délai : !120 !jours. Budget : *80 *000 *euros.", "hudAll"],
+  ["*30 emplacements mangés par les !ronces… et !0 campeur.", "pan"],
+  ["Enfin, presque.", "presque"],
+  ["Dans la vieille caravane du fond, il y a +Roger.", "roger"],
+  ["Le chien de ton grand-oncle. Il n'est jamais parti.", "wouf"],
+  ["Et Roger a une liste.", "liste"],
+  ["Point un : l'entrée.", "p1"],
+  ["Le portail est !rouillé, le panneau est par terre.", ""],
+  ["Portail neuf, panneau repeint : *4 *000 *euros.", "calc1"],
+  ["Point deux : les !ronces.", "p2"],
+  ["Débroussailleuse, benne, trois jours de sueur : *2 *500 *euros.", "calc2"],
+  ["Point trois : les ~douches.", "p3"],
+  ["Sans douches, personne ne reste une nuit.", ""],
+  ["Le bloc est !fissuré, les tuyaux ont !gelé.", ""],
+  ["Plomberie, carrelage, chauffe-eau : *34 *000 *euros.", "calc3"],
+  ["~Vérification : tu ouvres le robinet…", "verif"],
+  ["L'eau est +chaude. Roger +valide.", "ok"],
+  ["Dépensé : *40 *500. Il reste *39 *500 *euros.", "bilan"],
+  ["!0 famille sur 50. Il reste !110 !jours.", "bilan2"],
+  ["Maintenant, il faut une raison de venir.", "choix0"],
+  ["Une ~piscine… ou une *aire *de *jeux ?", "choix"],
+  ["Écris piscine ou jeux en commentaire.", "comment"],
+  ["Le plus voté sera construit au prochain épisode.", "fin"],
+];
+
+/* ---------- Minutage (remplaçable par celui d'une vraie voix off) ---------- */
+const CPS = 15.5;            // caractères par seconde (rythme narrateur TikTok)
+const WORDS = [], SENT = [], B = {};
+(function minuter() {
+  let t = 0.35;
+  SCRIPT.forEach(([txt, beat], si) => {
+    const s0 = t;
+    const mots = txt.split(/\s+/);
+    mots.forEach((m) => {
+      let couleur = "w", brut = m;
+      if ("*!+~".includes(m[0])) { couleur = { "*": "y", "!": "r", "+": "g", "~": "b" }[m[0]]; brut = m.slice(1); }
+      const d = (brut.length + 1) / CPS;
+      WORDS.push({ t, d, txt: brut, c: couleur, si });
+      t += d;
+      if (/…$/.test(brut)) t += 0.45; else if (/[.:?!,]$/.test(brut)) t += /[,]$/.test(brut) ? 0.08 : 0.22;
+    });
+    SENT.push({ t0: s0, t1: t });
+    if (beat) B[beat] = s0;
+    t += 0.12;
+  });
+  window.FIN_VOIX = t;
+})();
+const DUREE = FIN_VOIX + 2.6;
+
+/* Découpe des sous-titres : 3 mots max, coupe après la ponctuation */
+const CHUNKS = [];
+(function decouper() {
+  let cur = [];
+  const pousser = () => { if (cur.length) { CHUNKS.push(cur); cur = []; } };
+  WORDS.forEach((w, i) => {
+    const suivant = WORDS[i + 1];
+    cur.push(w);
+    if (cur.length >= 3 || /[.:?!,…]$/.test(w.txt) || !suivant || suivant.si !== w.si) pousser();
+  });
+  CHUNKS.forEach((c, i) => { c.t0 = c[0].t; c.t1 = CHUNKS[i + 1] ? CHUNKS[i + 1][0].t : c.at(-1).t + c.at(-1).d + 0.4; });
+})();
+
+/* ---------- Outils ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const easeIO = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+const ease = (t, a, d) => easeIO(clamp((t - a) / d));
+const lerp = (a, b, p) => a + (b - a) * p;
+const mixC = (c1, c2, p) => {
+  const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const a = h(c1), b = h(c2);
+  return "#" + a.map((v, i) => Math.round(lerp(v, b[i], p)).toString(16).padStart(2, "0")).join("");
+};
+const euros = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const vis = (t, a, b, f = 0.25) => clamp(Math.min((t - a) / f, (b - t) / f)); // apparition/disparition
+const fin = (beat, apres = 0) => (B[beat] ?? 0) + apres;
+const finPhrase = (beat) => { const i = SCRIPT.findIndex((s) => s[1] === beat); return SENT[i].t1; };
+
+/* Caméra : clés [temps, x, zoom, durée] enchaînées */
+const CAM = [
+  [0, 620, 0.85, 0.01],
+  [0.4, 760, 0.95, 5],
+  [fin("hudAll"), 1150, 0.72, 2.5],
+  [fin("pan"), 600, 1.45, 0.7],
+  [fin("pan", 0.8), 1280, 1.45, finPhrase("pan") - fin("pan") - 0.8],
+  [fin("roger"), 2040, 1.9, 1.0],
+  [fin("liste"), 2010, 1.6, 0.8],
+  [fin("p1"), 300, 1.7, 1.1],
+  [fin("p2"), 930, 1.3, 1.0],
+  [fin("p3"), 1620, 1.7, 1.0],
+  [fin("verif"), 1790, 2.7, 1.0],
+  [fin("bilan"), 1300, 0.9, 1.2],
+];
+function camera(t) {
+  let x = CAM[0][1], z = CAM[0][2];
+  for (const [kt, kx, kz, kd] of CAM) {
+    if (t < kt) break;
+    const p = ease(t, kt, kd);
+    x = lerp(x, kx, p); z = lerp(z, kz, p);
+  }
+  return { x, z };
+}
+/* Toi et Roger : positions clés */
+const TOI = [
+  [0, 330, 0.01], [fin("pan", 0.6), 600, 2.6], [fin("roger"), 1880, 1.0], [fin("p1"), 410, 1.1],
+  [fin("p2"), 760, 1.0], [fin("p3"), 1440, 1.0], [fin("verif"), 1740, 0.9], [fin("bilan"), 1150, 1.2],
+];
+const ROGER = [
+  [0, 2085, 0.01], [fin("liste", 0.3), 1990, 0.8], [fin("p1"), 480, 1.2], [fin("p2"), 830, 1.1],
+  [fin("p3"), 1520, 1.1], [fin("verif"), 1850, 1.0], [fin("bilan"), 1230, 1.3],
+];
+function piste(cles, t) {
+  let x = cles[0][1], v = 0;
+  for (const [kt, kx, kd] of cles) {
+    if (t < kt) break;
+    const p = ease(t, kt, kd);
+    if (p > 0 && p < 1) v = 1;
+    x = lerp(x, kx, p);
+  }
+  return { x, marche: v };
+}
+
+/* ---------- Dessins (monde : sol à y = 1060) ---------- */
+const SOL = 1060;
+
+function ciel(t, jour) {
+  const nuit = ["#16264f", "#3a5287"], aube = ["#2f3a6e", "#e9906b"], plein = ["#4f9fdc", "#c4e6f5"];
+  const top = jour < 0.5 ? mixC(nuit[0], aube[0], jour * 2) : mixC(aube[0], plein[0], (jour - 0.5) * 2);
+  const bas = jour < 0.5 ? mixC(nuit[1], aube[1], jour * 2) : mixC(aube[1], plein[1], (jour - 0.5) * 2);
+  let s = `<defs><linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bas}"/></linearGradient>
+  <radialGradient id="halo"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1080" height="1300" fill="url(#gc)"/>`;
+  const etoiles = clamp(1 - jour * 2.2);
+  if (etoiles > 0) {
+    let r = 7;
+    for (let i = 0; i < 70; i++) {
+      r = (r * 9301 + 49297) % 233280; const x = (r / 233280) * 1080;
+      r = (r * 9301 + 49297) % 233280; const y = 260 + (r / 233280) * 600;
+      const sc = 0.6 + 0.4 * Math.sin(t * 2 + i);
+      s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.2 + (i % 3) * 0.7).toFixed(1)}" fill="#fff" opacity="${(etoiles * sc * 0.8).toFixed(2)}"/>`;
+    }
+  }
+  const lune = clamp(1 - jour * 2);
+  if (lune > 0) s += `<circle cx="820" cy="330" r="44" fill="#e9eef7" opacity="${lune}"/><circle cx="806" cy="320" r="9" fill="#cfd6e4" opacity="${lune}"/><circle cx="834" cy="345" r="6" fill="#cfd6e4" opacity="${lune}"/>`;
+  if (jour > 0.25) {
+    const y = lerp(980, 330, ease(jour, 0.25, 0.75));
+    s += `<circle cx="250" cy="${y}" r="150" fill="url(#halo)"/><circle cx="250" cy="${y}" r="52" fill="#ffe08a"/>`;
+  }
+  return s;
+}
+
+function collines(cam, jour) {
+  const f = 0.25, z = 1 + (cam.z - 1) * 0.35;
+  const tx = 540 - (cam.x * f) * z;
+  const c1 = mixC("#2a3d68", "#7fae8c", jour), c2 = mixC("#22345a", "#5f9a6b", jour), c3 = mixC("#1a2a48", "#3f7a52", jour);
+  let s = `<g transform="translate(${tx},${SOL}) scale(${z}) translate(0,${-SOL})">`;
+  s += `<path d="M-900 ${SOL} Q -500 760 -100 900 T 700 870 T 1500 900 T 2300 860 L 2300 ${SOL} Z" fill="${c1}"/>`;
+  s += `<path d="M-900 ${SOL} Q -400 880 100 960 T 900 940 T 1700 960 T 2400 950 L 2400 ${SOL} Z" fill="${c2}"/>`;
+  for (let i = 0; i < 40; i++) {
+    const x = -800 + i * 85 + ((i * 37) % 30), h = 70 + ((i * 53) % 50);
+    s += `<path d="M${x} ${SOL - 20} l 22 ${-h} l 22 ${h} Z" fill="${c3}"/>`;
+  }
+  return s + `</g>`;
+}
+
+function pin(x, h, couleur = "#2f5d3a") {
+  const tronc = `<rect x="${x - 7}" y="${SOL - 40}" width="14" height="40" fill="#5b3b25"/>`;
+  let s = tronc;
+  for (let i = 0; i < 4; i++) {
+    const w = 70 - i * 13, y = SOL - 30 - i * (h / 5);
+    s += `<path d="M${x - w} ${y} L ${x} ${y - h / 3} L ${x + w} ${y} Z" fill="${mixC(couleur, "#5b8f52", i * 0.12)}"/>`;
+  }
+  return s;
+}
+
+function entree(t, neuf) {
+  let s = "";
+  // piliers en pierre
+  [150, 420].forEach((x) => {
+    s += `<rect x="${x - 26}" y="${SOL - 190}" width="52" height="190" fill="#8f8a80"/><rect x="${x - 32}" y="${SOL - 202}" width="64" height="18" fill="#a29d93"/>`;
+    for (let j = 0; j < 6; j++) s += `<line x1="${x - 26}" y1="${SOL - 160 + j * 30}" x2="${x + 26}" y2="${SOL - 160 + j * 30}" stroke="#77736a" stroke-width="3"/>`;
+  });
+  // portail : rouillé (de travers) -> neuf
+  const coul = mixC("#7a4a2a", "#2e6b52", neuf), pointe = mixC("#5c3a22", "#f2c14e", neuf);
+  const ang = lerp(9, 0, neuf);
+  for (let side = 0; side < 2; side++) {
+    const x0 = side ? 285 : 176, x1 = side ? 394 : 285;
+    const pivot = side ? 394 : 176;
+    const a = side ? -ang * 0.4 : ang;
+    s += `<g transform="rotate(${a} ${pivot} ${SOL - 20})">`;
+    s += `<rect x="${x0}" y="${SOL - 150}" width="${x1 - x0}" height="12" fill="${coul}"/><rect x="${x0}" y="${SOL - 40}" width="${x1 - x0}" height="12" fill="${coul}"/>`;
+    for (let b = x0 + 8; b < x1; b += 18) {
+      const casse = !neuf && (b * 7) % 5 === 0;
+      s += `<rect x="${b}" y="${SOL - (casse ? 110 : 160)}" width="7" height="${casse ? 70 : 135}" fill="${coul}"/><path d="M${b - 3} ${SOL - (casse ? 110 : 160)} l 6.5 -14 l 6.5 14 Z" fill="${pointe}"/>`;
+    }
+    s += `</g>`;
+  }
+  // panneau : par terre -> en haut
+  const p = neuf;
+  const px = lerp(500, 285, p), py = lerp(SOL - 26, SOL - 262, p), rot = lerp(-12, 0, p);
+  if (p > 0.05) s += `<rect x="${200}" y="${SOL - 262}" width="10" height="${80 * p}" fill="#6b4a2f"/><rect x="${360}" y="${SOL - 262}" width="10" height="${80 * p}" fill="#6b4a2f"/>`;
+  s += `<g transform="translate(${px},${py}) rotate(${rot})">
+    <rect x="-150" y="-40" width="300" height="80" rx="10" fill="${mixC("#8a7a62", "#f6ecd2", p)}" stroke="${mixC("#5b4c38", "#2e6b52", p)}" stroke-width="6"/>
+    <text x="0" y="-6" text-anchor="middle" font-family="Inter" font-weight="900" font-size="22" fill="${mixC("#5b4c38", "#2e6b52", p)}" letter-spacing="2">CAMPING</text>
+    <text x="0" y="24" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="${mixC("#4a3c2b", "#1f4d3a", p)}">LES PINS PERDUS</text>
+    ${p < 0.5 ? `<path d="M-120 -30 l 40 55 M60 -38 l 30 40" stroke="#4a3c2b" stroke-width="3" opacity="${1 - p * 2}"/>` : ""}
+  </g>`;
+  return s;
+}
+
+function emplacements(t, deblai) {
+  let s = "";
+  // bordures et piquets numérotés
+  for (let i = 0; i < 5; i++) {
+    const x = 540 + i * 170;
+    s += `<rect x="${x - 4}" y="${SOL - 46}" width="8" height="46" fill="#7a5636"/><rect x="${x - 22}" y="${SOL - 64}" width="44" height="24" rx="4" fill="${mixC("#6d6152", "#f6ecd2", deblai)}"/><text x="${x}" y="${SOL - 46}" text-anchor="middle" font-family="Inter" font-weight="900" font-size="16" fill="#2b2b2b">${String(i * 6 + 1).padStart(2, "0")}</text>`;
+  }
+  // ronces : disparaissent de gauche à droite
+  for (let i = 0; i < 9; i++) {
+    const x = 520 + i * 95 + ((i * 29) % 30), h = 80 + ((i * 41) % 50);
+    const part = clamp(deblai * 9 - i * 0.85);
+    const sc = 1 - part;
+    if (sc <= 0.02) continue;
+    s += `<g transform="translate(${x},${SOL}) scale(${sc.toFixed(3)}) translate(${-x},${-SOL})">`;
+    s += `<ellipse cx="${x}" cy="${SOL - h * 0.45}" rx="${h * 0.75}" ry="${h * 0.5}" fill="#2d3b22"/><ellipse cx="${x - 30}" cy="${SOL - h * 0.3}" rx="${h * 0.5}" ry="${h * 0.36}" fill="#36472a"/><ellipse cx="${x + 34}" cy="${SOL - h * 0.35}" rx="${h * 0.45}" ry="${h * 0.38}" fill="#26331d"/>`;
+    for (let k = 0; k < 7; k++) {
+      const a = -Math.PI * (0.1 + 0.8 * (k / 6));
+      s += `<path d="M${x} ${SOL - 10} q ${Math.cos(a) * h * 0.6} ${Math.sin(a) * h * 1.2} ${Math.cos(a) * h * 1.1} ${Math.sin(a) * h * 0.9}" stroke="#4a3a24" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+    }
+    s += `<circle cx="${x - 20}" cy="${SOL - h * 0.6}" r="6" fill="#5b2a6b"/><circle cx="${x + 18}" cy="${SOL - h * 0.5}" r="5" fill="#5b2a6b"/></g>`;
+  }
+  // poussière pendant le débroussaillage
+  if (deblai > 0 && deblai < 1) {
+    for (let k = 0; k < 6; k++) {
+      const x = 520 + deblai * 860 + k * 14 - 40, y = SOL - 30 - ((t * 120 + k * 37) % 80);
+      s += `<circle cx="${x}" cy="${y}" r="${10 + k * 2}" fill="#b9a98a" opacity=".35"/>`;
+    }
+  }
+  return s;
+}
+
+function douches(t, repare) {
+  const x0 = 1450, w = 300, h = 175;
+  const mur = mixC("#a39880", "#f3eee2", repare), toit = mixC("#5c5248", "#3a4a5c", repare);
+  let s = `<rect x="${x0}" y="${SOL - h}" width="${w}" height="${h}" fill="${mur}"/>`;
+  s += `<rect x="${x0 - 14}" y="${SOL - h - 18}" width="${w + 28}" height="22" fill="${toit}"/>`;
+  // bande de carrelage
+  s += `<rect x="${x0}" y="${SOL - 42}" width="${w}" height="42" fill="${mixC("#7d7464", "#3aa0d8", repare)}"/>`;
+  if (repare > 0.5) for (let i = 0; i < 12; i++) s += `<line x1="${x0 + i * 25}" y1="${SOL - 42}" x2="${x0 + i * 25}" y2="${SOL}" stroke="#2b86bd" stroke-width="2"/>`;
+  // porte et fenêtre
+  s += `<rect x="${x0 + 30}" y="${SOL - 130}" width="62" height="130" fill="${mixC("#6b5a45", "#2e6b52", repare)}"/><circle cx="${x0 + 80}" cy="${SOL - 64}" r="5" fill="#e6c36a"/>`;
+  s += `<rect x="${x0 + 150}" y="${SOL - 140}" width="110" height="56" fill="${mixC("#2a2f38", "#ffd98a", repare)}" stroke="#4a4036" stroke-width="5"/>`;
+  if (repare < 0.5) s += `<path d="M${x0 + 152} ${SOL - 138} l 40 30 l -10 20 l 30 4" stroke="#cfd6e4" stroke-width="3" fill="none" opacity=".6"/>`;
+  // panneau DOUCHES
+  s += `<rect x="${x0 + 110}" y="${SOL - h + 12}" width="150" height="40" rx="6" fill="${mixC("#5d6d7a", "#1f6fae", repare)}"/><text x="${x0 + 185}" y="${SOL - h + 41}" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="#fff" letter-spacing="2">DOUCHES</text>`;
+  // fissures et mousse (disparaissent)
+  const fis = 1 - repare;
+  if (fis > 0) {
+    s += `<g opacity="${fis}"><path d="M${x0 + 110} ${SOL - h} l 12 30 l -8 22 l 16 26 l -6 30" stroke="#3a3128" stroke-width="5" fill="none"/>
+      <path d="M${x0 + 270} ${SOL - 60} l -18 -24 l 10 -18 l -14 -30" stroke="#3a3128" stroke-width="4" fill="none"/>
+      <ellipse cx="${x0 + 20}" cy="${SOL - 6}" rx="40" ry="14" fill="#3f5a2c"/><ellipse cx="${x0 + 250}" cy="${SOL - h - 6}" rx="36" ry="10" fill="#3f5a2c"/></g>`;
+  }
+  // robinet extérieur (vérification)
+  const rx = 1800;
+  s += `<rect x="${rx - 6}" y="${SOL - 120}" width="12" height="120" fill="#6b6b6b"/><rect x="${rx - 6}" y="${SOL - 120}" width="40" height="12" fill="#8a8a8a"/><rect x="${rx + 26}" y="${SOL - 120}" width="10" height="26" fill="#8a8a8a"/><rect x="${rx - 2}" y="${SOL - 138}" width="22" height="10" rx="4" fill="#d24b3e"/>`;
+  s += `<rect x="${rx - 4}" y="${SOL - 40}" width="80" height="40" fill="#bfc5cc"/><rect x="${rx}" y="${SOL - 40}" width="72" height="8" fill="#9aa3ad"/>`;
+  return s;
+}
+
+function eauRobinet(t) {
+  const a = fin("verif", 1.2);
+  if (t < a) return "";
+  const p = clamp((t - a) / 0.3), rx = 1831;
+  let s = `<rect x="${rx - 5}" y="${SOL - 94}" width="10" height="${54 * p}" fill="#5fb3ff" opacity=".9"/>`;
+  for (let k = 0; k < 4; k++) {
+    const y = SOL - 92 + ((t * 160 + k * 14) % 54);
+    s += `<circle cx="${rx + (k % 2 ? 4 : -4)}" cy="${y}" r="3" fill="#bfe3ff"/>`;
+  }
+  const vap = ease(t, fin("ok") - 0.2, 0.6);
+  for (let k = 0; k < 3; k++) {
+    const y = SOL - 50 - ((t * 40 + k * 30) % 90);
+    s += `<path d="M${rx + 20 + k * 14} ${y} q 10 -14 0 -28 q -10 -14 0 -28" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round" opacity="${(0.55 * vap).toFixed(2)}"/>`;
+  }
+  return s;
+}
+
+function caravane(t) {
+  const x0 = 1930;
+  let s = `<rect x="${x0 - 60}" y="${SOL - 40}" width="70" height="8" fill="#555"/><rect x="${x0 - 70}" y="${SOL - 30}" width="24" height="30" fill="#8f8a80"/>`;
+  s += `<path d="M${x0} ${SOL - 30} L ${x0} ${SOL - 160} Q ${x0} ${SOL - 210} ${x0 + 60} ${SOL - 210} L ${x0 + 250} ${SOL - 210} Q ${x0 + 300} ${SOL - 210} ${x0 + 300} ${SOL - 150} L ${x0 + 300} ${SOL - 30} Z" fill="#e3d6b8"/>`;
+  s += `<rect x="${x0}" y="${SOL - 110}" width="300" height="22" fill="#a0603a"/>`;
+  s += `<rect x="${x0 + 30}" y="${SOL - 180}" width="80" height="55" rx="12" fill="#ffcf73"/><rect x="${x0 + 180}" y="${SOL - 180}" width="80" height="55" rx="12" fill="#2a2f38"/>`;
+  s += `<rect x="${x0 + 130}" y="${SOL - 165}" width="40" height="135" fill="#c9b994"/><circle cx="${x0 + 162}" cy="${SOL - 95}" r="4" fill="#6b5a45"/>`;
+  s += `<circle cx="${x0 + 60}" cy="${SOL - 190}" r="10" fill="#9a6b46" opacity=".7"/><circle cx="${x0 + 270}" cy="${SOL - 60}" r="14" fill="#9a6b46" opacity=".6"/><circle cx="${x0 + 250}" cy="${SOL - 130}" r="8" fill="#9a6b46" opacity=".6"/>`;
+  s += `<ellipse cx="${x0 + 220}" cy="${SOL - 14}" rx="30" ry="18" fill="#222"/><ellipse cx="${x0 + 220}" cy="${SOL - 14}" rx="12" ry="8" fill="#777"/>`;
+  s += `<ellipse cx="${x0 + 360}" cy="${SOL - 8}" rx="22" ry="8" fill="#c0392b"/>`;
+  return s;
+}
+
+function lumieres(t, repare) {
+  let s = `<circle cx="2000" cy="${SOL - 152}" r="90" fill="url(#halo)"/>`;
+  if (repare > 0) s += `<circle cx="1655" cy="${SOL - 112}" r="${110 * repare}" fill="url(#halo)"/>`;
+  return s;
+}
+
+function personnage(x, marche, t, regard = 1) {
+  const bob = marche ? Math.abs(Math.sin(t * 12)) * 5 : 0;
+  const j = marche ? Math.sin(t * 12) * 10 : 0;
+  return `<g transform="translate(${x},${SOL - bob}) scale(${regard},1)">
+    <rect x="-16" y="-52" width="13" height="52" fill="#2f4f8f" transform="rotate(${j} -10 -52)"/><rect x="3" y="-52" width="13" height="52" fill="#2a4580" transform="rotate(${-j} 10 -52)"/>
+    <rect x="-22" y="-112" width="44" height="64" rx="10" fill="#f08a24"/><rect x="-22" y="-80" width="44" height="6" fill="#d9771a"/>
+    <circle cx="0" cy="-134" r="22" fill="#f2c9a0"/><path d="M-23 -138 Q 0 -168 23 -138 Z" fill="#d23c3c"/><rect x="0" y="-142" width="30" height="7" rx="3" fill="#d23c3c"/>
+    <circle cx="8" cy="-132" r="3" fill="#2b2b2b"/></g>`;
+}
+
+function chien(x, marche, t, regard = -1) {
+  const bob = marche ? Math.abs(Math.sin(t * 14)) * 4 : 0;
+  const queue = Math.sin(t * (marche ? 14 : 8)) * 18;
+  const j = marche ? Math.sin(t * 14) * 12 : 0;
+  return `<g transform="translate(${x},${SOL - bob}) scale(${regard},1)">
+    <path d="M-34 -42 q -18 -10 -16 -30" stroke="#a8733a" stroke-width="7" fill="none" stroke-linecap="round" transform="rotate(${queue} -34 -42)"/>
+    <rect x="-30" y="-24" width="9" height="24" fill="#a8733a" transform="rotate(${j} -26 -24)"/><rect x="16" y="-24" width="9" height="24" fill="#a8733a" transform="rotate(${-j} 20 -24)"/>
+    <ellipse cx="-4" cy="-36" rx="36" ry="20" fill="#c98f4a"/>
+    <ellipse cx="-6" cy="-30" rx="16" ry="10" fill="#f1e2c6"/>
+    <circle cx="30" cy="-56" r="20" fill="#c98f4a"/>
+    <path d="M18 -72 q -14 4 -12 30 q 10 -6 14 -22 Z" fill="#7a4a24"/>
+    <ellipse cx="44" cy="-50" rx="12" ry="9" fill="#f1e2c6"/><circle cx="54" cy="-53" r="5" fill="#1b1b1b"/>
+    <circle cx="34" cy="-62" r="3.2" fill="#1b1b1b"/>
+    <rect x="16" y="-42" width="22" height="6" rx="3" fill="#d23c3c"/></g>`;
+}
+
+/* ---------- Interface ---------- */
+function bulle(x, y, texte, couleur = "#ffffff", ink = "#1b1b1b", o = 1) {
+  if (o <= 0) return "";
+  const w = texte.length * 17 + 40;
+  return `<g opacity="${o}" transform="translate(${x},${y}) scale(${0.8 + 0.2 * o})"><rect x="${-w / 2}" y="-30" width="${w}" height="52" rx="14" fill="${couleur}"/><path d="M-10 21 l 10 16 l 10 -16 Z" fill="${couleur}"/><text x="0" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="${ink}">${texte}</text></g>`;
+}
+
+function hud(t) {
+  const oF = vis(t, fin("hudFam"), 1e9, 0.3), oA = vis(t, fin("hudAll"), 1e9, 0.3);
+  if (oF <= 0) return "";
+  // valeurs
+  const sauts = [[fin("calc1", 2.2), 76000, 119], [fin("calc2", 2.6), 73500, 116], [fin("calc3", 2.2), 39500, 110]];
+  let budget = 80000, delai = 120, prev = 80000, prevD = 120, delta = null;
+  for (const [ts, b, d] of sauts) {
+    const p = ease(t, ts, 0.7);
+    if (t >= ts) { budget = lerp(prev, b, p); delai = Math.round(lerp(prevD, d, p)); if (t < ts + 2) delta = { v: b - prev, o: vis(t, ts, ts + 2, 0.2) }; }
+    prev = b; prevD = d;
+  }
+  const boite = (cx, lab, val, col, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},150) scale(${0.85 + 0.15 * o})">
+    <rect x="-118" y="-58" width="236" height="104" rx="18" fill="#121828" stroke="${col}" stroke-width="5"/>
+    <text x="0" y="-22" text-anchor="middle" font-family="Inter" font-weight="800" font-size="22" fill="#b9c0d0" letter-spacing="3">${lab}</text>
+    <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${col}">${val}</text></g>`;
+  let s = boite(285, "DÉLAI", `${delai} JOURS`.replace(" JOURS", " J"), "#ff5a5f", oA);
+  s += boite(540, "FAMILLES", "0 / 50", "#4ade80", oF);
+  s += boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA);
+  if (delta) s += `<text x="795" y="238" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
+  s += `<g opacity="${oF}"><rect x="40" y="40" width="120" height="0" /></g>`;
+  return s;
+}
+
+function puce(t) {
+  const etapes = [["1. L'ENTRÉE", fin("p1"), fin("p2"), "#ff5a5f"], ["2. LES RONCES", fin("p2"), fin("p3"), "#ff5a5f"], ["3. LES DOUCHES", fin("p3"), fin("verif"), "#ff5a5f"], ["VÉRIFICATION", fin("verif"), fin("bilan"), "#4fa3ff"]];
+  let s = "";
+  for (const [txt, a, b, col] of etapes) {
+    const o = vis(t, a, b, 0.2);
+    if (o <= 0) continue;
+    const w = txt.length * 19 + 50;
+    const verif = txt === "VÉRIFICATION";
+    s += `<g opacity="${o}" transform="translate(540,262) scale(${0.85 + 0.15 * o})"><rect x="${-w / 2}" y="-26" width="${w}" height="50" rx="12" fill="${verif ? "#0f1f3a" : "#ffffff"}" stroke="${verif ? col : "none"}" stroke-width="4"/>
+      <text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="${verif ? col : "#1b1b1b"}">${verif ? txt : `<tspan fill="${col}">${txt.slice(0, 2)}</tspan>${txt.slice(2)}`}</text></g>`;
+  }
+  return s;
+}
+
+function carteCalcul(t, a, b, lignes, total) {
+  const o = vis(t, a, b, 0.25);
+  if (o <= 0) return "";
+  const h = 120 + lignes.length * 58 + 70;
+  let s = `<g opacity="${o}" transform="translate(540,${360 + (1 - o) * -30}) rotate(-2.5)">
+    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
+    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#fbf7ec"/>`;
+  for (let y = 70; y < h; y += 58) s += `<line x1="-300" y1="${y}" x2="300" y2="${y}" stroke="#cdd9ee" stroke-width="2"/>`;
+  s += `<line x1="-240" y1="0" x2="-240" y2="${h}" stroke="#ef9a9a" stroke-width="3"/>
+    <text x="0" y="52" text-anchor="middle" font-family="Inter" font-weight="900" font-size="34" fill="#1b1b1b" letter-spacing="2">LE CALCUL</text>`;
+  lignes.forEach(([lab, val], i) => {
+    const oi = clamp((t - a - 0.35 - i * 0.55) / 0.2);
+    s += `<g opacity="${oi}"><text x="-222" y="${118 + i * 58}" font-family="Inter" font-weight="800" font-size="27" fill="#2b2b2b">${lab}</text><text x="272" y="${118 + i * 58}" text-anchor="end" font-family="Inter" font-weight="900" font-size="28" fill="#2b2b2b">${val}</text></g>`;
+  });
+  const ot = clamp((t - a - 0.35 - lignes.length * 0.55) / 0.2), yt = 118 + lignes.length * 58 + 6;
+  s += `<g opacity="${ot}"><line x1="-222" y1="${yt - 36}" x2="272" y2="${yt - 36}" stroke="#1b1b1b" stroke-width="3"/><text x="-222" y="${yt + 4}" font-family="Inter" font-weight="900" font-size="28" fill="#e23b3b">TOTAL</text><text x="272" y="${yt + 4}" text-anchor="end" font-family="Inter" font-weight="900" font-size="32" fill="#e23b3b">${total}</text></g>`;
+  return s + `</g>`;
+}
+
+function liste(t) {
+  const fen = [[fin("liste"), fin("p1", 0.6), false], [fin("bilan"), fin("choix0"), true]];
+  let s = "";
+  for (const [a, b, coches] of fen) {
+    const o = vis(t, a, b, 0.25);
+    if (o <= 0) continue;
+    const items = ["1. L'ENTRÉE", "2. LES RONCES", "3. LES DOUCHES", coches ? "4. ???" : null].filter(Boolean);
+    const h = 110 + items.length * 60;
+    s += `<g opacity="${o}" transform="translate(540,${360 + (1 - o) * -30}) rotate(2)">
+      <rect x="-270" y="0" width="540" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
+      <rect x="-270" y="0" width="540" height="${h}" rx="6" fill="#fbf7ec"/>
+      <text x="0" y="56" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#1b1b1b" letter-spacing="1">LA LISTE DE ROGER</text>`;
+    items.forEach((it, i) => {
+      const oi = clamp((t - a - 0.3 - i * 0.35) / 0.2), y = 112 + i * 60;
+      const coche = coches && i < 3 ? clamp((t - a - 0.6 - i * 0.4) / 0.2) : 0;
+      s += `<g opacity="${oi}"><rect x="-220" y="${y - 30}" width="36" height="36" rx="6" fill="none" stroke="#1b1b1b" stroke-width="4"/>
+        <text x="-166" y="${y}" font-family="Inter" font-weight="900" font-size="30" fill="${it.includes("???") ? "#e23b3b" : "#2b2b2b"}">${it}</text>
+        ${coche > 0 ? `<path d="M-214 ${y - 14} l 12 14 l 26 -32" stroke="#22a55a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${coche}"/>` : ""}</g>`;
+    });
+    s += `</g>`;
+  }
+  return s;
+}
+
+function choix(t) {
+  const a = fin("choix"), b = DUREE - 2.6;
+  let s = "";
+  const carte = (cx, titre, sous, col, icone, o, pulse) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},470) scale(${(0.8 + 0.2 * o) * (1 + pulse * 0.04)})">
+    <rect x="-200" y="-120" width="400" height="240" rx="24" fill="#121828" stroke="${col}" stroke-width="7"/>
+    ${icone}
+    <text x="0" y="62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${col}">${titre}</text>
+    <text x="0" y="98" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="2">${sous}</text></g>`;
+  const vagues = `<g transform="translate(0,-40)"><rect x="-90" y="-40" width="180" height="70" rx="12" fill="#1f6fae"/><path d="M-80 -8 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#bfe3ff" stroke-width="7" fill="none"/><path d="M-80 14 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#7cc4f5" stroke-width="7" fill="none"/></g>`;
+  const tobog = `<g transform="translate(0,-40)"><rect x="-70" y="-60" width="10" height="90" fill="#ffc93c"/><rect x="-20" y="-60" width="10" height="90" fill="#ffc93c"/><rect x="-74" y="-64" width="68" height="10" fill="#f08a24"/><path d="M-10 -58 Q 40 -40 60 30 L 80 30 Q 60 -50 -10 -72 Z" fill="#ff5a5f"/></g>`;
+  const pulse = Math.sin(t * 6) * 0.5 + 0.5;
+  s += carte(285, "PISCINE", "CHAUFFÉE", "#4fa3ff", vagues, vis(t, a, b, 0.25), pulse);
+  s += carte(795, "AIRE DE JEUX", "TOBOGGAN · BALANÇOIRES", "#ffc93c", tobog, vis(t, a + 1.0, b, 0.25), 1 - pulse);
+  const oOu = vis(t, a + 0.6, b, 0.2);
+  if (oOu > 0) s += `<g opacity="${oOu}"><circle cx="540" cy="470" r="44" fill="#ffffff"/><text x="540" y="484" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#1b1b1b">OU</text></g>`;
+  const oC = vis(t, fin("comment"), b, 0.25);
+  if (oC > 0) s += `<g opacity="${oC}" transform="translate(540,700) scale(${0.85 + 0.15 * oC})"><rect x="-370" y="-38" width="740" height="76" rx="38" fill="#ff3b5c"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="32" fill="#fff">ÉCRIS « PISCINE » OU « JEUX »</text></g>`;
+  return s;
+}
+
+function sousTitres(t) {
+  const c = CHUNKS.find((k) => t >= k.t0 && t < k.t1);
+  if (!c || t > FIN_VOIX + 0.3) return "";
+  const pop = 0.88 + 0.12 * easeIO(clamp((t - c.t0) / 0.12));
+  const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#4fa3ff" };
+  const tspans = c.map((w) => `<tspan fill="${t >= w.t ? COUL[w.c] : "#8f857c"}">${w.txt.toUpperCase().replace(/&/g, "&amp;")}</tspan>`).join(" ");
+  return `<g transform="translate(540,1395) scale(${pop})"><text x="4" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="68" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text>
+    <text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="68" letter-spacing="1">${tspans}</text></g>`;
+}
+
+function carteFin(t) {
+  const a = DUREE - 2.6, o = clamp((t - a) / 0.35);
+  if (o <= 0) return "";
+  return `<g opacity="${o}"><rect width="1080" height="1920" fill="#0b0f1c" opacity=".88"/>
+    <text x="540" y="760" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#4ade80" letter-spacing="6">LES PINS PERDUS</text>
+    <text x="540" y="860" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffffff">ÉPISODE 2</text>
+    <text x="540" y="950" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffc93c">BIENTÔT</text>
+    <g transform="translate(540,1120)"><rect x="-340" y="-44" width="680" height="88" rx="44" fill="#ff3b5c"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff">+ ABONNE-TOI POUR LA SUITE</text></g></g>`;
+}
+
+/* ---------- Rendu d'une image ---------- */
+function rendre(t) {
+  const cam = camera(t);
+  const jour = ease(t, fin("p3"), fin("verif") - fin("p3") + 0.6);
+  const neuf = ease(t, fin("calc1", 2.2), 0.7);
+  const deblai = ease(t, fin("calc2", 0.4), 2.4);
+  const repare = ease(t, fin("calc3", 2.2), 0.7);
+  const toi = piste(TOI, t), rog = piste(ROGER, t);
+  const tint = 0.3 * (1 - jour);
+
+  let s = ciel(t, jour) + collines(cam, jour);
+  s += `<g transform="translate(540,${SOL}) scale(${cam.z}) translate(${-cam.x},${-SOL})">`;
+  // monde
+  s += `<rect x="-2000" y="${SOL}" width="6400" height="1600" fill="#4a3426"/><rect x="-2000" y="${SOL - 4}" width="6400" height="22" fill="#4f8a3c"/><rect x="-2000" y="${SOL + 18}" width="6400" height="10" fill="#3d2a1f"/>`;
+  // tuyau d'eau (après réparation)
+  const tuyau = ease(t, fin("calc3", 2.4), 1.2);
+  s += `<rect x="1400" y="${SOL + 70}" width="${430 * tuyau}" height="14" rx="7" fill="#4fa3ff" opacity="${tuyau > 0 ? 1 : 0}"/>`;
+  s += [470, 1390, 1880, -40, 2400, 2600].map((x, i) => pin(x, 190 + (i % 3) * 40)).join("");
+  s += entree(t, neuf) + emplacements(t, deblai) + douches(t, repare) + caravane(t);
+  s += `<rect x="-2000" y="0" width="6400" height="${SOL + 1600}" fill="#0b1430" opacity="${tint}" style="mix-blend-mode:multiply"/>`;
+  s += lumieres(t, repare) + eauRobinet(t);
+  const rVis = clamp((t - fin("roger") - 0.4) / 0.3);
+  s += `<g opacity="${rVis}">${chien(rog.x, rog.marche, t, rog.x > toi.x ? -1 : 1)}</g>`;
+  s += personnage(toi.x, toi.marche, t, toi.x < rog.x ? 1 : -1);
+  // bulles dans le monde
+  s += bulle(rog.x + 10, SOL - 130, "ROGER", "#4ade80", "#0b2a16", vis(t, fin("roger", 1.2), fin("liste"), 0.2));
+  s += bulle(rog.x + 10, SOL - 130, "WOUF.", "#ffffff", "#1b1b1b", vis(t, fin("wouf", 1.6), finPhrase("wouf") + 0.3, 0.2));
+  s += bulle(toi.x, SOL - 200, "AÏE…", "#ffffff", "#1b1b1b", vis(t, fin("presque") - 2.6, fin("presque") - 0.6, 0.2));
+  s += bulle(toi.x, SOL - 200, "ELLE EST CHAUDE !", "#ffffff", "#1b1b1b", vis(t, fin("ok"), fin("ok", 1.6), 0.2) * (cam.z > 1.5 ? 0.9 : 1));
+  s += bulle(rog.x + 10, SOL - 130, "WOUF ! ✔", "#4ade80", "#0b2a16", vis(t, fin("ok", 1.5), fin("bilan"), 0.2));
+  s += `</g>`;
+  // dégradé sous le sol pour la zone de sous-titres
+  s += `<defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1d16" stop-opacity="0"/><stop offset=".35" stop-color="#22170f" stop-opacity=".75"/><stop offset="1" stop-color="#120c08"/></linearGradient></defs>
+    <rect x="0" y="1150" width="1080" height="770" fill="url(#gs)"/>`;
+  s += hud(t) + puce(t);
+  s += carteCalcul(t, fin("calc1"), fin("p2", 0.2), [["PORTAIL NEUF", "2 500 €"], ["PANNEAU REPEINT", "1 500 €"]], "4 000 €");
+  s += carteCalcul(t, fin("calc2"), fin("p3", 0.2), [["DÉBROUSSAILLEUSE", "300 €"], ["BENNE × 2", "900 €"], ["3 JOURS DE BOULOT", "1 300 €"]], "2 500 €");
+  s += carteCalcul(t, fin("calc3"), fin("verif", 0.2), [["PLOMBERIE", "14 000 €"], ["CARRELAGE", "12 000 €"], ["CHAUFFE-EAU", "8 000 €"]], "34 000 €");
+  s += liste(t) + choix(t) + sousTitres(t);
+  s += `<text x="1040" y="1868" text-anchor="end" font-family="Inter" font-weight="800" font-size="24" fill="#ffffff" opacity=".55" letter-spacing="2">LES PINS PERDUS · ÉP. 1</text>`;
+  s += carteFin(t);
+  document.getElementById("scene").innerHTML = s;
+}
+
+window.DUREE = DUREE;
+window.rendre = rendre;
+window.MINUTAGE = { SCRIPT, SENT, WORDS: WORDS.map(({ t, d, txt }) => ({ t, d, txt })) };
+
+if (!location.search.includes("rendu")) {
+  const debut = performance.now();
+  const boucle = () => { rendre(((performance.now() - debut) / 1000) % DUREE); requestAnimationFrame(boucle); };
+  requestAnimationFrame(boucle);
+} else {
+  document.body.classList.add("rendu");
+}
+</script>
+</body>
+</html>
