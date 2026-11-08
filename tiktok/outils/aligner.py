@@ -1,9 +1,15 @@
 import re, json, subprocess, sys
-html = open('/home/user/matheoguz.github.io/tiktok/ep1/index.html').read()
-block = html[html.index('const SCRIPT = ['):html.index('];', html.index('const SCRIPT = ['))]
-SCRIPT = re.findall(r'\["(.*?)", "(.*?)"\]', block)
-dur = float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0','voix.mp3']))
-out = subprocess.run(['ffmpeg','-hide_banner','-i','voix.mp3','-af','silencedetect=noise=-35dB:d=0.12','-f','null','-'],capture_output=True,text=True).stderr
+# usage : python3 aligner.py [script.json] [voix.mp3] [sortie.json]
+if len(sys.argv) > 1 and sys.argv[1].endswith('.json'):
+    SCRIPT = json.load(open(sys.argv[1]))
+else:
+    html = open('/home/user/matheoguz.github.io/tiktok/ep1/index.html').read()
+    block = html[html.index('const SCRIPT = ['):html.index('];', html.index('const SCRIPT = ['))]
+    SCRIPT = re.findall(r'\["(.*?)", "(.*?)"\]', block)
+VOIX = sys.argv[2] if len(sys.argv) > 2 else 'voix.mp3'
+SORTIE = sys.argv[3] if len(sys.argv) > 3 else 'minutage.json'
+dur = float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',VOIX]))
+out = subprocess.run(['ffmpeg','-hide_banner','-i',VOIX,'-af','silencedetect=noise=-35dB:d=0.12','-f','null','-'],capture_output=True,text=True).stderr
 st = [float(x) for x in re.findall(r'silence_start: ([\d.]+)', out)]
 en = [float(x) for x in re.findall(r'silence_end: ([\d.]+)', out)]
 sil = list(zip(st, en))
@@ -66,5 +72,5 @@ sent = []
 for si in range(len(SCRIPT)):
     ws = [w for w in words if w['si'] == si]
     sent.append({'t0': ws[0]['t'], 't1': round(ws[-1]['t'] + ws[-1]['d'], 3)})
-json.dump({'duree_voix': speech_end, 'duree_fichier': dur, 'words': words, 'sent': sent}, open('minutage.json', 'w'), ensure_ascii=False)
+json.dump({'duree_voix': speech_end, 'duree_fichier': dur, 'words': words, 'sent': sent}, open(SORTIE, 'w'), ensure_ascii=False)
 for si, s in enumerate(sent): print(f"{s['t0']:6.2f} {SCRIPT[si][0][:60]}")
