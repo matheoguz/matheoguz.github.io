@@ -115,12 +115,22 @@ SONS = {"whoosh": whoosh, "pop": pop, "bulle": bulle, "kaching": kaching, "ding"
 
 def main():
     evts = json.load(open(sys.argv[1])); duree = float(sys.argv[2]); sortie = sys.argv[3]
+    # moins de sons : on retire les petites bulles et on évite que deux sons tombent l'un sur l'autre
+    PRIO = {"kaching": 0, "ding": 0, "tampon": 0, "fin": 0, "wouf": 1, "eau": 1, "moteur": 1, "pop": 2, "whoosh": 3, "coche": 3}
+    GAIN = {"whoosh": 0.45, "pop": 0.6, "coche": 0.6, "moteur": 0.55, "eau": 0.6}
+    evts = [e for e in evts if e["type"] != "bulle"]
+    garde = []
+    for e in sorted(evts, key=lambda e: PRIO.get(e["type"], 2)):
+        if e["type"] in ("eau", "moteur") or all(abs(e["t"] - g["t"]) >= 0.6 for g in garde if g["type"] not in ("eau", "moteur")):
+            garde.append(e)
+    evts = sorted(garde, key=lambda e: e["t"])
     piste = np.zeros(int((duree + 2) * SR))
     for e in evts:
         if e["type"] in ("eau", "moteur"):
             x = (eau if e["type"] == "eau" else moteur)(e["d"])
         else:
             x = SONS[e["type"]]()
+        x = x * GAIN.get(e["type"], 1.0)
         i = int(e["t"] * SR); j = min(len(piste), i + len(x))
         piste[i:j] += x[: j - i]
     piste = np.tanh(piste * 1.1) * 0.9
