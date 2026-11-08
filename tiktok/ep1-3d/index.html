@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les Pins Perdus · Épisode 1 (3D)</title>
+<meta name="robots" content="noindex">
+<style>
+  html, body { margin: 0; height: 100%; background: #070a14; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: Inter, system-ui, sans-serif; }
+  #cadre { position: relative; height: 100vh; aspect-ratio: 9 / 16; max-width: 100vw; }
+  #cadre canvas, #cadre svg { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
+  body.rendu #cadre { width: 1080px; height: 1920px; }
+  #lecture { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(7,10,20,.55); color: #fff6e3; font: 900 28px Inter, sans-serif; cursor: pointer; z-index: 5; text-align: center; }
+  body.rendu #lecture { display: none; }
+</style>
+<script>
+  // Rendu local : three.js depuis le disque ; en ligne : depuis le CDN
+  const local = location.search.includes("rendu");
+  const base = local ? "/_three/" : "https://cdn.jsdelivr.net/npm/three@0.170.0/";
+  const im = document.createElement("script"); im.type = "importmap";
+  im.textContent = JSON.stringify({ imports: { "three": base + "build/three.module.js", "three/addons/": base + "examples/jsm/" } });
+  document.currentScript.after(im);
+</script>
+</head>
+<body>
+<div id="cadre">
+  <svg id="ui" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="lecture">▶ Lancer l'épisode (avec le son)</div>
+</div>
+<audio id="voix" src="voix.mp3" preload="auto"></audio>
+<script type="module">
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+/* =========================================================
+   LES PINS PERDUS — Épisode 1 en 3D low poly
+   Minutage calé sur la voix off (tiktok/outils/aligner.py)
+   ========================================================= */
+const SCRIPT = [
+  ["Ton grand-oncle t'a laissé un +camping.", "intro"],
+  ["Abandonné depuis !12 !ans.", ""],
+  ["Le notaire est clair : *50 *familles cet été.", "hudFam"],
+  ["Sinon, la mairie le !récupère.", ""],
+  ["Délai : !120 !jours. Budget : *80 *000 *euros.", "hudAll"],
+  ["*30 emplacements mangés par les !ronces… et !0 campeur.", "pan"],
+  ["Enfin, presque.", "presque"],
+  ["Dans la vieille caravane du fond, il y a +Roger.", "roger"],
+  ["Le chien de ton grand-oncle. Il n'est jamais parti.", "wouf"],
+  ["Et Roger a une liste.", "liste"],
+  ["Point un : l'entrée.", "p1"],
+  ["Le portail est !rouillé, le panneau est par terre.", ""],
+  ["Portail neuf, panneau repeint : *4 *000 *euros.", "calc1"],
+  ["Point deux : les !ronces.", "p2"],
+  ["Débroussailleuse, benne, trois jours de sueur : *2 *500 *euros.", "calc2"],
+  ["Point trois : les ~douches.", "p3"],
+  ["Sans douches, personne ne reste une nuit.", ""],
+  ["Le bloc est !fissuré, les tuyaux ont !gelé.", ""],
+  ["Plomberie, carrelage, chauffe-eau : *34 *000 *euros.", "calc3"],
+  ["~Vérification : tu ouvres le robinet…", "verif"],
+  ["L'eau est +chaude. Roger +valide.", "ok"],
+  ["Dépensé : *40 *500. Il reste *39 *500 *euros.", "bilan"],
+  ["!0 famille sur 50. Il reste !110 !jours.", "bilan2"],
+  ["Maintenant, il faut une raison de venir.", "choix0"],
+  ["Une ~piscine… ou une *aire *de *jeux ?", "choix"],
+  ["Écris piscine ou jeux en commentaire.", "comment"],
+  ["Le plus voté sera construit au prochain épisode.", "fin"],
+];
+const MINUTAGE = {"duree_voix": 67.7489, "duree_fichier": 68.075063, "words": [{"txt": "Ton", "c": "w", "si": 0, "t": 0.0, "d": 0.17}, {"txt": "grand-oncle", "c": "w", "si": 0, "t": 0.17, "d": 0.51}, {"txt": "t'a", "c": "w", "si": 0, "t": 0.68, "d": 0.17}, {"txt": "laissé", "c": "w", "si": 0, "t": 0.849, "d": 0.297}, {"txt": "un", "c": "w", "si": 0, "t": 1.147, "d": 0.127}, {"txt": "camping.", "c": "g", "si": 0, "t": 1.274, "d": 0.382}, {"txt": "Abandonné", "c": "w", "si": 1, "t": 2.004, "d": 0.499}, {"txt": "depuis", "c": "w", "si": 1, "t": 2.504, "d": 0.35}, {"txt": "12", "c": "r", "si": 1, "t": 2.853, "d": 0.15}, {"txt": "ans.", "c": "r", "si": 1, "t": 3.003, "d": 0.25}, {"txt": "Le", "c": "w", "si": 2, "t": 3.61, "d": 0.128}, {"txt": "notaire", "c": "w", "si": 2, "t": 3.738, "d": 0.34}, {"txt": "est", "c": "w", "si": 2, "t": 4.079, "d": 0.17}, {"txt": "clair", "c": "w", "si": 2, "t": 4.249, "d": 0.255}, {"txt": ":", "c": "w", "si": 2, "t": 4.504, "d": 0.085}, {"txt": "50", "c": "y", "si": 2, "t": 4.819, "d": 0.177}, {"txt": "familles", "c": "y", "si": 2, "t": 4.996, "d": 0.531}, {"txt": "cet", "c": "w", "si": 2, "t": 5.527, "d": 0.236}, {"txt": "été.", "c": "w", "si": 2, "t": 5.763, "d": 0.295}, {"txt": "Sinon,", "c": "w", "si": 3, "t": 6.415, "d": 0.381}, {"txt": "la", "c": "w", "si": 3, "t": 6.797, "d": 0.163}, {"txt": "mairie", "c": "w", "si": 3, "t": 6.96, "d": 0.381}, {"txt": "le", "c": "w", "si": 3, "t": 7.341, "d": 0.163}, {"txt": "récupère.", "c": "r", "si": 3, "t": 7.504, "d": 0.545}, {"txt": "Délai", "c": "w", "si": 4, "t": 8.367, "d": 0.286}, {"txt": ":", "c": "w", "si": 4, "t": 8.653, "d": 0.095}, {"txt": "120", "c": "r", "si": 4, "t": 9.06, "d": 0.258}, {"txt": "jours.", "c": "r", "si": 4, "t": 9.318, "d": 0.452}, {"txt": "Budget", "c": "w", "si": 4, "t": 10.184, "d": 0.399}, {"txt": ":", "c": "w", "si": 4, "t": 10.583, "d": 0.114}, {"txt": "80", "c": "y", "si": 4, "t": 11.012, "d": 0.218}, {"txt": "000", "c": "y", "si": 4, "t": 11.23, "d": 0.291}, {"txt": "euros.", "c": "y", "si": 4, "t": 11.521, "d": 0.51}, {"txt": "30", "c": "y", "si": 5, "t": 12.37, "d": 0.137}, {"txt": "emplacements", "c": "w", "si": 5, "t": 12.507, "d": 0.595}, {"txt": "mangés", "c": "w", "si": 5, "t": 13.103, "d": 0.321}, {"txt": "par", "c": "w", "si": 5, "t": 13.423, "d": 0.183}, {"txt": "les", "c": "w", "si": 5, "t": 13.606, "d": 0.183}, {"txt": "ronces…", "c": "r", "si": 5, "t": 13.79, "d": 0.366}, {"txt": "et", "c": "w", "si": 5, "t": 14.478, "d": 0.187}, {"txt": "0", "c": "r", "si": 5, "t": 14.664, "d": 0.124}, {"txt": "campeur.", "c": "w", "si": 5, "t": 14.789, "d": 0.56}, {"txt": "Enfin,", "c": "w", "si": 6, "t": 15.707, "d": 0.366}, {"txt": "presque.", "c": "w", "si": 6, "t": 16.228, "d": 0.388}, {"txt": "Dans", "c": "w", "si": 7, "t": 16.979, "d": 0.204}, {"txt": "la", "c": "w", "si": 7, "t": 17.183, "d": 0.123}, {"txt": "vieille", "c": "w", "si": 7, "t": 17.306, "d": 0.327}, {"txt": "caravane", "c": "w", "si": 7, "t": 17.632, "d": 0.368}, {"txt": "du", "c": "w", "si": 7, "t": 18.0, "d": 0.123}, {"txt": "fond,", "c": "w", "si": 7, "t": 18.123, "d": 0.245}, {"txt": "il", "c": "w", "si": 7, "t": 18.611, "d": 0.145}, {"txt": "y", "c": "w", "si": 7, "t": 18.756, "d": 0.096}, {"txt": "a", "c": "w", "si": 7, "t": 18.852, "d": 0.096}, {"txt": "Roger.", "c": "g", "si": 7, "t": 18.949, "d": 0.337}, {"txt": "Le", "c": "w", "si": 8, "t": 19.618, "d": 0.116}, {"txt": "chien", "c": "w", "si": 8, "t": 19.733, "d": 0.232}, {"txt": "de", "c": "w", "si": 8, "t": 19.965, "d": 0.116}, {"txt": "ton", "c": "w", "si": 8, "t": 20.081, "d": 0.154}, {"txt": "grand-oncle.", "c": "w", "si": 8, "t": 20.236, "d": 0.502}, {"txt": "Il", "c": "w", "si": 8, "t": 21.047, "d": 0.131}, {"txt": "n'est", "c": "w", "si": 8, "t": 21.178, "d": 0.262}, {"txt": "jamais", "c": "w", "si": 8, "t": 21.439, "d": 0.305}, {"txt": "parti.", "c": "w", "si": 8, "t": 21.744, "d": 0.305}, {"txt": "Et", "c": "w", "si": 9, "t": 22.437, "d": 0.147}, {"txt": "Roger", "c": "w", "si": 9, "t": 22.585, "d": 0.295}, {"txt": "a", "c": "w", "si": 9, "t": 22.879, "d": 0.098}, {"txt": "une", "c": "w", "si": 9, "t": 22.978, "d": 0.196}, {"txt": "liste.", "c": "w", "si": 9, "t": 23.174, "d": 0.344}, {"txt": "Point", "c": "w", "si": 10, "t": 23.853, "d": 0.21}, {"txt": "un", "c": "w", "si": 10, "t": 24.063, "d": 0.105}, {"txt": ":", "c": "w", "si": 10, "t": 24.168, "d": 0.07}, {"txt": "l'entrée.", "c": "w", "si": 10, "t": 24.541, "d": 0.426}, {"txt": "Le", "c": "w", "si": 11, "t": 25.283, "d": 0.122}, {"txt": "portail", "c": "w", "si": 11, "t": 25.405, "d": 0.326}, {"txt": "est", "c": "w", "si": 11, "t": 25.731, "d": 0.163}, {"txt": "rouillé,", "c": "r", "si": 11, "t": 25.894, "d": 0.367}, {"txt": "le", "c": "w", "si": 11, "t": 26.444, "d": 0.107}, {"txt": "panneau", "c": "w", "si": 11, "t": 26.551, "d": 0.284}, {"txt": "est", "c": "w", "si": 11, "t": 26.835, "d": 0.142}, {"txt": "par", "c": "w", "si": 11, "t": 26.977, "d": 0.142}, {"txt": "terre.", "c": "w", "si": 11, "t": 27.119, "d": 0.249}, {"txt": "Portail", "c": "w", "si": 12, "t": 27.799, "d": 0.772}, {"txt": "neuf,", "c": "w", "si": 12, "t": 28.571, "d": 0.579}, {"txt": "panneau", "c": "w", "si": 12, "t": 29.577, "d": 0.317}, {"txt": "repeint", "c": "w", "si": 12, "t": 29.894, "d": 0.317}, {"txt": ":", "c": "w", "si": 12, "t": 30.21, "d": 0.079}, {"txt": "4", "c": "y", "si": 12, "t": 30.702, "d": 0.07}, {"txt": "000", "c": "y", "si": 12, "t": 30.772, "d": 0.141}, {"txt": "euros.", "c": "y", "si": 12, "t": 30.913, "d": 0.246}, {"txt": "Point", "c": "w", "si": 13, "t": 31.523, "d": 0.29}, {"txt": "deux", "c": "w", "si": 13, "t": 31.813, "d": 0.242}, {"txt": ":", "c": "w", "si": 13, "t": 32.054, "d": 0.097}, {"txt": "les", "c": "w", "si": 13, "t": 32.417, "d": 0.189}, {"txt": "ronces.", "c": "r", "si": 13, "t": 32.607, "d": 0.379}, {"txt": "Débroussailleuse,", "c": "w", "si": 14, "t": 32.985, "d": 0.852}, {"txt": "benne,", "c": "w", "si": 14, "t": 34.083, "d": 0.963}, {"txt": "trois", "c": "w", "si": 14, "t": 35.25, "d": 0.276}, {"txt": "jours", "c": "w", "si": 14, "t": 35.525, "d": 0.276}, {"txt": "de", "c": "w", "si": 14, "t": 35.801, "d": 0.138}, {"txt": "sueur", "c": "w", "si": 14, "t": 35.939, "d": 0.276}, {"txt": ":", "c": "w", "si": 14, "t": 36.215, "d": 0.092}, {"txt": "2", "c": "y", "si": 14, "t": 36.689, "d": 0.075}, {"txt": "500", "c": "y", "si": 14, "t": 36.764, "d": 0.149}, {"txt": "euros.", "c": "y", "si": 14, "t": 36.913, "d": 0.261}, {"txt": "Point", "c": "w", "si": 15, "t": 37.396, "d": 0.233}, {"txt": "trois", "c": "w", "si": 15, "t": 37.629, "d": 0.233}, {"txt": ":", "c": "w", "si": 15, "t": 37.863, "d": 0.078}, {"txt": "les", "c": "w", "si": 15, "t": 38.272, "d": 0.188}, {"txt": "douches.", "c": "b", "si": 15, "t": 38.46, "d": 0.424}, {"txt": "Sans", "c": "w", "si": 16, "t": 39.081, "d": 0.365}, {"txt": "douches,", "c": "w", "si": 16, "t": 39.447, "d": 0.657}, {"txt": "personne", "c": "w", "si": 16, "t": 40.548, "d": 0.362}, {"txt": "ne", "c": "w", "si": 16, "t": 40.91, "d": 0.121}, {"txt": "reste", "c": "w", "si": 16, "t": 41.031, "d": 0.241}, {"txt": "une", "c": "w", "si": 16, "t": 41.273, "d": 0.161}, {"txt": "nuit.", "c": "w", "si": 16, "t": 41.433, "d": 0.241}, {"txt": "Le", "c": "w", "si": 17, "t": 41.811, "d": 0.135}, {"txt": "bloc", "c": "w", "si": 17, "t": 41.946, "d": 0.225}, {"txt": "est", "c": "w", "si": 17, "t": 42.171, "d": 0.18}, {"txt": "fissuré,", "c": "r", "si": 17, "t": 42.351, "d": 0.405}, {"txt": "les", "c": "w", "si": 17, "t": 43.224, "d": 0.172}, {"txt": "tuyaux", "c": "w", "si": 17, "t": 43.396, "d": 0.3}, {"txt": "ont", "c": "w", "si": 17, "t": 43.696, "d": 0.172}, {"txt": "gelé.", "c": "r", "si": 17, "t": 43.868, "d": 0.257}, {"txt": "Plomberie,", "c": "w", "si": 18, "t": 44.125, "d": 0.472}, {"txt": "carrelage,", "c": "w", "si": 18, "t": 44.596, "d": 0.472}, {"txt": "chauffe-eau", "c": "w", "si": 18, "t": 45.39, "d": 0.816}, {"txt": ":", "c": "w", "si": 18, "t": 46.206, "d": 0.136}, {"txt": "34", "c": "y", "si": 18, "t": 46.714, "d": 0.143}, {"txt": "000", "c": "y", "si": 18, "t": 46.858, "d": 0.191}, {"txt": "euros.", "c": "y", "si": 18, "t": 47.049, "d": 0.335}, {"txt": "Vérification", "c": "b", "si": 19, "t": 47.833, "d": 0.965}, {"txt": ":", "c": "w", "si": 19, "t": 48.798, "d": 0.148}, {"txt": "tu", "c": "w", "si": 19, "t": 49.308, "d": 0.041}, {"txt": "ouvres", "c": "w", "si": 19, "t": 49.349, "d": 0.097}, {"txt": "le", "c": "w", "si": 19, "t": 49.446, "d": 0.041}, {"txt": "robinet…", "c": "w", "si": 19, "t": 49.487, "d": 0.124}, {"txt": "L'eau", "c": "w", "si": 20, "t": 49.734, "d": 0.168}, {"txt": "est", "c": "w", "si": 20, "t": 49.902, "d": 0.112}, {"txt": "chaude.", "c": "g", "si": 20, "t": 50.013, "d": 0.224}, {"txt": "Roger", "c": "w", "si": 20, "t": 50.584, "d": 0.327}, {"txt": "valide.", "c": "g", "si": 20, "t": 50.911, "d": 0.436}, {"txt": "Dépensé", "c": "w", "si": 21, "t": 51.675, "d": 0.408}, {"txt": ":", "c": "w", "si": 21, "t": 52.082, "d": 0.102}, {"txt": "40", "c": "y", "si": 21, "t": 52.599, "d": 0.332}, {"txt": "500.", "c": "y", "si": 21, "t": 52.93, "d": 0.553}, {"txt": "Il", "c": "w", "si": 21, "t": 53.858, "d": 0.132}, {"txt": "reste", "c": "w", "si": 21, "t": 53.99, "d": 0.265}, {"txt": "39", "c": "y", "si": 21, "t": 54.255, "d": 0.132}, {"txt": "500", "c": "y", "si": 21, "t": 54.388, "d": 0.177}, {"txt": "euros.", "c": "y", "si": 21, "t": 54.564, "d": 0.309}, {"txt": "0", "c": "r", "si": 22, "t": 54.874, "d": 0.088}, {"txt": "famille", "c": "w", "si": 22, "t": 54.962, "d": 0.353}, {"txt": "sur", "c": "w", "si": 22, "t": 55.315, "d": 0.177}, {"txt": "50.", "c": "w", "si": 22, "t": 55.492, "d": 0.177}, {"txt": "Il", "c": "w", "si": 22, "t": 56.03, "d": 0.187}, {"txt": "reste", "c": "w", "si": 22, "t": 56.217, "d": 0.374}, {"txt": "110", "c": "r", "si": 22, "t": 56.59, "d": 0.249}, {"txt": "jours.", "c": "r", "si": 22, "t": 56.839, "d": 0.436}, {"txt": "Maintenant,", "c": "w", "si": 23, "t": 57.594, "d": 1.037}, {"txt": "il", "c": "w", "si": 23, "t": 59.089, "d": 0.043}, {"txt": "faut", "c": "w", "si": 23, "t": 59.131, "d": 0.071}, {"txt": "une", "c": "w", "si": 23, "t": 59.202, "d": 0.057}, {"txt": "raison", "c": "w", "si": 23, "t": 59.259, "d": 0.099}, {"txt": "de", "c": "w", "si": 23, "t": 59.358, "d": 0.043}, {"txt": "venir.", "c": "w", "si": 23, "t": 59.401, "d": 0.099}, {"txt": "Une", "c": "w", "si": 24, "t": 59.65, "d": 0.326}, {"txt": "piscine…", "c": "b", "si": 24, "t": 59.976, "d": 0.733}, {"txt": "ou", "c": "w", "si": 24, "t": 61.1, "d": 0.23}, {"txt": "une", "c": "w", "si": 24, "t": 61.331, "d": 0.307}, {"txt": "aire", "c": "y", "si": 24, "t": 61.638, "d": 0.384}, {"txt": "de", "c": "y", "si": 24, "t": 62.021, "d": 0.23}, {"txt": "jeux", "c": "y", "si": 24, "t": 62.252, "d": 0.384}, {"txt": "?", "c": "w", "si": 24, "t": 62.635, "d": 0.153}, {"txt": "Écris", "c": "w", "si": 25, "t": 63.233, "d": 0.28}, {"txt": "piscine", "c": "w", "si": 25, "t": 63.513, "d": 0.374}, {"txt": "ou", "c": "w", "si": 25, "t": 63.886, "d": 0.14}, {"txt": "jeux", "c": "w", "si": 25, "t": 64.026, "d": 0.233}, {"txt": "en", "c": "w", "si": 25, "t": 64.26, "d": 0.14}, {"txt": "commentaire.", "c": "w", "si": 25, "t": 64.4, "d": 0.607}, {"txt": "Le", "c": "w", "si": 26, "t": 65.363, "d": 0.146}, {"txt": "plus", "c": "w", "si": 26, "t": 65.509, "d": 0.243}, {"txt": "voté", "c": "w", "si": 26, "t": 65.752, "d": 0.243}, {"txt": "sera", "c": "w", "si": 26, "t": 65.996, "d": 0.243}, {"txt": "construit", "c": "w", "si": 26, "t": 66.239, "d": 0.487}, {"txt": "au", "c": "w", "si": 26, "t": 66.726, "d": 0.146}, {"txt": "prochain", "c": "w", "si": 26, "t": 66.872, "d": 0.438}, {"txt": "épisode.", "c": "w", "si": 26, "t": 67.311, "d": 0.438}], "sent": [{"t0": 0.0, "t1": 1.656}, {"t0": 2.004, "t1": 3.253}, {"t0": 3.61, "t1": 6.058}, {"t0": 6.415, "t1": 8.049}, {"t0": 8.367, "t1": 12.031}, {"t0": 12.37, "t1": 15.349}, {"t0": 15.707, "t1": 16.616}, {"t0": 16.979, "t1": 19.286}, {"t0": 19.618, "t1": 22.049}, {"t0": 22.437, "t1": 23.518}, {"t0": 23.853, "t1": 24.967}, {"t0": 25.283, "t1": 27.368}, {"t0": 27.799, "t1": 31.159}, {"t0": 31.523, "t1": 32.986}, {"t0": 32.985, "t1": 37.174}, {"t0": 37.396, "t1": 38.884}, {"t0": 39.081, "t1": 41.674}, {"t0": 41.811, "t1": 44.125}, {"t0": 44.125, "t1": 47.384}, {"t0": 47.833, "t1": 49.611}, {"t0": 49.734, "t1": 51.347}, {"t0": 51.675, "t1": 54.873}, {"t0": 54.874, "t1": 57.275}, {"t0": 57.594, "t1": 59.5}, {"t0": 59.65, "t1": 62.788}, {"t0": 63.233, "t1": 65.007}, {"t0": 65.363, "t1": 67.749}]};
+const WORDS = MINUTAGE.words, SENT = MINUTAGE.sent, B = {};
+SCRIPT.forEach(([, beat], i) => { if (beat) B[beat] = SENT[i].t0; });
+const FIN_VOIX = MINUTAGE.duree_voix;
+const DUREE = MINUTAGE.duree_fichier + 2.6;
+/* Découpe des sous-titres : 3 mots max, coupe après la ponctuation */
+const CHUNKS = [];
+(function decouper() {
+  let cur = [];
+  const pousser = () => { if (cur.length) { CHUNKS.push(cur); cur = []; } };
+  WORDS.forEach((w, i) => {
+    const suivant = WORDS[i + 1];
+    cur.push(w);
+    if (cur.length >= 3 || /[.:?!,…]$/.test(w.txt) || !suivant || suivant.si !== w.si) pousser();
+  });
+  CHUNKS.forEach((c, i) => { c.t0 = c[0].t; c.t1 = CHUNKS[i + 1] ? CHUNKS[i + 1][0].t : c.at(-1).t + c.at(-1).d + 0.4; });
+})();
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const easeIO = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+const ease = (t, a, d) => easeIO(clamp((t - a) / d));
+const lerp = (a, b, p) => a + (b - a) * p;
+const mixC = (c1, c2, p) => {
+  const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const a = h(c1), b = h(c2);
+  return "#" + a.map((v, i) => Math.round(lerp(v, b[i], p)).toString(16).padStart(2, "0")).join("");
+};
+const euros = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const vis = (t, a, b, f = 0.25) => clamp(Math.min((t - a) / f, (b - t) / f)); // apparition/disparition
+const fin = (beat, apres = 0) => (B[beat] ?? 0) + apres;
+const finPhrase = (beat) => { const i = SCRIPT.findIndex((s) => s[1] === beat); return SENT[i].t1; };
+const TRAIT = "#1d1a2b";
+let ZOOM = 1;
+function bulle(x, y, texte, couleur = "#fff6e3", ink = TRAIT, o = 1) {
+  if (o <= 0) return "";
+  const w = texte.length * 17 + 44;
+  return `<g opacity="${o}" transform="translate(${x},${y}) scale(${(0.7 + 0.3 * easeIO(o)) * 1.25 / ZOOM})">
+    <rect x="${-w / 2 + 5}" y="-25" width="${w}" height="54" rx="18" fill="${TRAIT}"/>
+    <path d="M-12 22 l 4 22 l 20 -22 Z" fill="${couleur}" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="${-w / 2}" y="-30" width="${w}" height="54" rx="18" fill="${couleur}" stroke="${TRAIT}" stroke-width="4"/>
+    <rect x="-10" y="18" width="20" height="8" fill="${couleur}"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="${ink}">${texte}</text></g>`;
+}
+
+function hud(t) {
+  const oF = vis(t, fin("hudFam"), 1e9, 0.3), oA = vis(t, fin("hudAll"), 1e9, 0.3);
+  if (oF <= 0) return "";
+  const sauts = [[finPhrase("calc1"), 76000, 119], [finPhrase("calc2"), 73500, 116], [finPhrase("calc3"), 39500, 110]];
+  let budget = 80000, delai = 120, prev = 80000, prevD = 120, delta = null;
+  for (const [ts, b, d] of sauts) {
+    const p = ease(t, ts, 0.7);
+    if (t >= ts) { budget = lerp(prev, b, p); delai = Math.round(lerp(prevD, d, p)); if (t < ts + 2) delta = { v: b - prev, o: vis(t, ts, ts + 2, 0.2) }; }
+    prev = b; prevD = d;
+  }
+  const ico = {
+    jours: `<rect x="-12" y="-10" width="24" height="22" rx="3" fill="#fff" stroke="${TRAIT}" stroke-width="3"/><rect x="-12" y="-10" width="24" height="7" fill="${TRAIT}"/><path d="M-6 -14 v6 M6 -14 v6" stroke="${TRAIT}" stroke-width="3" stroke-linecap="round"/>`,
+    familles: `<path d="M-15 12 L 0 -13 L 15 12 Z" fill="#fff" stroke="${TRAIT}" stroke-width="3" stroke-linejoin="round"/><path d="M0 -13 L -4 12 M0 -13 L 4 12" stroke="${TRAIT}" stroke-width="3"/>`,
+    budget: `<circle r="13" fill="#ffe27a" stroke="${TRAIT}" stroke-width="3"/><text y="6" text-anchor="middle" font-family="Inter" font-weight="900" font-size="17" fill="${TRAIT}">€</text>`,
+  };
+  const boite = (cx, rot, lab, val, col, ic, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},150) rotate(${rot}) scale(${0.8 + 0.2 * easeIO(o)})">
+    <rect x="-125" y="-46" width="250" height="92" rx="24" fill="${TRAIT}" transform="translate(5,7)"/>
+    <rect x="-125" y="-46" width="250" height="92" rx="24" fill="#fff6e3" stroke="${TRAIT}" stroke-width="5"/>
+    <circle cx="-88" cy="0" r="25" fill="${col}" stroke="${TRAIT}" stroke-width="4"/><g transform="translate(-88,0)">${ic}</g>
+    <text x="-54" y="-12" font-family="Inter" font-weight="800" font-size="17" fill="#7a6f80" letter-spacing="2">${lab}</text>
+    <text x="-54" y="27" font-family="Inter" font-weight="900" font-size="34" fill="${TRAIT}">${val}</text></g>`;
+  let s = boite(265, -2, "JOURS", `${delai}`, "#ff6b5e", ico.jours, oA);
+  s += boite(540, 1, "FAMILLES", "0 / 50", "#4ade80", ico.familles, oF);
+  s += boite(815, -1.5, "BUDGET", `${euros(budget)} €`, "#ffc93c", ico.budget, oA);
+  if (delta) s += `<g opacity="${delta.o}" transform="translate(830,236) rotate(-3)"><rect x="-90" y="-26" width="180" height="48" rx="14" fill="#ff5a5f" stroke="${TRAIT}" stroke-width="4"/><text y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#fff">−${euros(-delta.v)} €</text></g>`;
+  return s;
+}
+
+function puce(t) {
+  const etapes = [["1", "L'ENTRÉE", fin("p1"), fin("p2")], ["2", "LES RONCES", fin("p2"), fin("p3")], ["3", "LES DOUCHES", fin("p3"), fin("verif")]];
+  let s = "";
+  for (const [n, txt, a, b] of etapes) {
+    const o = vis(t, a, b, 0.2);
+    if (o <= 0) continue;
+    const w = txt.length * 19 + 190;
+    s += `<g opacity="${o}" transform="translate(540,262) scale(${0.85 + 0.15 * o})">
+      <rect x="${-w / 2}" y="-27" width="${w}" height="54" rx="27" fill="${TRAIT}"/>
+      <rect x="${-w / 2 + 7}" y="-20" width="132" height="40" rx="20" fill="#ff6b5e"/>
+      <text x="${-w / 2 + 73}" y="9" text-anchor="middle" font-family="Inter" font-weight="900" font-size="22" fill="#fff">ÉTAPE ${n}/3</text>
+      <text x="${-w / 2 + 156}" y="10" font-family="Inter" font-weight="900" font-size="28" fill="#fff6e3">${txt}</text></g>`;
+  }
+  // tampon « vérification »
+  const a = fin("verif"), o = vis(t, a, fin("ok"), 0.15);
+  if (o > 0) {
+    const k = 1 + 0.6 * (1 - easeIO(clamp((t - a) / 0.22)));
+    s += `<g opacity="${o}" transform="translate(540,268) rotate(-5) scale(${k})">
+      <rect x="-200" y="-38" width="400" height="76" rx="10" fill="#fff6e3" stroke="#2b7bd6" stroke-width="6"/>
+      <rect x="-190" y="-28" width="380" height="56" rx="6" fill="none" stroke="#2b7bd6" stroke-width="3"/>
+      <text y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#2b7bd6" letter-spacing="4">VÉRIFICATION</text></g>`;
+  }
+  return s;
+}
+
+/* Le calcul façon ticket de caisse */
+function carteCalcul(t, a, b, lignes, total, num = 1) {
+  const o = vis(t, a, b, 0.25);
+  if (o <= 0) return "";
+  const h = 150 + lignes.length * 50 + 80;
+  let bord = `M-250 0 H 250 V ${h}`;
+  for (let x = 250; x > -250; x -= 25) bord += ` L ${x - 12.5} ${h - 14} L ${x - 25} ${h}`;
+  bord += " Z";
+  const mono = `font-family="JetBrains Mono" font-weight="800"`;
+  let s = `<g opacity="${o}" transform="translate(540,${330 + (1 - easeIO(o)) * -40}) rotate(2.5)">
+    <path d="${bord}" fill="${TRAIT}" transform="translate(7,9)"/>
+    <path d="${bord}" fill="#ffffff" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"/>
+    <text x="0" y="44" text-anchor="middle" ${mono} font-size="24" fill="${TRAIT}">CAMPING LES PINS PERDUS</text>
+    <text x="0" y="76" text-anchor="middle" ${mono} font-size="20" fill="#7a6f80">TICKET N°${num}</text>
+    <line x1="-225" y1="98" x2="225" y2="98" stroke="${TRAIT}" stroke-width="3" stroke-dasharray="10 8"/>`;
+  lignes.forEach(([lab, val], i) => {
+    const oi = clamp((t - a - 0.35 - i * 0.55) / 0.15);
+    s += `<g opacity="${oi}"><text x="-225" y="${140 + i * 50}" ${mono} font-size="25" fill="${TRAIT}">${lab}</text><text x="225" y="${140 + i * 50}" text-anchor="end" ${mono} font-size="25" fill="${TRAIT}">${val}</text></g>`;
+  });
+  const ot = clamp((t - a - 0.35 - lignes.length * 0.55) / 0.15), yt = 140 + lignes.length * 50 + 14;
+  s += `<g opacity="${ot}"><line x1="-225" y1="${yt - 36}" x2="225" y2="${yt - 36}" stroke="${TRAIT}" stroke-width="3" stroke-dasharray="10 8"/>
+    <text x="-225" y="${yt + 6}" font-family="Inter" font-weight="900" font-size="32" fill="#e23b3b">TOTAL</text><text x="225" y="${yt + 6}" text-anchor="end" font-family="Inter" font-weight="900" font-size="36" fill="#e23b3b">${total}</text></g>`;
+  return s + `</g>`;
+}
+
+/* La liste de Roger : un porte-bloc */
+function liste(t) {
+  const fen = [[fin("liste"), fin("p1", 0.6), false], [fin("bilan"), fin("choix0"), true]];
+  let s = "";
+  for (const [a, b, coches] of fen) {
+    const o = vis(t, a, b, 0.25);
+    if (o <= 0) continue;
+    const items = ["1. L'ENTRÉE", "2. LES RONCES", "3. LES DOUCHES", coches ? "4. ???" : null].filter(Boolean);
+    const h = 140 + items.length * 60;
+    const patte = `<g transform="translate(205,74)" fill="#c98f4a" stroke="${TRAIT}" stroke-width="2.5"><ellipse cx="0" cy="6" rx="12" ry="10"/><circle cx="-12" cy="-8" r="5"/><circle cx="-4" cy="-14" r="5"/><circle cx="5" cy="-14" r="5"/><circle cx="13" cy="-8" r="5"/></g>`;
+    s += `<g opacity="${o}" transform="translate(540,${330 + (1 - easeIO(o)) * -40}) rotate(-2)">
+      <rect x="-265" y="0" width="530" height="${h}" rx="22" fill="${TRAIT}" transform="translate(7,9)"/>
+      <rect x="-265" y="0" width="530" height="${h}" rx="22" fill="#b9773f" stroke="${TRAIT}" stroke-width="5"/>
+      <rect x="-238" y="26" width="476" height="${h - 48}" rx="6" fill="#fff6e3" stroke="${TRAIT}" stroke-width="3"/>
+      <rect x="-70" y="-18" width="140" height="42" rx="12" fill="#aab3bd" stroke="${TRAIT}" stroke-width="4"/>
+      <text x="-205" y="88" font-family="Inter" font-weight="900" font-size="30" fill="${TRAIT}">LA LISTE DE ROGER</text>${patte}`;
+    items.forEach((it, i) => {
+      const oi = clamp((t - a - 0.3 - i * 0.35) / 0.2), y = 152 + i * 60;
+      const coche = coches && i < 3 ? clamp((t - a - 0.6 - i * 0.4) / 0.2) : 0;
+      s += `<g opacity="${oi}"><rect x="-205" y="${y - 30}" width="36" height="36" rx="8" fill="#fff" stroke="${TRAIT}" stroke-width="4"/>
+        <text x="-152" y="${y}" font-family="Inter" font-weight="900" font-size="30" fill="${it.includes("???") ? "#e23b3b" : TRAIT}">${it}</text>
+        ${coche > 0 ? `<path d="M-199 ${y - 14} l 12 14 l 26 -32" stroke="#22a55a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${coche}"/>` : ""}</g>`;
+    });
+    s += `</g>`;
+  }
+  return s;
+}
+
+function choix(t) {
+  const a = fin("choix"), b = DUREE - 2.6;
+  const carte = (cx, rot, titre, sous, col, icone, o, pulse) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},480) rotate(${rot}) scale(${(0.75 + 0.25 * easeIO(o)) * (1 + pulse * 0.035)})">
+    <rect x="-200" y="-125" width="400" height="250" rx="30" fill="${TRAIT}" transform="translate(8,10)"/>
+    <rect x="-200" y="-125" width="400" height="250" rx="30" fill="#fff6e3" stroke="${TRAIT}" stroke-width="6"/>
+    <rect x="-200" y="-125" width="400" height="22" rx="11" fill="${col}" stroke="${TRAIT}" stroke-width="6"/>
+    ${icone}
+    <text x="0" y="62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${TRAIT}">${titre}</text>
+    <text x="0" y="98" text-anchor="middle" font-family="Inter" font-weight="800" font-size="19" fill="#7a6f80" letter-spacing="2">${sous}</text></g>`;
+  const vagues = `<g transform="translate(0,-38)"><rect x="-90" y="-40" width="180" height="70" rx="14" fill="#2b7bd6" stroke="${TRAIT}" stroke-width="4"/><path d="M-80 -8 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#bfe3ff" stroke-width="7" fill="none"/><path d="M-80 14 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#7cc4f5" stroke-width="7" fill="none"/></g>`;
+  const tobog = `<g transform="translate(0,-40)" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"><rect x="-70" y="-60" width="12" height="92" fill="#ffc93c"/><rect x="-22" y="-60" width="12" height="92" fill="#ffc93c"/><rect x="-76" y="-66" width="72" height="12" fill="#f08a24"/><path d="M-10 -58 Q 40 -40 62 32 L 84 32 Q 62 -50 -10 -74 Z" fill="#ff5a5f"/></g>`;
+  const pulse = Math.sin(t * 6) * 0.5 + 0.5;
+  let s = carte(285, -3, "PISCINE", "CHAUFFÉE", "#2b7bd6", vagues, vis(t, a, b, 0.25), pulse);
+  s += carte(795, 3, "AIRE DE JEUX", "TOBOGGAN · BALANÇOIRES", "#ffc93c", tobog, vis(t, a + 1.0, b, 0.25), 1 - pulse);
+  const oOu = vis(t, a + 0.6, b, 0.2);
+  if (oOu > 0) s += `<g opacity="${oOu}"><circle cx="540" cy="480" r="46" fill="${TRAIT}" stroke="#fff6e3" stroke-width="5"/><text x="540" y="494" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff6e3">OU</text></g>`;
+  const oC = vis(t, fin("comment"), b, 0.25);
+  if (oC > 0) s += `<g opacity="${oC}" transform="translate(540,715) scale(${0.85 + 0.15 * oC})"><rect x="-370" y="-38" width="740" height="76" rx="38" fill="${TRAIT}" transform="translate(5,7)"/><rect x="-370" y="-38" width="740" height="76" rx="38" fill="#ff3b5c" stroke="${TRAIT}" stroke-width="5"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="32" fill="#fff">ÉCRIS « PISCINE » OU « JEUX »</text></g>`;
+  return s;
+}
+
+/* Sous-titres : mot en cours surligné dans une pastille */
+const MESURE = document.createElement("canvas").getContext("2d");
+function largeur(txt, taille) { MESURE.font = `900 ${taille}px Inter`; return MESURE.measureText(txt).width; }
+function sousTitres(t) {
+  const c = CHUNKS.find((k) => t >= k.t0 && t < k.t1);
+  if (!c || t > FIN_VOIX + 0.3) return "";
+  const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#5fb0ff" };
+  const PASTILLE = { w: "#ffd23f", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#5fb0ff" };
+  let taille = 72;
+  const mots = c.map((w) => w.txt.toUpperCase());
+  const ecart = 22;
+  let total = mots.reduce((s, m) => s + largeur(m, taille), 0) + ecart * (mots.length - 1);
+  if (total > 960) { taille = taille * 960 / total; total = 960; }
+  const pop = 0.9 + 0.1 * easeIO(clamp((t - c.t0) / 0.12));
+  let cur = -1;
+  c.forEach((w, i) => { if (t >= w.t) cur = i; });
+  let x = 540 - total / 2, s = `<g transform="translate(540,1395) scale(${pop}) translate(-540,-1395)">`;
+  c.forEach((w, i) => {
+    const m = mots[i].replace(/&/g, "&amp;"), lw = largeur(mots[i], taille);
+    if (i === cur) {
+      const k = 1 + 0.08 * (1 - easeIO(clamp((t - w.t) / 0.15)));
+      s += `<g transform="translate(${x + lw / 2},1372) scale(${k}) translate(${-(x + lw / 2)},-1372)">
+        <rect x="${x - 14}" y="${1395 - taille * 0.86}" width="${lw + 28}" height="${taille * 1.12}" rx="16" fill="${TRAIT}" transform="translate(5,6)"/>
+        <rect x="${x - 14}" y="${1395 - taille * 0.86}" width="${lw + 28}" height="${taille * 1.12}" rx="16" fill="${PASTILLE[w.c]}" stroke="${TRAIT}" stroke-width="5"/>
+        <text x="${x}" y="1395" font-family="Inter" font-weight="900" font-size="${taille}" fill="${TRAIT}">${m}</text></g>`;
+    } else {
+      const dit = t >= w.t;
+      s += `<text x="${x}" y="1395" font-family="Inter" font-weight="900" font-size="${taille}" fill="${dit ? COUL[w.c] : "#ffffff"}" opacity="${dit ? 1 : 0.5}" stroke="${TRAIT}" stroke-width="12" paint-order="stroke" stroke-linejoin="round">${m}</text>`;
+    }
+    x += lw + ecart;
+  });
+  return s + `</g>`;
+}
+
+
+
+/* ---------- Moteur 3D ---------- */
+const W = 1080, H = 1920;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+document.getElementById("cadre").prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 150);
+
+let graine = 3;
+const alea = () => { graine = (graine * 16807) % 2147483647; return graine / 2147483647; };
+const mat = (c, e = 0) => new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: 0.85, metalness: 0, emissive: e ? c : 0x000000, emissiveIntensity: e });
+function facettes(geo, force = 0.04, sphere = 0) {
+  geo.deleteAttribute("normal"); geo.deleteAttribute("uv");
+  geo = mergeVertices(geo);
+  const p = geo.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    if (sphere) { const l = v.length(); const n = v.clone().normalize().multiplyScalar(Math.max(Math.abs(v.x), Math.abs(v.y), Math.abs(v.z))); v.lerp(n.setLength(Math.max(l * 0.9, n.length())), sphere); }
+    v.x += (alea() - 0.5) * force; v.y += (alea() - 0.5) * force; v.z += (alea() - 0.5) * force;
+    p.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+const ombre = (o) => { o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); return o; };
+const bloc = (w, h, d, c, f = 0.03, seg = 1) => ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(w, h, d, seg, seg, seg), f), mat(c)));
+const pose = (m, x, y, z, rx = 0, ry = 0, rz = 0) => { m.position.set(x, y, z); m.rotation.set(rx, ry, rz); return m; };
+const groupe = (x = 0, y = 0, z = 0) => { const g = new THREE.Group(); g.position.set(x, y, z); return g; };
+function texteTexture(lignes, fond, encre, w = 512, h = 160) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d"); x.fillStyle = fond; x.fillRect(0, 0, w, h);
+  x.fillStyle = encre; x.textAlign = "center"; x.textBaseline = "middle";
+  lignes.forEach(([txt, taille, y]) => { x.font = `900 ${taille}px Inter, sans-serif`; x.fillText(txt, w / 2, y); });
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+/* ---------- Malo ---------- */
+const PEAU = "#e9b48e", CHEV = "#6b3b1f", VESTE = "#2f6b4f", TSHIRT = "#efe8d8", JEAN = "#33476e", BASKET = "#d8432f";
+function creerMalo() {
+  const g = new THREE.Group(), corps = groupe(); g.add(corps);
+  const jambes = [];
+  for (const s of [-1, 1]) {
+    const j = groupe(s * 0.17, 1.05, 0);
+    j.add(pose(bloc(0.26, 0.85, 0.28, JEAN, 0.02), 0, -0.43, 0));
+    j.add(pose(bloc(0.3, 0.16, 0.44, BASKET, 0.02), 0, -0.95, 0.06));
+    j.add(pose(bloc(0.31, 0.05, 0.45, "#f2f2f2", 0), 0, -1.03, 0.06));
+    corps.add(j); jambes.push(j);
+  }
+  corps.add(pose(bloc(0.62, 0.78, 0.36, TSHIRT, 0.03, 2), 0, 1.42, 0));
+  for (const s of [-1, 1]) corps.add(pose(bloc(0.24, 0.82, 0.4, VESTE, 0.03, 2), s * 0.24, 1.43, 0));
+  corps.add(pose(bloc(0.7, 0.14, 0.42, VESTE, 0.02), 0, 1.05, 0));
+  for (const s of [-1, 1]) corps.add(pose(bloc(0.16, 0.18, 0.06, "#24543e", 0.01), s * 0.14, 1.78, 0.19, 0.2, 0, s * 0.35));
+  corps.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), mat("#2e8b57")), 0, 1.5, 0.19, 0, Math.PI / 4));
+  const bras = [];
+  for (const s of [-1, 1]) {
+    const b = groupe(s * 0.43, 1.74, 0);
+    b.add(pose(bloc(0.2, 0.5, 0.22, VESTE, 0.02), 0, -0.24, 0));
+    b.add(pose(bloc(0.16, 0.4, 0.17, PEAU, 0.02), 0, -0.64, 0));
+    b.add(pose(bloc(0.19, 0.18, 0.2, PEAU, 0.03), 0, -0.9, 0.01));
+    corps.add(b); bras.push(b);
+  }
+  // pouce (visible seulement pour le geste « pouce levé »)
+  const pouce = pose(bloc(0.07, 0.16, 0.07, PEAU, 0.01), 0, -1.04, 0.02); bras[1].add(pouce); pouce.visible = false;
+  corps.add(pose(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.2, 6), mat(PEAU)), 0, 1.88, 0));
+  const tete = groupe(0, 2.25, 0);
+  const gc = facettes(new THREE.BoxGeometry(0.68, 0.76, 0.66, 3, 3, 3), 0.03, 0.45);
+  { const p = gc.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i); const k = y < 0 ? 1 + y * 0.75 : 1 - y * 0.12; p.setX(i, p.getX(i) * k); if (y < -0.1) p.setZ(i, p.getZ(i) * (1 + y * 0.35) + 0.03); } gc.computeVertexNormals(); }
+  tete.add(ombre(new THREE.Mesh(gc, mat(PEAU))));
+  tete.add(pose(bloc(0.26, 0.1, 0.3, PEAU, 0.02), 0, -0.37, 0.06));
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.08, 0.17, 0.12, "#dda27c", 0.02), s * 0.36, -0.02, -0.02));
+  const yeux = [], sourcils = [];
+  for (const s of [-1, 1]) {
+    const oeil = groupe(s * 0.14, 0.03, 0.335);
+    oeil.add(pose(bloc(0.15, 0.17, 0.03, "#fbf6ee", 0), 0, 0, 0));
+    oeil.add(pose(bloc(0.09, 0.12, 0.03, "#3b2a1e", 0), s * -0.005, -0.005, 0.012));
+    oeil.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.02), mat("#ffffff", 1)), 0.02, 0.025, 0.03));
+    tete.add(oeil); yeux.push(oeil);
+    const sc = groupe(s * 0.14, 0.15, 0.345); sc.add(bloc(0.17, 0.045, 0.04, "#4a2814", 0)); tete.add(sc); sourcils.push(sc);
+  }
+  tete.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), mat("#e0a07a")), 0, -0.08, 0.36, Math.PI / 2, Math.PI / 4, 0));
+  // bouche : barre centrale + deux coins orientables (sourire / moue)
+  const bouche = groupe(0, -0.21, 0.335);
+  const centre = bloc(0.1, 0.035, 0.03, "#6e2a24", 0); bouche.add(centre);
+  const coins = [-1, 1].map((s) => { const c = groupe(s * 0.05, 0, 0); c.add(pose(bloc(0.05, 0.035, 0.03, "#6e2a24", 0), s * 0.022, 0, 0)); bouche.add(c); return c; });
+  tete.add(bouche);
+  for (const [x, y] of [[-0.2, -0.08], [-0.16, -0.1], [-0.22, -0.11], [0.2, -0.08], [0.16, -0.1], [0.22, -0.11]])
+    tete.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.018, 0.01), mat("#b8714f")), x, y, 0.335));
+  const calotte = ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(0.76, 0.34, 0.74, 3, 1, 3), 0.05, 0.3), mat(CHEV)));
+  calotte.position.set(0, 0.29, -0.02); tete.add(calotte);
+  tete.add(pose(bloc(0.74, 0.42, 0.18, CHEV, 0.05, 2), 0, 0.06, -0.3));
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.1, 0.32, 0.5, CHEV, 0.04), s * 0.36, 0.12, -0.08));
+  const meches = [[-0.25, 0.42, 0.2, -0.5, 0.4], [-0.05, 0.5, 0.25, -0.7, 0.1], [0.18, 0.46, 0.22, -0.6, -0.3], [0.3, 0.38, 0.05, -0.2, -0.6],
+    [-0.3, 0.4, -0.15, 0.3, 0.6], [0.0, 0.52, -0.1, 0.2, 0], [0.22, 0.45, -0.25, 0.4, -0.4], [-0.12, 0.48, 0.05, -0.2, 0.3], [0.1, 0.5, 0.0, 0, -0.2],
+    [-0.2, 0.28, 0.33, -1.2, 0.2], [0.08, 0.3, 0.35, -1.25, -0.15], [0.26, 0.26, 0.3, -1.1, -0.4]];
+  for (const [x, y, z, rx, rz] of meches) tete.add(pose(ombre(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.15, 0.42, 4, 1), 0.02), mat(alea() > 0.5 ? CHEV : "#7a4626"))), x, y, z, rx, alea(), rz));
+  corps.add(tete);
+  // lanterne tenue dans la main gauche
+  const lanterne = groupe(0, -1.12, 0.05);
+  const verre = pose(bloc(0.2, 0.26, 0.2, "#ffcf7a", 0.01), 0, -0.1, 0); verre.material = mat("#ffcf7a", 1.6); verre.castShadow = false;
+  lanterne.add(verre, pose(bloc(0.26, 0.05, 0.26, "#2b2b2b", 0), 0, 0.05, 0), pose(bloc(0.03, 0.12, 0.03, "#2b2b2b", 0), 0, 0.12, 0));
+  const flamme = new THREE.PointLight("#ffb257", 10, 9, 1.4); flamme.position.set(0, -0.05, 0.25); lanterne.add(flamme);
+  bras[0].add(lanterne);
+  g.userData = { corps, tete, bras, jambes, yeux, sourcils, bouche, centre, coins, pouce, lanterne, verre, flamme };
+  return g;
+}
+
+/* ---------- Roger ---------- */
+function creerRoger() {
+  const g = new THREE.Group(), ROUX = "#c27a3a", CREME = "#f0dcc0";
+  const corps = groupe(); g.add(corps);
+  corps.add(pose(bloc(0.8, 0.42, 0.44, ROUX, 0.04, 2), 0, 0.55, 0));
+  corps.add(pose(bloc(0.5, 0.2, 0.4, CREME, 0.03), 0.05, 0.4, 0));
+  const pattes = [];
+  for (const [x, z] of [[-0.28, -0.14], [-0.28, 0.14], [0.28, -0.14], [0.28, 0.14]]) { const p = groupe(x, 0.4, z); p.add(pose(bloc(0.13, 0.4, 0.13, "#a8662f", 0.02), 0, -0.2, 0)); corps.add(p); pattes.push(p); }
+  const tete = groupe(0.5, 0.92, 0);
+  tete.add(ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(0.44, 0.42, 0.42, 2, 2, 2), 0.04, 0.35), mat(ROUX))));
+  tete.add(pose(bloc(0.26, 0.2, 0.26, CREME, 0.03), 0.27, -0.08, 0));
+  tete.add(pose(bloc(0.09, 0.08, 0.1, "#1b1410", 0.01), 0.42, -0.02, 0));
+  const oreilles = [];
+  for (const s of [-1, 1]) {
+    tete.add(pose(bloc(0.07, 0.09, 0.03, "#1b1410", 0), 0.14, 0.07, s * 0.2));
+    const o = groupe(-0.04, 0.17, s * 0.24); o.add(pose(bloc(0.14, 0.3, 0.07, "#6e3d1c", 0.03), 0, -0.15, 0)); o.rotation.x = s * 0.2; tete.add(o); oreilles.push(o);
+  }
+  corps.add(tete);
+  corps.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.22, 3), mat("#c8342b")), 0.42, 0.64, 0, 0, 0, Math.PI));
+  const queue = groupe(-0.4, 0.68, 0); queue.add(pose(bloc(0.08, 0.36, 0.08, ROUX, 0.02), 0, 0.16, 0)); queue.rotation.z = 0.7; corps.add(queue);
+  g.userData = { corps, tete, pattes, queue, oreilles };
+  return ombre(g);
+}
+
+/* ---------- Décor du camping (axe x : entrée -10 → caravane +11) ---------- */
+const sol = new THREE.Mesh(facettes(new THREE.PlaneGeometry(80, 50, 50, 30), 0.15), mat("#2f4d2c"));
+sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+const chemin = new THREE.Mesh(facettes(new THREE.PlaneGeometry(30, 1.8, 30, 2), 0.05), mat("#6b5338"));
+chemin.rotation.x = -Math.PI / 2; chemin.position.set(0.5, 0.02, 1.3); chemin.receiveShadow = true; scene.add(chemin);
+
+function sapin(x, z, h) {
+  const g = groupe(x, 0, z);
+  g.add(pose(bloc(0.18, 0.6, 0.18, "#4a2f1c", 0.02), 0, 0.3, 0));
+  for (let i = 0; i < 3; i++) g.add(pose(ombre(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.9 - i * 0.22, 1.1, 6, 1), 0.08), mat(i % 2 ? "#1f4a32" : "#245a3a"))), 0, 0.9 + i * 0.6, 0));
+  g.scale.setScalar(h); g.rotation.y = alea() * 3; return g;
+}
+[[-13, -3, 2], [-7.5, -4, 2.3], [-3, -6, 2.6], [1, -4.5, 2], [3.5, -7, 2.8], [8, -4.5, 2.2], [13.5, -3, 2.4], [-16, -8, 3], [16, -8, 3], [-10, -10, 3.2], [6, -11, 3.4], [-1, -12, 3.5], [11, -12, 3], [-14, 4, 1.6], [15, 4, 1.8]]
+  .forEach(([x, z, h]) => scene.add(sapin(x, z, h)));
+
+// Entrée : piliers, portail (rouillé → neuf), panneau (par terre → en haut)
+const entree = groupe(-10, 0, 0); scene.add(entree);
+for (const x of [-1.7, 1.7]) { entree.add(pose(bloc(0.6, 2.4, 0.6, "#8f8a80", 0.06, 2), x, 1.2, 0)); entree.add(pose(bloc(0.75, 0.2, 0.75, "#a29d93", 0.04), x, 2.5, 0)); }
+const portail = [];
+for (const s of [-1, 1]) {
+  const v = groupe(s * 1.4, 0, 0); entree.add(v);
+  const barres = [];
+  v.add(pose(bloc(1.4, 0.1, 0.08, "#7a4a2a", 0.01), -s * 0.7, 1.75, 0), pose(bloc(1.4, 0.1, 0.08, "#7a4a2a", 0.01), -s * 0.7, 0.45, 0));
+  for (let i = 0; i < 6; i++) { const b = pose(bloc(0.07, 1.6, 0.07, "#7a4a2a", 0.01), -s * (0.12 + i * 0.23), 1.15, 0); v.add(b); barres.push(b); }
+  portail.push({ v, s, barres });
+}
+const texPanneauVieux = texteTexture([["CAMPING", 40, 50], ["LES PINS PERDUS", 56, 110]], "#8a7a62", "#4a3c2b");
+const texPanneauNeuf = texteTexture([["CAMPING", 40, 50], ["LES PINS PERDUS", 56, 110]], "#f6ecd2", "#1f4d3a");
+const panneau = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.95, 0.1), [mat("#5b4c38"), mat("#5b4c38"), mat("#5b4c38"), mat("#5b4c38"), new THREE.MeshStandardMaterial({ map: texPanneauVieux, roughness: 0.9 }), mat("#5b4c38")]);
+panneau.castShadow = true; entree.add(panneau);
+const poteaux = [-1.2, 1.2].map((x) => { const p = pose(bloc(0.12, 1, 0.12, "#6b4a2f", 0.01), x, 2.6, -0.1); entree.add(p); return p; });
+
+// Emplacements : piquets numérotés + ronces
+const ronces = [];
+for (let i = 0; i < 5; i++) {
+  const x = -6 + i * 1.9;
+  scene.add(pose(bloc(0.1, 0.7, 0.1, "#7a5636", 0.01), x, 0.35, 2.4));
+  const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.26, 0.05), [mat("#ddd"), mat("#ddd"), mat("#ddd"), mat("#ddd"), new THREE.MeshStandardMaterial({ map: texteTexture([[String(i * 6 + 1).padStart(2, "0"), 110, 80]], "#f6ecd2", "#1d1a2b", 200, 140) }), mat("#ddd")]);
+  plaque.position.set(x, 0.75, 2.43); scene.add(plaque);
+}
+for (let i = 0; i < 10; i++) {
+  const g = groupe(-6.6 + i * 1.0 + alea() * 0.4, 0, -0.3 + alea() * 1.6);
+  for (let k = 0; k < 4; k++) {
+    const r = 0.45 + alea() * 0.4;
+    g.add(pose(ombre(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(r, 0), 0.12), mat(k % 2 ? "#2d3b22" : "#3a4a28"))), (alea() - 0.5) * 0.9, r * 0.8, (alea() - 0.5) * 0.7));
+  }
+  for (let k = 0; k < 3; k++) g.add(pose(new THREE.Mesh(new THREE.IcosahedronGeometry(0.07, 0), mat("#6b2a7b")), (alea() - 0.5) * 0.8, 0.5 + alea() * 0.6, 0.45));
+  scene.add(g); ronces.push(g);
+}
+// poussière du débroussaillage
+const poussiere = [];
+for (let i = 0; i < 14; i++) { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.25, 0), new THREE.MeshStandardMaterial({ color: "#c9b48e", transparent: true, opacity: 0, flatShading: true })); scene.add(m); poussiere.push(m); }
+
+// Bloc douches
+const douches = groupe(5, 0, -0.5); scene.add(douches);
+const murMat = mat("#a39880"), carMat = mat("#7d7464"), toitMat = mat("#5c5248");
+const mur = ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(4.4, 2.6, 2.8, 4, 2, 2), 0.05), murMat)); mur.position.y = 1.3; douches.add(mur);
+const carrelage = pose(new THREE.Mesh(new THREE.BoxGeometry(4.45, 0.6, 2.85), carMat), 0, 0.3, 0); douches.add(carrelage);
+douches.add(pose(ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(4.9, 0.25, 3.3, 3, 1, 2), 0.05), toitMat)), 0, 2.72, 0));
+const porte = pose(bloc(0.8, 1.7, 0.08, "#6b5a45", 0.01), -1.2, 0.85, 1.42); douches.add(porte);
+const fenetreMat = mat("#2a2f38"); const fenetre = pose(new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 0.06), fenetreMat), 0.8, 1.7, 1.42); douches.add(fenetre);
+const lumDouche = new THREE.PointLight("#ffd59a", 0, 6, 1.5); lumDouche.position.set(0.8, 1.7, 2.2); douches.add(lumDouche);
+const enseigne = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 0.06), [mat("#555"), mat("#555"), mat("#555"), mat("#555"), new THREE.MeshStandardMaterial({ map: texteTexture([["DOUCHES", 90, 80]], "#1f6fae", "#ffffff", 512, 150) }), mat("#555")]);
+enseigne.position.set(0.3, 2.3, 1.45); douches.add(enseigne);
+const fissures = groupe(); douches.add(fissures);
+for (const [x, y, rz, l] of [[-0.3, 1.9, 0.4, 0.6], [-0.15, 1.45, -0.5, 0.5], [-0.3, 1.05, 0.3, 0.5], [1.7, 0.9, -0.6, 0.5], [1.85, 0.5, 0.4, 0.4]]) fissures.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.05, l, 0.03), mat("#2a231c")), x, y, 1.43, 0, 0, rz));
+for (const [x, z] of [[-1.9, 1.3], [1.6, 1.35]]) fissures.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(0.35, 0), 0.08), mat("#3f5a2c")), x, 0.15, z));
+// robinet extérieur
+const robinet = groupe(7.7, 0, 1.0); scene.add(robinet);
+robinet.add(pose(bloc(0.14, 1.3, 0.14, "#7b7f86", 0.01), 0, 0.65, 0), pose(bloc(0.14, 0.12, 0.45, "#8d9199", 0.01), 0, 1.25, 0.18), pose(bloc(0.1, 0.22, 0.1, "#8d9199", 0.01), 0, 1.12, 0.38), pose(bloc(0.26, 0.08, 0.1, "#d24b3e", 0.01), 0, 1.38, 0.05));
+robinet.add(pose(bloc(0.8, 0.45, 0.6, "#bfc5cc", 0.02), 0, 0.23, 0.4));
+const jet = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.62, 6), new THREE.MeshStandardMaterial({ color: "#7cc4ff", emissive: "#2b6fae", emissiveIntensity: 0.4, transparent: true, opacity: 0.85 }));
+jet.position.set(0, 0.7, 0.38); jet.scale.y = 0; robinet.add(jet);
+const vapeur = [];
+for (let i = 0; i < 8; i++) { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.12, 0), new THREE.MeshStandardMaterial({ color: "#ffffff", transparent: true, opacity: 0, flatShading: true })); robinet.add(m); vapeur.push(m); }
+// tuyau enterré qui apparaît (bleu, juste visible au sol)
+const tuyau = new THREE.Mesh(new THREE.BoxGeometry(1, 0.06, 0.18), mat("#4fa3ff", 0.3)); tuyau.position.set(5.6, 0.04, 1.0); tuyau.scale.x = 0.001; scene.add(tuyau);
+
+// Caravane
+const caravane = groupe(11.5, 0, -2.6); caravane.rotation.y = -0.25; scene.add(caravane);
+caravane.add(pose(ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(4.2, 2.1, 2.2, 4, 2, 2), 0.04, 0.25), mat("#e3d6b8"))), 0, 1.45, 0));
+caravane.add(pose(new THREE.Mesh(new THREE.BoxGeometry(4.22, 0.32, 2.22), mat("#a0603a")), 0, 1.1, 0));
+const fenCar = pose(new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), mat("#ffcf73", 1.2)), -1.0, 1.85, 1.13); caravane.add(fenCar);
+caravane.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), mat("#2a2f38")), 1.1, 1.85, 1.13));
+caravane.add(pose(bloc(0.6, 1.4, 0.06, "#c9b994", 0.01), 0.15, 1.15, 1.13));
+for (const [x, y, r] of [[-1.6, 2.3, 0.15], [1.5, 0.9, 0.18], [0.9, 2.2, 0.12]]) caravane.add(pose(new THREE.Mesh(new THREE.CircleGeometry(r, 6), mat("#9a6b46")), x, y, 1.14));
+caravane.add(pose(ombre(new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.3, 8), mat("#222"))), 0.9, 0.42, 1.0, Math.PI / 2, 0, 0));
+caravane.add(pose(bloc(1.2, 0.1, 0.12, "#555", 0.01), -2.6, 0.55, 0), pose(bloc(0.4, 0.5, 0.4, "#8f8a80", 0.05), -3.1, 0.25, 0));
+const lumCar = new THREE.PointLight("#ffb257", 6, 7, 1.5); lumCar.position.set(-1.0, 1.85, 2.0); caravane.add(lumCar);
+const gamelle = pose(new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.12, 8), mat("#c0392b")), 1.9, 0.06, 1.6); caravane.add(gamelle);
+
+// Ciel : étoiles, lune, soleil
+const ciel = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 600 }, () => [(alea() - 0.5) * 120, 8 + alea() * 40, -40 - alea() * 20]).flat(), 3)), new THREE.PointsMaterial({ color: "#ffffff", size: 0.25, transparent: true }));
+scene.add(ciel);
+const lune = new THREE.Mesh(new THREE.IcosahedronGeometry(2.2, 1), new THREE.MeshBasicMaterial({ color: "#e9eef7" })); lune.position.set(14, 22, -50); scene.add(lune);
+const astre = new THREE.Mesh(new THREE.IcosahedronGeometry(3, 1), new THREE.MeshBasicMaterial({ color: "#ffe08a" })); astre.position.set(-18, -5, -55); scene.add(astre);
+
+const hemi = new THREE.HemisphereLight("#5a70b0", "#24321c", 1.35); scene.add(hemi);
+const luneL = new THREE.DirectionalLight("#7fa2ff", 1.0); luneL.position.set(-8, 14, 10); luneL.castShadow = true;
+luneL.shadow.mapSize.set(2048, 2048); Object.assign(luneL.shadow.camera, { left: -20, right: 20, top: 14, bottom: -6, near: 1, far: 50 }); luneL.shadow.bias = -0.0008; scene.add(luneL);
+const soleil = new THREE.DirectionalLight("#ffe2b0", 0); soleil.position.set(-10, 12, 8); scene.add(soleil);
+const contre = new THREE.DirectionalLight("#9fb8ff", 1.0); contre.position.set(-2, 6, -10); scene.add(contre);
+scene.fog = new THREE.Fog("#1a2650", 26, 75);
+
+const malo = creerMalo(); scene.add(malo);
+const roger = creerRoger(); scene.add(roger);
+
+/* ---------- Mise en scène ---------- */
+const P = (beat, d = 0) => fin(beat, d);
+const FP = (beat, d = 0) => finPhrase(beat) + d;
+// Caméra : [temps, position, cible, durée du mouvement]
+const PLANS = [
+  [0, [-9.3, 2.6, 4.6], [-10, 2.0, 1.2], 0.01],
+  [0.2, [-9.0, 2.7, 5.4], [-10, 1.9, 1.2], 1.6],
+  [P("hudFam") - 1.6, [-2, 9, 24], [0, 0.6, -1], 2.4],
+  [P("hudAll"), [1, 10, 27], [1, 0.2, -1], 4],
+  [P("pan"), [-7, 2.3, 6.2], [-5, 0.9, 0], 0.8],
+  [P("pan", 0.8), [0.5, 2.3, 6.2], [2.5, 0.9, 0], FP("pan") - P("pan") - 0.8],
+  [P("presque"), [5, 2.8, 8], [10.5, 1.4, 0], 0.9],
+  [P("roger"), [8.0, 1.5, 5.6], [9.2, 1.0, 1.9], 1.1],
+  [P("wouf"), [6.4, 2.3, 7.6], [8.6, 1.3, 1.8], 1.0],
+  [P("liste"), [6.0, 2.8, 8.6], [8.6, 1.0, 1.6], 0.8],
+  [P("p1"), [-9.2, 2.6, 7.2], [-10, 1.5, 0.6], 1.1],
+  [P("calc1"), [-8.6, 3.0, 8.4], [-10, 1.3, 0.4], 3.0],
+  [P("p2"), [-2.6, 4.2, 9.5], [-2, 0.6, 0.4], 1.0],
+  [P("calc2"), [0.5, 3.6, 8.8], [-1.5, 0.6, 0.4], 3.2],
+  [P("p3"), [4.4, 2.6, 8.4], [5, 1.4, 0], 1.0],
+  [P("calc3"), [3.2, 3.2, 9.4], [5, 1.3, 0], 3.2],
+  [P("verif"), [5.9, 2.5, 5.4], [7.3, 1.4, 1.0], 1.0],
+  [P("ok"), [5.5, 2.7, 5.6], [6.9, 1.8, 1.2], 0.6],
+  [P("bilan"), [1, 8.5, 22], [1, 0.4, -1], 1.6],
+  [P("choix0"), [1.5, 7, 19], [1.5, 0.4, -1], 4],
+  [P("comment"), [2.2, 4.4, 12.5], [2.2, 0.6, 0], 3.5],
+  [FIN_VOIX + 0.2, [4.0, 2.4, 5.6], [3.9, 1.6, 1.2], 1.4],
+];
+function plan(t) {
+  const pos = new THREE.Vector3(...PLANS[0][1]), cib = new THREE.Vector3(...PLANS[0][2]);
+  for (const [kt, kp, kc, kd] of PLANS) {
+    if (t < kt) break;
+    const p = ease(t, kt, kd);
+    pos.lerp(new THREE.Vector3(...kp), p); cib.lerp(new THREE.Vector3(...kc), p);
+  }
+  pos.x += Math.sin(t * 0.7) * 0.06; pos.y += Math.sin(t * 0.9 + 1) * 0.04;
+  return { pos, cib };
+}
+// Trajets [temps, x, z, durée]
+const TRAJ_MALO = [
+  [0, -10, 1.3, 0.01], [P("pan", 0.3), -5.5, 1.6, FP("pan") - P("pan")], [P("presque", 0.2), 7.6, 2.0, P("roger") - P("presque") + 0.6],
+  [P("p1"), -9.6, 1.6, 1.0], [P("p2"), -3, 1.7, 1.0], [P("p3"), 4.2, 1.6, 1.0], [P("verif"), 6.9, 1.2, 0.9],
+  [P("bilan", 0.4), 1.6, 1.4, 1.6], [FIN_VOIX + 0.2, 3.4, 1.3, 0.8],
+];
+const TRAJ_ROGER = [
+  [0, 9.2, 2.3, 0.01], [P("liste", 0.3), 8.9, 1.9, 0.8], [P("p1"), -8.6, 1.9, 1.2], [P("p2"), -2, 2.0, 1.1],
+  [P("p3"), 5.4, 1.9, 1.1], [P("verif"), 8.4, 1.5, 1.0], [P("bilan", 0.6), 2.9, 1.6, 1.7], [FIN_VOIX + 0.2, 4.5, 1.6, 0.8],
+];
+function trajet(cles, t) {
+  let x = cles[0][1], z = cles[0][2], v = 0, dir = 0;
+  for (const [kt, kx, kz, kd] of cles) {
+    if (t < kt) break;
+    const p = ease(t, kt, kd);
+    if (p > 0 && p < 1 && Math.abs(kx - x) > 0.05) { v = 1; dir = Math.sign(kx - x); }
+    x = lerp(x, kx, p); z = lerp(z, kz, p);
+  }
+  return { x, z, v, dir };
+}
+function humeur(t) {
+  const H = [[0, "content"], [P("hudFam"), "inquiet"], [P("pan", 1.2), "choque"], [P("presque"), "surpris"],
+    [P("roger", 1.0), "content"], [P("p1", 1.2), "grimace"], [FP("calc1"), "content"], [P("p2", 0.6), "grimace"], [FP("calc2"), "content"],
+    [P("p3", 1.0), "inquiet"], [P("verif"), "concentre"], [P("ok"), "joie"], [P("bilan", 0.5), "content"], [P("bilan2"), "inquiet"],
+    [P("choix0"), "reflechit"], [P("comment"), "joie"]];
+  let h = "content"; for (const [ht, v] of H) if (t >= ht) h = v; return h;
+}
+const EXPR = { // sourcil (rotation, hauteur), bouche (coins, ouverture, largeur), yeux (hauteur)
+  content: { sr: 0, sy: 0, coin: 0.45, ouv: 1, lar: 1, oy: 1 },
+  joie: { sr: 0, sy: 0.03, coin: 0.7, ouv: 3.2, lar: 1.3, oy: 0.35 },
+  inquiet: { sr: 0.35, sy: 0.02, coin: -0.4, ouv: 1, lar: 0.8, oy: 1 },
+  grimace: { sr: -0.38, sy: -0.02, coin: -0.25, ouv: 2.2, lar: 1.5, oy: 0.8 },
+  concentre: { sr: -0.2, sy: -0.01, coin: 0, ouv: 0.8, lar: 0.7, oy: 0.85 },
+  choque: { sr: 0.15, sy: 0.06, coin: -0.2, ouv: 4, lar: 0.9, oy: 1.2 },
+  surpris: { sr: 0.1, sy: 0.05, coin: 0, ouv: 2.4, lar: 0.6, oy: 1.15 },
+  reflechit: { sr: 0.25, sy: 0.03, coin: 0.15, ouv: 1, lar: 0.8, oy: 0.95 },
+};
+let exprCour = { ...EXPR.content };
+
+function animerMalo(t, dt) {
+  const u = malo.userData, tr = trajet(TRAJ_MALO, t), h = humeur(t);
+  malo.position.set(tr.x, 0, tr.z);
+  const marche = tr.v ? t * 9 : 0;
+  const cibleRot = tr.v ? tr.dir * Math.PI / 2 : (h === "reflechit" ? 0.1 : 0.25);
+  malo.rotation.y = lerp(malo.rotation.y, cibleRot, clamp(dt * 8));
+  u.corps.position.y = tr.v ? Math.abs(Math.sin(marche)) * 0.08 : Math.sin(t * 2.2) * 0.012;
+  u.jambes[0].rotation.x = tr.v ? Math.sin(marche) * 0.6 : 0; u.jambes[1].rotation.x = -u.jambes[0].rotation.x;
+  // bras : balancement / gestes
+  let b0 = [tr.v ? -Math.sin(marche) * 0.5 : -0.25, 0.09], b1 = [tr.v ? Math.sin(marche) * 0.5 : 0.05, -0.09];
+  u.pouce.visible = false;
+  if (h === "joie" && t >= P("ok") && t < P("bilan")) { b1 = [-2.1, 0.25]; u.pouce.visible = true; }
+  if (h === "reflechit") b1 = [-2.5, 0.55];
+  if (t >= P("comment")) b1 = [0, -2.6 + Math.sin(t * 9) * 0.35];
+  if (h === "choque") { b0 = [-0.6, 0.5]; b1 = [-0.6, -0.5]; }
+  u.bras[0].rotation.set(b0[0], 0, b0[1]); u.bras[1].rotation.set(b1[0], 0, b1[1]);
+  // tête
+  u.tete.rotation.y = tr.v ? 0 : Math.sin(t * 0.8) * 0.12; u.tete.rotation.x = h === "reflechit" ? -0.12 : h === "inquiet" ? 0.06 : 0;
+  u.tete.rotation.z = h === "reflechit" ? 0.12 : 0;
+  // expression (transition douce)
+  const e = EXPR[h]; for (const k in e) exprCour[k] = lerp(exprCour[k], e[k], clamp(dt * 10));
+  const E = exprCour;
+  u.sourcils.forEach((s, i) => { const sg = i ? 1 : -1; s.rotation.z = sg * -E.sr + (h === "reflechit" && i ? 0.3 : 0); s.position.y = 0.15 + E.sy + (h === "reflechit" && i ? 0.04 : 0); });
+  const cligne = h !== "joie" && (t % 3.4) < 0.12;
+  u.yeux.forEach((o) => { o.scale.y = cligne ? 0.1 : E.oy; });
+  u.centre.scale.set(E.lar, E.ouv, 1);
+  u.coins.forEach((c, i) => { const sg = i ? 1 : -1; c.position.x = sg * 0.05 * E.lar; c.rotation.z = sg * E.coin; });
+  // lanterne : allumée la nuit
+  const nuit = 1 - jourDe(t);
+  u.lanterne.visible = nuit > 0.05; u.flamme.intensity = 10 * nuit * (0.92 + Math.sin(t * 13) * 0.05 + Math.sin(t * 7.3) * 0.03);
+}
+function animerRoger(t, dt) {
+  const u = roger.userData, tr = trajet(TRAJ_ROGER, t);
+  roger.position.set(tr.x, 0, tr.z);
+  const cible = tr.v ? (tr.dir > 0 ? 0 : Math.PI) : -0.9;
+  roger.rotation.y = lerp(roger.rotation.y, cible, clamp(dt * 7));
+  const vis = clamp((t - P("roger") - 0.3) / 0.4); roger.visible = t > P("roger") + 0.2;
+  roger.scale.setScalar(0.6 + 0.4 * easeIO(vis));
+  const m = t * 12;
+  u.pattes.forEach((p, i) => { p.rotation.z = tr.v ? Math.sin(m + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI / 2 : 0)) * 0.6 : 0; });
+  u.corps.position.y = tr.v ? Math.abs(Math.sin(m)) * 0.05 : 0;
+  u.queue.rotation.x = Math.sin(t * (tr.v || t > P("ok", 0.5) && t < P("bilan") ? 18 : 7)) * 0.6;
+  u.tete.rotation.z = !tr.v && t > P("wouf") && t < P("liste") ? Math.abs(Math.sin(t * 6)) * 0.15 : 0;
+}
+function jourDe(t) { return ease(t, P("p3"), P("verif") - P("p3") + 0.6); }
+function ambiance(t) {
+  const j = jourDe(t);
+  const ciels = [new THREE.Color("#1a2650"), new THREE.Color("#4a4a7e"), new THREE.Color("#7db8e8")];
+  const c = j < 0.5 ? ciels[0].clone().lerp(ciels[1], j * 2) : ciels[1].clone().lerp(ciels[2], (j - 0.5) * 2);
+  scene.background = c; scene.fog.color.copy(c);
+  ciel.material.opacity = clamp(1 - j * 2.2);
+  lune.visible = j < 0.5;
+  astre.position.y = lerp(-5, 26, ease(j, 0.2, 0.8));
+  hemi.intensity = lerp(1.35, 1.6, j); hemi.color.set(j > 0.5 ? "#cfe3ff" : "#5a70b0"); hemi.groundColor.set(j > 0.5 ? "#4a5a2c" : "#24321c");
+  luneL.intensity = lerp(1.9, 0, j);
+  soleil.intensity = lerp(0, 2.6, ease(j, 0.3, 0.7)); soleil.castShadow = j > 0.5;
+  luneL.castShadow = j <= 0.5;
+  lumCar.intensity = 6 * (1 - j);
+  renderer.toneMappingExposure = lerp(1.3, 0.98, j);
+}
+function decor(t) {
+  const neuf = ease(t, FP("calc1", -0.3), 0.8);
+  portail.forEach(({ v, s, barres }) => {
+    v.rotation.y = lerp(s * 0.35, 0, neuf); v.rotation.z = lerp(-s * 0.08, 0, neuf);
+    barres.forEach((b, i) => { b.material.color.set(neuf > 0.5 ? "#2e6b52" : "#7a4a2a"); b.scale.y = neuf > 0.5 || (i % 3) ? 1 : 0.6; b.position.y = neuf > 0.5 || (i % 3) ? 1.15 : 0.95; });
+    v.children.slice(0, 2).forEach((c) => c.material.color.set(neuf > 0.5 ? "#2e6b52" : "#7a4a2a"));
+  });
+  // panneau : par terre → monte sur ses poteaux
+  panneau.position.set(lerp(1.4, 0, neuf), lerp(0.12, 3.1, neuf), lerp(1.6, -0.1, neuf));
+  panneau.rotation.set(lerp(-1.45, 0, neuf), lerp(0.4, 0, neuf), 0);
+  panneau.material[4].map = neuf > 0.5 ? texPanneauNeuf : texPanneauVieux;
+  poteaux.forEach((p) => { p.scale.y = Math.max(0.001, neuf); p.position.y = 2.6 * neuf + 0.5 * (1 - neuf) * 0; p.visible = neuf > 0.02; });
+  // ronces : disparaissent de gauche à droite
+  const deblai = ease(t, P("calc2", 0.3), FP("calc2") - P("calc2") + 0.4);
+  ronces.forEach((r, i) => { const k = clamp(deblai * 10 - i * 0.9); r.scale.setScalar(Math.max(0.001, 1 - easeIO(k))); r.visible = k < 0.999; });
+  poussiere.forEach((m, i) => {
+    const actif = deblai > 0 && deblai < 1;
+    m.material.opacity = actif ? 0.45 * (1 - ((t * 0.8 + i * 0.13) % 1)) : 0;
+    m.position.set(-6.6 + deblai * 10 + (i % 5) * 0.3 - 0.6, 0.3 + ((t * 0.8 + i * 0.13) % 1) * 1.6, 0.4 + (i % 3) * 0.3);
+  });
+  // douches réparées
+  const rep = ease(t, FP("calc3", -0.3), 0.8);
+  murMat.color.set("#a39880").lerp(new THREE.Color("#f3eee2"), rep);
+  carMat.color.set("#7d7464").lerp(new THREE.Color("#3aa0d8"), rep);
+  toitMat.color.set("#5c5248").lerp(new THREE.Color("#35506e"), rep);
+  porte.material.color.set(rep > 0.5 ? "#2e6b52" : "#6b5a45");
+  fenetreMat.color.set("#2a2f38").lerp(new THREE.Color("#ffd98a"), rep); fenetreMat.emissive.set("#ffb84d"); fenetreMat.emissiveIntensity = rep * 0.8;
+  lumDouche.intensity = rep * 4 * (1 - jourDe(t) * 0.6);
+  fissures.visible = rep < 0.5;
+  tuyau.scale.x = Math.max(0.001, ease(t, FP("calc3"), 1.2) * 4.2); tuyau.position.x = 5.6 + tuyau.scale.x / 2 - 0.5;
+  // eau + vapeur
+  const eau = ease(t, P("verif", 1.0), 0.3);
+  jet.scale.y = Math.max(0.001, eau); jet.position.y = 1.0 - 0.31 * eau;
+  const vap = ease(t, P("ok") - 0.2, 0.6);
+  vapeur.forEach((m, i) => { const c = (t * 0.6 + i / vapeur.length) % 1; m.material.opacity = vap * 0.55 * (1 - c); m.position.set(0.15 + Math.sin(c * 6 + i) * 0.12, 0.6 + c * 1.6, 0.45); m.scale.setScalar(0.6 + c * 1.6); });
+}
+
+/* ---------- Interface par-dessus la 3D ---------- */
+const v3 = new THREE.Vector3();
+function ecran(obj, dy) { obj.updateMatrixWorld(); v3.set(0, dy, 0).applyMatrix4(obj.matrixWorld).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * H, v3.z < 1]; }
+function bulles(t) {
+  let s = "";
+  const [mx, my] = ecran(malo, 3.05), [rx, ry] = ecran(roger, 1.55);
+  const B1 = (x, y, txt, c, o) => bulle(clamp(x, 200, 880), clamp(y, 330, 1250), txt, c, TRAIT, o);
+  s += B1(mx, my, "C'EST TOI", "#ffc93c", vis(t, 0.4, 2.6, 0.2));
+  s += B1(mx, my, "AÏE…", "#fff6e3", vis(t, P("presque") - 2.4, P("presque") - 0.3, 0.2));
+  s += B1(mx, my, "SÉRIEUX ?!", "#fff6e3", vis(t, P("p1", 1.2), P("calc1") - 0.1, 0.2));
+  s += B1(mx, my, "ELLE EST CHAUDE !", "#fff6e3", vis(t, P("ok"), P("ok", 1.5), 0.2));
+  if (roger.visible) {
+    s += B1(rx, ry, "ROGER", "#4ade80", vis(t, P("roger", 1.0), P("wouf"), 0.2));
+    s += B1(rx, ry, "WOUF.", "#fff6e3", vis(t, P("wouf", 1.4), FP("wouf") + 0.3, 0.2));
+    s += B1(rx, ry, "WOUF ! ✔", "#4ade80", vis(t, P("ok", 1.3), P("bilan"), 0.2));
+  }
+  return s;
+}
+function carteFin(t) {
+  const a = DUREE - 2.6, o = clamp((t - a) / 0.35);
+  if (o <= 0) return "";
+  return `<g opacity="${o}"><rect width="1080" height="1920" fill="#0b0f1c" opacity=".55"/>
+    <text x="540" y="470" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#4ade80" letter-spacing="6" stroke="${TRAIT}" stroke-width="8" paint-order="stroke">LES PINS PERDUS</text>
+    <text x="540" y="575" text-anchor="middle" font-family="Inter" font-weight="900" font-size="96" fill="#fff6e3" stroke="${TRAIT}" stroke-width="14" paint-order="stroke">ÉPISODE 2</text>
+    <text x="540" y="675" text-anchor="middle" font-family="Inter" font-weight="900" font-size="96" fill="#ffc93c" stroke="${TRAIT}" stroke-width="14" paint-order="stroke">BIENTÔT</text>
+    <g transform="translate(540,1560)"><rect x="-340" y="-44" width="680" height="88" rx="44" fill="${TRAIT}" transform="translate(5,7)"/><rect x="-340" y="-44" width="680" height="88" rx="44" fill="#ff3b5c" stroke="#fff6e3" stroke-width="4"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff">+ ABONNE-TOI POUR LA SUITE</text></g></g>`;
+}
+function interface_(t) {
+  let s = `<defs><linearGradient id="bas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05070f" stop-opacity="0"/><stop offset="1" stop-color="#05070f" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="haut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05070f" stop-opacity=".45"/><stop offset="1" stop-color="#05070f" stop-opacity="0"/></linearGradient></defs>
+    <rect x="0" y="1180" width="1080" height="740" fill="url(#bas)"/><rect x="0" y="0" width="1080" height="320" fill="url(#haut)"/>`;
+  s += bulles(t) + hud(t) + puce(t);
+  s += carteCalcul(t, P("calc1"), P("p2", 0.2), [["PORTAIL NEUF", "2 500 €"], ["PANNEAU REPEINT", "1 500 €"]], "4 000 €", 1);
+  s += carteCalcul(t, P("calc2"), P("p3", 0.2), [["DÉBROUSSAILLEUSE", "300 €"], ["BENNE × 2", "900 €"], ["3 JOURS DE BOULOT", "1 300 €"]], "2 500 €", 2);
+  s += carteCalcul(t, P("calc3"), P("verif", 0.2), [["PLOMBERIE", "14 000 €"], ["CARRELAGE", "12 000 €"], ["CHAUFFE-EAU", "8 000 €"]], "34 000 €", 3);
+  s += liste(t) + choix(t) + sousTitres(t);
+  s += `<text x="1040" y="1868" text-anchor="end" font-family="Inter" font-weight="800" font-size="24" fill="#ffffff" opacity=".55" letter-spacing="2">LES PINS PERDUS · ÉP. 1</text>`;
+  s += carteFin(t);
+  document.getElementById("ui").innerHTML = s;
+}
+
+/* ---------- Rendu ---------- */
+let tPrec = 0;
+function rendre(t) {
+  const dt = Math.max(0, Math.min(0.1, t - tPrec)) || 1 / 30; tPrec = t;
+  ambiance(t); decor(t); animerMalo(t, dt); animerRoger(t, dt);
+  const { pos, cib } = plan(t); camera.position.copy(pos); camera.lookAt(cib);
+  renderer.render(scene, camera);
+  interface_(t);
+}
+window.rendre = rendre; window.DUREE = DUREE;
+await document.fonts.ready;
+window.pret = true;
+if (!document.body.classList.contains("rendu") && !location.search.includes("rendu")) {
+  rendre(0.5);
+  const voix = document.getElementById("voix"), btn = document.getElementById("lecture");
+  btn.onclick = () => {
+    btn.remove(); voix.currentTime = 0; voix.play().catch(() => {});
+    const debut = performance.now();
+    const boucle = () => { const t = (performance.now() - debut) / 1000; rendre(Math.min(t, DUREE)); if (t < DUREE) requestAnimationFrame(boucle); };
+    requestAnimationFrame(boucle);
+  };
+} else document.body.classList.add("rendu");
+</script>
+</body>
+</html>

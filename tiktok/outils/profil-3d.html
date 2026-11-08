@@ -1,0 +1,164 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Profil</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body><script type="module">
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+const W = 1080, H = 1080;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.25;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color("#1d3a5f"); scene.fog = new THREE.Fog("#1d3a5f", 6, 22);
+const lerp = (a, b, p) => a + (b - a) * p;
+let graine = 3;
+const alea = () => { graine = (graine * 16807) % 2147483647; return graine / 2147483647; };
+const mat = (c, e = 0) => new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: 0.85, metalness: 0, emissive: e ? c : 0x000000, emissiveIntensity: e });
+function facettes(geo, force = 0.04, sphere = 0) {
+  geo.deleteAttribute("normal"); geo.deleteAttribute("uv");
+  geo = mergeVertices(geo);
+  const p = geo.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    if (sphere) { const l = v.length(); const n = v.clone().normalize().multiplyScalar(Math.max(Math.abs(v.x), Math.abs(v.y), Math.abs(v.z))); v.lerp(n.setLength(Math.max(l * 0.9, n.length())), sphere); }
+    v.x += (alea() - 0.5) * force; v.y += (alea() - 0.5) * force; v.z += (alea() - 0.5) * force;
+    p.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+const ombre = (o) => { o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); return o; };
+const bloc = (w, h, d, c, f = 0.03, seg = 1) => ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(w, h, d, seg, seg, seg), f), mat(c)));
+const pose = (m, x, y, z, rx = 0, ry = 0, rz = 0) => { m.position.set(x, y, z); m.rotation.set(rx, ry, rz); return m; };
+const groupe = (x = 0, y = 0, z = 0) => { const g = new THREE.Group(); g.position.set(x, y, z); return g; };
+function texteTexture(lignes, fond, encre, w = 512, h = 160) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d"); x.fillStyle = fond; x.fillRect(0, 0, w, h);
+  x.fillStyle = encre; x.textAlign = "center"; x.textBaseline = "middle";
+  lignes.forEach(([txt, taille, y]) => { x.font = `900 ${taille}px Inter, sans-serif`; x.fillText(txt, w / 2, y); });
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+/* ---------- Malo ---------- */
+const PEAU = "#e9b48e", CHEV = "#6b3b1f", VESTE = "#2f6b4f", TSHIRT = "#efe8d8", JEAN = "#33476e", BASKET = "#d8432f";
+function creerMalo() {
+  const g = new THREE.Group(), corps = groupe(); g.add(corps);
+  const jambes = [];
+  for (const s of [-1, 1]) {
+    const j = groupe(s * 0.17, 1.05, 0);
+    j.add(pose(bloc(0.26, 0.85, 0.28, JEAN, 0.02), 0, -0.43, 0));
+    j.add(pose(bloc(0.3, 0.16, 0.44, BASKET, 0.02), 0, -0.95, 0.06));
+    j.add(pose(bloc(0.31, 0.05, 0.45, "#f2f2f2", 0), 0, -1.03, 0.06));
+    corps.add(j); jambes.push(j);
+  }
+  corps.add(pose(bloc(0.62, 0.78, 0.36, TSHIRT, 0.03, 2), 0, 1.42, 0));
+  for (const s of [-1, 1]) corps.add(pose(bloc(0.24, 0.82, 0.4, VESTE, 0.03, 2), s * 0.24, 1.43, 0));
+  corps.add(pose(bloc(0.7, 0.14, 0.42, VESTE, 0.02), 0, 1.05, 0));
+  for (const s of [-1, 1]) corps.add(pose(bloc(0.16, 0.18, 0.06, "#24543e", 0.01), s * 0.14, 1.78, 0.19, 0.2, 0, s * 0.35));
+  corps.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), mat("#2e8b57")), 0, 1.5, 0.19, 0, Math.PI / 4));
+  const bras = [];
+  for (const s of [-1, 1]) {
+    const b = groupe(s * 0.43, 1.74, 0);
+    b.add(pose(bloc(0.2, 0.5, 0.22, VESTE, 0.02), 0, -0.24, 0));
+    b.add(pose(bloc(0.16, 0.4, 0.17, PEAU, 0.02), 0, -0.64, 0));
+    b.add(pose(bloc(0.19, 0.18, 0.2, PEAU, 0.03), 0, -0.9, 0.01));
+    corps.add(b); bras.push(b);
+  }
+  // pouce (visible seulement pour le geste « pouce levé »)
+  const pouce = pose(bloc(0.07, 0.16, 0.07, PEAU, 0.01), 0, -1.04, 0.02); bras[1].add(pouce); pouce.visible = false;
+  corps.add(pose(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.2, 6), mat(PEAU)), 0, 1.88, 0));
+  const tete = groupe(0, 2.25, 0);
+  const gc = facettes(new THREE.BoxGeometry(0.68, 0.76, 0.66, 3, 3, 3), 0.03, 0.45);
+  { const p = gc.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i); const k = y < 0 ? 1 + y * 0.75 : 1 - y * 0.12; p.setX(i, p.getX(i) * k); if (y < -0.1) p.setZ(i, p.getZ(i) * (1 + y * 0.35) + 0.03); } gc.computeVertexNormals(); }
+  tete.add(ombre(new THREE.Mesh(gc, mat(PEAU))));
+  tete.add(pose(bloc(0.26, 0.1, 0.3, PEAU, 0.02), 0, -0.37, 0.06));
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.08, 0.17, 0.12, "#dda27c", 0.02), s * 0.36, -0.02, -0.02));
+  const yeux = [], sourcils = [];
+  for (const s of [-1, 1]) {
+    const oeil = groupe(s * 0.14, 0.03, 0.335);
+    oeil.add(pose(bloc(0.15, 0.17, 0.03, "#fbf6ee", 0), 0, 0, 0));
+    oeil.add(pose(bloc(0.09, 0.12, 0.03, "#3b2a1e", 0), s * -0.005, -0.005, 0.012));
+    oeil.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.02), mat("#ffffff", 1)), 0.02, 0.025, 0.03));
+    tete.add(oeil); yeux.push(oeil);
+    const sc = groupe(s * 0.14, 0.15, 0.345); sc.add(bloc(0.17, 0.045, 0.04, "#4a2814", 0)); tete.add(sc); sourcils.push(sc);
+  }
+  tete.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), mat("#e0a07a")), 0, -0.08, 0.36, Math.PI / 2, Math.PI / 4, 0));
+  // bouche : barre centrale + deux coins orientables (sourire / moue)
+  const bouche = groupe(0, -0.21, 0.335);
+  const centre = bloc(0.1, 0.035, 0.03, "#6e2a24", 0); bouche.add(centre);
+  const coins = [-1, 1].map((s) => { const c = groupe(s * 0.05, 0, 0); c.add(pose(bloc(0.05, 0.035, 0.03, "#6e2a24", 0), s * 0.022, 0, 0)); bouche.add(c); return c; });
+  tete.add(bouche);
+  for (const [x, y] of [[-0.2, -0.08], [-0.16, -0.1], [-0.22, -0.11], [0.2, -0.08], [0.16, -0.1], [0.22, -0.11]])
+    tete.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.018, 0.01), mat("#b8714f")), x, y, 0.335));
+  const calotte = ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(0.76, 0.34, 0.74, 3, 1, 3), 0.05, 0.3), mat(CHEV)));
+  calotte.position.set(0, 0.29, -0.02); tete.add(calotte);
+  tete.add(pose(bloc(0.74, 0.42, 0.18, CHEV, 0.05, 2), 0, 0.06, -0.3));
+  for (const s of [-1, 1]) tete.add(pose(bloc(0.1, 0.32, 0.5, CHEV, 0.04), s * 0.36, 0.12, -0.08));
+  const meches = [[-0.25, 0.42, 0.2, -0.5, 0.4], [-0.05, 0.5, 0.25, -0.7, 0.1], [0.18, 0.46, 0.22, -0.6, -0.3], [0.3, 0.38, 0.05, -0.2, -0.6],
+    [-0.3, 0.4, -0.15, 0.3, 0.6], [0.0, 0.52, -0.1, 0.2, 0], [0.22, 0.45, -0.25, 0.4, -0.4], [-0.12, 0.48, 0.05, -0.2, 0.3], [0.1, 0.5, 0.0, 0, -0.2],
+    [-0.2, 0.28, 0.33, -1.2, 0.2], [0.08, 0.3, 0.35, -1.25, -0.15], [0.26, 0.26, 0.3, -1.1, -0.4]];
+  for (const [x, y, z, rx, rz] of meches) tete.add(pose(ombre(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.15, 0.42, 4, 1), 0.02), mat(alea() > 0.5 ? CHEV : "#7a4626"))), x, y, z, rx, alea(), rz));
+  corps.add(tete);
+  // lanterne tenue dans la main gauche
+  const lanterne = groupe(0, -1.12, 0.05);
+  const verre = pose(bloc(0.2, 0.26, 0.2, "#ffcf7a", 0.01), 0, -0.1, 0); verre.material = mat("#ffcf7a", 1.6); verre.castShadow = false;
+  lanterne.add(verre, pose(bloc(0.26, 0.05, 0.26, "#2b2b2b", 0), 0, 0.05, 0), pose(bloc(0.03, 0.12, 0.03, "#2b2b2b", 0), 0, 0.12, 0));
+  const flamme = new THREE.PointLight("#ffb257", 10, 9, 1.4); flamme.position.set(0, -0.05, 0.25); lanterne.add(flamme);
+  bras[0].add(lanterne);
+  g.userData = { corps, tete, bras, jambes, yeux, sourcils, bouche, centre, coins, pouce, lanterne, verre, flamme };
+  return g;
+}
+
+/* ---------- Roger ---------- */
+function creerRoger() {
+  const g = new THREE.Group(), ROUX = "#c27a3a", CREME = "#f0dcc0";
+  const corps = groupe(); g.add(corps);
+  corps.add(pose(bloc(0.8, 0.42, 0.44, ROUX, 0.04, 2), 0, 0.55, 0));
+  corps.add(pose(bloc(0.5, 0.2, 0.4, CREME, 0.03), 0.05, 0.4, 0));
+  const pattes = [];
+  for (const [x, z] of [[-0.28, -0.14], [-0.28, 0.14], [0.28, -0.14], [0.28, 0.14]]) { const p = groupe(x, 0.4, z); p.add(pose(bloc(0.13, 0.4, 0.13, "#a8662f", 0.02), 0, -0.2, 0)); corps.add(p); pattes.push(p); }
+  const tete = groupe(0.5, 0.92, 0);
+  tete.add(ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(0.44, 0.42, 0.42, 2, 2, 2), 0.04, 0.35), mat(ROUX))));
+  tete.add(pose(bloc(0.26, 0.2, 0.26, CREME, 0.03), 0.27, -0.08, 0));
+  tete.add(pose(bloc(0.09, 0.08, 0.1, "#1b1410", 0.01), 0.42, -0.02, 0));
+  const oreilles = [];
+  for (const s of [-1, 1]) {
+    tete.add(pose(bloc(0.07, 0.09, 0.03, "#1b1410", 0), 0.14, 0.07, s * 0.2));
+    const o = groupe(-0.04, 0.17, s * 0.24); o.add(pose(bloc(0.14, 0.3, 0.07, "#6e3d1c", 0.03), 0, -0.15, 0)); o.rotation.x = s * 0.2; tete.add(o); oreilles.push(o);
+  }
+  corps.add(tete);
+  corps.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.22, 3), mat("#c8342b")), 0.42, 0.64, 0, 0, 0, Math.PI));
+  const queue = groupe(-0.4, 0.68, 0); queue.add(pose(bloc(0.08, 0.36, 0.08, ROUX, 0.02), 0, 0.16, 0)); queue.rotation.z = 0.7; corps.add(queue);
+  g.userData = { corps, tete, pattes, queue, oreilles };
+  return ombre(g);
+}
+
+
+const sol = new THREE.Mesh(facettes(new THREE.PlaneGeometry(40, 40, 20, 20), 0.12), mat("#2f4d2c")); sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+function sapin(x, z, h) { const g = groupe(x, 0, z); g.add(pose(bloc(0.18, 0.6, 0.18, "#4a2f1c", 0.02), 0, 0.3, 0));
+  for (let i = 0; i < 3; i++) g.add(pose(ombre(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.9 - i * 0.22, 1.1, 6, 1), 0.08), mat(i % 2 ? "#1f4a32" : "#245a3a"))), 0, 0.9 + i * 0.6, 0));
+  g.scale.setScalar(h); return g; }
+[[-2.6, -3, 2.2], [2.4, -4, 2.6], [-0.4, -6.5, 3], [4.5, -2.5, 2], [-4.6, -5, 2.6]].forEach(([x, z, h]) => scene.add(sapin(x, z, h)));
+const etoiles = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 300 }, () => [(alea() - 0.5) * 30, 3 + alea() * 12, -12 - alea() * 4]).flat(), 3)), new THREE.PointsMaterial({ color: "#ffffff", size: 0.07 }));
+scene.add(etoiles);
+const malo = creerMalo(); malo.rotation.y = 0.18; scene.add(malo);
+const u = malo.userData;
+u.bras[1].rotation.set(0.05, 0, -0.09);
+u.bras[0].rotation.set(-0.35, 0, 0.12);
+u.centre.scale.set(1.15, 1.6, 1); u.coins.forEach((c, i) => { const s = i ? 1 : -1; c.position.x = s * 0.058; c.rotation.z = s * 0.55; });
+u.sourcils.forEach((s) => { s.position.y = 0.18; });
+u.tete.rotation.set(0, -0.12, 0.06);
+u.lanterne.visible = false;
+// souche + Roger assis dessus
+const souche = ombre(new THREE.Mesh(facettes(new THREE.CylinderGeometry(0.45, 0.55, 1.2, 7), 0.05), mat("#6b4a2f"))); souche.position.set(1.0, 0.6, 0.25); scene.add(souche);
+const roger = creerRoger(); roger.position.set(1.05, 1.18, 0.25); roger.rotation.y = -2.55; scene.add(roger);
+roger.userData.tete.rotation.z = 0.25; roger.userData.queue.rotation.x = 0.5;
+scene.add(new THREE.HemisphereLight("#8fa8e6", "#2a3a1f", 1.3));
+const lune = new THREE.DirectionalLight("#9fb6ff", 1.6); lune.position.set(-5, 8, 6); lune.castShadow = true; scene.add(lune);
+const cle = new THREE.SpotLight("#ffd9a8", 34, 14, 0.55, 0.6); cle.position.set(-1.0, 3.4, 4.2); cle.target.position.set(0.45, 2.2, 0); scene.add(cle, cle.target);
+const contre = new THREE.DirectionalLight("#ffb257", 2.2); contre.position.set(3, 3, -4); scene.add(contre);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+camera.position.set(0.55, 2.2, 3.8); camera.lookAt(0.5, 2.05, 0);
+renderer.render(scene, camera);
+window.pret = true;
+</script></body></html>
