@@ -607,12 +607,12 @@ function hud(t) {
   if (oF <= 0) return "";
   let budget = 150000, delai = 120, pb = 150000, pd = 120, delta = null;
   for (const [ts, b, d] of SAUTS) { const p = ease(t, ts, 0.7); if (t >= ts) { budget = lerp(pb, b, p); delai = Math.round(lerp(pd, d, p)); if (t < ts + 2) delta = { v: b - pb, o: vis(t, ts, ts + 2, 0.2) }; } pb = b; pd = d; }
-  const boite = (cx, lab, val, col, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},150) scale(${0.85 + 0.15 * o})">
+  const boite = (cx, lab, val, col, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},340) scale(${0.85 + 0.15 * o})">
     <rect x="-118" y="-56" width="236" height="104" rx="18" fill="#121828" stroke="${col}" stroke-width="5"/>
     <text x="0" y="-21" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="3">${lab}</text>
     <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="${col}">${val}</text></g>`;
   let s = boite(285, "DÉLAI", `${delai} JOURS`, "#ff5a5f", oA) + boite(540, "FAMILLES", "0 / 50", "#4ade80", oF) + boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA);
-  if (delta) s += `<text x="795" y="236" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
+  if (delta) s += `<text x="795" y="426" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
   return s;
 }
 function puce(t) {
@@ -621,16 +621,16 @@ function puce(t) {
   for (const [n, txt, a, b] of etapes) {
     const o = vis(t, a, b, 0.2); if (o <= 0) continue;
     const w = (n + txt).length * 19 + 50;
-    s += `<g opacity="${o}" transform="translate(540,258) scale(${0.85 + 0.15 * o})"><rect x="${-w / 2}" y="-26" width="${w}" height="50" rx="12" fill="#ffffff"/><text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#1b1b1b"><tspan fill="#ff5a5f">${n}</tspan>${txt}</text></g>`;
+    s += `<g opacity="${o}" transform="translate(540,450) scale(${0.85 + 0.15 * o})"><rect x="${-w / 2}" y="-26" width="${w}" height="50" rx="12" fill="#ffffff"/><text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#1b1b1b"><tspan fill="#ff5a5f">${n}</tspan>${txt}</text></g>`;
   }
   const o = vis(t, P("verif"), P("p3"), 0.2);
-  if (o > 0) s += `<g opacity="${o}" transform="translate(540,258) scale(${0.85 + 0.15 * o})"><rect x="-150" y="-26" width="300" height="50" rx="12" fill="#0f1f3a" stroke="#4fa3ff" stroke-width="4"/><text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#4fa3ff">VÉRIFICATION</text></g>`;
+  if (o > 0) s += `<g opacity="${o}" transform="translate(540,450) scale(${0.85 + 0.15 * o})"><rect x="-150" y="-26" width="300" height="50" rx="12" fill="#0f1f3a" stroke="#4fa3ff" stroke-width="4"/><text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#4fa3ff">VÉRIFICATION</text></g>`;
   return s;
 }
 function cahier(t, a, b, titre, lignes, total, rot = -2.5) {
   const o = vis(t, a, b, 0.25); if (o <= 0) return "";
   const h = 120 + lignes.length * 56 + (total ? 70 : 0);
-  let s = `<g opacity="${o}" transform="translate(540,${340 + (1 - o) * -30}) rotate(${rot})">
+  let s = `<g opacity="${o}" transform="translate(540,${510 + (1 - o) * -30}) rotate(${rot})">
     <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
     <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#fbf7ec"/>`;
   for (let y = 70; y < h; y += 56) s += `<line x1="-300" y1="${y}" x2="300" y2="${y}" stroke="#cdd9ee" stroke-width="2"/>`;
@@ -646,14 +646,14 @@ function cahier(t, a, b, titre, lignes, total, rot = -2.5) {
 }
 function choix(t) {
   const a = P("choix"), b = DUREE - 2.6; let s = "";
-  const carte = (cx, titre, sous, col, ic, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},470) scale(${0.8 + 0.2 * o})"><rect x="-200" y="-120" width="400" height="240" rx="24" fill="#121828" stroke="${col}" stroke-width="7"/>${ic}
+  const carte = (cx, titre, sous, col, ic, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},640) scale(${0.8 + 0.2 * o})"><rect x="-200" y="-120" width="400" height="240" rx="24" fill="#121828" stroke="${col}" stroke-width="7"/>${ic}
     <text x="0" y="62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="42" fill="${col}">${titre}</text><text x="0" y="98" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="2">${sous}</text></g>`;
   const vagues = `<g transform="translate(0,-40)"><rect x="-90" y="-40" width="180" height="70" rx="12" fill="#1f6fae"/><path d="M-80 -8 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#bfe3ff" stroke-width="7" fill="none"/><path d="M-80 14 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#7cc4f5" stroke-width="7" fill="none"/></g>`;
   const mh = `<g transform="translate(0,-40)"><rect x="-90" y="-30" width="180" height="62" rx="8" fill="#f4f1ea"/><rect x="-98" y="-42" width="196" height="16" rx="4" fill="#3e5266"/><rect x="-90" y="16" width="180" height="10" fill="#2e8b57"/><rect x="-66" y="-16" width="40" height="26" fill="#ffd98a"/><rect x="26" y="-16" width="40" height="26" fill="#ffd98a"/><rect x="-10" y="-20" width="24" height="42" fill="#2e6b52"/></g>`;
   s += carte(285, "PISCINE", "18 000 €", "#4fa3ff", vagues, vis(t, a, b, 0.25));
   s += carte(795, "MOBIL-HOMES", "+2 RÉNOVÉS", "#4ade80", mh, vis(t, a + 0.9, b, 0.25));
-  const oo = vis(t, a + 0.5, b, 0.2); if (oo > 0) s += `<g opacity="${oo}"><circle cx="540" cy="470" r="44" fill="#ffffff"/><text x="540" y="484" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#1b1b1b">OU</text></g>`;
-  const oc = vis(t, P("comment"), b, 0.25); if (oc > 0) s += `<g opacity="${oc}" transform="translate(540,690) scale(${0.85 + 0.15 * oc})"><rect x="-380" y="-38" width="760" height="76" rx="38" fill="#ff3b5c"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#fff">ÉCRIS « PISCINE » OU « MOBIL-HOMES »</text></g>`;
+  const oo = vis(t, a + 0.5, b, 0.2); if (oo > 0) s += `<g opacity="${oo}"><circle cx="540" cy="640" r="44" fill="#ffffff"/><text x="540" y="654" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#1b1b1b">OU</text></g>`;
+  const oc = vis(t, P("comment"), b, 0.25); if (oc > 0) s += `<g opacity="${oc}" transform="translate(540,860) scale(${0.85 + 0.15 * oc})"><rect x="-380" y="-38" width="760" height="76" rx="38" fill="#ff3b5c"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#fff">ÉCRIS « PISCINE » OU « MOBIL-HOMES »</text></g>`;
   return s;
 }
 function sousTitres(t) {
@@ -662,7 +662,10 @@ function sousTitres(t) {
   const pop = 0.92 + 0.08 * easeIO(clamp((t - c.t0) / 0.1));
   const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#4fa3ff" };
   const sp = c.map((w) => `<tspan fill="${t >= w.t ? COUL[w.c] : "#9a9089"}">${w.txt.toUpperCase()}</tspan>`).join(" ");
-  return `<g transform="translate(540,1330) scale(${pop})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" letter-spacing="1">${sp}</text></g>`;
+  const MES = sousTitres.c || (sousTitres.c = document.createElement("canvas").getContext("2d")); MES.font = "900 64px Inter";
+  const larg = MES.measureText(c.map((w) => w.txt.toUpperCase()).join(" ")).width + 20;
+  const k = Math.min(1, 1000 / larg);
+  return `<g transform="translate(540,1330) scale(${pop * k})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" letter-spacing="1">${sp}</text></g>`;
 }
 function carteFin(t) {
   const a = DUREE - 2.6, o = clamp((t - a) / 0.35); if (o <= 0) return "";
@@ -676,7 +679,7 @@ const FLASHS = [FP("calc1"), FP("calc2"), FP("calc3")];
 function interface_(t) {
   let s = "";
   const [mx, my] = ecran(malo, 3.6), [rx, ry] = ecran(roger, 1.6);
-  const Bb = (x, y, txt, c, o) => bulle(clamp(x, 200, 880), clamp(y, 330, 1000), txt, c, o);
+  const Bb = (x, y, txt, c, o) => bulle(clamp(x, 200, 860), clamp(y, 520, 1000), txt, c, o);
   s += Bb(mx, my, "C'EST TOI", "#ffc93c", vis(t, 0.3, 2.2, 0.2));
   s += Bb(mx, my, "AÏE…", "#ffffff", vis(t, P("zero"), P("presque"), 0.2));
   s += Bb(mx, my, "SÉRIEUX ?!", "#ffffff", vis(t, P("trous", 0.6), P("travaux1"), 0.2));
