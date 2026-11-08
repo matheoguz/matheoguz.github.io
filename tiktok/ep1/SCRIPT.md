@@ -5,6 +5,13 @@ Série TikTok originale, 100 % animée (pas de face caméra) : tu hérites d'un 
 - Vidéo : `episode-1.mp4` (85 s, 1080×1920, sans voix pour l'instant)
 - Animation (source) : `index.html` (le texte et le minutage sont en haut du fichier)
 
+## Le style de la série (à garder pour tous les épisodes)
+- **Malo**, 19 ans (c'est « toi ») : cheveux châtains en bataille avec un épi, chemise en jean ouverte sur un t-shirt blanc avec un sapin, short beige, baskets rouges. Son visage réagit à l'histoire : content, inquiet, choqué, grimace, réfléchit, joie (pouce levé).
+- **Roger** : chien roux, oreille tombante, foulard rouge.
+- Style « sticker » : trait foncé autour de tout, ombres pleines, couleurs crème.
+- Compteurs en stickers avec icônes (jours, familles, budget), étapes « ÉTAPE 1/3 », calculs en **ticket de caisse du camping**, liste de Roger sur un **porte-bloc**, tampon « VÉRIFICATION ».
+- Sous-titres : le mot prononcé est surligné dans une pastille de couleur.
+
 ## Voix off (à faire lire)
 Ton grand-oncle t'a laissé un camping. Abandonné depuis 12 ans. Le notaire est clair : 50 familles cet été. Sinon, la mairie le récupère. Délai : 120 jours. Budget : 80 000 euros. 30 emplacements mangés par les ronces… et 0 campeur. Enfin, presque. Dans la vieille caravane du fond, il y a Roger. Le chien de ton grand-oncle. Il n'est jamais parti. Et Roger a une liste.
 

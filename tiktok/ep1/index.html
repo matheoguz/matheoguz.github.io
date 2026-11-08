@@ -331,43 +331,180 @@ function lumieres(t, repare) {
   return s;
 }
 
-function personnage(x, marche, t, regard = 1) {
-  const bob = marche ? Math.abs(Math.sin(t * 12)) * 5 : 0;
-  const j = marche ? Math.sin(t * 12) * 10 : 0;
-  return `<g transform="translate(${x},${SOL - bob}) scale(${regard},1)">
-    <rect x="-16" y="-52" width="13" height="52" fill="#2f4f8f" transform="rotate(${j} -10 -52)"/><rect x="3" y="-52" width="13" height="52" fill="#2a4580" transform="rotate(${-j} 10 -52)"/>
-    <rect x="-22" y="-112" width="44" height="64" rx="10" fill="#f08a24"/><rect x="-22" y="-80" width="44" height="6" fill="#d9771a"/>
-    <circle cx="0" cy="-134" r="22" fill="#f2c9a0"/><path d="M-23 -138 Q 0 -168 23 -138 Z" fill="#d23c3c"/><rect x="0" y="-142" width="30" height="7" rx="3" fill="#d23c3c"/>
-    <circle cx="8" cy="-132" r="3" fill="#2b2b2b"/></g>`;
+/* ---------- Personnages (style « sticker » : trait foncé, grosses têtes) ---------- */
+const TRAIT = "#1d1a2b", PEAU = "#f3c7a1", CHEVEUX = "#5a3420";
+
+/* Humeur du héros selon le moment de l'histoire */
+function humeur(t) {
+  const H = [
+    [0, "content"], [fin("hudFam"), "inquiet"], [fin("pan", 1.2), "choque"], [fin("presque"), "surpris"],
+    [fin("roger", 1.2), "content"], [fin("p1", 1.4), "grimace"], [fin("calc1", 2.2), "content"],
+    [fin("p2", 0.8), "grimace"], [fin("calc2", 2.8), "content"], [fin("p3", 1.2), "inquiet"],
+    [fin("verif"), "concentre"], [fin("ok"), "joie"], [fin("bilan", 0.5), "content"], [fin("bilan2"), "inquiet"],
+    [fin("choix0"), "reflechit"], [fin("comment"), "joie"],
+  ];
+  let h = "content";
+  for (const [ht, v] of H) if (t >= ht) h = v;
+  return h;
+}
+function geste(t, h) {
+  if (h === "joie" && t >= fin("ok") && t < fin("bilan")) return "pouce";
+  if (h === "reflechit") return "menton";
+  if (t >= fin("comment")) return "salut";
+  if (h === "choque") return "choc";
+  return "";
 }
 
+function visage(h, t) {
+  const O = TRAIT;
+  const cligne = h !== "joie" && h !== "choque" && (t % 3.3) < 0.13;
+  const grand = h === "choque" || h === "surpris";
+  let s = "";
+  // yeux
+  [4, 22].forEach((ex, i) => {
+    if (h === "joie") { s += `<path d="M${ex - 7} 3 q 7 -10 14 0" stroke="${O}" stroke-width="4" fill="none" stroke-linecap="round"/>`; return; }
+    if (cligne) { s += `<path d="M${ex - 7} 1 h 14" stroke="${O}" stroke-width="4" stroke-linecap="round"/>`; return; }
+    const ry = grand ? 11 : 9, rp = h === "choque" ? 2.6 : 4.2;
+    const dy = h === "reflechit" ? -3 : 0, dx = h === "reflechit" ? 1 : 2.5;
+    s += `<ellipse cx="${ex}" cy="0" rx="${grand ? 8.5 : 7}" ry="${ry}" fill="#fff" stroke="${O}" stroke-width="3"/>`;
+    s += `<circle cx="${ex + dx}" cy="${1 + dy}" r="${rp}" fill="${O}"/><circle cx="${ex + dx + 1.5}" cy="${-1 + dy}" r="1.3" fill="#fff"/>`;
+  });
+  // sourcils
+  const S = {
+    content: ["M-3 -14 q 7 -5 14 0", "M15 -14 q 7 -5 14 0"],
+    joie: ["M-3 -15 q 7 -6 14 0", "M15 -15 q 7 -6 14 0"],
+    inquiet: ["M-3 -12 L 11 -18", "M15 -18 L 29 -12"],
+    grimace: ["M-3 -18 L 11 -11", "M15 -11 L 29 -18"],
+    concentre: ["M-3 -17 L 11 -13", "M15 -13 L 29 -17"],
+    choque: ["M-3 -22 q 7 -6 14 0", "M15 -22 q 7 -6 14 0"],
+    surpris: ["M-3 -20 q 7 -6 14 0", "M15 -20 q 7 -6 14 0"],
+    reflechit: ["M-3 -14 q 7 -3 14 0", "M15 -21 q 7 -6 14 2"],
+  }[h] || ["M-3 -14 q 7 -5 14 0", "M15 -14 q 7 -5 14 0"];
+  s += S.map((d) => `<path d="${d}" stroke="${CHEVEUX}" stroke-width="5" fill="none" stroke-linecap="round"/>`).join("");
+  // nez + joues
+  s += `<path d="M31 5 q 7 4 0 9" stroke="${O}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  s += `<ellipse cx="2" cy="15" rx="6" ry="4" fill="#f08a8a" opacity=".45"/><ellipse cx="25" cy="15" rx="6" ry="4" fill="#f08a8a" opacity=".45"/>`;
+  // bouche
+  const M = {
+    content: `<path d="M8 20 q 8 8 16 0" stroke="${O}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    joie: `<path d="M6 18 q 10 18 20 0 Z" fill="#7a2230" stroke="${O}" stroke-width="3.5" stroke-linejoin="round"/><path d="M11 25 q 5 4 10 0" fill="#ef7b86"/>`,
+    inquiet: `<path d="M8 24 q 4 -4 8 0 q 4 4 8 0" stroke="${O}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`,
+    grimace: `<rect x="6" y="18" width="20" height="10" rx="3" fill="#fff" stroke="${O}" stroke-width="3"/><path d="M6 23 h 20 M13 18 v 10 M19 18 v 10" stroke="${O}" stroke-width="2"/>`,
+    concentre: `<path d="M9 23 h 14" stroke="${O}" stroke-width="4" stroke-linecap="round"/>`,
+    choque: `<ellipse cx="16" cy="24" rx="6.5" ry="9" fill="#7a2230" stroke="${O}" stroke-width="3"/>`,
+    surpris: `<ellipse cx="16" cy="23" rx="4.5" ry="5.5" fill="#7a2230" stroke="${O}" stroke-width="3"/>`,
+    reflechit: `<path d="M10 25 q 7 -2 13 -7" stroke="${O}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+  };
+  return s + (M[h] || M.content);
+}
+
+function bras(sx, a1, a2, fonce, pouce) {
+  const O = TRAIT;
+  return `<g transform="translate(${sx},-128) rotate(${a1})">
+    <rect x="-10" y="-6" width="20" height="32" rx="9" fill="${fonce ? "#2c5590" : "#3f74c2"}" stroke="${O}" stroke-width="4"/>
+    <rect x="-10" y="18" width="20" height="7" rx="3" fill="${fonce ? "#244a7e" : "#35649f"}"/>
+    <g transform="translate(0,24) rotate(${a2})">
+      <rect x="-6.5" y="-2" width="13" height="26" rx="6" fill="${PEAU}" stroke="${O}" stroke-width="4"/>
+      ${pouce ? `<rect x="-3.5" y="30" width="8" height="16" rx="4" fill="${PEAU}" stroke="${O}" stroke-width="3.5"/>` : ""}
+      <circle cx="0" cy="28" r="9" fill="${PEAU}" stroke="${O}" stroke-width="4"/>
+    </g></g>`;
+}
+
+function jambe(dx, ang, fonce) {
+  const O = TRAIT;
+  return `<g transform="rotate(${ang} ${dx} -80)">
+    <rect x="${dx - 7.5}" y="-56" width="15" height="40" fill="${PEAU}" stroke="${O}" stroke-width="4"/>
+    <rect x="${dx - 7.5}" y="-26" width="15" height="11" fill="#fff" stroke="${O}" stroke-width="3"/>
+    <rect x="${dx - 7.5}" y="-24" width="15" height="3" fill="#2e8b57"/>
+    <path d="M${dx - 12} -16 h 20 q 16 1 16 12 v 4 h -36 Z" fill="${fonce ? "#c43a31" : "#e2483d"}" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="${dx - 12}" y="-5" width="36" height="5" rx="2" fill="#fff" stroke="${O}" stroke-width="2.5"/>
+    <rect x="${dx - 13}" y="-84" width="26" height="34" rx="7" fill="${fonce ? "#8f7c4f" : "#ad9765"}" stroke="${O}" stroke-width="4"/>
+  </g>`;
+}
+
+/* Le héros : Malo, 19 ans, cheveux en bataille, chemise en jean ouverte sur un t-shirt « pin » */
+function personnage(x, marche, t, regard = 1, h = "content", g = "") {
+  const O = TRAIT;
+  const ph = t * 11;
+  const bob = marche ? Math.abs(Math.sin(ph)) * 6 : Math.sin(t * 2.4) * 1.5;
+  const j = marche ? Math.sin(ph) * 24 : 0;
+  const b = marche ? Math.sin(ph) * 30 : Math.sin(t * 2.4) * 3;
+  // angles des bras [épaule, coude] : 0 = vers le bas, négatif = vers l'avant
+  let avant = [-b - 6, -14], arriere = [b + 6, -10], pouce = false;
+  if (g === "pouce") { avant = [-105, -70]; pouce = true; }
+  if (g === "menton") avant = [-28, -148];
+  if (g === "salut") avant = [-165, Math.sin(t * 10) * 25];
+  if (g === "choc") { avant = [-60, -40]; arriere = [55, 30]; }
+  const saut = h === "joie" && t >= fin("ok") && t < fin("ok", 0.5) ? Math.sin(((t - fin("ok")) / 0.5) * Math.PI) * 18 : 0;
+  const tete = h === "reflechit" ? -6 : marche ? Math.sin(ph) * 2 : 0;
+  return `<g transform="translate(${x},${SOL - bob - saut}) scale(${regard},1)">
+    <ellipse cx="0" cy="${bob + saut + 2}" rx="34" ry="7" fill="#000" opacity=".22"/>
+    ${bras(-14, arriere[0], arriere[1], true, false)}
+    ${jambe(-8, -j, true)}${jambe(8, j, false)}
+    <rect x="-26" y="-96" width="52" height="20" rx="6" fill="#ad9765" stroke="${O}" stroke-width="4"/>
+    <rect x="-26" y="-96" width="52" height="6" fill="#6b5a3a"/>
+    <rect x="-24" y="-142" width="48" height="52" rx="13" fill="#f7f4ec" stroke="${O}" stroke-width="4"/>
+    <path d="M-4 -106 l 8 -16 l 8 16 Z" fill="#2e8b57"/><rect x="2" y="-106" width="4" height="5" fill="#6b3f22"/>
+    <path d="M-25 -136 Q -26 -110 -24 -90 L -9 -90 L -9 -128 L -14 -142 Z" fill="#3f74c2" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M25 -136 Q 26 -110 24 -90 L 13 -90 L 13 -128 L 15 -142 Z" fill="#3f74c2" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="-7" y="-152" width="14" height="14" fill="${PEAU}" stroke="${O}" stroke-width="4"/>
+    <g transform="translate(0,-186) rotate(${tete})">
+      <path d="M-34 4 Q -42 -38 -2 -46 Q 36 -48 38 -8 L 32 6 Z" fill="${CHEVEUX}" stroke="${O}" stroke-width="4"/>
+      <ellipse cx="2" cy="0" rx="33" ry="34" fill="${PEAU}" stroke="${O}" stroke-width="4"/>
+      <ellipse cx="-27" cy="7" rx="6" ry="9" fill="${PEAU}" stroke="${O}" stroke-width="3.5"/>
+      <path d="M-28 3 q 4 4 0 8" stroke="${O}" stroke-width="2.5" fill="none"/>
+      <path d="M-36 6 Q -42 -34 -6 -40 Q 28 -46 38 -16 Q 42 -4 34 2 Q 31 -14 19 -14 Q 23 -4 14 -1 Q 11 -14 0 -16 Q 2 -7 -6 -5 Q -9 -18 -22 -13 Q -27 -2 -36 6 Z" fill="${CHEVEUX}" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-2 -42 q 2 -16 16 -20 q -6 8 -4 18" fill="${CHEVEUX}" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-20 -30 q 10 -8 22 -8" stroke="#7a4a2e" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <g transform="translate(-5,2)">${visage(h, t)}</g>
+    </g>
+    ${bras(14, avant[0], avant[1], false, pouce)}
+  </g>`;
+}
+
+/* Roger : chien de camping, oreille tombante, foulard rouge */
 function chien(x, marche, t, regard = -1) {
+  const O = TRAIT;
   const bob = marche ? Math.abs(Math.sin(t * 14)) * 4 : 0;
   const queue = Math.sin(t * (marche ? 14 : 8)) * 18;
-  const j = marche ? Math.sin(t * 14) * 12 : 0;
+  const j = marche ? Math.sin(t * 14) * 14 : 0;
+  const cligne = (t % 4.1) < 0.12;
   return `<g transform="translate(${x},${SOL - bob}) scale(${regard},1)">
-    <path d="M-34 -42 q -18 -10 -16 -30" stroke="#a8733a" stroke-width="7" fill="none" stroke-linecap="round" transform="rotate(${queue} -34 -42)"/>
-    <rect x="-30" y="-24" width="9" height="24" fill="#a8733a" transform="rotate(${j} -26 -24)"/><rect x="16" y="-24" width="9" height="24" fill="#a8733a" transform="rotate(${-j} 20 -24)"/>
-    <ellipse cx="-4" cy="-36" rx="36" ry="20" fill="#c98f4a"/>
-    <ellipse cx="-6" cy="-30" rx="16" ry="10" fill="#f1e2c6"/>
-    <circle cx="30" cy="-56" r="20" fill="#c98f4a"/>
-    <path d="M18 -72 q -14 4 -12 30 q 10 -6 14 -22 Z" fill="#7a4a24"/>
-    <ellipse cx="44" cy="-50" rx="12" ry="9" fill="#f1e2c6"/><circle cx="54" cy="-53" r="5" fill="#1b1b1b"/>
-    <circle cx="34" cy="-62" r="3.2" fill="#1b1b1b"/>
-    <rect x="16" y="-42" width="22" height="6" rx="3" fill="#d23c3c"/></g>`;
+    <ellipse cx="0" cy="${bob + 2}" rx="40" ry="6" fill="#000" opacity=".2"/>
+    <path d="M-36 -44 q -20 -10 -16 -32" stroke="${O}" stroke-width="13" fill="none" stroke-linecap="round" transform="rotate(${queue} -36 -44)"/>
+    <path d="M-36 -44 q -20 -10 -16 -32" stroke="#c98f4a" stroke-width="6" fill="none" stroke-linecap="round" transform="rotate(${queue} -36 -44)"/>
+    <rect x="-32" y="-30" width="11" height="30" rx="4" fill="#b07a3c" stroke="${O}" stroke-width="3.5" transform="rotate(${j} -26 -30)"/>
+    <rect x="14" y="-30" width="11" height="30" rx="4" fill="#b07a3c" stroke="${O}" stroke-width="3.5" transform="rotate(${-j} 20 -30)"/>
+    <ellipse cx="-4" cy="-38" rx="38" ry="21" fill="#c98f4a" stroke="${O}" stroke-width="4"/>
+    <ellipse cx="-8" cy="-31" rx="17" ry="10" fill="#f1e2c6"/>
+    <rect x="-24" y="-30" width="11" height="30" rx="4" fill="#c98f4a" stroke="${O}" stroke-width="3.5" transform="rotate(${-j} -18 -30)"/>
+    <rect x="22" y="-30" width="11" height="30" rx="4" fill="#c98f4a" stroke="${O}" stroke-width="3.5" transform="rotate(${j} 28 -30)"/>
+    <path d="M14 -50 l 26 6 l -8 10 Z" fill="#d23c3c" stroke="${O}" stroke-width="3.5" stroke-linejoin="round"/>
+    <circle cx="32" cy="-62" r="22" fill="#c98f4a" stroke="${O}" stroke-width="4"/>
+    <ellipse cx="47" cy="-55" rx="14" ry="10" fill="#f1e2c6" stroke="${O}" stroke-width="3.5"/>
+    <ellipse cx="58" cy="-59" rx="6" ry="5" fill="${O}"/>
+    <path d="M44 -48 q 6 4 12 0" stroke="${O}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${cligne ? `<path d="M31 -68 h 9" stroke="${O}" stroke-width="3.5" stroke-linecap="round"/>` : `<circle cx="36" cy="-68" r="4.2" fill="${O}"/><circle cx="37.5" cy="-69.5" r="1.3" fill="#fff"/>`}
+    <path d="M18 -80 q -18 2 -16 34 q 12 -4 18 -24 Z" fill="#7a4a24" stroke="${O}" stroke-width="3.5" stroke-linejoin="round"/>
+  </g>`;
 }
 
-/* ---------- Interface ---------- */
-function bulle(x, y, texte, couleur = "#ffffff", ink = "#1b1b1b", o = 1) {
+/* ---------- Interface (notre style : stickers crème, trait foncé, ombre pleine) ---------- */
+let ZOOM = 1;
+function bulle(x, y, texte, couleur = "#fff6e3", ink = TRAIT, o = 1) {
   if (o <= 0) return "";
-  const w = texte.length * 17 + 40;
-  return `<g opacity="${o}" transform="translate(${x},${y}) scale(${0.8 + 0.2 * o})"><rect x="${-w / 2}" y="-30" width="${w}" height="52" rx="14" fill="${couleur}"/><path d="M-10 21 l 10 16 l 10 -16 Z" fill="${couleur}"/><text x="0" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="${ink}">${texte}</text></g>`;
+  const w = texte.length * 17 + 44;
+  return `<g opacity="${o}" transform="translate(${x},${y}) scale(${(0.7 + 0.3 * easeIO(o)) * 1.25 / ZOOM})">
+    <rect x="${-w / 2 + 5}" y="-25" width="${w}" height="54" rx="18" fill="${TRAIT}"/>
+    <path d="M-12 22 l 4 22 l 20 -22 Z" fill="${couleur}" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="${-w / 2}" y="-30" width="${w}" height="54" rx="18" fill="${couleur}" stroke="${TRAIT}" stroke-width="4"/>
+    <rect x="-10" y="18" width="20" height="8" fill="${couleur}"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="${ink}">${texte}</text></g>`;
 }
 
 function hud(t) {
   const oF = vis(t, fin("hudFam"), 1e9, 0.3), oA = vis(t, fin("hudAll"), 1e9, 0.3);
   if (oF <= 0) return "";
-  // valeurs
   const sauts = [[fin("calc1", 2.2), 76000, 119], [fin("calc2", 2.6), 73500, 116], [fin("calc3", 2.2), 39500, 110]];
   let budget = 80000, delai = 120, prev = 80000, prevD = 120, delta = null;
   for (const [ts, b, d] of sauts) {
@@ -375,51 +512,75 @@ function hud(t) {
     if (t >= ts) { budget = lerp(prev, b, p); delai = Math.round(lerp(prevD, d, p)); if (t < ts + 2) delta = { v: b - prev, o: vis(t, ts, ts + 2, 0.2) }; }
     prev = b; prevD = d;
   }
-  const boite = (cx, lab, val, col, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},150) scale(${0.85 + 0.15 * o})">
-    <rect x="-118" y="-58" width="236" height="104" rx="18" fill="#121828" stroke="${col}" stroke-width="5"/>
-    <text x="0" y="-22" text-anchor="middle" font-family="Inter" font-weight="800" font-size="22" fill="#b9c0d0" letter-spacing="3">${lab}</text>
-    <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${col}">${val}</text></g>`;
-  let s = boite(285, "DÉLAI", `${delai} JOURS`.replace(" JOURS", " J"), "#ff5a5f", oA);
-  s += boite(540, "FAMILLES", "0 / 50", "#4ade80", oF);
-  s += boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA);
-  if (delta) s += `<text x="795" y="238" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
-  s += `<g opacity="${oF}"><rect x="40" y="40" width="120" height="0" /></g>`;
+  const ico = {
+    jours: `<rect x="-12" y="-10" width="24" height="22" rx="3" fill="#fff" stroke="${TRAIT}" stroke-width="3"/><rect x="-12" y="-10" width="24" height="7" fill="${TRAIT}"/><path d="M-6 -14 v6 M6 -14 v6" stroke="${TRAIT}" stroke-width="3" stroke-linecap="round"/>`,
+    familles: `<path d="M-15 12 L 0 -13 L 15 12 Z" fill="#fff" stroke="${TRAIT}" stroke-width="3" stroke-linejoin="round"/><path d="M0 -13 L -4 12 M0 -13 L 4 12" stroke="${TRAIT}" stroke-width="3"/>`,
+    budget: `<circle r="13" fill="#ffe27a" stroke="${TRAIT}" stroke-width="3"/><text y="6" text-anchor="middle" font-family="Inter" font-weight="900" font-size="17" fill="${TRAIT}">€</text>`,
+  };
+  const boite = (cx, rot, lab, val, col, ic, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},150) rotate(${rot}) scale(${0.8 + 0.2 * easeIO(o)})">
+    <rect x="-125" y="-46" width="250" height="92" rx="24" fill="${TRAIT}" transform="translate(5,7)"/>
+    <rect x="-125" y="-46" width="250" height="92" rx="24" fill="#fff6e3" stroke="${TRAIT}" stroke-width="5"/>
+    <circle cx="-88" cy="0" r="25" fill="${col}" stroke="${TRAIT}" stroke-width="4"/><g transform="translate(-88,0)">${ic}</g>
+    <text x="-54" y="-12" font-family="Inter" font-weight="800" font-size="17" fill="#7a6f80" letter-spacing="2">${lab}</text>
+    <text x="-54" y="27" font-family="Inter" font-weight="900" font-size="34" fill="${TRAIT}">${val}</text></g>`;
+  let s = boite(265, -2, "JOURS", `${delai}`, "#ff6b5e", ico.jours, oA);
+  s += boite(540, 1, "FAMILLES", "0 / 50", "#4ade80", ico.familles, oF);
+  s += boite(815, -1.5, "BUDGET", `${euros(budget)} €`, "#ffc93c", ico.budget, oA);
+  if (delta) s += `<g opacity="${delta.o}" transform="translate(830,236) rotate(-3)"><rect x="-90" y="-26" width="180" height="48" rx="14" fill="#ff5a5f" stroke="${TRAIT}" stroke-width="4"/><text y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="#fff">−${euros(-delta.v)} €</text></g>`;
   return s;
 }
 
 function puce(t) {
-  const etapes = [["1. L'ENTRÉE", fin("p1"), fin("p2"), "#ff5a5f"], ["2. LES RONCES", fin("p2"), fin("p3"), "#ff5a5f"], ["3. LES DOUCHES", fin("p3"), fin("verif"), "#ff5a5f"], ["VÉRIFICATION", fin("verif"), fin("bilan"), "#4fa3ff"]];
+  const etapes = [["1", "L'ENTRÉE", fin("p1"), fin("p2")], ["2", "LES RONCES", fin("p2"), fin("p3")], ["3", "LES DOUCHES", fin("p3"), fin("verif")]];
   let s = "";
-  for (const [txt, a, b, col] of etapes) {
+  for (const [n, txt, a, b] of etapes) {
     const o = vis(t, a, b, 0.2);
     if (o <= 0) continue;
-    const w = txt.length * 19 + 50;
-    const verif = txt === "VÉRIFICATION";
-    s += `<g opacity="${o}" transform="translate(540,262) scale(${0.85 + 0.15 * o})"><rect x="${-w / 2}" y="-26" width="${w}" height="50" rx="12" fill="${verif ? "#0f1f3a" : "#ffffff"}" stroke="${verif ? col : "none"}" stroke-width="4"/>
-      <text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="28" fill="${verif ? col : "#1b1b1b"}">${verif ? txt : `<tspan fill="${col}">${txt.slice(0, 2)}</tspan>${txt.slice(2)}`}</text></g>`;
+    const w = txt.length * 19 + 190;
+    s += `<g opacity="${o}" transform="translate(540,262) scale(${0.85 + 0.15 * o})">
+      <rect x="${-w / 2}" y="-27" width="${w}" height="54" rx="27" fill="${TRAIT}"/>
+      <rect x="${-w / 2 + 7}" y="-20" width="132" height="40" rx="20" fill="#ff6b5e"/>
+      <text x="${-w / 2 + 73}" y="9" text-anchor="middle" font-family="Inter" font-weight="900" font-size="22" fill="#fff">ÉTAPE ${n}/3</text>
+      <text x="${-w / 2 + 156}" y="10" font-family="Inter" font-weight="900" font-size="28" fill="#fff6e3">${txt}</text></g>`;
+  }
+  // tampon « vérification »
+  const a = fin("verif"), o = vis(t, a, fin("ok"), 0.15);
+  if (o > 0) {
+    const k = 1 + 0.6 * (1 - easeIO(clamp((t - a) / 0.22)));
+    s += `<g opacity="${o}" transform="translate(540,268) rotate(-5) scale(${k})">
+      <rect x="-200" y="-38" width="400" height="76" rx="10" fill="#fff6e3" stroke="#2b7bd6" stroke-width="6"/>
+      <rect x="-190" y="-28" width="380" height="56" rx="6" fill="none" stroke="#2b7bd6" stroke-width="3"/>
+      <text y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#2b7bd6" letter-spacing="4">VÉRIFICATION</text></g>`;
   }
   return s;
 }
 
-function carteCalcul(t, a, b, lignes, total) {
+/* Le calcul façon ticket de caisse */
+function carteCalcul(t, a, b, lignes, total, num = 1) {
   const o = vis(t, a, b, 0.25);
   if (o <= 0) return "";
-  const h = 120 + lignes.length * 58 + 70;
-  let s = `<g opacity="${o}" transform="translate(540,${360 + (1 - o) * -30}) rotate(-2.5)">
-    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
-    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#fbf7ec"/>`;
-  for (let y = 70; y < h; y += 58) s += `<line x1="-300" y1="${y}" x2="300" y2="${y}" stroke="#cdd9ee" stroke-width="2"/>`;
-  s += `<line x1="-240" y1="0" x2="-240" y2="${h}" stroke="#ef9a9a" stroke-width="3"/>
-    <text x="0" y="52" text-anchor="middle" font-family="Inter" font-weight="900" font-size="34" fill="#1b1b1b" letter-spacing="2">LE CALCUL</text>`;
+  const h = 150 + lignes.length * 50 + 80;
+  let bord = `M-250 0 H 250 V ${h}`;
+  for (let x = 250; x > -250; x -= 25) bord += ` L ${x - 12.5} ${h - 14} L ${x - 25} ${h}`;
+  bord += " Z";
+  const mono = `font-family="JetBrains Mono" font-weight="800"`;
+  let s = `<g opacity="${o}" transform="translate(540,${330 + (1 - easeIO(o)) * -40}) rotate(2.5)">
+    <path d="${bord}" fill="${TRAIT}" transform="translate(7,9)"/>
+    <path d="${bord}" fill="#ffffff" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"/>
+    <text x="0" y="44" text-anchor="middle" ${mono} font-size="24" fill="${TRAIT}">CAMPING LES PINS PERDUS</text>
+    <text x="0" y="76" text-anchor="middle" ${mono} font-size="20" fill="#7a6f80">TICKET N°${num}</text>
+    <line x1="-225" y1="98" x2="225" y2="98" stroke="${TRAIT}" stroke-width="3" stroke-dasharray="10 8"/>`;
   lignes.forEach(([lab, val], i) => {
-    const oi = clamp((t - a - 0.35 - i * 0.55) / 0.2);
-    s += `<g opacity="${oi}"><text x="-222" y="${118 + i * 58}" font-family="Inter" font-weight="800" font-size="27" fill="#2b2b2b">${lab}</text><text x="272" y="${118 + i * 58}" text-anchor="end" font-family="Inter" font-weight="900" font-size="28" fill="#2b2b2b">${val}</text></g>`;
+    const oi = clamp((t - a - 0.35 - i * 0.55) / 0.15);
+    s += `<g opacity="${oi}"><text x="-225" y="${140 + i * 50}" ${mono} font-size="25" fill="${TRAIT}">${lab}</text><text x="225" y="${140 + i * 50}" text-anchor="end" ${mono} font-size="25" fill="${TRAIT}">${val}</text></g>`;
   });
-  const ot = clamp((t - a - 0.35 - lignes.length * 0.55) / 0.2), yt = 118 + lignes.length * 58 + 6;
-  s += `<g opacity="${ot}"><line x1="-222" y1="${yt - 36}" x2="272" y2="${yt - 36}" stroke="#1b1b1b" stroke-width="3"/><text x="-222" y="${yt + 4}" font-family="Inter" font-weight="900" font-size="28" fill="#e23b3b">TOTAL</text><text x="272" y="${yt + 4}" text-anchor="end" font-family="Inter" font-weight="900" font-size="32" fill="#e23b3b">${total}</text></g>`;
+  const ot = clamp((t - a - 0.35 - lignes.length * 0.55) / 0.15), yt = 140 + lignes.length * 50 + 14;
+  s += `<g opacity="${ot}"><line x1="-225" y1="${yt - 36}" x2="225" y2="${yt - 36}" stroke="${TRAIT}" stroke-width="3" stroke-dasharray="10 8"/>
+    <text x="-225" y="${yt + 6}" font-family="Inter" font-weight="900" font-size="32" fill="#e23b3b">TOTAL</text><text x="225" y="${yt + 6}" text-anchor="end" font-family="Inter" font-weight="900" font-size="36" fill="#e23b3b">${total}</text></g>`;
   return s + `</g>`;
 }
 
+/* La liste de Roger : un porte-bloc */
 function liste(t) {
   const fen = [[fin("liste"), fin("p1", 0.6), false], [fin("bilan"), fin("choix0"), true]];
   let s = "";
@@ -427,17 +588,20 @@ function liste(t) {
     const o = vis(t, a, b, 0.25);
     if (o <= 0) continue;
     const items = ["1. L'ENTRÉE", "2. LES RONCES", "3. LES DOUCHES", coches ? "4. ???" : null].filter(Boolean);
-    const h = 110 + items.length * 60;
-    s += `<g opacity="${o}" transform="translate(540,${360 + (1 - o) * -30}) rotate(2)">
-      <rect x="-270" y="0" width="540" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
-      <rect x="-270" y="0" width="540" height="${h}" rx="6" fill="#fbf7ec"/>
-      <text x="0" y="56" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#1b1b1b" letter-spacing="1">LA LISTE DE ROGER</text>`;
+    const h = 140 + items.length * 60;
+    const patte = `<g transform="translate(205,74)" fill="#c98f4a" stroke="${TRAIT}" stroke-width="2.5"><ellipse cx="0" cy="6" rx="12" ry="10"/><circle cx="-12" cy="-8" r="5"/><circle cx="-4" cy="-14" r="5"/><circle cx="5" cy="-14" r="5"/><circle cx="13" cy="-8" r="5"/></g>`;
+    s += `<g opacity="${o}" transform="translate(540,${330 + (1 - easeIO(o)) * -40}) rotate(-2)">
+      <rect x="-265" y="0" width="530" height="${h}" rx="22" fill="${TRAIT}" transform="translate(7,9)"/>
+      <rect x="-265" y="0" width="530" height="${h}" rx="22" fill="#b9773f" stroke="${TRAIT}" stroke-width="5"/>
+      <rect x="-238" y="26" width="476" height="${h - 48}" rx="6" fill="#fff6e3" stroke="${TRAIT}" stroke-width="3"/>
+      <rect x="-70" y="-18" width="140" height="42" rx="12" fill="#aab3bd" stroke="${TRAIT}" stroke-width="4"/>
+      <text x="-205" y="88" font-family="Inter" font-weight="900" font-size="30" fill="${TRAIT}">LA LISTE DE ROGER</text>${patte}`;
     items.forEach((it, i) => {
-      const oi = clamp((t - a - 0.3 - i * 0.35) / 0.2), y = 112 + i * 60;
+      const oi = clamp((t - a - 0.3 - i * 0.35) / 0.2), y = 152 + i * 60;
       const coche = coches && i < 3 ? clamp((t - a - 0.6 - i * 0.4) / 0.2) : 0;
-      s += `<g opacity="${oi}"><rect x="-220" y="${y - 30}" width="36" height="36" rx="6" fill="none" stroke="#1b1b1b" stroke-width="4"/>
-        <text x="-166" y="${y}" font-family="Inter" font-weight="900" font-size="30" fill="${it.includes("???") ? "#e23b3b" : "#2b2b2b"}">${it}</text>
-        ${coche > 0 ? `<path d="M-214 ${y - 14} l 12 14 l 26 -32" stroke="#22a55a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${coche}"/>` : ""}</g>`;
+      s += `<g opacity="${oi}"><rect x="-205" y="${y - 30}" width="36" height="36" rx="8" fill="#fff" stroke="${TRAIT}" stroke-width="4"/>
+        <text x="-152" y="${y}" font-family="Inter" font-weight="900" font-size="30" fill="${it.includes("???") ? "#e23b3b" : TRAIT}">${it}</text>
+        ${coche > 0 ? `<path d="M-199 ${y - 14} l 12 14 l 26 -32" stroke="#22a55a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${coche}"/>` : ""}</g>`;
     });
     s += `</g>`;
   }
@@ -446,42 +610,68 @@ function liste(t) {
 
 function choix(t) {
   const a = fin("choix"), b = DUREE - 2.6;
-  let s = "";
-  const carte = (cx, titre, sous, col, icone, o, pulse) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},470) scale(${(0.8 + 0.2 * o) * (1 + pulse * 0.04)})">
-    <rect x="-200" y="-120" width="400" height="240" rx="24" fill="#121828" stroke="${col}" stroke-width="7"/>
+  const carte = (cx, rot, titre, sous, col, icone, o, pulse) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},480) rotate(${rot}) scale(${(0.75 + 0.25 * easeIO(o)) * (1 + pulse * 0.035)})">
+    <rect x="-200" y="-125" width="400" height="250" rx="30" fill="${TRAIT}" transform="translate(8,10)"/>
+    <rect x="-200" y="-125" width="400" height="250" rx="30" fill="#fff6e3" stroke="${TRAIT}" stroke-width="6"/>
+    <rect x="-200" y="-125" width="400" height="22" rx="11" fill="${col}" stroke="${TRAIT}" stroke-width="6"/>
     ${icone}
-    <text x="0" y="62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${col}">${titre}</text>
-    <text x="0" y="98" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="2">${sous}</text></g>`;
-  const vagues = `<g transform="translate(0,-40)"><rect x="-90" y="-40" width="180" height="70" rx="12" fill="#1f6fae"/><path d="M-80 -8 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#bfe3ff" stroke-width="7" fill="none"/><path d="M-80 14 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#7cc4f5" stroke-width="7" fill="none"/></g>`;
-  const tobog = `<g transform="translate(0,-40)"><rect x="-70" y="-60" width="10" height="90" fill="#ffc93c"/><rect x="-20" y="-60" width="10" height="90" fill="#ffc93c"/><rect x="-74" y="-64" width="68" height="10" fill="#f08a24"/><path d="M-10 -58 Q 40 -40 60 30 L 80 30 Q 60 -50 -10 -72 Z" fill="#ff5a5f"/></g>`;
+    <text x="0" y="62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${TRAIT}">${titre}</text>
+    <text x="0" y="98" text-anchor="middle" font-family="Inter" font-weight="800" font-size="19" fill="#7a6f80" letter-spacing="2">${sous}</text></g>`;
+  const vagues = `<g transform="translate(0,-38)"><rect x="-90" y="-40" width="180" height="70" rx="14" fill="#2b7bd6" stroke="${TRAIT}" stroke-width="4"/><path d="M-80 -8 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#bfe3ff" stroke-width="7" fill="none"/><path d="M-80 14 q 20 -16 40 0 t 40 0 t 40 0 t 40 0" stroke="#7cc4f5" stroke-width="7" fill="none"/></g>`;
+  const tobog = `<g transform="translate(0,-40)" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"><rect x="-70" y="-60" width="12" height="92" fill="#ffc93c"/><rect x="-22" y="-60" width="12" height="92" fill="#ffc93c"/><rect x="-76" y="-66" width="72" height="12" fill="#f08a24"/><path d="M-10 -58 Q 40 -40 62 32 L 84 32 Q 62 -50 -10 -74 Z" fill="#ff5a5f"/></g>`;
   const pulse = Math.sin(t * 6) * 0.5 + 0.5;
-  s += carte(285, "PISCINE", "CHAUFFÉE", "#4fa3ff", vagues, vis(t, a, b, 0.25), pulse);
-  s += carte(795, "AIRE DE JEUX", "TOBOGGAN · BALANÇOIRES", "#ffc93c", tobog, vis(t, a + 1.0, b, 0.25), 1 - pulse);
+  let s = carte(285, -3, "PISCINE", "CHAUFFÉE", "#2b7bd6", vagues, vis(t, a, b, 0.25), pulse);
+  s += carte(795, 3, "AIRE DE JEUX", "TOBOGGAN · BALANÇOIRES", "#ffc93c", tobog, vis(t, a + 1.0, b, 0.25), 1 - pulse);
   const oOu = vis(t, a + 0.6, b, 0.2);
-  if (oOu > 0) s += `<g opacity="${oOu}"><circle cx="540" cy="470" r="44" fill="#ffffff"/><text x="540" y="484" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#1b1b1b">OU</text></g>`;
+  if (oOu > 0) s += `<g opacity="${oOu}"><circle cx="540" cy="480" r="46" fill="${TRAIT}" stroke="#fff6e3" stroke-width="5"/><text x="540" y="494" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff6e3">OU</text></g>`;
   const oC = vis(t, fin("comment"), b, 0.25);
-  if (oC > 0) s += `<g opacity="${oC}" transform="translate(540,700) scale(${0.85 + 0.15 * oC})"><rect x="-370" y="-38" width="740" height="76" rx="38" fill="#ff3b5c"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="32" fill="#fff">ÉCRIS « PISCINE » OU « JEUX »</text></g>`;
+  if (oC > 0) s += `<g opacity="${oC}" transform="translate(540,715) scale(${0.85 + 0.15 * oC})"><rect x="-370" y="-38" width="740" height="76" rx="38" fill="${TRAIT}" transform="translate(5,7)"/><rect x="-370" y="-38" width="740" height="76" rx="38" fill="#ff3b5c" stroke="${TRAIT}" stroke-width="5"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="32" fill="#fff">ÉCRIS « PISCINE » OU « JEUX »</text></g>`;
   return s;
 }
 
+/* Sous-titres : mot en cours surligné dans une pastille */
+const MESURE = document.createElement("canvas").getContext("2d");
+function largeur(txt, taille) { MESURE.font = `900 ${taille}px Inter`; return MESURE.measureText(txt).width; }
 function sousTitres(t) {
   const c = CHUNKS.find((k) => t >= k.t0 && t < k.t1);
   if (!c || t > FIN_VOIX + 0.3) return "";
-  const pop = 0.88 + 0.12 * easeIO(clamp((t - c.t0) / 0.12));
-  const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#4fa3ff" };
-  const tspans = c.map((w) => `<tspan fill="${t >= w.t ? COUL[w.c] : "#8f857c"}">${w.txt.toUpperCase().replace(/&/g, "&amp;")}</tspan>`).join(" ");
-  return `<g transform="translate(540,1395) scale(${pop})"><text x="4" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="68" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text>
-    <text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="68" letter-spacing="1">${tspans}</text></g>`;
+  const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#5fb0ff" };
+  const PASTILLE = { w: "#ffd23f", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#5fb0ff" };
+  let taille = 72;
+  const mots = c.map((w) => w.txt.toUpperCase());
+  const ecart = 22;
+  let total = mots.reduce((s, m) => s + largeur(m, taille), 0) + ecart * (mots.length - 1);
+  if (total > 960) { taille = taille * 960 / total; total = 960; }
+  const pop = 0.9 + 0.1 * easeIO(clamp((t - c.t0) / 0.12));
+  let cur = -1;
+  c.forEach((w, i) => { if (t >= w.t) cur = i; });
+  let x = 540 - total / 2, s = `<g transform="translate(540,1395) scale(${pop}) translate(-540,-1395)">`;
+  c.forEach((w, i) => {
+    const m = mots[i].replace(/&/g, "&amp;"), lw = largeur(mots[i], taille);
+    if (i === cur) {
+      const k = 1 + 0.08 * (1 - easeIO(clamp((t - w.t) / 0.15)));
+      s += `<g transform="translate(${x + lw / 2},1372) scale(${k}) translate(${-(x + lw / 2)},-1372)">
+        <rect x="${x - 14}" y="${1395 - taille * 0.86}" width="${lw + 28}" height="${taille * 1.12}" rx="16" fill="${TRAIT}" transform="translate(5,6)"/>
+        <rect x="${x - 14}" y="${1395 - taille * 0.86}" width="${lw + 28}" height="${taille * 1.12}" rx="16" fill="${PASTILLE[w.c]}" stroke="${TRAIT}" stroke-width="5"/>
+        <text x="${x}" y="1395" font-family="Inter" font-weight="900" font-size="${taille}" fill="${TRAIT}">${m}</text></g>`;
+    } else {
+      const dit = t >= w.t;
+      s += `<text x="${x}" y="1395" font-family="Inter" font-weight="900" font-size="${taille}" fill="${dit ? COUL[w.c] : "#ffffff"}" opacity="${dit ? 1 : 0.5}" stroke="${TRAIT}" stroke-width="12" paint-order="stroke" stroke-linejoin="round">${m}</text>`;
+    }
+    x += lw + ecart;
+  });
+  return s + `</g>`;
 }
 
 function carteFin(t) {
   const a = DUREE - 2.6, o = clamp((t - a) / 0.35);
   if (o <= 0) return "";
-  return `<g opacity="${o}"><rect width="1080" height="1920" fill="#0b0f1c" opacity=".88"/>
-    <text x="540" y="760" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#4ade80" letter-spacing="6">LES PINS PERDUS</text>
-    <text x="540" y="860" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffffff">ÉPISODE 2</text>
-    <text x="540" y="950" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffc93c">BIENTÔT</text>
-    <g transform="translate(540,1120)"><rect x="-340" y="-44" width="680" height="88" rx="44" fill="#ff3b5c"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff">+ ABONNE-TOI POUR LA SUITE</text></g></g>`;
+  return `<g opacity="${o}"><rect width="1080" height="1920" fill="#14182a" opacity=".93"/>
+    <text x="540" y="560" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#4ade80" letter-spacing="6">LES PINS PERDUS</text>
+    <text x="540" y="660" text-anchor="middle" font-family="Inter" font-weight="900" font-size="92" fill="#fff6e3">ÉPISODE 2</text>
+    <text x="540" y="755" text-anchor="middle" font-family="Inter" font-weight="900" font-size="92" fill="#ffc93c">BIENTÔT</text>
+    <g transform="translate(540,1450) scale(2.1) translate(-540,${-SOL})">${personnage(500, 0, t, 1, "joie", "salut")}${chien(600, 0, t, -1)}</g>
+    <g transform="translate(540,1620)"><rect x="-340" y="-44" width="680" height="88" rx="44" fill="${TRAIT}" transform="translate(5,7)"/><rect x="-340" y="-44" width="680" height="88" rx="44" fill="#ff3b5c" stroke="#fff6e3" stroke-width="4"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#fff">+ ABONNE-TOI POUR LA SUITE</text></g></g>`;
 }
 
 /* ---------- Rendu d'une image ---------- */
@@ -507,21 +697,25 @@ function rendre(t) {
   s += lumieres(t, repare) + eauRobinet(t);
   const rVis = clamp((t - fin("roger") - 0.4) / 0.3);
   s += `<g opacity="${rVis}">${chien(rog.x, rog.marche, t, rog.x > toi.x ? -1 : 1)}</g>`;
-  s += personnage(toi.x, toi.marche, t, toi.x < rog.x ? 1 : -1);
+  ZOOM = cam.z;
+  const hu = humeur(t);
+  s += personnage(toi.x, toi.marche, t, toi.x < rog.x || hu === "reflechit" ? 1 : -1, hu, geste(t, hu));
   // bulles dans le monde
-  s += bulle(rog.x + 10, SOL - 130, "ROGER", "#4ade80", "#0b2a16", vis(t, fin("roger", 1.2), fin("liste"), 0.2));
-  s += bulle(rog.x + 10, SOL - 130, "WOUF.", "#ffffff", "#1b1b1b", vis(t, fin("wouf", 1.6), finPhrase("wouf") + 0.3, 0.2));
-  s += bulle(toi.x, SOL - 200, "AÏE…", "#ffffff", "#1b1b1b", vis(t, fin("presque") - 2.6, fin("presque") - 0.6, 0.2));
-  s += bulle(toi.x, SOL - 200, "ELLE EST CHAUDE !", "#ffffff", "#1b1b1b", vis(t, fin("ok"), fin("ok", 1.6), 0.2) * (cam.z > 1.5 ? 0.9 : 1));
-  s += bulle(rog.x + 10, SOL - 130, "WOUF ! ✔", "#4ade80", "#0b2a16", vis(t, fin("ok", 1.5), fin("bilan"), 0.2));
+  s += bulle(rog.x + 20, SOL - 105 - 40 / ZOOM, "ROGER", "#4ade80", "#1d1a2b", vis(t, fin("roger", 1.2), fin("liste"), 0.2));
+  s += bulle(rog.x + 20, SOL - 105 - 40 / ZOOM, "WOUF.", "#fff6e3", "#1d1a2b", vis(t, fin("wouf", 1.6), finPhrase("wouf") + 0.3, 0.2));
+  s += bulle(toi.x, SOL - 250 - 40 / ZOOM, "C'EST TOI", "#ffc93c", "#1d1a2b", vis(t, 0.5, 3.0, 0.2));
+  s += bulle(toi.x, SOL - 250 - 40 / ZOOM, "AÏE…", "#fff6e3", "#1d1a2b", vis(t, fin("presque") - 2.6, fin("presque") - 0.6, 0.2));
+  s += bulle(toi.x, SOL - 250 - 40 / ZOOM, "SÉRIEUX ?!", "#fff6e3", "#1d1a2b", vis(t, fin("p1", 1.4), fin("calc1") - 0.1, 0.2));
+  s += bulle(toi.x, SOL - 250 - 40 / ZOOM, "ELLE EST CHAUDE !", "#fff6e3", "#1d1a2b", vis(t, fin("ok"), fin("ok", 1.6), 0.2) * (cam.z > 1.5 ? 0.9 : 1));
+  s += bulle(rog.x + 20, SOL - 105 - 40 / ZOOM, "WOUF ! ✔", "#4ade80", "#1d1a2b", vis(t, fin("ok", 1.5), fin("bilan"), 0.2));
   s += `</g>`;
   // dégradé sous le sol pour la zone de sous-titres
   s += `<defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1d16" stop-opacity="0"/><stop offset=".35" stop-color="#22170f" stop-opacity=".75"/><stop offset="1" stop-color="#120c08"/></linearGradient></defs>
     <rect x="0" y="1150" width="1080" height="770" fill="url(#gs)"/>`;
   s += hud(t) + puce(t);
-  s += carteCalcul(t, fin("calc1"), fin("p2", 0.2), [["PORTAIL NEUF", "2 500 €"], ["PANNEAU REPEINT", "1 500 €"]], "4 000 €");
-  s += carteCalcul(t, fin("calc2"), fin("p3", 0.2), [["DÉBROUSSAILLEUSE", "300 €"], ["BENNE × 2", "900 €"], ["3 JOURS DE BOULOT", "1 300 €"]], "2 500 €");
-  s += carteCalcul(t, fin("calc3"), fin("verif", 0.2), [["PLOMBERIE", "14 000 €"], ["CARRELAGE", "12 000 €"], ["CHAUFFE-EAU", "8 000 €"]], "34 000 €");
+  s += carteCalcul(t, fin("calc1"), fin("p2", 0.2), [["PORTAIL NEUF", "2 500 €"], ["PANNEAU REPEINT", "1 500 €"]], "4 000 €", 1);
+  s += carteCalcul(t, fin("calc2"), fin("p3", 0.2), [["DÉBROUSSAILLEUSE", "300 €"], ["BENNE × 2", "900 €"], ["3 JOURS DE BOULOT", "1 300 €"]], "2 500 €", 2);
+  s += carteCalcul(t, fin("calc3"), fin("verif", 0.2), [["PLOMBERIE", "14 000 €"], ["CARRELAGE", "12 000 €"], ["CHAUFFE-EAU", "8 000 €"]], "34 000 €", 3);
   s += liste(t) + choix(t) + sousTitres(t);
   s += `<text x="1040" y="1868" text-anchor="end" font-family="Inter" font-weight="800" font-size="24" fill="#ffffff" opacity=".55" letter-spacing="2">LES PINS PERDUS · ÉP. 1</text>`;
   s += carteFin(t);
