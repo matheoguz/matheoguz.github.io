@@ -23,9 +23,14 @@ Vérification : tu ouvres le robinet… L'eau est chaude. Roger valide. Dépens�
 
 Maintenant, il faut une raison de venir. Une piscine… ou une aire de jeux ? Écris piscine ou jeux en commentaire. Le plus voté sera construit au prochain épisode.
 
-## Légende TikTok
-J'ai hérité d'un camping abandonné… et d'un chien. 🏕️🐶 Épisode 1 : piscine ou aire de jeux ? Vous décidez en commentaire 👇
-#camping #serie #pourtoi #animation #defi
+## Légende TikTok (compte « Malo & Roger », saison 1)
+J'ai hérité d'un camping abandonné… et d'un chien 🏕️🐶
+Saison 1 · Épisode 1 : 120 jours, 80 000 €, 0 campeur.
+Piscine 🏊 ou aire de jeux 🛝 ? Le plus voté sera construit 👇
+
+#camping #renovation #serie #animation #lowpoly #pourtoi #fyp
+
+Commentaire à épingler : « Votez ici 👇 PISCINE ou JEUX ? Résultat dans l'épisode 2 🛠️ »
 
 ## Calculs (cohérents d'un épisode à l'autre)
 | Poste | Coût | Budget restant | Jours restants |
