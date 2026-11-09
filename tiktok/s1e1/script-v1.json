@@ -1,0 +1,142 @@
+[
+ [
+  "Ton grand-oncle t'a laissé un +camping.",
+  "intro"
+ ],
+ [
+  "Abandonné depuis !12 !ans.",
+  "abandon"
+ ],
+ [
+  "Une condition : *50 *familles cet été.",
+  "hudFam"
+ ],
+ [
+  "Sinon, la mairie le !récupère.",
+  ""
+ ],
+ [
+  "Délai : !120 !jours. Budget : *150 *000 *euros.",
+  "hudAll"
+ ],
+ [
+  "Sur place : *12 mobil-homes, une piscine…",
+  "tour"
+ ],
+ [
+  "et !0 campeur.",
+  "zero"
+ ],
+ [
+  "Enfin, presque.",
+  "presque"
+ ],
+ [
+  "Dans le dernier mobil-home, il y a +Roger.",
+  "roger"
+ ],
+ [
+  "Le chien de ton grand-oncle. Il n'est jamais parti.",
+  "wouf"
+ ],
+ [
+  "Roger a fait le tour du camping.",
+  "liste0"
+ ],
+ [
+  "Ce qu'il faut réparer :",
+  "liste"
+ ],
+ [
+  "Point un : la ~route.",
+  "p1"
+ ],
+ [
+  "*800 mètres de !nids-de-poule.",
+  "trous"
+ ],
+ [
+  "Aucune caravane ne passera.",
+  ""
+ ],
+ [
+  "On rabote, on remet du gravier, on compacte.",
+  "travaux1"
+ ],
+ [
+  "*800 mètres : *60 *000 *euros.",
+  "calc1"
+ ],
+ [
+  "Point deux : l'~eau.",
+  "p2"
+ ],
+ [
+  "L'hiver a fait !éclater tous les tuyaux.",
+  "eclate"
+ ],
+ [
+  "Il faut tout refaire sous terre.",
+  "travaux2"
+ ],
+ [
+  "*400 mètres de canalisations et un compteur : *35 *000 *euros.",
+  "calc2"
+ ],
+ [
+  "~Vérification : tu ouvres le robinet…",
+  "verif"
+ ],
+ [
+  "L'eau coule. Roger +valide.",
+  "ok"
+ ],
+ [
+  "Point trois : les mobil-homes.",
+  "p3"
+ ],
+ [
+  "Douze sur douze sont !pourris.",
+  "pourris"
+ ],
+ [
+  "Tout refaire ? Trop cher.",
+  ""
+ ],
+ [
+  "On en sauve quatre : toit, plancher, cuisine.",
+  "travaux3"
+ ],
+ [
+  "*9 *000 euros chacun : *36 *000 *euros.",
+  "calc3"
+ ],
+ [
+  "Les huit autres ? Bons pour la !casse.",
+  "casse"
+ ],
+ [
+  "Il reste *19 *000 *euros et !99 !jours.",
+  "bilan"
+ ],
+ [
+  "Et la piscine est !fissurée.",
+  "piscine"
+ ],
+ [
+  "La réparer : *18 *000 euros.",
+  ""
+ ],
+ [
+  "Ou rénover deux mobil-homes de plus ?",
+  "choix"
+ ],
+ [
+  "Écris piscine ou mobil-homes en commentaire.",
+  "comment"
+ ],
+ [
+  "Le plus voté sera fait au prochain épisode.",
+  "fin"
+ ]
+]
