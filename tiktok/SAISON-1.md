@@ -43,7 +43,7 @@ Ce sont des fourchettes à vérifier avant d'annoncer un chiffre précis dans un
 
 ## Le déroulé de la saison
 1. **Épisode 1 : l'accès et l'eau.** Route (60 000 €), canalisations (35 000 €), 4 mobil-homes sauvés (36 000 €). Il reste 19 000 € et 99 jours. Vote : réparer la piscine (18 000 €) ou rénover 2 mobil-homes de plus.
-2. **Épisode 2 : le vote + l'électricité.** On fait le choix gagnant. Problème : le vieux tableau électrique ne supporte pas tous les mobil-homes, il faut le changer (12 000 €). Le budget est presque vide, donc on ouvre les mobil-homes prêts pour gagner de l'argent. Vote : ouvrir tout de suite, ou attendre d'en avoir plus.
+2. **Épisode 2 (fait) : la piscine + l'électricité.** Vote du public : piscine. Vote suivant : petit prix (450 €) ou plein tarif (650 €/semaine). Ancien plan : On fait le choix gagnant. Problème : le vieux tableau électrique ne supporte pas tous les mobil-homes, il faut le changer (12 000 €). Le budget est presque vide, donc on ouvre les mobil-homes prêts pour gagner de l'argent. Vote : ouvrir tout de suite, ou attendre d'en avoir plus.
 3. **Épisode 3 : les premières familles.** Le compteur « Familles » bouge enfin, et l'argent rentre. Vote : démolir les mobil-homes pourris pour faire de la place, ou les garder pour plus tard.
 4. **Épisode 4 : démolir et creuser.** Démolition et évacuation (1 500 € chacun). Défrichage, tranchées pour les bornes, création des emplacements de tente. Vote : racheter des mobil-homes d'occasion, ou faire plus d'emplacements de tente.
 5. **Épisode 5 : les sanitaires.** Les tentes en ont besoin, c'est obligatoire. On rénove ou on reconstruit le bloc. Vote : aire de jeux ou snack.
@@ -55,3 +55,11 @@ Tenir à jour après chaque épisode : budget, jours, familles, ce qui est fait,
 | Après | Budget | Jours | Familles | Fait |
 |---|---|---|---|---|
 | Épisode 1 | 19 000 € | 99 | 0 / 50 | route, eau, 4 mobil-homes |
+| Épisode 2 | 400 € | 93 | 0 / 50 | piscine réparée et remplie (vote), groupe électrogène loué 600 €/semaine (le vieux tableau saute ; tableau neuf = 12 000 €, à faire plus tard) |
+
+## Votes du public
+- Épisode 1 → **piscine** (premier commentaire : Ilya, « Piscine », montré dans l'épisode 2).
+- Épisode 2 → petit prix ou plein tarif : en attente.
+
+## Style (à garder)
+Vue de côté, sol en coupe, compteurs sombres sous la barre de TikTok (y ≈ 340), cartes « cahier », sous-titres blancs taille 52 avec contour, pas de zoom ni secousse, bruitages discrets, voix ElevenLabs « Hugo » accélérée de 10 %.
