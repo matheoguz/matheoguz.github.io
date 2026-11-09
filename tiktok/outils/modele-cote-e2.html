@@ -365,7 +365,10 @@ function bulle(x, y, texte, fondC = "#ffffff", o = 1) {
   return `<g opacity="${o}" transform="translate(${x},${y - 40}) scale(${0.8 + 0.2 * o})"><rect x="${-w / 2}" y="-30" width="${w}" height="52" rx="14" fill="${fondC}"/><path d="M-10 21 l 10 16 l 10 -16 Z" fill="${fondC}"/><text x="0" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="#1b1b1b">${texte}</text></g>`;
 }
 
+const REGLE = { likes: 0, abonnes: 0 }; // chiffres réels de l'épisode 1, donnés par Matheo
+const GAIN = REGLE.likes + REGLE.abonnes;
 const SAUTS = [[FP("calc1"), 1000, 94], [FP("calc2"), 400, 93]];
+if (B.gain !== undefined) SAUTS.push([FP("gain"), 400 + GAIN, 93]);
 function hud(t) {
   const oF = vis(t, P("hudFam"), 1e9, 0.3), oA = vis(t, P("hudAll"), 1e9, 0.3);
   if (oA <= 0) return "";
@@ -376,8 +379,22 @@ function hud(t) {
     <text x="0" y="-21" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="3">${lab}</text>
     <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="${col}">${val}</text></g>`;
   let s = boite(285, "DÉLAI", `${delai} JOURS`, "#ff5a5f", oA) + boite(540, "FAMILLES", "0 / 50", "#4ade80", oF) + boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA);
-  if (delta) s += `<text x="795" y="426" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
+  if (delta) s += `<text x="795" y="426" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="${delta.v < 0 ? "#ff5a5f" : "#4ade80"}" opacity="${delta.o}">${delta.v < 0 ? "−" : "+"}${euros(Math.abs(delta.v))} €</text>`;
+  // rappel permanent de la règle, sous les compteurs
+  const oR = B.regle !== undefined ? vis(t, P("regle", 0.5), 1e9, 0.3) : 0;
+  if (oR > 0) s += `<g opacity="${oR}" transform="translate(540,410)"><rect x="-165" y="-17" width="330" height="34" rx="17" fill="#121828" stroke="#ff3b5c" stroke-width="3"/><text x="0" y="7" text-anchor="middle" font-family="Inter" font-weight="900" font-size="19" fill="#ffffff">❤ 1 LIKE / 1 ABONNÉ = +1 €</text></g>`;
   return s;
+}
+function carteRegle(t) {
+  if (B.regle === undefined) return "";
+  const o = vis(t, P("regle"), P("ouvrir", -0.1), 0.25); if (o <= 0) return "";
+  const og = B.gain !== undefined ? clamp((t - P("gain")) / 0.3) : 0;
+  return `<g opacity="${o}" transform="translate(540,${600 + (1 - o) * -30}) scale(${0.85 + 0.15 * o})">
+    <rect x="-300" y="-120" width="600" height="${og > 0 ? 300 : 230}" rx="24" fill="#121828" stroke="#ffc93c" stroke-width="7"/>
+    <text x="0" y="-62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffc93c" letter-spacing="2">NOUVELLE RÈGLE</text>
+    <text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff"><tspan fill="#ff3b5c">❤</tspan> 1 LIKE = +1 €</text>
+    <text x="0" y="60" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff"><tspan fill="#4ade80">+</tspan> 1 ABONNÉ = +1 €</text>
+    ${og > 0 ? `<g opacity="${og}"><line x1="-240" y1="96" x2="240" y2="96" stroke="#3a4258" stroke-width="3"/><text x="0" y="148" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#4ade80">${euros(REGLE.likes)} + ${euros(REGLE.abonnes)} = +${euros(GAIN)} €</text></g>` : ""}</g>`;
 }
 function puce(t) {
   const etapes = [["1.", " LA PISCINE", P("piscine"), P("verif")], ["2.", " L'ÉLECTRICITÉ", P("soir"), P("bilan")]];
@@ -461,7 +478,7 @@ function interface_(t) {
   s += cahier(t, P("rep"), P("verif", 0.1), "LE CALCUL", [["FISSURES + ÉTANCHÉITÉ", "12 000 €"], ["POMPE + FILTRE", "6 000 €"]], "18 000 €");
   s += cahier(t, P("prix"), P("groupe", -0.1), "LE CALCUL", [["TABLEAU NEUF", "12 000 €"], ["DANS LA CAISSE", "1 000 €"]], null);
   s += cahier(t, P("groupe"), P("lumiere", 0.3), "LE CALCUL", [["GROUPE ÉLECTROGÈNE", "600 €"], ["(LOCATION / SEMAINE)", ""]], "600 €");
-  s += choix(t) + sousTitres(t);
+  s += carteRegle(t) + choix(t) + sousTitres(t);
   for (const ft of FLASHS) { const o = 0.5 * clamp(1 - (t - ft) / 0.3); if (t >= ft && o > 0) s += `<rect width="1080" height="1920" fill="#ffffff" opacity="${o.toFixed(3)}"/>`; }
   s += carteFin(t);
   document.getElementById("ui").innerHTML = s;
