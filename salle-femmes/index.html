@@ -87,7 +87,7 @@
 <div class="hud" id="toast"></div>
 <div class="hud" id="joy"><i></i></div>
 <button class="walk-only" id="credits">Crédits 3D</button>
-<div class="hud" id="credBox">Modèles 3D : <a href="https://github.com/KhronosGroup/glTF-Sample-Assets" target="_blank" rel="noopener">Khronos glTF Sample Assets</a> — Sheen Chair, Glass Vase Flowers, Toy Car (CC0) ; Glam Velvet Sofa, Specular Silk Pouf, Diffuse Transmission Plant (CC BY 4.0, Khronos Group et leurs auteurs). Textures bois, herbe, eau et ciel HDR : exemples <a href="https://github.com/mrdoob/three.js" target="_blank" rel="noopener">three.js</a> (MIT) et Poly Haven (CC0). Moteur : three.js.</div>
+<div class="hud" id="credBox">Modèles 3D : <a href="https://github.com/KhronosGroup/glTF-Sample-Assets" target="_blank" rel="noopener">Khronos glTF Sample Assets</a> — Sheen Chair, Glass Vase Flowers (CC0) ; Glam Velvet Sofa, Specular Silk Pouf, Diffuse Transmission Plant (CC BY 4.0, Khronos Group et leurs auteurs). Textures bois, herbe, eau et ciel HDR : exemples <a href="https://github.com/mrdoob/three.js" target="_blank" rel="noopener">three.js</a> (MIT) et Poly Haven (CC0). Moteur : three.js.</div>
 
 <div class="hud intro-only hide" id="caption"><div><div class="k" id="capK"></div><div class="t" id="capT"></div></div></div>
 <button class="intro-only" id="skip">Passer l'intro →</button>
@@ -311,7 +311,7 @@ function slats(axis,fixed,from,to,y0,h,step=.09,wd=.045,dp=.04){
 
 /* ================= Modèles réels ================= */
 const models={};
-['SheenChair','GlamVelvetSofa','DiffuseTransmissionPlant','SpecularSilkPouf','GlassVaseFlowers','ToyCar'].forEach(n=>gltfLoader.load(A+n+'.glb',g=>{models[n]=g.scene;}));
+['SheenChair','GlamVelvetSofa','DiffuseTransmissionPlant','SpecularSilkPouf','GlassVaseFlowers'].forEach(n=>gltfLoader.load(A+n+'.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){for(const k of ['aoMap','lightMap','map','normalMap','roughnessMap','metalnessMap','emissiveMap','sheenColorMap','sheenRoughnessMap','transmissionMap','thicknessMap','specularIntensityMap','specularColorMap','clearcoatMap','clearcoatNormalMap','clearcoatRoughnessMap','iridescenceMap','iridescenceThicknessMap','anisotropyMap']){const t=m[k];if(t&&t.channel>0&&!o.geometry.attributes['uv'+t.channel])t.channel=0;}}}});models[n]=g.scene;}));
 const placements=[];
 function place(name,x,z,{ry=0,height,size,y=0,col}={}){placements.push({name,x,z,ry,height,size,y});if(col)solid(...col);}
 function realizePlacements(){
@@ -472,7 +472,7 @@ floor(-7,-24,7,-15,S({...T.foam,roughness:.9}));
 ceiling(-7,-24,7,-15,H_ROOM,S({color:0xf8f5f1,roughness:.95}));
 wall(-7,-24,-7,-15,H_ROOM,mWallKids); wall(7,-24,7,-15,H_ROOM,mWallKids); wall(-7,-24,7,-24,H_ROOM,mWallKids);
 box(13.8,1.1,.02,S({color:0xd9c3ae,roughness:.9}),0,.55,-23.88);
-lamp(0,2.9,-19.5,0xfff2e4,40);
+lamp(0,2.9,-19.5,0xfff2e4,24);
 for(const x of [-3,3]){const p=cyl(.45,.45,.04,mSolid,x,H_ROOM-.03,-19.5,40);noShadow.add(p);const l=cyl(.42,.42,.005,mLED,x,H_ROOM-.052,-19.5,40);noShadow.add(l);}
 const mFoam=c=>S({color:c,roughness:.95});
 const foams=[0xc99a7f,0x9fb3a0,0xd8c08f,0x98a8bd,0xc58f8a];
@@ -492,7 +492,7 @@ solid(-.9,-23.95,3.3,-23.45);
 // poufs
 for(let i=0;i<3;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(.45,32,20),mFabric([0xc99a7f,0x9fb3a0,0xd8c08f][i]));b.scale.set(1,.62,1);b.position.set(-5.6+i*1.05,.28,-22.9);add(b);}
 solid(-6.1,-23.4,-3.4,-22.4);
-place('ToyCar',-1,-19.5,{size:.45,ry:.6}); place('ToyCar',1.5,-17.6,{size:.45,ry:-1.2});
+
 const kidsTxt=letters('Petits champions',5,.7,'#b8685d',{weight:700}); kidsTxt.position.set(-1.5,2.35,-23.88);
 place('DiffuseTransmissionPlant',6.4,-23.4,{height:1.2,col:[6,-23.8,6.8,-23]});
 
@@ -549,7 +549,7 @@ wall(15.2,-2,21,-2,H_ROOM,mTileWall);
 for(const z of [6,1,-5]) {const p=box(1.2,.03,.3,mLED,16.5,H_ROOM-.016,z);noShadow.add(p);}
 lamp(16.5,2.8,3,0xffffff,26); lamp(16.5,2.8,-6,0xffffff,20);
 // casiers 2 niveaux
-const mLocker=S({...woodRep([.6,.6]),roughness:1,color:0xd9cfc4}), mLocker2=S({color:0x9fb3a0,roughness:.6});
+const mLocker=S({color:0xc4a07a,roughness:.5}), mLocker2=S({color:0x9fb3a0,roughness:.6});
 function lockerCol(x,z,ry){
   const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;add(g);
   const car=new THREE.Mesh(new THREE.BoxGeometry(.98,2.0,.55),S({color:0xe9e6e2,roughness:.6}));car.position.set(0,1.1,0);g.add(car);
