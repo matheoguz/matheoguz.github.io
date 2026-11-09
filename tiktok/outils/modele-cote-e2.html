@@ -424,10 +424,10 @@ function sousTitres(t) {
   const pop = 0.92 + 0.08 * easeIO(clamp((t - c.t0) / 0.1));
   const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#4fa3ff" };
   const sp = c.map((w) => `<tspan fill="${t >= w.t ? COUL[w.c] : "#9a9089"}">${w.txt.toUpperCase()}</tspan>`).join(" ");
-  const MES = sousTitres.c || (sousTitres.c = document.createElement("canvas").getContext("2d")); MES.font = "900 64px Inter";
+  const MES = sousTitres.c || (sousTitres.c = document.createElement("canvas").getContext("2d")); MES.font = "900 52px Inter";
   const larg = MES.measureText(c.map((w) => w.txt.toUpperCase()).join(" ")).width + 20;
   const k = Math.min(1, 1000 / larg);
-  return `<g transform="translate(540,1330) scale(${pop * k})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" letter-spacing="1" stroke="#1b120c" stroke-width="10" stroke-linejoin="round" paint-order="stroke">${sp}</text></g>`;
+  return `<g transform="translate(540,1330) scale(${pop * k})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="52" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="52" letter-spacing="1" stroke="#1b120c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${sp}</text></g>`;
 }
 
 function carteFin(t) {
