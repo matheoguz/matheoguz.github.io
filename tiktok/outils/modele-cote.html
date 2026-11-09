@@ -192,12 +192,12 @@ function sapin(x, z, h) {
   g.scale.setScalar(h); g.rotation.y = alea() * 3; return g;
 }
 const arriere = groupe(); scene.add(arriere);
-for (let x = -40; x < 50; x += 1.6 + alea() * 1.2) arriere.add(sapin(x, -5 - alea() * 4, 0.7 + alea() * 0.5));
-for (let x = -40; x < 50; x += 3) arriere.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(3 + alea() * 2, 0), 0.4), mat("#2b4636")), x, -1.6, -14 - alea() * 3));
-for (const x of [-8, 6.3, 10.5, 19.6, 27.3, 34]) scene.add(sapin(x, -2.4, 0.85 + alea() * 0.25));
+for (let x = -40; x < 50; x += 6 + alea() * 5) arriere.add(sapin(x, -6 - alea() * 3, 0.5 + alea() * 0.3));
+for (let x = -40; x < 50; x += 3) arriere.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(2.6 + alea() * 1.6, 0), 0.4), mat("#2c3f6a")), x, -1.9, -16 - alea() * 3));
+for (const x of [-8, 19.6, 27.3, 34]) scene.add(sapin(x, -2.4, 0.7 + alea() * 0.15));
 
 /* ---------- Lumières ---------- */
-const hemi = new THREE.HemisphereLight("#7a90d0", "#2a3a1f", 1.6); scene.add(hemi);
+const hemi = new THREE.HemisphereLight("#9ab0ee", "#3a4a2a", 2.1); scene.add(hemi);
 const face = new THREE.DirectionalLight("#b9c6ff", 0.9); face.position.set(0, 2, 40); scene.add(face, face.target);
 const luneL = new THREE.DirectionalLight("#8faaff", 1.6); luneL.position.set(-8, 14, 12); luneL.castShadow = true;
 luneL.shadow.mapSize.set(2048, 2048); Object.assign(luneL.shadow.camera, { left: -16, right: 16, top: 12, bottom: -4, near: 1, far: 60 }); luneL.shadow.bias = -0.0008;
@@ -212,27 +212,21 @@ const roger = creerRoger(); roger.scale.setScalar(0.8); scene.add(roger);
 /* ---------- Mise en scène ---------- */
 // Caméra : [temps, x, zoom, durée]
 const PLANS = [
-  [0, -5.5, 1.7, 0.01],
-  [P("abandon"), 6, 0.85, 1.4],
-  [P("tour"), 2, 0.95, 0.6],
-  [P("tour", 0.7), 22, 0.95, FP("zero") - P("tour") - 0.7],
-  [P("presque"), 27, 1.25, 0.8],
-  [P("roger"), 30, 1.65, 0.8],
-  [P("liste0"), 28.5, 1.2, 0.8],
-  [P("p1"), -15, 0.9, 1.0],
-  [P("trous"), -18, 1.35, 0.8],
-  [P("travaux1"), -15, 0.85, 0.8],
-  [P("p2"), 6, 0.85, 1.0],
-  [P("eclate"), 4, 1.3, 0.8],
-  [P("travaux2"), 7, 0.85, 0.8],
-  [P("verif"), 14.6, 1.8, 0.9],
-  [P("p3"), 6.5, 0.9, 1.0],
-  [P("pourris"), 4.2, 1.5, 0.7],
-  [P("travaux3"), 6.5, 0.85, 0.8],
-  [P("bilan"), 8.5, 0.85, 1.0],
-  [P("piscine"), 23, 1.0, 1.0],
-  [P("choix"), 13, 0.85, 1.0],
-  [FIN_VOIX + 0.2, 18, 0.7, 1.4],
+  [0, 4, 0.72, 0.01],
+  [P("abandon"), 6, 0.72, 2.5],
+  [P("tour"), 10, 0.72, FP("zero") - P("tour")],
+  [P("presque"), 27, 0.85, 1.0],
+  [P("roger"), 29.5, 1.25, 0.8],
+  [P("liste0"), 27, 0.8, 0.8],
+  [P("p1"), -14, 0.72, 1.0],
+  [P("travaux1"), -13, 0.72, 0.8],
+  [P("p2"), 6, 0.72, 1.0],
+  [P("verif"), 14.2, 1.3, 0.9],
+  [P("p3"), 6.5, 0.72, 1.0],
+  [P("bilan"), 9, 0.72, 1.0],
+  [P("piscine"), 22, 0.85, 1.0],
+  [P("choix"), 12, 0.72, 1.0],
+  [FIN_VOIX + 0.2, 14, 0.72, 1.4],
 ];
 function plan(t) {
   let x = PLANS[0][1], z = PLANS[0][2];
@@ -240,7 +234,7 @@ function plan(t) {
   return { x, z };
 }
 // trajets [temps, x, durée]
-const TRAJ_MALO = [[0, -5.6, 0.01], [P("tour", 0.7), 18.5, FP("zero") - P("tour") - 0.7], [P("presque", 0.3), 27.8, 1.4], [P("p1"), -13, 1.2],
+const TRAJ_MALO = [[0, 3.6, 0.01], [P("tour", 0.7), 18.5, FP("zero") - P("tour") - 0.7], [P("presque", 0.3), 27.8, 1.4], [P("p1"), -13, 1.2],
   [P("p2"), 3, 1.2], [P("verif"), 13.9, 0.9], [P("p3"), 6.2, 1.0], [P("bilan"), 8.5, 1.0], [P("piscine"), 21.2, 1.0], [FIN_VOIX + 0.2, 17.6, 1.0]];
 const TRAJ_ROGER = [[0, 31.6, 0.01], [P("liste0", 0.2), 29, 0.8], [P("p1"), -11.8, 1.3], [P("p2"), 4.3, 1.3], [P("verif"), 15.4, 1.0],
   [P("p3"), 7.4, 1.1], [P("bilan"), 9.8, 1.1], [P("piscine"), 24.6, 1.1], [FIN_VOIX + 0.2, 18.9, 1.0]];
@@ -296,7 +290,7 @@ function animerRoger(t, dt) {
 }
 function ambiance(t) {
   const j = jourDe(t);
-  const haut = new THREE.Color("#1a2a5a").lerp(new THREE.Color("#4f9fdc"), j), bas = new THREE.Color("#3e5690").lerp(new THREE.Color("#c4e6f5"), j);
+  const haut = new THREE.Color("#1c2c5e").lerp(new THREE.Color("#4f9fdc"), j), bas = new THREE.Color("#2e4680").lerp(new THREE.Color("#c4e6f5"), j);
   if (j < 0.6) bas.lerp(new THREE.Color("#e9906b"), Math.sin(j / 0.6 * Math.PI) * 0.6);
   peindreCiel("#" + haut.getHexString(), "#" + bas.getHexString());
   scene.fog.color.copy(bas);
@@ -305,7 +299,7 @@ function ambiance(t) {
   luneL.intensity = lerp(1.6, 0, j); luneL.castShadow = j <= 0.5;
   soleil.intensity = lerp(0, 2.6, ease(j, 0.3, 0.7)); soleil.castShadow = j > 0.5;
   lumRoger.intensity = 5 * (1 - j);
-  renderer.toneMappingExposure = lerp(1.2, 1.0, j);
+  renderer.toneMappingExposure = lerp(1.35, 1.05, j);
 }
 function decor(t) {
   // route : le rouleau passe, les trous disparaissent, la route devient grise
@@ -340,15 +334,19 @@ function bulle(x, y, texte, fondC = "#ffffff", o = 1) {
 }
 const SAUTS = [[FP("calc1"), 90000, 110], [FP("calc2"), 55000, 104], [FP("calc3"), 19000, 99]];
 function hud(t) {
-  const oF = vis(t, P("hudFam"), 1e9, 0.3), oA = vis(t, P("hudAll"), 1e9, 0.3);
+  const oF = vis(t, 2.2, 1e9, 0.3), oA = vis(t, 2.25, 1e9, 0.3);
   if (oF <= 0) return "";
+  const mot = (re, apres) => { const w = WORDS.find((w) => w.t >= apres - 0.05 && re.test(w.txt)); return w ? w.t : -9; };
+  const eclat = (tm) => clamp(1 - Math.abs(t - tm - 0.5) / 0.7);
+  const hiD = Math.max(eclat(mot(/^120$/, P("hudAll"))), ...SAUTS.map(([ts]) => eclat(ts))), hiF = eclat(mot(/^50$/, P("hudFam"))), hiB = Math.max(eclat(mot(/^150$/, P("hudAll"))), ...SAUTS.map(([ts]) => eclat(ts)));
   let budget = 150000, delai = 120, pb = 150000, pd = 120, delta = null;
   for (const [ts, b, d] of SAUTS) { const p = ease(t, ts, 0.7); if (t >= ts) { budget = lerp(pb, b, p); delai = Math.round(lerp(pd, d, p)); if (t < ts + 2) delta = { v: b - pb, o: vis(t, ts, ts + 2, 0.2) }; } pb = b; pd = d; }
-  const boite = (cx, lab, val, col, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},340) scale(${0.85 + 0.15 * o})">
-    <rect x="-118" y="-56" width="236" height="104" rx="18" fill="#121828" stroke="${col}" stroke-width="5"/>
+  const boite = (cx, lab, val, col, o, hi = 0) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},340) scale(${(0.85 + 0.15 * o) * (1 + 0.12 * hi)})">
+    ${hi > 0 ? `<rect x="-128" y="-66" width="256" height="124" rx="24" fill="${col}" opacity="${0.35 * hi}"/>` : ""}
+    <rect x="-118" y="-56" width="236" height="104" rx="18" fill="${hi > 0.3 ? col : "#121828"}" fill-opacity="${hi > 0.3 ? 0.35 : 1}" stroke="${col}" stroke-width="5"/>
     <text x="0" y="-21" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="3">${lab}</text>
     <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="${col}">${val}</text></g>`;
-  let s = boite(285, "DÉLAI", `${delai} JOURS`, "#ff5a5f", oA) + boite(540, "FAMILLES", "0 / 50", "#4ade80", oF) + boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA);
+  let s = boite(285, "DÉLAI", `${delai} JOURS`, "#ff5a5f", oA, hiD) + boite(540, "FAMILLES", "0 / 50", "#4ade80", oF, hiF) + boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA, hiB);
   if (delta) s += `<text x="795" y="426" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ff5a5f" opacity="${delta.o}">−${euros(-delta.v)} €</text>`;
   return s;
 }
@@ -404,6 +402,23 @@ function sousTitres(t) {
   const k = Math.min(1, 1000 / larg);
   return `<g transform="translate(540,1330) scale(${pop * k})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" letter-spacing="1">${sp}</text></g>`;
 }
+function titre(t) {
+  const o = vis(t, 0.05, 2.25, 0.2); if (o <= 0) return "";
+  const k = 0.85 + 0.15 * easeIO(clamp(t / 0.25));
+  return `<g opacity="${o}" transform="translate(540,470) scale(${k})" font-family="Inter" font-weight="900" text-anchor="middle" stroke="#0b1020" stroke-width="12" paint-order="stroke" stroke-linejoin="round">
+    <text x="0" y="0" font-size="96" fill="#ffffff">UN CAMPING</text><text x="0" y="104" font-size="96" fill="#ffc93c">EN RUINE</text></g>`;
+}
+const ETIQUETTES = [["0 CAMPEUR", "zero", "presque"], ["IMPRATICABLE", "trous", "travaux1"], ["TOUT A ÉCLATÉ", "eclate", "travaux2"], ["POURRIS", "pourris", "travaux3"], ["À LA CASSE", "casse", "bilan"], ["FISSURÉE", "piscine", "choix"]];
+function etiquettes(t) {
+  let s = "";
+  for (const [txt, a, b] of ETIQUETTES) {
+    if (B[a] === undefined) continue;
+    const o = vis(t, P(a, 0.3), P(b), 0.15); if (o <= 0) continue;
+    const w = txt.length * 26 + 50, k = 1 + 0.4 * (1 - easeIO(clamp((t - P(a, 0.3)) / 0.18)));
+    s += `<g opacity="${o}" transform="translate(560,640) rotate(-6) scale(${k})"><rect x="${-w / 2}" y="-34" width="${w}" height="66" rx="10" fill="#e63946" stroke="#ffffff" stroke-width="5"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff" letter-spacing="1">${txt}</text></g>`;
+  }
+  return s;
+}
 function carteFin(t) {
   const a = DUREE - 2.6, o = clamp((t - a) / 0.35); if (o <= 0) return "";
   return `<g opacity="${o}"><rect width="1080" height="1920" fill="#0b0f1c" opacity=".88"/>
@@ -426,7 +441,7 @@ function interface_(t) {
     s += Bb(rx, ry, "WOUF.", "#ffffff", vis(t, P("wouf", 1.2), FP("wouf") + 0.3, 0.2));
     s += Bb(rx, ry, "WOUF ! ✔", "#4ade80", vis(t, P("ok", 1.2), P("p3"), 0.2));
   }
-  s += hud(t) + puce(t);
+  s += titre(t) + hud(t) + puce(t) + etiquettes(t);
   s += cahier(t, P("liste"), P("p1", 0.4), "LA LISTE DE ROGER", [["1. LA ROUTE", ""], ["2. L'EAU", ""], ["3. LES MOBIL-HOMES", ""], ["4. LA PISCINE", ""]], null, 2);
   s += cahier(t, P("calc1"), P("p2", 0.2), "LE CALCUL", [["RABOTAGE", "15 000 €"], ["GRAVIER", "30 000 €"], ["COMPACTAGE", "15 000 €"]], "60 000 €");
   s += cahier(t, P("calc2"), P("verif", 0.1), "LE CALCUL", [["TUYAUX (400 M)", "25 000 €"], ["TRANCHÉES", "7 000 €"], ["COMPTEUR", "3 000 €"]], "35 000 €");
