@@ -1,0 +1,114 @@
+[
+ [
+  "Vous avez choisi : la ~piscine.",
+  "intro"
+ ],
+ [
+  "Il reste *19 *000 *euros, *99 jours…",
+  "hudAll"
+ ],
+ [
+  "et toujours !0 famille sur 50.",
+  "hudFam"
+ ],
+ [
+  "La piscine : dix mètres de long, !fissurée de partout.",
+  "piscine"
+ ],
+ [
+  "On sort les feuilles mortes.",
+  "travaux1"
+ ],
+ [
+  "On rebouche les fissures, on refait l'étanchéité.",
+  "fissures"
+ ],
+ [
+  "Réparation : *12 *000 euros.",
+  "rep"
+ ],
+ [
+  "Pompe et filtre neufs : *6 *000 euros.",
+  "pompe"
+ ],
+ [
+  "Total : *18 *000 *euros.",
+  "calc1"
+ ],
+ [
+  "~Vérification : on remplit.",
+  "verif"
+ ],
+ [
+  "Quatre-vingt mille litres. Pas une seule ~fuite.",
+  "plein"
+ ],
+ [
+  "Roger refuse quand même d'y aller.",
+  "roger"
+ ],
+ [
+  "Il reste *1 *000 euros.",
+  "reste"
+ ],
+ [
+  "Le soir, on allume les mobil-homes…",
+  "soir"
+ ],
+ [
+  "!Clac. Tout saute.",
+  "clac"
+ ],
+ [
+  "Le vieux tableau électrique ne tient pas !quatre mobil-homes et une pompe.",
+  "tableau"
+ ],
+ [
+  "Un tableau neuf : *12 *000 euros.",
+  "prix"
+ ],
+ [
+  "On en a *1 *000.",
+  ""
+ ],
+ [
+  "Solution : on loue un groupe électrogène.",
+  "groupe"
+ ],
+ [
+  "*600 euros la semaine.",
+  "calc2"
+ ],
+ [
+  "La lumière revient.",
+  "lumiere"
+ ],
+ [
+  "Il reste *400 euros. Il faut de l'argent, vite.",
+  "bilan"
+ ],
+ [
+  "Le camping peut ouvrir : quatre mobil-homes, une piscine.",
+  "ouvrir"
+ ],
+ [
+  "Mais à quel prix ?",
+  "choix0"
+ ],
+ [
+  "Petit prix, *450 euros la semaine, pour attirer du monde…",
+  "choix"
+ ],
+ [
+  "ou plein tarif, *650 euros ?",
+  "choix2"
+ ],
+ [
+  "Écris petit prix ou plein tarif en commentaire.",
+  "comment"
+ ],
+ [
+  "Le plus voté, on ouvre au prochain épisode.",
+  "fin"
+ ]
+]

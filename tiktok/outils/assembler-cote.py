@@ -3,7 +3,8 @@ Le dossier contient script.json et minutage.json ; sortie : <dossier>/index.html
 import sys, os
 racine = os.path.dirname(os.path.abspath(__file__))
 ep = sys.argv[1]
-modele = open(os.path.join(racine, 'modele-cote.html')).read()
+nom_modele = sys.argv[2] if len(sys.argv) > 2 else 'modele-cote.html'
+modele = open(os.path.join(racine, nom_modele)).read()
 m3d = open(os.path.join(racine, 'modele-3d.html')).read()
 persos = m3d[m3d.index('let graine = 3;'):m3d.index('/* ---------- Décor du camping')]
 out = (modele.replace('/*@@SCRIPT@@*/null', open(os.path.join(ep, 'script.json')).read())
