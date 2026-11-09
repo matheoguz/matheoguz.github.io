@@ -211,7 +211,7 @@ const roger = creerRoger(); roger.scale.setScalar(0.8); scene.add(roger);
 
 /* ---------- Épisode 2 : état de départ (après l'épisode 1) ---------- */
 routeMat.color.set("#a7a39a"); trous.forEach((m) => (m.visible = false)); routeCoupe.scale.x = 1; routeCoupe.position.x = -16; rouleau.visible = false;
-vieuxTuyau.visible = false; tuyau.scale.y = 36; tuyau.position.x = 12; branches.forEach((b) => (b.visible = true)); compteur.visible = true;
+vieuxTuyau.visible = false; tuyau.scale.y = 26; tuyau.position.x = 7; branches.forEach((b) => (b.visible = true)); compteur.visible = true;
 jet.visible = false; flaque.visible = false;
 const feuilles = piscine.children.filter((m) => Math.abs(m.position.y + 2.05) < 0.01);
 // eau de la piscine (coupe + surface)
@@ -335,7 +335,7 @@ function decor(t) {
   eauCoupe.visible = eauHaut.visible = niv > 0.005;
   const hEau = 2.05 * niv; eauCoupe.scale.y = Math.max(0.001, hEau); eauCoupe.position.y = -2.18 + hEau / 2; eauHaut.position.y = -2.18 + hEau;
   eauHaut.scale.x = 1 + Math.sin(t * 3) * 0.002;
-  flux.forEach((m, i) => { m.visible = true; m.position.x = -6 + ((t * 5 + i * 2.25) % 36); });
+  flux.forEach((m, i) => { m.position.x = -6 + ((t * 5 + i * 2.25) % 36); m.visible = m.position.x < 19.6; });
   // mobil-homes : 4 rénovés ; lumière selon le courant
   const c = courant(t);
   mobilHomes.forEach((mh, i) => { etatMobilHome(mh, i < 4 ? 1 : 0, t); const u = mh.userData; u.fenMat.emissiveIntensity *= c; u.lum.intensity *= c * 1.6; if (i < 4 && c < 0.5) u.fenMat.color.set("#3a3f4a"); });
@@ -449,6 +449,16 @@ function interface_(t) {
   s += Bb(mx, my, "NOIR TOTAL !", "#ffffff", vis(t, P("clac", 0.5), P("tableau", 0.5), 0.2));
   s += Bb(rx, ry, "WOUF !", "#ffffff", vis(t, P("lumiere", 0.3), P("bilan"), 0.2));
   s += hud(t) + puce(t);
+  // premier commentaire (vrai commentaire d'abonné, fourni par Matheo)
+  const oCom = vis(t, 0.7, P("piscine", -0.1), 0.25);
+  if (oCom > 0) s += `<g opacity="${oCom}" transform="translate(540,${830 + (1 - oCom) * 30}) rotate(1.5)">
+    <rect x="-330" y="-78" width="660" height="156" rx="26" fill="#000" opacity=".3" transform="translate(6,8)"/>
+    <rect x="-330" y="-78" width="660" height="156" rx="26" fill="#1f1f1f"/>
+    <circle cx="-262" cy="-18" r="40" fill="#7a1f24" stroke="#c0392b" stroke-width="4"/><text x="-262" y="-4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#fff">I</text>
+    <text x="-198" y="-34" font-family="Inter" font-weight="700" font-size="26" fill="#a8a8a8">Ilya</text>
+    <text x="-198" y="10" font-family="Inter" font-weight="800" font-size="40" fill="#ffffff">Piscine</text>
+    <rect x="-198" y="30" width="254" height="36" rx="8" fill="#3a3a3a"/><text x="-71" y="56" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#cfcfcf">Premier commentaire</text>
+    <path d="M250 -10 c -10 -16 -34 -10 -30 8 c 3 12 30 28 30 28 c 0 0 27 -16 30 -28 c 4 -18 -20 -24 -30 -8 Z" fill="#ff3b5c"/></g>`;
   s += cahier(t, 0.15, P("piscine", -0.1), "LE VOTE", [["PISCINE", "", 0.9], ["MOBIL-HOMES", ""]], null, 2);
   s += cahier(t, P("rep"), P("verif", 0.1), "LE CALCUL", [["FISSURES + ÉTANCHÉITÉ", "12 000 €"], ["POMPE + FILTRE", "6 000 €"]], "18 000 €");
   s += cahier(t, P("prix"), P("groupe", -0.1), "LE CALCUL", [["TABLEAU NEUF", "12 000 €"], ["DANS LA CAISSE", "1 000 €"]], null);
