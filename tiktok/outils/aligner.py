@@ -21,6 +21,9 @@ for si, (txt, beat) in enumerate(SCRIPT):
     for m in txt.split():
         c = 'w'; raw = m
         if m[0] in '*!+~': c = {'*':'y','!':'r','+':'g','~':'b'}[m[0]]; raw = m[1:]
+        if re.fullmatch(r'[?!:;…]+', raw) and words and words[-1]['si'] == si:
+            words[-1]['txt'] += '\u00a0' + raw  # « ? » et « : » restent collés au mot d'avant
+            continue
         words.append({'txt': raw, 'c': c, 'si': si})
 # frontières candidates : après ponctuation
 cand = [i for i, w in enumerate(words[:-1]) if re.search(r'[.:?!,…]$', w['txt'])]
