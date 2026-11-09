@@ -432,7 +432,6 @@ function interface_(t) {
   let s = "";
   const [mx, my] = ecran(malo, 3.6), [rx, ry] = ecran(roger, 1.6);
   const Bb = (x, y, txt, c, o) => bulle(clamp(x, 200, 860), clamp(y, 520, 1000), txt, c, o);
-  s += Bb(mx, my, "C'EST TOI", "#ffc93c", vis(t, 0.3, 2.2, 0.2));
   s += Bb(mx, my, "AÏE…", "#ffffff", vis(t, P("zero"), P("presque"), 0.2));
   s += Bb(mx, my, "SÉRIEUX ?!", "#ffffff", vis(t, P("trous", 0.6), P("travaux1"), 0.2));
   s += Bb(mx, my, "ÇA COULE !", "#ffffff", vis(t, P("ok"), P("ok", 1.4), 0.2));
