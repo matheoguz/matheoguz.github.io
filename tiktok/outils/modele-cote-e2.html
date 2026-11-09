@@ -355,6 +355,8 @@ function decor(t) {
 }
 
 /* ---------- Interface ---------- */
+const COMMENTAIRE = "@@COMMENTAIRE@@";
+await new Promise((r) => { const im = new Image(); im.onload = im.onerror = r; im.src = COMMENTAIRE; });
 const v3 = new THREE.Vector3();
 function ecran(obj, dy) { obj.updateMatrixWorld(); v3.set(0, dy, 0).applyMatrix4(obj.matrixWorld).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * H]; }
 function bulle(x, y, texte, fondC = "#ffffff", o = 1) {
@@ -449,16 +451,12 @@ function interface_(t) {
   s += Bb(mx, my, "NOIR TOTAL !", "#ffffff", vis(t, P("clac", 0.5), P("tableau", 0.5), 0.2));
   s += Bb(rx, ry, "WOUF !", "#ffffff", vis(t, P("lumiere", 0.3), P("bilan"), 0.2));
   s += hud(t) + puce(t);
-  // premier commentaire (vrai commentaire d'abonné, fourni par Matheo)
+  // premier commentaire : capture d'écran réelle fournie par Matheo (s1e2/commentaire.jpg, 1206 × 309)
   const oCom = vis(t, 0.7, P("piscine", -0.1), 0.25);
-  if (oCom > 0) s += `<g opacity="${oCom}" transform="translate(540,${830 + (1 - oCom) * 30}) rotate(1.5)">
-    <rect x="-330" y="-78" width="660" height="156" rx="26" fill="#000" opacity=".3" transform="translate(6,8)"/>
-    <rect x="-330" y="-78" width="660" height="156" rx="26" fill="#1f1f1f"/>
-    <circle cx="-262" cy="-18" r="40" fill="#7a1f24" stroke="#c0392b" stroke-width="4"/><text x="-262" y="-4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#fff">I</text>
-    <text x="-198" y="-34" font-family="Inter" font-weight="700" font-size="26" fill="#a8a8a8">Ilya</text>
-    <text x="-198" y="10" font-family="Inter" font-weight="800" font-size="40" fill="#ffffff">Piscine</text>
-    <rect x="-198" y="30" width="254" height="36" rx="8" fill="#3a3a3a"/><text x="-71" y="56" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#cfcfcf">Premier commentaire</text>
-    <path d="M250 -10 c -10 -16 -34 -10 -30 8 c 3 12 30 28 30 28 c 0 0 27 -16 30 -28 c 4 -18 -20 -24 -30 -8 Z" fill="#ff3b5c"/></g>`;
+  if (oCom > 0) s += `<g opacity="${oCom}" transform="translate(540,${840 + (1 - oCom) * 30})">
+    <rect x="-382" y="-102" width="764" height="204" rx="22" fill="#000" opacity=".35" transform="translate(6,8)"/>
+    <clipPath id="clipCom"><rect x="-382" y="-102" width="764" height="204" rx="22"/></clipPath>
+    <image href="${COMMENTAIRE}" x="-382" y="-102" width="764" height="196" clip-path="url(#clipCom)" preserveAspectRatio="xMidYMid slice"/></g>`;
   s += cahier(t, 0.15, P("piscine", -0.1), "LE VOTE", [["PISCINE", "", 0.9], ["MOBIL-HOMES", ""]], null, 2);
   s += cahier(t, P("rep"), P("verif", 0.1), "LE CALCUL", [["FISSURES + ÉTANCHÉITÉ", "12 000 €"], ["POMPE + FILTRE", "6 000 €"]], "18 000 €");
   s += cahier(t, P("prix"), P("groupe", -0.1), "LE CALCUL", [["TABLEAU NEUF", "12 000 €"], ["DANS LA CAISSE", "1 000 €"]], null);

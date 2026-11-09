@@ -10,5 +10,9 @@ persos = m3d[m3d.index('let graine = 3;'):m3d.index('/* ---------- Décor du cam
 out = (modele.replace('/*@@SCRIPT@@*/null', open(os.path.join(ep, 'script.json')).read())
        .replace('/*@@MINUTAGE@@*/null', open(os.path.join(ep, 'minutage.json')).read())
        .replace('/*@@PERSOS@@*/', persos))
+com = os.path.join(ep, 'commentaire.jpg')
+if '@@COMMENTAIRE@@' in out:
+    import base64
+    out = out.replace('@@COMMENTAIRE@@', 'data:image/jpeg;base64,' + base64.b64encode(open(com, 'rb').read()).decode() if os.path.exists(com) else '')
 open(os.path.join(ep, 'index.html'), 'w').write(out)
 print('ok', len(out))
