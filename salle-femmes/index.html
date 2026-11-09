@@ -899,7 +899,7 @@ function frame(){
 }
 frame();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight);});
-window.__P=PL;window.__tp=tp;window.__end=endIntro;window.__ZONES=ZONES;window.__mode=()=>mode;
+window.__P=PL;window.__scene=scene;window.__cam=camera;window.__T=THREE;window.__tp=tp;window.__end=endIntro;window.__ZONES=ZONES;window.__mode=()=>mode;
 </script>
 </body>
 </html>
