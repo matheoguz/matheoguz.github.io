@@ -14,5 +14,9 @@ com = os.path.join(ep, 'commentaire.jpg')
 if '@@COMMENTAIRE@@' in out:
     import base64
     out = out.replace('@@COMMENTAIRE@@', 'data:image/jpeg;base64,' + base64.b64encode(open(com, 'rb').read()).decode() if os.path.exists(com) else '')
+son = os.path.join(ep, 'sondage.jpg')
+if '@@SONDAGE@@' in out:
+    import base64
+    out = out.replace('@@SONDAGE@@', 'data:image/jpeg;base64,' + base64.b64encode(open(son, 'rb').read()).decode() if os.path.exists(son) else '')
 open(os.path.join(ep, 'index.html'), 'w').write(out)
 print('ok', len(out))

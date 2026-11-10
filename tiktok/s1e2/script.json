@@ -1,114 +1,33 @@
 [
- [
-  "Vous avez choisi : la ~piscine.",
-  "intro"
- ],
- [
-  "Il reste *19 *000 *euros, *99 jours…",
-  "hudAll"
- ],
- [
-  "et toujours !0 famille sur 50.",
-  "hudFam"
- ],
- [
-  "La piscine : dix mètres de long, !fissurée de partout.",
-  "piscine"
- ],
- [
-  "On sort les feuilles mortes.",
-  "travaux1"
- ],
- [
-  "On rebouche les fissures, on refait l'étanchéité.",
-  "fissures"
- ],
- [
-  "Réparation : *12 *000 euros.",
-  "rep"
- ],
- [
-  "Pompe et filtre neufs : *6 *000 euros.",
-  "pompe"
- ],
- [
-  "Total : *18 *000 *euros.",
-  "calc1"
- ],
- [
-  "~Vérification : on remplit.",
-  "verif"
- ],
- [
-  "Quatre-vingt mille litres. Pas une seule ~fuite.",
-  "plein"
- ],
- [
-  "Roger refuse quand même d'y aller.",
-  "roger"
- ],
- [
-  "Il reste *1 *000 euros.",
-  "reste"
- ],
- [
-  "Le soir, on allume les mobil-homes…",
-  "soir"
- ],
- [
-  "!Clac. Tout saute.",
-  "clac"
- ],
- [
-  "Le vieux tableau électrique ne tient pas !quatre mobil-homes et une pompe.",
-  "tableau"
- ],
- [
-  "Un tableau neuf : *12 *000 euros.",
-  "prix"
- ],
- [
-  "On en a *1 *000.",
-  ""
- ],
- [
-  "Solution : on loue un groupe électrogène.",
-  "groupe"
- ],
- [
-  "*600 euros la semaine.",
-  "calc2"
- ],
- [
-  "La lumière revient.",
-  "lumiere"
- ],
- [
-  "Il reste *400 euros. Il faut de l'argent, vite.",
-  "bilan"
- ],
- [
-  "Le camping peut ouvrir : quatre mobil-homes, une piscine.",
-  "ouvrir"
- ],
- [
-  "Mais à quel prix ?",
-  "choix0"
- ],
- [
-  "Petit prix, *450 euros la semaine, pour attirer du monde…",
-  "choix"
- ],
- [
-  "ou plein tarif, *650 euros ?",
-  "choix2"
- ],
- [
-  "Écris petit prix ou plein tarif en commentaire.",
-  "comment"
- ],
- [
-  "Le plus voté, on ouvre au prochain épisode.",
-  "fin"
- ]
+ ["Vous avez voté : la ~piscine, à *73 %.", "intro"],
+ ["Mais attention… sous cette piscine, Roger va trouver quelque chose. Reste jusqu'au bout.", "teaser"],
+ ["D'abord, nouvelle règle : chaque like et chaque abonné, c'est un euro de plus pour le camping.", "regle"],
+ ["Épisode un : *67 likes et *118 abonnés.", "chiffres"],
+ ["Plus *185 euros !", "gain"],
+ ["Budget : *19 *185 euros. Il reste !99 jours.", "budget"],
+ ["Point un : la ~piscine.", "p1"],
+ ["On la vide… et c'est pire que prévu.", "vide"],
+ ["Le béton est !fissuré, et les tuyaux de filtration sont !morts.", "degats"],
+ ["Il faut tout refaire.", ""],
+ ["On rebouche les fissures, nouvelle étanchéité.", "travaux1"],
+ ["Et on creuse pour changer tous les tuyaux.", "travaux2"],
+ ["C'est là que Roger se met à creuser… tout seul.", "creuse"],
+ ["Une boîte en fer. Rouillée. Fermée à clé.", "boite"],
+ ["On verra ça plus tard.", ""],
+ ["Facture de la piscine : *18 *000 euros.", "calc1"],
+ ["~Vérification : on remplit. Quatre-vingt mille litres…", "verif"],
+ ["Pas une seule ~fuite !", "plein"],
+ ["Roger, lui, refuse d'y aller.", "refus"],
+ ["Il reste *1 *185 euros. Et !93 jours.", "reste"],
+ ["Maintenant, la boîte.", "ouvre0"],
+ ["On force la serrure…", "serrure"],
+ ["*3 *000 euros en vieux billets. Et un mot de ton grand-oncle :", "billets"],
+ ["« Pour Roger. Et pour le +bungalow +treize. »", "mot"],
+ ["Sauf que… le camping n'a que !douze mobil-homes.", "douze"],
+ ["Budget : *4 *185 euros.", "budget2"],
+ ["Alors, on fait quoi ?", "choix0"],
+ ["On ouvre le camping avec les quatre mobil-homes…", "choix"],
+ ["ou on cherche le bungalow treize ?", "choix2"],
+ ["Écris ouvrir ou bungalow en commentaire.", "comment"],
+ ["Et abonne-toi : chaque abonné, c'est un euro de plus pour le camping.", "fin"]
 ]
