@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les Pins Perdus · Saison 1 · Épisode 3</title>
+<meta name="robots" content="noindex">
+<style>
+  html, body { margin: 0; height: 100%; background: #070a14; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: Inter, system-ui, sans-serif; }
+  #cadre { position: relative; height: 100vh; aspect-ratio: 9 / 16; max-width: 100vw; }
+  #cadre canvas, #cadre svg { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
+  body.rendu #cadre { width: 1080px; height: 1920px; }
+  #lecture { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(7,10,20,.55); color: #fff; font: 900 28px Inter, sans-serif; cursor: pointer; z-index: 5; }
+  body.rendu #lecture { display: none; }
+</style>
+<script>
+  const local = location.search.includes("rendu");
+  const base = local ? "/_three/" : "https://cdn.jsdelivr.net/npm/three@0.170.0/";
+  const im = document.createElement("script"); im.type = "importmap";
+  im.textContent = JSON.stringify({ imports: { "three": base + "build/three.module.js", "three/addons/": base + "examples/jsm/" } });
+  document.currentScript.after(im);
+</script>
+</head>
+<body>
+<div id="cadre">
+  <svg id="ui" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="lecture">▶ Lancer l'épisode</div>
+</div>
+<audio id="voix" src="son.mp3" preload="auto"></audio>
+<script type="module">
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+/* =========================================================
+   LES PINS PERDUS — Saison 1, épisode 1 (vue de côté, sol en coupe)
+   ========================================================= */
+const SCRIPT = /*@@SCRIPT@@*/null;
+const MINUTAGE = /*@@MINUTAGE@@*/null;
+const WORDS = MINUTAGE.words, SENT = MINUTAGE.sent, B = {};
+SCRIPT.forEach(([, beat], i) => { if (beat) B[beat] = SENT[i].t0; });
+const FIN_VOIX = MINUTAGE.duree_voix;
+const DUREE = MINUTAGE.duree_fichier + 2.6;
+const CHUNKS = [];
+(function decouper() {
+  let cur = [];
+  const pousser = () => { if (cur.length) { CHUNKS.push(cur); cur = []; } };
+  WORDS.forEach((w, i) => { const s = WORDS[i + 1]; cur.push(w); if (cur.length >= 3 || /[.:?!,…]$/.test(w.txt) || !s || s.si !== w.si) pousser(); });
+  CHUNKS.forEach((c, i) => { c.t0 = c[0].t; c.t1 = CHUNKS[i + 1] ? CHUNKS[i + 1][0].t : c.at(-1).t + c.at(-1).d + 0.4; });
+})();
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const easeIO = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+const ease = (t, a, d) => easeIO(clamp((t - a) / d));
+const lerp = (a, b, p) => a + (b - a) * p;
+const euros = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const vis = (t, a, b, f = 0.25) => clamp(Math.min((t - a) / f, (b - t) / f));
+const P = (beat, d = 0) => (B[beat] ?? 0) + d;
+const FP = (beat, d = 0) => { const i = SCRIPT.findIndex((s) => s[1] === beat); return SENT[i].t1 + d; };
+
+/* ---------- Moteur ---------- */
+const W = 1080, H = 1920, VUE = 16; // hauteur visible (unités) au zoom 1
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
+document.getElementById("cadre").prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-VUE * W / H / 2, VUE * W / H / 2, VUE / 2, -VUE / 2, 0.1, 200);
+/*@@PERSOS@@*/
+
+/* ---------- Ciel (fond qui suit la caméra) ---------- */
+const cielCan = document.createElement("canvas"); cielCan.width = 4; cielCan.height = 256;
+const cielTex = new THREE.CanvasTexture(cielCan); cielTex.colorSpace = THREE.SRGBColorSpace;
+const fond = new THREE.Mesh(new THREE.PlaneGeometry(200, 120), new THREE.MeshBasicMaterial({ map: cielTex, depthWrite: false, fog: false }));
+fond.position.z = -90; scene.add(fond);
+function peindreCiel(haut, bas) { const x = cielCan.getContext("2d"); const g = x.createLinearGradient(0, 0, 0, 256); g.addColorStop(0, haut); g.addColorStop(0.55, bas); g.addColorStop(1, bas); x.fillStyle = g; x.fillRect(0, 0, 4, 256); cielTex.needsUpdate = true; }
+const etoiles = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 500 }, () => [(alea() - 0.5) * 120, 2 + alea() * 40, -80]).flat(), 3)), new THREE.PointsMaterial({ color: "#ffffff", size: 0.09, transparent: true, sizeAttenuation: false }));
+etoiles.material.size = 2.2; scene.add(etoiles);
+const lune = new THREE.Mesh(new THREE.CircleGeometry(1.1, 18), new THREE.MeshBasicMaterial({ color: "#eef2fa", transparent: true, fog: false })); lune.position.z = -80; scene.add(lune);
+const soleilDisque = new THREE.Mesh(new THREE.CircleGeometry(1.3, 18), new THREE.MeshBasicMaterial({ color: "#ffe08a", fog: false })); soleilDisque.position.z = -80; scene.add(soleilDisque);
+
+/* ---------- Le terrain en coupe ---------- */
+const TERRE = mat("#7a5032"), TERRE2 = mat("#5e3d26"), HERBE = mat("#4f8a3c");
+const AVANT = 1.6; // face avant de la coupe
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(140, 12, 30), TERRE), 10, -6, AVANT - 15));
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(140, 0.35, 0.02), mat("#3d2a1c")), 10, -0.18, AVANT + 0.01));
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(140, 7, 0.02), TERRE2), 10, -8.6, AVANT + 0.01));
+for (let i = 0; i < 140; i++) { const x = -60 + alea() * 140, y = -0.6 - alea() * 4.5; scene.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(0.06 + alea() * 0.12, 0), 0.02), mat(alea() > 0.5 ? "#6e4a33" : "#7d5a40")), x, y, AVANT + 0.03)); }
+const herbe = pose(new THREE.Mesh(new THREE.BoxGeometry(140, 0.12, 30), HERBE), 10, 0.0, AVANT - 15); herbe.receiveShadow = true; scene.add(herbe);
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(140, 0.14, 0.04), mat("#3f7a30")), 10, 0.0, AVANT + 0.01));
+
+// câble électrique (intact, en coupe)
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(60, 0.07, 0.04), mat("#d8b23a", 0.15)), 8, -0.32, AVANT + 0.04));
+// ancienne canalisation : morceaux éclatés
+const vieuxTuyau = groupe(); scene.add(vieuxTuyau);
+for (let x = -6; x < 30; x += 1.5) {
+  const l = 0.9 + alea() * 0.4, m = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, l, 7), mat(alea() > 0.4 ? "#8b8f96" : "#8a5a3a"));
+  m.rotation.z = Math.PI / 2 + (alea() - 0.5) * 0.25; m.position.set(x + 0.2, -0.72 + (alea() - 0.5) * 0.1, AVANT + 0.08); vieuxTuyau.add(m);
+}
+// nouvelle canalisation : grandit de gauche à droite, avec branchements
+const tuyau = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 1, 8), mat("#3f8fd6", 0.25)); tuyau.rotation.z = Math.PI / 2; tuyau.position.set(0, -0.72, AVANT + 0.1); scene.add(tuyau);
+const BRANCHES = [0, 4, 8, 12, 14.6, 22.5];
+const branches = BRANCHES.map((x) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.72, 6), mat("#3f8fd6", 0.25)); m.position.set(x, -0.36, AVANT + 0.1); scene.add(m); return m; });
+const compteur = pose(bloc(0.5, 0.5, 0.3, "#2b5e8f", 0.01), -6, -0.72, AVANT + 0.2); scene.add(compteur);
+const flux = []; for (let i = 0; i < 16; i++) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.06, 0.02), new THREE.MeshBasicMaterial({ color: "#cfeaff" })); m.position.set(0, -0.72, AVANT + 0.24); scene.add(m); flux.push(m); }
+
+/* ---------- La route d'accès (x -26 → -6) ---------- */
+const route = groupe(); scene.add(route);
+const routeMat = mat("#9a7650");
+route.add(pose(new THREE.Mesh(facettes(new THREE.BoxGeometry(20, 0.16, 3.2, 20, 1, 3), 0.03), routeMat), -16, 0.08, AVANT - 1.6));
+const routeCoupe = pose(new THREE.Mesh(new THREE.BoxGeometry(20, 0.5, 0.03), mat("#b9a27a")), -16, -0.25, AVANT + 0.02); routeCoupe.scale.x = 0.001; scene.add(routeCoupe);
+const trous = [];
+for (let i = 0; i < 12; i++) { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.55 + alea() * 0.35, 0.5, 0.05, 8), mat(i % 2 ? "#3b2a1c" : "#4f7fa6", i % 2 ? 0 : 0.25)); m.position.set(-25.5 + i * 1.65 + alea() * 0.4, 0.17, AVANT - 0.6 - alea() * 1.4); m.scale.z = 0.7; route.add(m); trous.push(m); }
+// le rouleau compresseur
+const rouleau = groupe(-30, 0, 0.4); scene.add(rouleau);
+rouleau.add(pose(bloc(1.6, 0.9, 1.2, "#f2b33d", 0.02), 0.2, 1.0, 0), pose(bloc(0.8, 0.7, 1.0, "#2b3a4a", 0.02), -0.1, 1.75, 0), pose(bloc(0.5, 0.08, 1.2, "#d23c3c", 0), 0.2, 2.15, 0));
+const cyl = ombre(new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 1.4, 10), mat("#8d9199"))); cyl.rotation.x = Math.PI / 2; cyl.position.set(1.2, 0.55, 0); rouleau.add(cyl);
+const roue = ombre(new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.3, 10), mat("#222"))); roue.rotation.x = Math.PI / 2; roue.position.set(-0.6, 0.45, 0); rouleau.add(roue);
+ombre(rouleau);
+
+/* ---------- L'entrée ---------- */
+const entree = groupe(-5, 0, -0.6); scene.add(entree);
+for (const x of [-1.5, 1.5]) { entree.add(pose(bloc(0.5, 2.2, 0.5, "#8f8a80", 0.05, 2), x, 1.1, 0), pose(bloc(0.65, 0.18, 0.65, "#a29d93", 0.03), x, 2.3, 0)); }
+const texPanneau = texteTexture([["CAMPING", 40, 50], ["LES PINS PERDUS", 56, 110]], "#8a7a62", "#4a3c2b");
+const panneau = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.95, 0.1), [mat("#5b4c38"), mat("#5b4c38"), mat("#5b4c38"), mat("#5b4c38"), new THREE.MeshStandardMaterial({ map: texPanneau, roughness: 0.9 }), mat("#5b4c38")]);
+panneau.position.set(0, 2.85, 0); panneau.rotation.z = -0.06; panneau.castShadow = true; entree.add(panneau);
+
+/* ---------- Les mobil-homes ---------- */
+function creerMobilHome(x, z) {
+  const g = groupe(x, 0, z), u = {};
+  g.add(pose(bloc(3.2, 0.3, 0.3, "#777", 0.02), 0, 0.15, 0.5), pose(bloc(3.2, 0.3, 0.3, "#777", 0.02), 0, 0.15, -0.5));
+  u.murMat = mat("#9c9282"); u.toitMat = mat("#5c5248"); u.bandeMat = mat("#7a6a55");
+  const mur = ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(3.6, 1.5, 1.8, 3, 2, 2), 0.04), u.murMat)); mur.position.y = 1.05; g.add(mur);
+  g.add(pose(new THREE.Mesh(new THREE.BoxGeometry(3.62, 0.18, 1.82), u.bandeMat), 0, 0.62, 0));
+  u.toit = ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(3.9, 0.18, 2.1, 3, 1, 2), 0.04), u.toitMat)); u.toit.position.set(0, 1.88, 0); g.add(u.toit);
+  u.fenMat = mat("#20242c"); u.porteMat = mat("#5b4a38");
+  g.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.5, 0.04), u.fenMat), -0.9, 1.2, 0.92), pose(new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.5, 0.04), u.fenMat), 1.05, 1.2, 0.92));
+  u.porte = pose(new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.05, 0.04), u.porteMat), 0.1, 0.95, 0.92); g.add(u.porte);
+  u.planches = groupe(); g.add(u.planches);
+  for (const [px, r] of [[-0.9, 0.5], [-0.9, -0.4], [1.05, 0.3]]) u.planches.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.09, 0.03), mat("#7a5636")), px, 1.2, 0.95, 0, 0, r));
+  u.mousse = groupe(); g.add(u.mousse);
+  for (const [px, py] of [[-1.5, 1.98], [1.2, 1.98], [-1.6, 0.4]]) u.mousse.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(0.22, 0), 0.06), mat("#3f5a2c")), px, py, 0.6));
+  u.terrasse = groupe(); g.add(u.terrasse); u.terrasse.visible = false;
+  u.terrasse.add(pose(bloc(2.6, 0.12, 1.0, "#a8743f", 0.01), 0.3, 0.32, 1.45), pose(bloc(0.3, 0.3, 0.3, "#c0392b", 0.01), 1.4, 0.55, 1.75), pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(0.22, 0), 0.04), mat("#3f9a4c")), 1.4, 0.85, 1.75));
+  u.lum = new THREE.PointLight("#ffcf8a", 0, 4, 1.6); u.lum.position.set(0, 1.2, 1.6); g.add(u.lum);
+  u.etat = 0; g.userData = u;
+  return g;
+}
+function etatMobilHome(m, p, t) {
+  const u = m.userData;
+  u.murMat.color.set("#9c9282").lerp(new THREE.Color("#f4f1ea"), p);
+  u.toitMat.color.set("#5c5248").lerp(new THREE.Color("#3e5266"), p);
+  u.bandeMat.color.set("#7a6a55").lerp(new THREE.Color("#2e8b57"), p);
+  u.fenMat.color.set("#20242c").lerp(new THREE.Color("#ffd98a"), p); u.fenMat.emissive.set("#ffb84d"); u.fenMat.emissiveIntensity = p * 0.7;
+  u.porteMat.color.set(p > 0.5 ? "#2e6b52" : "#5b4a38");
+  u.toit.rotation.z = lerp(0.07, 0, p); u.toit.position.y = lerp(1.82, 1.88, p);
+  u.planches.visible = p < 0.5; u.mousse.visible = p < 0.5; u.terrasse.visible = p > 0.5;
+  const bond = p > 0 && p < 1 ? Math.sin(p * Math.PI) * 0.12 : 0; m.scale.set(1 + bond, 1 + bond, 1);
+  u.lum.intensity = p * 2.5;
+}
+const MH_X = [0, 4.2, 8.4, 12.6, 17];
+const mobilHomes = MH_X.map((x) => { const m = creerMobilHome(x, -0.4); scene.add(m); return m; });
+const mhRoger = creerMobilHome(30, -0.4); scene.add(mhRoger);
+mhRoger.userData.fenMat.color.set("#ffcf73"); mhRoger.userData.fenMat.emissive.set("#ffb84d"); mhRoger.userData.fenMat.emissiveIntensity = 0.9;
+const lumRoger = new THREE.PointLight("#ffb257", 5, 6, 1.5); lumRoger.position.set(30, 1.3, 1.6); scene.add(lumRoger);
+scene.add(pose(new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.12, 8), mat("#c0392b")), 32.2, 0.1, 1.0));
+
+/* ---------- La piscine (x 20 → 26), en coupe ---------- */
+const piscine = groupe(23, 0, 0); scene.add(piscine);
+piscine.add(pose(new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.05, 3.2), mat("#1e2a36")), 0, 0.07, -0.1));
+for (const [w, d, x, z] of [[6.6, 0.25, 0, 1.55], [6.6, 0.25, 0, -1.75], [0.25, 3.4, -3.2, -0.1], [0.25, 3.4, 3.2, -0.1]]) piscine.add(pose(bloc(w, 0.14, d, "#e8e2d4", 0.01), x, 0.1, z));
+const bassin = pose(new THREE.Mesh(new THREE.BoxGeometry(6.0, 2.2, 0.04), mat("#8fb9cc")), 0, -1.1, AVANT + 0.05); piscine.add(bassin);
+for (const [x, y] of [[-3, -1.1], [3, -1.1]]) piscine.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.2, 0.06), mat("#e8e2d4")), x, y, AVANT + 0.07));
+piscine.add(pose(new THREE.Mesh(new THREE.BoxGeometry(6.1, 0.12, 0.06), mat("#e8e2d4")), 0, -2.2, AVANT + 0.07));
+const fissP = groupe(); piscine.add(fissP);
+for (const [x, y, r, l] of [[-1.5, -0.8, 0.5, 0.8], [-1.2, -1.4, -0.4, 0.7], [1.4, -1.0, -0.6, 1.0], [1.7, -1.7, 0.3, 0.5]]) fissP.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.06, l, 0.03), mat("#2a231c")), x, y, AVANT + 0.09, 0, 0, r));
+for (let i = 0; i < 7; i++) piscine.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.03), mat(i % 2 ? "#a0602e" : "#7a6a2a")), -2.4 + alea() * 4.8, -2.05, AVANT + 0.1, 0, 0, alea()));
+for (const s of [-1, 1]) piscine.add(pose(bloc(0.06, 1.1, 0.06, "#c9ced6", 0), -2.6 + s * 0.25, 0.5, 1.2));
+
+/* ---------- Le robinet (vérification) ---------- */
+const robinet = groupe(14.6, 0, 1.0); scene.add(robinet);
+robinet.add(pose(bloc(0.14, 1.2, 0.14, "#7b7f86", 0.01), 0, 0.6, 0), pose(bloc(0.14, 0.12, 0.42, "#8d9199", 0.01), 0, 1.15, 0.16), pose(bloc(0.1, 0.2, 0.1, "#8d9199", 0.01), 0, 1.02, 0.34), pose(bloc(0.26, 0.08, 0.1, "#d24b3e", 0.01), 0, 1.28, 0.04));
+const jet = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.9, 6), new THREE.MeshStandardMaterial({ color: "#7cc4ff", emissive: "#2b6fae", emissiveIntensity: 0.5, transparent: true, opacity: 0.85 }));
+jet.position.set(0, 0.47, 0.34); jet.scale.y = 0.001; robinet.add(jet);
+const flaque = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.02, 10), new THREE.MeshStandardMaterial({ color: "#7cc4ff", transparent: true, opacity: 0.7 })); flaque.position.set(0, 0.07, 0.4); flaque.scale.set(0.001, 1, 0.5); robinet.add(flaque);
+
+/* ---------- Arbres (fond + bords) ---------- */
+function sapin(x, z, h) {
+  const g = groupe(x, 0, z);
+  g.add(pose(bloc(0.18, 0.6, 0.18, "#4a2f1c", 0.02), 0, 0.3, 0));
+  for (let i = 0; i < 3; i++) g.add(pose(ombre(new THREE.Mesh(facettes(new THREE.ConeGeometry(0.9 - i * 0.22, 1.1, 6, 1), 0.08), mat(i % 2 ? "#1f4a32" : "#245a3a"))), 0, 0.9 + i * 0.6, 0));
+  g.scale.setScalar(h); g.rotation.y = alea() * 3; return g;
+}
+const arriere = groupe(); scene.add(arriere);
+for (let x = -40; x < 50; x += 6 + alea() * 5) arriere.add(sapin(x, -6 - alea() * 3, 0.5 + alea() * 0.3));
+for (let x = -40; x < 50; x += 3) arriere.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(2.6 + alea() * 1.6, 0), 0.4), mat("#2c3f6a")), x, -1.9, -16 - alea() * 3));
+for (const x of [-8, 19.6, 27.3, 34]) scene.add(sapin(x, -2.4, 0.7 + alea() * 0.15));
+
+/* ---------- Lumières ---------- */
+const hemi = new THREE.HemisphereLight("#9ab0ee", "#3a4a2a", 2.1); scene.add(hemi);
+const face = new THREE.DirectionalLight("#b9c6ff", 0.9); face.position.set(0, 2, 40); scene.add(face, face.target);
+const luneL = new THREE.DirectionalLight("#8faaff", 1.6); luneL.position.set(-8, 14, 12); luneL.castShadow = true;
+luneL.shadow.mapSize.set(2048, 2048); Object.assign(luneL.shadow.camera, { left: -16, right: 16, top: 12, bottom: -4, near: 1, far: 60 }); luneL.shadow.bias = -0.0008;
+scene.add(luneL, luneL.target);
+const soleil = new THREE.DirectionalLight("#ffe2b0", 0); soleil.position.set(-10, 14, 10); scene.add(soleil, soleil.target);
+Object.assign(soleil.shadow.camera, { left: -16, right: 16, top: 12, bottom: -4, near: 1, far: 60 }); soleil.shadow.mapSize.set(2048, 2048);
+scene.fog = new THREE.Fog("#1a2650", 40, 120);
+
+const malo = creerMalo(); malo.scale.setScalar(0.72); scene.add(malo);
+const roger = creerRoger(); roger.scale.setScalar(0.8); scene.add(roger);
+
+/* ---------- Épisode 3 : état de départ = fin de l'épisode 2 ---------- */
+routeMat.color.set("#a7a39a"); trous.forEach((m) => (m.visible = false)); routeCoupe.scale.x = 1; routeCoupe.position.x = -16; rouleau.visible = false;
+vieuxTuyau.visible = false; tuyau.scale.y = 26; tuyau.position.x = 7; branches.forEach((b, i) => (b.visible = i < 5)); compteur.visible = true;
+jet.visible = false; flaque.visible = false; fissP.visible = false;
+piscine.children.filter((m) => Math.abs(m.position.y + 2.05) < 0.01).forEach((f) => (f.visible = false));
+bassin.material.color.set("#6ec3ee");
+const eauMat = new THREE.MeshStandardMaterial({ color: "#2f8fd8", transparent: true, opacity: 0.82, emissive: "#0f4f8a", emissiveIntensity: 0.25 });
+const eauCoupe = new THREE.Mesh(new THREE.BoxGeometry(5.86, 2.05, 0.05), eauMat); eauCoupe.position.set(0, -2.18 + 1.025, AVANT + 0.08); piscine.add(eauCoupe);
+const eauHaut = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.04, 3.1), eauMat); eauHaut.position.set(0, -0.13, -0.1); piscine.add(eauHaut);
+const pompe = groupe(27.9, 0, 0.9); scene.add(pompe);
+pompe.add(pose(bloc(0.7, 0.55, 0.5, "#3e5266", 0.01), 0, 0.28, 0), pose(bloc(0.32, 0.7, 0.32, "#d8dde4", 0.01), 0.55, 0.35, 0));
+
+/* ---------- Nouveaux lieux : grillage, forêt, bungalow 13, lac ---------- */
+const grillage = groupe(33.2, 0, 0.4); scene.add(grillage);
+for (const z of [-1.2, 0, 1.2]) grillage.add(pose(bloc(0.1, 1.7, 0.1, "#6b6f75", 0.01), 0, 0.85, z));
+for (let i = 0; i < 9; i++) grillage.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 2.6), mat("#8d9199")), 0, 0.2 + i * 0.18, 0, (i % 2 ? 0.5 : -0.5), 0, 0));
+const trouGrillage = pose(new THREE.Mesh(new THREE.CircleGeometry(0.45, 8), mat("#1a2238")), 0.06, 0.45, 0.6, 0, Math.PI / 2, 0); grillage.add(trouGrillage);
+const foret = groupe(); scene.add(foret);
+for (let x = 34.5; x < 44.5; x += 0.9 + alea() * 0.8) { foret.add(sapin(x, -1.5 - alea() * 3.5, 0.8 + alea() * 0.5)); if (alea() > 0.4) foret.add(sapin(x + 0.4, -0.2 - alea() * 0.6, 0.55 + alea() * 0.3)); }
+for (let x = 34; x < 45; x += 0.7) { const r = 0.25 + alea() * 0.25; foret.add(pose(ombre(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(r, 0), 0.08), mat(alea() > 0.5 ? "#2d3b22" : "#3a4a28"))), x + alea() * 0.4, r * 0.7, 1.5 + alea() * 0.5)); }
+// bungalow 13
+const bung = groupe(47, 0, -0.4); scene.add(bung);
+bung.add(pose(ombre(new THREE.Mesh(facettes(new THREE.BoxGeometry(3.2, 2.1, 2.4, 3, 2, 2), 0.05), mat("#5e4129"))), 0, 1.05, 0));
+for (let i = 0; i < 6; i++) bung.add(pose(new THREE.Mesh(new THREE.BoxGeometry(3.22, 0.04, 2.42), mat("#4a3220")), 0, 0.2 + i * 0.35, 0));
+for (const s of [-1, 1]) bung.add(pose(ombre(new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.14, 2.8), mat("#3a2a1c"))), s * 0.82, 2.55, 0, 0, 0, s * -0.55));
+const texTreize = texteTexture([["13", 120, 80]], "#2a1d14", "#e8d9b0", 200, 160);
+const porteB = groupe(-0.45, 0, 1.22); bung.add(porteB);
+porteB.add(pose(bloc(0.9, 1.65, 0.07, "#3d2a19", 0.01), 0.45, 0.83, 0));
+const plaque13 = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.34, 0.03), [mat("#2a1d14"), mat("#2a1d14"), mat("#2a1d14"), mat("#2a1d14"), new THREE.MeshStandardMaterial({ map: texTreize, emissive: "#ffffff", emissiveMap: texTreize, emissiveIntensity: 0.25 }), mat("#2a1d14")]);
+plaque13.position.set(0.45, 1.3, 0.05); porteB.add(plaque13);
+const lumB = new THREE.PointLight("#ffcf8a", 0, 4, 1.6); lumB.position.set(0, 1.0, 1.6); bung.add(lumB);
+bung.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.04), mat("#141820")), 0.9, 1.3, 1.22));
+for (let i = 0; i < 40; i++) bung.add(pose(new THREE.Mesh(facettes(new THREE.IcosahedronGeometry(0.14 + alea() * 0.12, 0), 0.04), mat(alea() > 0.5 ? "#2f5a2a" : "#3d6e33")), -1.6 + alea() * 3.2, 0.3 + alea() * 2.2, 1.22 + alea() * 0.1));
+// le lac
+const LAC0 = 50, LAC1 = 64;
+const lacMat = new THREE.MeshStandardMaterial({ color: "#3a82c4", emissive: "#1d5a94", emissiveIntensity: 0.6, roughness: 0.2, metalness: 0.1 });
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(LAC1 - LAC0, 0.05, 9), lacMat), (LAC0 + LAC1) / 2, 0.08, -2.4));
+scene.add(pose(new THREE.Mesh(new THREE.BoxGeometry(LAC1 - LAC0, 1.8, 0.03), new THREE.MeshStandardMaterial({ color: "#2f74b8", emissive: "#1d5a94", emissiveIntensity: 0.55 })), (LAC0 + LAC1) / 2, -0.85, AVANT + 0.04));
+const reflet = groupe(57, 0.12, 0); scene.add(reflet); reflet.material = new THREE.MeshBasicMaterial({ color: "#f2f6ff", transparent: true, opacity: 0.7 });
+for (let i = 0; i < 7; i++) reflet.add(pose(new THREE.Mesh(new THREE.BoxGeometry(0.6 + i * 0.25, 0.02, 0.12), reflet.material), (alea() - 0.5) * 0.4, 0, -6 + i * 0.85));
+const ponton = groupe(LAC0 + 0.4, 0, 0.6); scene.add(ponton);
+for (let i = 0; i < 9; i++) ponton.add(pose(bloc(0.42, 0.08, 1.2, i % 2 ? "#8a6a42" : "#9c7a4e", 0.01), i * 0.45, 0.25, 0));
+for (const x of [0, 1.8, 3.6]) ponton.add(pose(bloc(0.1, 0.7, 0.1, "#5b4128", 0), x, 0.0, 0.55));
+for (let i = 0; i < 14; i++) scene.add(pose(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.6 + alea() * 0.4, 4), mat("#4f6b2e")), LAC0 + alea() * 1.2, 0.35, 0.8 + alea() * 1.0));
+// boîte aux lettres + lettre (matin)
+const bal = groupe(-3.6, 0, 1.0); scene.add(bal);
+bal.add(pose(bloc(0.1, 1.1, 0.1, "#5b4128", 0), 0, 0.55, 0), pose(bloc(0.5, 0.35, 0.4, "#d23c3c", 0.01), 0, 1.25, 0));
+const lettre3d = pose(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.02, 0.24), mat("#f6f1e4")), 0, 1.47, 0.05); bal.add(lettre3d);
+for (let x = 50; x < 80; x += 2.4) arriere.add(sapin(x, -6 - alea() * 3, 0.5 + alea() * 0.3));
+
+/* ---------- Mise en scène ---------- */
+const PLANS = [
+  [0, 18, 0.72, 0.01],
+  [P("nuit"), 30, 1.3, 1.0],
+  [P("suit"), 32.5, 1.05, 1.0],
+  [P("foret"), 36, 1.0, 0.8],
+  [P("foret", 0.8), 43.5, 1.0, P("stop") - P("foret") - 0.8],
+  [P("bungalow"), 46.4, 1.2, 1.2],
+  [P("numero"), 46.6, 2.0, 0.9],
+  [P("plan"), 46.6, 1.15, 0.8],
+  [P("fond"), 50, 0.9, 0.6],
+  [P("lac"), 55, 0.78, 1.4],
+  [P("lettre"), -3.4, 1.5, 0.01],
+  [P("offre"), -1, 0.9, 1.0],
+  [P("choix"), 20, 0.72, 0.01],
+  [FIN_VOIX + 0.2, 22, 0.72, 1.4],
+];
+function plan(t) {
+  let x = PLANS[0][1], z = PLANS[0][2];
+  for (const [kt, kx, kz, kd] of PLANS) { if (t < kt) break; const p = ease(t, kt, kd); x = lerp(x, kx, p); z = lerp(z, kz, p); }
+  return { x, z };
+}
+const TRAJ_MALO = [[0, 21.5, 0.01], [P("nuit", 1.2), 28.6, 1.4], [P("suit", 0.4), 32.2, 1.4], [P("foret", 0.4), 43.6, P("stop") - P("foret")],
+  [P("bungalow", 2.5), 45.5, 0.8], [P("porte", 0.3), 46.1, 0.25], [P("porte", 0.6), 45.6, 0.3], [P("fond", 0.2), 50.2, 1.3], [P("lettre"), -2.6, 0.01], [P("choix"), 19.5, 0.01]];
+const TRAJ_ROGER = [[0, 30.8, 0.01], [P("suit", 0.2), 33.3, 1.2], [P("foret", 0.2), 44.6, P("stop") - P("foret") - 0.2], [P("fond", 0.4), 51.6, 1.3], [P("lettre"), -1.4, 0.01], [P("choix"), 20.8, 0.01]];
+function trajet(cles, t) {
+  let x = cles[0][1], v = 0, dir = 0;
+  for (const [kt, kx, kd] of cles) { if (t < kt) break; const p = ease(t, kt, kd); if (p > 0 && p < 1 && Math.abs(kx - x) > 0.05) { v = 1; dir = Math.sign(kx - x); } x = lerp(x, kx, p); }
+  return { x, v, dir };
+}
+function humeur(t) {
+  const H = [[0, "joie"], [P("teaser"), "surpris"], [P("argent"), "content"], [P("gain"), "joie"], [P("budget"), "inquiet"], [P("nuit"), "surpris"], [P("suit"), "concentre"],
+    [P("ronces"), "inquiet"], [P("bungalow"), "choque"], [P("numero"), "surpris"], [P("porte"), "grimace"], [P("plan"), "concentre"], [P("plan2"), "surpris"],
+    [P("lac"), "choque"], [P("appartient"), "joie"], [P("lettre"), "content"], [P("mairie"), "inquiet"], [P("offre"), "choque"], [P("tout"), "reflechit"], [P("comment"), "joie"]];
+  let h = "content"; for (const [ht, v] of H) if (t >= ht) h = v; return h;
+}
+const EXPR = {
+  content: { sr: 0, sy: 0, coin: 0.45, ouv: 1, lar: 1, oy: 1 }, joie: { sr: 0, sy: 0.03, coin: 0.7, ouv: 3.2, lar: 1.3, oy: 0.35 },
+  inquiet: { sr: 0.35, sy: 0.02, coin: -0.4, ouv: 1, lar: 0.8, oy: 1 }, grimace: { sr: -0.38, sy: -0.02, coin: -0.25, ouv: 2.2, lar: 1.5, oy: 0.8 },
+  concentre: { sr: -0.2, sy: -0.01, coin: 0, ouv: 0.8, lar: 0.7, oy: 0.85 }, choque: { sr: 0.15, sy: 0.06, coin: -0.2, ouv: 4, lar: 0.9, oy: 1.2 },
+  surpris: { sr: 0.1, sy: 0.05, coin: 0, ouv: 2.4, lar: 0.6, oy: 1.15 }, reflechit: { sr: 0.25, sy: 0.03, coin: 0.15, ouv: 1, lar: 0.8, oy: 0.95 },
+};
+let ex = { ...EXPR.content };
+const jourDe = (t) => (t < P("lettre") ? 0 : 1);
+function animerMalo(t, dt) {
+  const u = malo.userData, tr = trajet(TRAJ_MALO, t), h = humeur(t);
+  malo.position.set(tr.x, 0.06, 0.9);
+  const m = tr.v ? t * 9 : 0;
+  const saut = t >= P("lettre") - 0.05 && t < P("lettre") + 0.05;
+  malo.rotation.y = saut ? 0.15 : lerp(malo.rotation.y, tr.v ? tr.dir * Math.PI / 2 : 0.15, clamp(dt * 9));
+  u.corps.position.y = tr.v ? Math.abs(Math.sin(m)) * 0.08 : Math.sin(t * 2.2) * 0.012;
+  u.jambes[0].rotation.x = tr.v ? Math.sin(m) * 0.6 : 0; u.jambes[1].rotation.x = -u.jambes[0].rotation.x;
+  let b0 = [tr.v ? -Math.sin(m) * 0.5 : -0.25, 0.09], b1 = [tr.v ? Math.sin(m) * 0.5 : 0.05, -0.09];
+  u.pouce.visible = false;
+  if (h === "joie" && t >= P("gain") && t < P("budget")) { b1 = [-2.1, 0.25]; u.pouce.visible = true; }
+  if (h === "reflechit") b1 = [-2.5, 0.55];
+  if (t >= P("comment")) b1 = [0, -2.6 + Math.sin(t * 9) * 0.35];
+  if (h === "choque") { b0 = [-0.6, 0.5]; b1 = [-0.6, -0.5]; }
+  if (t >= P("lettre") && t < P("tout")) b1 = [-1.4, -0.1];
+  u.bras[0].rotation.set(b0[0], 0, b0[1]); u.bras[1].rotation.set(b1[0], 0, b1[1]);
+  u.tete.rotation.y = tr.v ? 0 : Math.sin(t * 0.8) * 0.12; u.tete.rotation.x = h === "reflechit" ? -0.12 : 0; u.tete.rotation.z = h === "reflechit" ? 0.12 : 0;
+  const e = EXPR[h]; for (const k in e) ex[k] = lerp(ex[k], e[k], clamp(dt * 10));
+  u.sourcils.forEach((s, i) => { const sg = i ? 1 : -1; s.rotation.z = sg * -ex.sr + (h === "reflechit" && i ? 0.3 : 0); s.position.y = 0.15 + ex.sy; });
+  const cligne = h !== "joie" && (t % 3.4) < 0.12; u.yeux.forEach((o) => { o.scale.y = cligne ? 0.1 : ex.oy; });
+  u.centre.scale.set(ex.lar, ex.ouv, 1); u.coins.forEach((c, i) => { const sg = i ? 1 : -1; c.position.x = sg * 0.05 * ex.lar; c.rotation.z = sg * ex.coin; });
+  const nuit = 1 - jourDe(t);
+  const gresille = t >= P("ronces", 1.2) && t < P("stop") ? (Math.sin(t * 47) > 0.3 ? 0.15 : 1) : 1;
+  u.lanterne.visible = nuit > 0.4; u.flamme.intensity = 9 * nuit * gresille * (0.92 + Math.sin(t * 13) * 0.05);
+}
+function animerRoger(t, dt) {
+  const u = roger.userData, tr = trajet(TRAJ_ROGER, t);
+  roger.position.set(tr.x, 0.06, 1.1);
+  const gratte = t >= P("nuit", 0.6) && t < P("suit");
+  roger.rotation.y = lerp(roger.rotation.y, tr.v ? (tr.dir > 0 ? 0 : Math.PI) : gratte ? -1.4 : -0.55, clamp(dt * 8));
+  const m = t * (gratte ? 24 : 12);
+  u.pattes.forEach((p, i) => { p.rotation.z = tr.v ? Math.sin(m + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI / 2 : 0)) * 0.6 : gratte && i > 1 ? Math.sin(m + i) * 0.9 : 0; });
+  u.corps.rotation.z = gratte ? 0.25 : 0;
+  u.corps.position.y = tr.v ? Math.abs(Math.sin(m)) * 0.05 : 0;
+  u.queue.rotation.x = Math.sin(t * (tr.v ? 18 : t > P("stop") && t < P("plan") ? 0 : 7)) * 0.6;
+  u.tete.rotation.z = t > P("stop") && t < P("bungalow", 1.5) ? 0.2 : 0;
+}
+function ambiance(t) {
+  const j = jourDe(t);
+  const foretP = t > P("foret") && t < P("fond") ? 1 : 0;
+  const haut = new THREE.Color("#141f44").lerp(new THREE.Color("#4f9fdc"), j), bas = new THREE.Color(foretP ? "#22305a" : "#2e4680").lerp(new THREE.Color("#c4e6f5"), j);
+  peindreCiel("#" + haut.getHexString(), "#" + bas.getHexString());
+  scene.fog.color.copy(bas); scene.fog.near = foretP ? 34 : 40; scene.fog.far = foretP ? 70 : 120;
+  etoiles.material.opacity = clamp(1 - j * 1.6); lune.material.opacity = clamp(1 - j * 1.6);
+  hemi.intensity = lerp(foretP ? 1.35 : 1.7, 2.0, j); hemi.color.set(j > 0.5 ? "#cfe3ff" : "#9ab0ee");
+  luneL.intensity = lerp(foretP ? 1.1 : 1.6, 0, j); luneL.castShadow = j <= 0.5;
+  soleil.intensity = lerp(0, 2.6, j); soleil.castShadow = j > 0.5;
+  lumRoger.intensity = 5 * (1 - j);
+  renderer.toneMappingExposure = lerp(1.3, 1.05, j);
+}
+function decor(t) {
+  mobilHomes.forEach((mh, i) => etatMobilHome(mh, i < 4 ? 1 : 0, t));
+  flux.forEach((m, i) => { m.position.x = -6 + ((t * 5 + i * 2.25) % 36); m.visible = m.position.x < 19.6; });
+  const ouv = ease(t, P("porte", 0.6), 0.3);
+  porteB.rotation.y = -1.6 * ouv;
+  lumB.intensity = 3 * ease(t, P("plan"), 0.6) * (t < P("lettre") ? 1 : 0);
+  reflet.material.opacity = 0.55 + Math.sin(t * 2) * 0.15;
+  lettre3d.visible = t > P("lettre") - 0.1 && t < P("mairie");
+}
+
+/* ---------- Interface ---------- */
+const v3 = new THREE.Vector3();
+function ecran(obj, dy) { obj.updateMatrixWorld(); v3.set(0, dy, 0).applyMatrix4(obj.matrixWorld).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * H]; }
+function bulle(x, y, texte, fondC = "#ffffff", o = 1) {
+  if (o <= 0) return "";
+  const w = texte.length * 17 + 40;
+  return `<g opacity="${o}" transform="translate(${x},${y - 40}) scale(${0.8 + 0.2 * o})"><rect x="${-w / 2}" y="-30" width="${w}" height="52" rx="14" fill="${fondC}"/><path d="M-10 21 l 10 16 l 10 -16 Z" fill="${fondC}"/><text x="0" y="5" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="#1b1b1b">${texte}</text></g>`;
+}
+
+const SONDAGE = "@@SONDAGE@@";
+const SAUTS = [[FP("gain"), 4328, 93]];
+function hud(t) {
+  const oA = vis(t, 2.2, 1e9, 0.3);
+  if (oA <= 0) return "";
+  let budget = 4185, delai = 93, pb = 4185, pd = 93, delta = null;
+  for (const [ts, b, d] of SAUTS) { const p = ease(t, ts, 0.7); if (t >= ts) { budget = lerp(pb, b, p); delai = Math.round(lerp(pd, d, p)); if (t < ts + 2) delta = { v: b - pb, o: vis(t, ts, ts + 2, 0.2) }; } pb = b; pd = d; }
+  const eclat = (tm) => clamp(1 - Math.abs(t - tm - 0.5) / 0.7);
+  const hiB = Math.max(...SAUTS.map(([ts]) => eclat(ts)), eclat(P("budget")), eclat(P("offre", 1.0))), hiD = eclat(P("budget", 1.8)), hiF = eclat(P("budget", 3.0));
+  const boite = (cx, lab, val, col, o, hi = 0) => `<g opacity="${o}" transform="translate(${cx},340) scale(${(0.85 + 0.15 * o) * (1 + 0.12 * hi)})">
+    ${hi > 0 ? `<rect x="-128" y="-66" width="256" height="124" rx="24" fill="${col}" opacity="${0.35 * hi}"/>` : ""}
+    <rect x="-118" y="-56" width="236" height="104" rx="18" fill="${hi > 0.3 ? col : "#121828"}" fill-opacity="${hi > 0.3 ? 0.35 : 1}" stroke="${col}" stroke-width="5"/>
+    <text x="0" y="-21" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="3">${lab}</text>
+    <text x="0" y="28" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="${col}">${val}</text></g>`;
+  let s = boite(285, "DÉLAI", `${delai} JOURS`, "#ff5a5f", oA, hiD) + boite(540, "FAMILLES", "0 / 50", "#4ade80", oA, hiF) + boite(795, "BUDGET", `${euros(budget)} €`, "#ffc93c", oA, hiB);
+  if (delta) s += `<text x="795" y="426" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="${delta.v < 0 ? "#ff5a5f" : "#4ade80"}" opacity="${delta.o}">${delta.v < 0 ? "−" : "+"}${euros(Math.abs(delta.v))} €</text>`;
+  s += `<g opacity="${oA}" transform="translate(540,452)"><rect x="-170" y="-18" width="340" height="36" rx="18" fill="#121828" stroke="#ff3b5c" stroke-width="3"/><text x="0" y="7" text-anchor="middle" font-family="Inter" font-weight="900" font-size="19" fill="#ffffff">❤ 1 LIKE / 1 ABONNÉ = +1 €</text></g>`;
+  return s;
+}
+function titre(t) {
+  const o = vis(t, 0.05, 2.5, 0.2); if (o <= 0) return "";
+  const k = 0.85 + 0.15 * easeIO(clamp(t / 0.25));
+  return `<g opacity="${o}" transform="translate(540,560) scale(${k})" font-family="Inter" font-weight="900" text-anchor="middle" stroke="#0b1020" stroke-width="12" paint-order="stroke" stroke-linejoin="round">
+    <text x="0" y="0" font-size="56" fill="#ffc93c">ÉPISODE 3</text><text x="0" y="100" font-size="96" fill="#ffffff">LE BUNGALOW 13</text></g>`;
+}
+function sondage(t) {
+  const o = vis(t, 2.5, P("argent", -0.1), 0.25); if (o <= 0) return "";
+  return `<g opacity="${o}" transform="translate(540,${740 + (1 - o) * 30})"><rect x="-386" y="-152" width="772" height="304" rx="26" fill="#000" opacity=".35" transform="translate(6,8)"/>
+    <clipPath id="clipS"><rect x="-386" y="-152" width="772" height="304" rx="26"/></clipPath><image href="${SONDAGE}" x="-386" y="-152" width="772" height="304" clip-path="url(#clipS)" preserveAspectRatio="xMidYMid slice"/></g>`;
+}
+function carteArgent(t) {
+  const o = vis(t, P("argent"), P("nuit", -0.2), 0.25); if (o <= 0) return "";
+  const l1 = clamp((t - P("argent", 1.6)) / 0.3), l2 = clamp((t - P("argent", 3.0)) / 0.3), l3 = clamp((t - P("gain")) / 0.3);
+  return `<g opacity="${o}" transform="translate(540,${660 + (1 - o) * -30}) scale(${0.85 + 0.15 * o})">
+    <rect x="-300" y="-120" width="600" height="300" rx="24" fill="#121828" stroke="#ffc93c" stroke-width="7"/>
+    <text x="0" y="-62" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#ffc93c" letter-spacing="2">L'ARGENT DE L'ÉPISODE 2</text>
+    <text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff" opacity="${l1}"><tspan fill="#ff3b5c">❤</tspan> 101 LIKES = +101 €</text>
+    <text x="0" y="60" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff" opacity="${l2}"><tspan fill="#4ade80">+</tspan> 42 ABONNÉS = +42 €</text>
+    <g opacity="${l3}"><line x1="-240" y1="96" x2="240" y2="96" stroke="#3a4258" stroke-width="3"/><text x="0" y="148" text-anchor="middle" font-family="Inter" font-weight="900" font-size="42" fill="#4ade80">TOTAL : +143 €</text></g></g>`;
+}
+const ETIQUETTES = [["INVISIBLE", "bungalow", 2.4, "numero", 640, "#e63946"], ["BEAUCOUP PLUS GRAND", "plan2", 0.6, "rouge", 1060, "#e63946"], ["LAC PRIVÉ · 3 HECTARES", "lac", 0.4, "familles", 640, "#2b7bd6"], ["150 000 €", "offre", 1.2, "doute", 1080, "#e63946"]];
+function etiquettes(t) {
+  let s = "";
+  for (const [txt, a, d, b, y, col] of ETIQUETTES) {
+    const o = vis(t, P(a, d), P(b), 0.15); if (o <= 0) continue;
+    const w = txt.length * 26 + 50, k = 1 + 0.4 * (1 - easeIO(clamp((t - P(a, d)) / 0.18)));
+    s += `<g opacity="${o}" transform="translate(560,${y}) rotate(-6) scale(${k})"><rect x="${-w / 2}" y="-34" width="${w}" height="66" rx="10" fill="${col}" stroke="#ffffff" stroke-width="5"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="40" fill="#ffffff" letter-spacing="1">${txt}</text></g>`;
+  }
+  return s;
+}
+function cartePlan(t) {
+  const o = vis(t, P("plan", 1.4), P("fond", -0.1), 0.3); if (o <= 0) return "";
+  const grand = clamp((t - P("plan2", 0.3)) / 0.8), rouge = clamp((t - P("rouge", 0.8)) / 0.5);
+  return `<g opacity="${o}" transform="translate(540,${700 + (1 - o) * -30}) rotate(-2) scale(${0.85 + 0.15 * o})">
+    <rect x="-330" y="-190" width="660" height="380" rx="8" fill="#000" opacity=".3" transform="translate(8,10)"/>
+    <rect x="-330" y="-190" width="660" height="380" rx="8" fill="#e9dcb8"/><rect x="-330" y="-190" width="660" height="380" rx="8" fill="none" stroke="#a8915e" stroke-width="5"/>
+    <text x="0" y="-145" text-anchor="middle" font-family="Liberation Serif, serif" font-style="italic" font-weight="700" font-size="34" fill="#4a3a22">Camping des Pins Perdus — 1974</text>
+    <rect x="-290" y="-110" width="250" height="230" fill="none" stroke="#4a3a22" stroke-width="4"/>
+    <text x="-165" y="10" text-anchor="middle" font-family="Liberation Serif, serif" font-style="italic" font-size="26" fill="#4a3a22">le camping</text>
+    <g opacity="${grand}"><rect x="-40" y="-110" width="330" height="230" fill="none" stroke="#4a3a22" stroke-width="4" stroke-dasharray="12 8"/><path d="M60 -20 q 60 -50 140 -10 q 50 40 -10 80 q -80 40 -130 -10 Z" fill="#9cc3d9" stroke="#4a3a22" stroke-width="3"/><rect x="-28" y="-30" width="34" height="28" fill="#6b4a2f"/><text x="-11" y="-36" text-anchor="middle" font-family="Liberation Serif, serif" font-weight="700" font-size="22" fill="#4a3a22">13</text></g>
+    <g opacity="${rouge}"><ellipse cx="128" cy="15" rx="125" ry="85" fill="none" stroke="#d62828" stroke-width="7"/></g></g>`;
+}
+function carteLettre(t) {
+  const o = vis(t, P("mairie", -0.3), P("doute", 0.2), 0.3); if (o <= 0) return "";
+  const m = clamp((t - P("offre", 0.8)) / 0.3);
+  return `<g opacity="${o}" transform="translate(540,${720 + (1 - o) * -30}) rotate(1.5) scale(${0.85 + 0.15 * o})">
+    <rect x="-310" y="-200" width="620" height="400" rx="6" fill="#000" opacity=".3" transform="translate(8,10)"/>
+    <rect x="-310" y="-200" width="620" height="400" rx="6" fill="#ffffff"/>
+    <rect x="-310" y="-200" width="620" height="70" rx="6" fill="#1f3a6b"/><text x="0" y="-152" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#ffffff" letter-spacing="3">MAIRIE</text>
+    <text x="-270" y="-80" font-family="Inter" font-weight="800" font-size="24" fill="#4a4f5c">Objet : rachat du lac</text>
+    <text x="-270" y="-30" font-family="Inter" font-weight="600" font-size="24" fill="#4a4f5c">La commune propose d'acheter</text>
+    <text x="-270" y="5" font-family="Inter" font-weight="600" font-size="24" fill="#4a4f5c">le lac et ses abords pour :</text>
+    <text x="0" y="95" text-anchor="middle" font-family="Inter" font-weight="900" font-size="72" fill="#1f3a6b" opacity="${m}">150 000 €</text>
+    <text x="270" y="165" text-anchor="end" font-family="Liberation Serif, serif" font-style="italic" font-size="26" fill="#4a4f5c">— Le maire</text></g>`;
+}
+function cahier(t, a, b, titre, lignes, total, rot = -2.5) {
+  const o = vis(t, a, b, 0.25); if (o <= 0) return "";
+  const h = 120 + lignes.length * 56 + (total ? 70 : 0);
+  let s = `<g opacity="${o}" transform="translate(540,${510 + (1 - o) * -30}) rotate(${rot})">
+    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#000" opacity=".25" transform="translate(8,10)"/>
+    <rect x="-300" y="0" width="600" height="${h}" rx="6" fill="#fbf7ec"/>`;
+  for (let y = 70; y < h; y += 56) s += `<line x1="-300" y1="${y}" x2="300" y2="${y}" stroke="#cdd9ee" stroke-width="2"/>`;
+  s += `<line x1="-240" y1="0" x2="-240" y2="${h}" stroke="#ef9a9a" stroke-width="3"/><text x="0" y="52" text-anchor="middle" font-family="Inter" font-weight="900" font-size="32" fill="#1b1b1b" letter-spacing="2">${titre}</text>`;
+  lignes.forEach(([lab, val, coche], i) => {
+    const oi = clamp((t - a - 0.3 - i * 0.4) / 0.2), y = 116 + i * 56;
+    s += `<g opacity="${oi}"><text x="-222" y="${y}" font-family="Inter" font-weight="800" font-size="27" fill="#2b2b2b">${lab}</text><text x="272" y="${y}" text-anchor="end" font-family="Inter" font-weight="900" font-size="28" fill="#2b2b2b">${val}</text>
+      ${coche ? `<path d="M210 ${y - 14} l 14 16 l 30 -34" stroke="#22a55a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${clamp((t - coche) / 0.2)}"/>` : ""}</g>`;
+  });
+  if (total) { const ot = clamp((t - a - 0.3 - lignes.length * 0.4) / 0.2), yt = 116 + lignes.length * 56 + 6;
+    s += `<g opacity="${ot}"><line x1="-222" y1="${yt - 36}" x2="272" y2="${yt - 36}" stroke="#1b1b1b" stroke-width="3"/><text x="-222" y="${yt + 4}" font-family="Inter" font-weight="900" font-size="28" fill="#e23b3b">TOTAL</text><text x="272" y="${yt + 4}" text-anchor="end" font-family="Inter" font-weight="900" font-size="32" fill="#e23b3b">${total}</text></g>`; }
+  return s + `</g>`;
+}
+
+function choix(t) {
+  const a = P("choix"), b = DUREE - 2.6; let s = "";
+  const carte = (cx, titre, sous, col, ic, o) => o <= 0 ? "" : `<g opacity="${o}" transform="translate(${cx},640) scale(${0.8 + 0.2 * o})"><rect x="-200" y="-120" width="400" height="240" rx="24" fill="#121828" stroke="${col}" stroke-width="7"/>${ic}
+    <text x="0" y="58" text-anchor="middle" font-family="Inter" font-weight="900" font-size="44" fill="${col}">${titre}</text><text x="0" y="96" text-anchor="middle" font-family="Inter" font-weight="800" font-size="20" fill="#b9c0d0" letter-spacing="2">${sous}</text></g>`;
+  const argent = `<g transform="translate(0,-42)"><rect x="-80" y="-34" width="160" height="62" rx="10" fill="#2e8b57"/><text x="0" y="10" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#fff">+150 000</text></g>`;
+  const lac = `<g transform="translate(0,-42)"><rect x="-90" y="-34" width="180" height="62" rx="12" fill="#1f6fae"/><path d="M-78 -4 q 20 -14 39 0 t 39 0 t 39 0 t 39 0" stroke="#bfe3ff" stroke-width="6" fill="none"/></g>`;
+  s += carte(285, "VENDRE", "150 000 € D'UN COUP", "#ffc93c", argent, vis(t, a, b, 0.25));
+  s += carte(795, "GARDER", "LE LAC POUR LES FAMILLES", "#4fa3ff", lac, vis(t, a + 1.0, b, 0.25));
+  const oo = vis(t, a + 0.6, b, 0.2); if (oo > 0) s += `<g opacity="${oo}"><circle cx="540" cy="640" r="44" fill="#ffffff"/><text x="540" y="654" text-anchor="middle" font-family="Inter" font-weight="900" font-size="36" fill="#1b1b1b">OU</text></g>`;
+  const oc = vis(t, P("comment"), b, 0.25); if (oc > 0) s += `<g opacity="${oc}" transform="translate(540,860) scale(${0.85 + 0.15 * oc})"><rect x="-370" y="-38" width="740" height="76" rx="38" fill="#ff3b5c"/><text x="0" y="13" text-anchor="middle" font-family="Inter" font-weight="900" font-size="30" fill="#fff">ÉCRIS « VENDRE » OU « GARDER »</text></g>`;
+  return s;
+}
+function sousTitres(t) {
+  const c = CHUNKS.find((k) => t >= k.t0 && t < k.t1);
+  if (!c || t > FIN_VOIX + 0.3) return "";
+  const pop = 0.92 + 0.08 * easeIO(clamp((t - c.t0) / 0.1));
+  const COUL = { w: "#ffffff", y: "#ffc93c", r: "#ff5a5f", g: "#4ade80", b: "#4fa3ff" };
+  const sp = c.map((w) => `<tspan fill="${t >= w.t ? COUL[w.c] : "#9a9089"}">${w.txt.toUpperCase()}</tspan>`).join(" ");
+  const MES = sousTitres.c || (sousTitres.c = document.createElement("canvas").getContext("2d")); MES.font = "900 64px Inter";
+  const larg = MES.measureText(c.map((w) => w.txt.toUpperCase()).join(" ")).width + 20;
+  const k = Math.min(1, 1000 / larg);
+  return `<g transform="translate(540,1330) scale(${pop * k})"><text x="3" y="4" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" fill="#000" opacity=".35" letter-spacing="1">${c.map((w) => w.txt.toUpperCase()).join(" ")}</text><text x="0" y="0" text-anchor="middle" font-family="Inter" font-weight="900" font-size="64" letter-spacing="1">${sp}</text></g>`;
+}
+
+function carteFin(t) {
+  const a = DUREE - 2.6, o = clamp((t - a) / 0.35); if (o <= 0) return "";
+  return `<g opacity="${o}"><rect width="1080" height="1920" fill="#0b0f1c" opacity=".88"/>
+    <text x="540" y="760" text-anchor="middle" font-family="Inter" font-weight="900" font-size="38" fill="#4ade80" letter-spacing="6">LES PINS PERDUS · SAISON 1</text>
+    <text x="540" y="860" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffffff">ÉPISODE 4</text>
+    <text x="540" y="950" text-anchor="middle" font-family="Inter" font-weight="900" font-size="88" fill="#ffc93c">BIENTÔT</text>
+    <g transform="translate(540,1120)"><rect x="-360" y="-44" width="720" height="88" rx="44" fill="#ff3b5c"/><text x="0" y="14" text-anchor="middle" font-family="Inter" font-weight="900" font-size="34" fill="#fff">+ ABONNE-TOI = +1 € POUR LE CAMPING</text></g></g>`;
+}
+function vignette(t) {
+  const n = t > P("nuit") && t < P("lettre") ? 1 : 0; if (!n) return "";
+  return `<defs><radialGradient id="vg" cx="50%" cy="48%" r="70%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".65"/></radialGradient></defs><rect width="1080" height="1920" fill="url(#vg)"/>`;
+}
+const FLASHS = [P("numero", 0.6), P("lac")];
+function interface_(t) {
+  let s = vignette(t);
+  const [mx, my] = ecran(malo, 3.6), [rx, ry] = ecran(roger, 1.6);
+  const Bb = (x, y, txt, c, o) => bulle(clamp(x, 200, 860), clamp(y, 560, 1000), txt, c, o);
+  s += Bb(rx, ry, "WOUF !", "#ffffff", vis(t, P("nuit", 1.4), P("suit"), 0.2));
+  s += Bb(rx, ry, "GRRR…", "#ffffff", vis(t, P("stop", 0.2), P("bungalow", 1.0), 0.2));
+  s += Bb(mx, my, "C'EST QUOI ÇA ?!", "#ffffff", vis(t, P("bungalow", 0.6), P("numero"), 0.2));
+  s += Bb(mx, my, "WOW…", "#4fa3ff", vis(t, P("lac", 0.3), P("appartient"), 0.2));
+  s += Bb(mx, my, "150 000 ?!", "#ffffff", vis(t, P("tout"), P("doute"), 0.2));
+  s += titre(t) + hud(t) + etiquettes(t) + sondage(t) + carteArgent(t) + cartePlan(t) + carteLettre(t);
+  s += choix(t) + sousTitres(t);
+  for (const ft of FLASHS) { const o = 0.45 * clamp(1 - (t - ft) / 0.3); if (t >= ft && o > 0) s += `<rect width="1080" height="1920" fill="#ffffff" opacity="${o.toFixed(3)}"/>`; }
+  const oN = clamp(1 - Math.abs(t - P("lettre")) / 0.35); if (oN > 0) s += `<rect width="1080" height="1920" fill="#000" opacity="${oN.toFixed(3)}"/>`;
+  const oC = clamp(1 - Math.abs(t - P("choix")) / 0.3); if (oC > 0) s += `<rect width="1080" height="1920" fill="#000" opacity="${(oC * 0.8).toFixed(3)}"/>`;
+  s += carteFin(t);
+  document.getElementById("ui").innerHTML = s;
+}
+
+/* ---------- Bruitages ---------- */
+const EVENEMENTS = [];
+const ev = (t, type, d = 0) => { if (t >= 0) EVENEMENTS.push({ t: +t.toFixed(3), type, d }); };
+[2.5, P("argent"), P("plan", 1.4), P("mairie", -0.3), P("choix"), P("comment")].forEach((t) => ev(t, "pop"));
+ev(P("nuit", 1.4), "wouf"); ev(FP("gain"), "kaching");
+ev(P("porte", 0.6), "tampon"); ev(P("lac"), "ding"); ev(P("offre", 0.8), "kaching");
+ev(DUREE - 2.6, "fin");
+window.EVENEMENTS = EVENEMENTS;
+
+/* ---------- Rendu ---------- */
+let tPrec = 0;
+function rendre(t) {
+  const dt = Math.max(0, Math.min(0.1, t - tPrec)) || 1 / 30; tPrec = t;
+  ambiance(t); decor(t); animerMalo(t, dt); animerRoger(t, dt);
+  const c = plan(t), yc = 1.05 / c.z;
+  camera.zoom = c.z; camera.updateProjectionMatrix();
+  camera.position.set(c.x, yc + 7, 40); camera.lookAt(c.x, yc, 0);
+  fond.position.set(c.x, yc + 10, -90); etoiles.position.set(c.x * 0.9, 0, 0);
+  lune.position.set(c.x + 2.6 / c.z, yc + 5.5 / c.z, -80); lune.scale.setScalar(1 / c.z);
+  const j = jourDe(t); soleilDisque.position.set(c.x - 2.4 / c.z, yc + lerp(-3, 5.8, ease(j, 0.2, 0.8)) / c.z, -80); soleilDisque.scale.setScalar(1 / c.z); soleilDisque.visible = j > 0.75;
+  arriere.position.x = c.x * 0.35;
+  luneL.target.position.set(c.x, 0, 0); face.target.position.set(c.x, -2, 0); face.position.set(c.x, 2, 40); luneL.position.set(c.x - 8, 14, 12); soleil.target.position.set(c.x, 0, 0); soleil.position.set(c.x - 10, 14, 10);
+  renderer.render(scene, camera);
+  interface_(t);
+}
+window.rendre = rendre; window.DUREE = DUREE;
+await document.fonts.ready;
+window.pret = true;
+if (!location.search.includes("rendu")) {
+  rendre(0.3);
+  const voix = document.getElementById("voix"), btn = document.getElementById("lecture");
+  btn.onclick = () => { btn.remove(); voix.currentTime = 0; voix.play().catch(() => {}); const d0 = performance.now();
+    const boucle = () => { const t = (performance.now() - d0) / 1000; rendre(Math.min(t, DUREE)); if (t < DUREE) requestAnimationFrame(boucle); }; requestAnimationFrame(boucle); };
+} else document.body.classList.add("rendu");
+</script>
+</body>
+</html>
