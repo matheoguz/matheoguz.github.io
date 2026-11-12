@@ -55,11 +55,17 @@ Tenir à jour après chaque épisode : budget, jours, familles, ce qui est fait,
 | Après | Budget | Jours | Familles | Fait |
 |---|---|---|---|---|
 | Épisode 1 | 19 000 € | 99 | 0 / 50 | route, eau, 4 mobil-homes |
-| Épisode 2 | 400 € | 93 | 0 / 50 | piscine réparée et remplie (vote), groupe électrogène loué 600 €/semaine (le vieux tableau saute ; tableau neuf = 12 000 €, à faire plus tard) |
+| Épisode 2 (v2) | 4 185 € | 93 | 0 / 50 | piscine réparée et remplie (vote) |
+| Épisode 3 | 4 328 € | 93 | 0 / 50 | bungalow 13 et lac privé de 3 ha trouvés ; la mairie offre 150 000 € pour le lac |
+| Épisode 4 | 984 € | 83 | 1 / 50 | lac gardé (vote 96 %) ; inspection imposée par le maire : barrière piscine 2 000, 10 extincteurs 600, 12 bornes solaires 900 ; baignade au lac interdite sans surveillance ; 1re famille |
+| (ancienne v1) Épisode 2 | 400 € | 93 | 0 / 50 | piscine réparée et remplie (vote), groupe électrogène loué 600 €/semaine (le vieux tableau saute ; tableau neuf = 12 000 €, à faire plus tard) |
 
 ## Votes du public
 - Épisode 1 → **piscine** (premier commentaire : Ilya, « Piscine », montré dans l'épisode 2).
-- Épisode 2 → petit prix ou plein tarif : en attente.
+- Épisode 2 (v2) → trouver le bungalow 13 (82 %, 76 votes).
+- Épisode 3 → garder le lac (96 %, 90 votes).
+- Épisode 4 → maître-nageur (2 000 €/mois) ou pêche & pédalos : en attente.
+- Chaque épisode commence par le rappel : camping cédé pour 1 € symbolique, 50 familles en 120 jours, sinon la mairie le reprend.
 
 ## Style (à garder)
 Vue de côté, sol en coupe, compteurs sombres sous la barre de TikTok (y ≈ 340), cartes « cahier », sous-titres blancs taille 52 avec contour, pas de zoom ni secousse, bruitages discrets, voix ElevenLabs « Hugo » accélérée de 10 %.
