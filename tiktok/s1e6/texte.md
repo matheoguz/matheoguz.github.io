@@ -6,6 +6,7 @@ Les chiffres (likes, abonnés, budget) et les pseudos des 3 commentaires sont se
 [excited] J'ai ouvert la caisse du lac.
 [fast] Rappel : un camping pour un euro. Cinquante familles en cent vingt jours, sinon la mairie le récupère.
 Vous avez voté camping-car : le premier emplacement est construit !
+Il s'appelle « Les Fougères », merci Nohlann ! Yaya et Rem, vos panneaux sont posés.
 [serious] Bon. La caisse treize.
 On coupe la chaîne. [pause] Le couvercle grince…
 [whispers] Dedans, une vieille clé. Et un plan du camping.
@@ -21,3 +22,8 @@ Et abonne-toi : chaque abonné, c'est un euro de plus pour sauver le camping.
 
 ## Chiffres (écran seulement)
 Vote ép. 5 : camping-car 55 % (20 votes). Ép. 5 : 36 likes + 3 nouveaux abonnés (233 − 230) = +39 € → 1 703 €. Emplacement camping-car −1 200 € → 503 €. Jour 80. Familles 4/50.
+
+## Les 3 premiers commentaires (ép. 5, dans l'ordre)
+1. Nohlann_T : « L'emplacement Fougères » → emplacement construit « LES FOUGÈRES ».
+2. Rem.tlk : un bungalow + ouvrir un petit resto → panneau « CHEZ REM » (idée resto à garder pour un épisode).
+3. nes.yaya : « Mobil home nommé Yaya » → panneau « YAYA » (le futur mobil-home).
