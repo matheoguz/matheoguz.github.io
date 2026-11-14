@@ -5,8 +5,7 @@ Les chiffres (likes, abonnés, budget) et les pseudos des 3 commentaires sont se
 
 [excited] J'ai ouvert la caisse du lac.
 [fast] Rappel : un camping pour un euro. Cinquante familles en cent vingt jours, sinon la mairie le récupère.
-(VARIANTE A) Vous avez voté camping-car : le premier emplacement est construit !
-(VARIANTE B) Vous avez voté mobil-home : neuf mille euros… on commence à économiser.
+Vous avez voté camping-car : le premier emplacement est construit !
 [serious] Bon. La caisse treize.
 On coupe la chaîne. [pause] Le couvercle grince…
 [whispers] Dedans, une vieille clé. Et un plan du camping.
@@ -19,3 +18,6 @@ Et au-dessus du lac, écrit en gros : « Parking. Deux mille vingt-sept. »
 [calm] « Je vois que tu as trouvé ma caisse. »
 [excited] Je lui rends, ou je la garde ? Écris « rendre » ou « garder ».
 Et abonne-toi : chaque abonné, c'est un euro de plus pour sauver le camping.
+
+## Chiffres (écran seulement)
+Vote ép. 5 : camping-car 55 % (20 votes). Ép. 5 : 36 likes + 3 nouveaux abonnés (233 − 230) = +39 € → 1 703 €. Emplacement camping-car −1 200 € → 503 €. Jour 80. Familles 4/50.
