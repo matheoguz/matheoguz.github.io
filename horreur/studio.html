@@ -33,10 +33,13 @@
   <small id="info"></small>
 </div>
 <small>Aperçu sans son. La vidéo finale (avec son) est rendue par <code>render.mjs</code>.</small>
+<script src="monstres-art.js"></script>
+<script src="persos.js"></script>
+<script src="decors.js"></script>
 <script>
 const W = 1080, H = 1920;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
-const EPISODES = ['ep01-wendigo'];
+const EPISODES = ['ep02-hasshaku', 'ep01-wendigo'];
 let EP = null, BIBLE = null, TIMELINE = [], DUR = 0;
 const FONT = '"Anton", "Inter Display", Impact, sans-serif';
 
@@ -293,7 +296,7 @@ function croque(x, y, s, t) {
   ctx.restore();
 }
 const MONSTRES = { wendigo, mothman, skinwalker, dame_blanche: dameBlanche, croque_mitaine: croque };
-const ORDRE = ['mothman', 'skinwalker', 'croque_mitaine', 'dame_blanche', 'wendigo', 'mothman', 'skinwalker', 'croque_mitaine', 'dame_blanche', 'wendigo', 'mothman', 'skinwalker'];
+const ORDRE = ['skinwalker', 'mothman', 'rake', 'hasshaku', 'kuchisake', 'bloody_mary', 'teke_teke', 'enfants_yeux_noirs', 'wendigo', 'vampire', 'loup_garou', 'krampus', 'skinwalker', 'mothman', 'rake', 'hasshaku', 'kuchisake'];
 
 // ---------- plans spéciaux (identité LE BESTIAIRE) ----------
 const AMBRE = '#f2a93b', ENCRE = '#0e1116', PARCH = '#efe2c2';
@@ -310,7 +313,7 @@ function pageMonstre(x0, nom, t) {
   ctx.save(); ctx.beginPath(); ctx.rect(x0, 760, 430, 640); ctx.clip();
   ctx.fillStyle = PARCH; ctx.fillRect(x0, 760, 430, 640);
   ctx.strokeStyle = '#c9b48a'; ctx.lineWidth = 3; ctx.strokeRect(x0 + 24, 784, 382, 592);
-  if (nom) { MONSTRES[nom](x0 + 215, 1300, .48, t, false);
+  if (nom) { const art = window.BESTIAIRE_ART[nom]; if (art) { const k = Math.min(500 / art.hauteur, art.large ? 380 / (art.largeur || 1000) : 1); ctx.save(); ctx.translate(x0 + 215, 1310); ctx.scale(k, k); art.dessin(ctx, t, {}); ctx.restore(); }
     ctx.fillStyle = '#3a2a16'; ctx.font = `44px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText((BIBLE.monstres[nom] || {nom: ''}).nom, x0 + 215, 1360); }
   ctx.restore();
 }
@@ -402,9 +405,19 @@ window.renderAt = function (t) {
     const z = p.zoom ? lerp(p.zoom[0], p.zoom[1], ease(k)) : 1; secousse = (p.secousse || 0) * (lt < .5 ? 18 : 3);
     ctx.save(); ctx.translate(540, 1100); ctx.scale(z, z); ctx.translate(-540, -1100);
     if (secousse) ctx.translate(Math.sin(lt * 60) * secousse, Math.cos(lt * 47) * secousse);
+    if (p.decor) {
+      const D = window.DECORS[p.decor]; D.fond(ctx, lt, p);
+      const m = p.monstre; if (m) { const art = window.BESTIAIRE_ART[m.id]; const x = m.x0 != null ? lerp(m.x0, m.x, clamp(lt / (m.duree || d))) : m.x;
+        const a = clamp((lt - (m.apparait || 0)) / (m.fondu || .6)); if (a > 0) { ctx.save(); if (m.clipBas) { ctx.beginPath(); ctx.rect(0, 0, W, m.clipBas); ctx.clip(); } ctx.globalAlpha = a * (m.alpha ?? 1); ctx.translate(x, m.y); ctx.scale(m.echelle, m.echelle); art.dessin(ctx, lt, m); ctx.restore(); } }
+      if (D.avant && D.sousHumains) D.avant(ctx, lt, p);
+      (p.humains || []).forEach(o => window.HUMAIN(ctx, EP.persos[o.id], o, lt));
+      if (D.avant && !D.sousHumains) D.avant(ctx, lt, p);
+      if (p.voile) { ctx.fillStyle = `rgba(5,8,20,${p.voile})`; ctx.fillRect(0, 0, W, H); }
+    } else {
     SCENES[p.scene](lt, p);
     (p.persos || []).forEach(o => perso(EP.persos[o.id], o, lt + (o.x || 0) * .001));
     if (p.scene !== 'refuge_int' && p.scene !== 'porte' && p.scene !== 'fenetre') neige(lt + t, 90, 21, .85);
+    }
     ctx.restore();
     if (p.type === 'mot') carteMot(lt, p.mot);
     if (p.type === 'regle') carteRegle(lt, p);
@@ -418,7 +431,7 @@ window.renderAt = function (t) {
 };
 // liste des sons pour le rendu (temps en secondes)
 window.cues = function () { const c = []; let a = 0; for (const p of TIMELINE) { if (p.type === 'roulette') { const sp = p.dur - 2.2; for (let i = 0; i < 26; i++) { const tt = sp * (1 - Math.pow(1 - i / 26, 1 / 3)) ; c.push({ t: a + tt * .98, son: 'tic' }); } c.push({ t: a + sp, son: 'choc' }); }
-  if (p.son) c.push({ t: a + .1, son: p.son }); if (p.type === 'regle' || p.type === 'mot') c.push({ t: a + .05, son: 'woosh' }); if (p.type === 'fin') c.push({ t: a, son: 'choc' }); a += p.dur; } return c; };
+  if (p.son) c.push({ t: a + .1, son: p.son }); (p.sons || []).forEach(x => c.push({ t: a + x.t, son: x.son, dur: x.dur, vol: x.vol })); if (p.type === 'regle' || p.type === 'mot') c.push({ t: a + .05, son: 'woosh' }); if (p.type === 'fin') c.push({ t: a, son: 'choc' }); a += p.dur; } return c; };
 
 // ---------- chargement + lecteur ----------
 async function charger(id) {

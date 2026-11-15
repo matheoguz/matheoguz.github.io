@@ -1,0 +1,494 @@
+{
+ "id": "ep02-hasshaku",
+ "titre": "La quatrième statue",
+ "numero": 2,
+ "monstre": "hasshaku",
+ "persos": {
+  "leo": {
+   "nom": "Léo",
+   "peau": "#f0cfb0",
+   "cheveux": "#4a3020",
+   "coiffure": "court",
+   "tenue": "tshirt",
+   "haut": "#e07a34",
+   "motif": "#f6e1c4",
+   "bas": "#2f4a6a",
+   "chaussures": "#f2f2f2",
+   "sac": "#3a6aa0",
+   "taille": 0.9
+  },
+  "papi": {
+   "nom": "Papi Kenji",
+   "peau": "#e3b892",
+   "cheveux": "#d8d8d8",
+   "coiffure": "degarni",
+   "tenue": "polo",
+   "haut": "#5e6e52",
+   "bas": "#45454e",
+   "lunettes": true,
+   "taille": 0.96
+  },
+  "mamie": {
+   "nom": "Mamie Haru",
+   "peau": "#e8c09a",
+   "cheveux": "#cfcfcf",
+   "coiffure": "chignon",
+   "tenue": "kimono",
+   "haut": "#3c4f6e",
+   "bas": "#2e3d56",
+   "obi": "#9a3a2a",
+   "taille": 0.9
+  }
+ },
+ "plans": [
+  {
+   "type": "roulette",
+   "dur": 6.5,
+   "choix": "hasshaku"
+  },
+  {
+   "decor": "campagne",
+   "tag": "JAPON · VILLAGE DE KAMIYA · 14:00",
+   "dur": 5,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "cigales",
+     "dur": 13.5
+    }
+   ],
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1800,
+     "echelle": 0.85,
+     "pose": "sac",
+     "expr": "neutre"
+    }
+   ],
+   "texte": "Léo passe l'été chez ses grands-parents, au fond du Japon."
+  },
+  {
+   "decor": "jizo",
+   "tag": "ENTRÉE DU VILLAGE · 14:05",
+   "dur": 4.5,
+   "zoom": [
+    1,
+    1.12
+   ],
+   "casse": 3,
+   "texte": "À l'entrée du village : quatre statues de pierre. Une est cassée."
+  },
+  {
+   "decor": "haie",
+   "tag": "JARDIN · 16:30",
+   "dur": 4.4,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "monstre": {
+    "id": "hasshaku",
+    "x0": 1250,
+    "x": 300,
+    "y": 1800,
+    "echelle": 0.75,
+    "clipBas": 905,
+    "duree": 9
+   },
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1900,
+     "echelle": 0.95,
+     "dos": true
+    }
+   ],
+   "texte": "Derrière la haie, un grand chapeau blanc glisse lentement."
+  },
+  {
+   "decor": "haie",
+   "tag": "JARDIN · 16:30",
+   "dur": 3,
+   "zoom": [
+    1.1,
+    1.18
+   ],
+   "monstre": {
+    "id": "hasshaku",
+    "x0": 520,
+    "x": 420,
+    "y": 1800,
+    "echelle": 0.75,
+    "clipBas": 905
+   },
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1900,
+     "echelle": 0.95,
+     "dos": true
+    }
+   ],
+   "texte": "La haie fait deux mètres."
+  },
+  {
+   "decor": "haie",
+   "tag": "JARDIN · 16:31",
+   "dur": 3.8,
+   "zoom": [
+    1.2,
+    1.32
+   ],
+   "secousse": 0.3,
+   "sons": [
+    {
+     "t": 0.3,
+     "son": "po"
+    }
+   ],
+   "monstre": {
+    "id": "hasshaku",
+    "x": 420,
+    "y": 1800,
+    "echelle": 0.75,
+    "clipBas": 905
+   },
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1900,
+     "echelle": 0.95,
+     "dos": true
+    }
+   ],
+   "texte": "Et une voix grave fait : « po… po… po… »"
+  },
+  {
+   "decor": "salon",
+   "tag": "MAISON · 19:00",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "baguettes": true,
+   "sons": [
+    {
+     "t": 2.3,
+     "son": "baguettes"
+    }
+   ],
+   "humains": [
+    {
+     "id": "papi",
+     "x": 270,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "choc"
+    },
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "parle"
+    },
+    {
+     "id": "mamie",
+     "x": 810,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "peur"
+    }
+   ],
+   "texte": "Au dîner, il en parle. Papi lâche ses baguettes."
+  },
+  {
+   "type": "regle",
+   "decor": "salon",
+   "nuit": true,
+   "tag": "MAISON · 19:01",
+   "dur": 5.2,
+   "titre": "FICHE DU MONSTRE",
+   "humains": [
+    {
+     "id": "papi",
+     "x": 270,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "peur"
+    },
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "inquiet"
+    },
+    {
+     "id": "mamie",
+     "x": 810,
+     "y": 1640,
+     "echelle": 0.8,
+     "pose": "assis",
+     "expr": "peur"
+    }
+   ],
+   "regle": "Elle mesure 2,40 mètres.\nElle choisit un enfant.\nElle imite les voix qu'il aime.",
+   "texte": ""
+  },
+  {
+   "decor": "chambre",
+   "tag": "CHAMBRE DU HAUT · 21:00",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.04
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "nuit",
+     "dur": 30
+    }
+   ],
+   "humains": [
+    {
+     "id": "mamie",
+     "x": 330,
+     "y": 1760,
+     "echelle": 0.85,
+     "expr": "inquiet",
+     "pose": "pointe"
+    },
+    {
+     "id": "leo",
+     "x": 720,
+     "y": 1760,
+     "echelle": 0.85,
+     "expr": "inquiet"
+    }
+   ],
+   "texte": "Cette nuit, Léo dort dans une pièce fermée. Du sel dans les quatre coins."
+  },
+  {
+   "decor": "chambre",
+   "tag": "CHAMBRE DU HAUT · 21:02",
+   "dur": 4.2,
+   "zoom": [
+    1.08,
+    1.16
+   ],
+   "humains": [
+    {
+     "id": "mamie",
+     "x": 540,
+     "y": 1800,
+     "echelle": 0.95,
+     "expr": "parle"
+    }
+   ],
+   "texte": "« N'ouvre à personne avant le matin. À personne. »"
+  },
+  {
+   "decor": "chambre",
+   "tag": "CHAMBRE DU HAUT · 02:13",
+   "dur": 3.6,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "sons": [
+    {
+     "t": 0.5,
+     "son": "toc"
+    }
+   ],
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1760,
+     "echelle": 0.85,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": -1
+    }
+   ],
+   "texte": "À 2 heures, on frappe à la fenêtre."
+  },
+  {
+   "decor": "fenetre",
+   "tag": "CHAMBRE DU HAUT · FENÊTRE",
+   "dur": 4.4,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "toc": true,
+   "sons": [
+    {
+     "t": 0.2,
+     "son": "voix_papi"
+    }
+   ],
+   "texte": "« Léo ? C'est papi. Tu peux m'ouvrir ? »"
+  },
+  {
+   "decor": "chambre",
+   "tag": "CHAMBRE DU HAUT · 02:14",
+   "dur": 4.4,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "selNoir": 1,
+   "selDebut": 1.2,
+   "sons": [
+    {
+     "t": 1.2,
+     "son": "grésillement"
+    }
+   ],
+   "humains": [
+    {
+     "id": "leo",
+     "x": 540,
+     "y": 1760,
+     "echelle": 0.85,
+     "expr": "inquiet",
+     "pose": "recule"
+    }
+   ],
+   "texte": "Il se lève… et voit le sel devenir noir."
+  },
+  {
+   "decor": "fenetre",
+   "tag": "CHAMBRE DU HAUT · FENÊTRE",
+   "dur": 3.6,
+   "zoom": [
+    1,
+    1.22
+   ],
+   "ombre": true,
+   "ombreDebut": 0.3,
+   "main": true,
+   "secousse": 0.6,
+   "sons": [
+    {
+     "t": 0.3,
+     "son": "choc"
+    },
+    {
+     "t": 1.2,
+     "son": "po"
+    }
+   ],
+   "texte": "Papi mesure 1 mètre 60."
+  },
+  {
+   "decor": "chambre",
+   "tag": "CHAMBRE DU HAUT · 02:15",
+   "dur": 3.2,
+   "selDeja": true,
+   "silhouette": 0.9,
+   "zoom": [
+    1.05,
+    1.12
+   ],
+   "humains": [
+    {
+     "id": "leo",
+     "x": 760,
+     "y": 1800,
+     "echelle": 0.85,
+     "pose": "assis",
+     "expr": "peur"
+    }
+   ],
+   "texte": "Il ne bouge plus jusqu'au matin."
+  },
+  {
+   "decor": "voiture",
+   "tag": "ROUTE DU VILLAGE · 05:50",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.04
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "voiture",
+     "dur": 9.5
+    }
+   ],
+   "texte": "À l'aube, ils partent en voiture. « Surtout, ne regarde pas dehors. »"
+  },
+  {
+   "decor": "voiture",
+   "tag": "ROUTE DU VILLAGE · 05:52",
+   "dur": 2.2,
+   "zoom": [
+    1.1,
+    1.18
+   ],
+   "voile": 0.1,
+   "texte": "Léo regarde."
+  },
+  {
+   "decor": "voiture",
+   "tag": "ROUTE DU VILLAGE · 05:52",
+   "dur": 2.8,
+   "zoom": [
+    1.18,
+    1.25
+   ],
+   "visage": 0.25,
+   "secousse": 1.2,
+   "sons": [
+    {
+     "t": 0.25,
+     "son": "cri"
+    }
+   ],
+   "texte": "« po. »"
+  },
+  {
+   "decor": "jizo",
+   "tag": "ENTRÉE DU VILLAGE · AUJOURD'HUI",
+   "soir": true,
+   "casse": 3,
+   "dur": 4.4,
+   "zoom": [
+    1.12,
+    1
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "souffle"
+    }
+   ],
+   "texte": "Personne n'a jamais réparé la quatrième statue."
+  },
+  {
+   "type": "fin",
+   "dur": 3.4
+  }
+ ]
+}
