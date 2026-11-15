@@ -1,0 +1,326 @@
+{
+ "id": "ep01-wendigo",
+ "titre": "Le refuge du lac gelé",
+ "numero": 1,
+ "monstre": "wendigo",
+ "persos": {
+  "ines": {
+   "nom": "Inès",
+   "peau": "#e9b98f",
+   "cheveux": "#3b2417",
+   "long": true,
+   "veste": "#6d4bb3",
+   "bonnet": null
+  },
+  "tom": {
+   "nom": "Tom",
+   "peau": "#f1c9a5",
+   "cheveux": "#d9a441",
+   "long": false,
+   "veste": "#2f8f5b",
+   "bonnet": "#9aa3ad"
+  }
+ },
+ "plans": [
+  {
+   "type": "roulette",
+   "dur": 6.5,
+   "choix": "wendigo"
+  },
+  {
+   "scene": "lac",
+   "tag": "LAC GELÉ · 22:40",
+   "dur": 4.2,
+   "zoom": [
+    1,
+    1.08
+   ],
+   "props": [
+    "motoneige"
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 380,
+     "expr": "inquiet"
+    },
+    {
+     "id": "tom",
+     "x": 700,
+     "expr": "neutre"
+    }
+   ],
+   "texte": "La motoneige vient de caler. Au milieu du lac."
+  },
+  {
+   "scene": "lac",
+   "tag": "LAC GELÉ · 22:52",
+   "dur": 3.8,
+   "zoom": [
+    1.05,
+    1.15
+   ],
+   "refuge_loin": true,
+   "persos": [
+    {
+     "id": "ines",
+     "x": 400,
+     "y": 1820,
+     "dos": true,
+     "marche": true,
+     "echelle": 0.72
+    },
+    {
+     "id": "tom",
+     "x": 680,
+     "y": 1820,
+     "dos": true,
+     "marche": true,
+     "echelle": 0.72
+    }
+   ],
+   "texte": "Il fait moins vingt. Un refuge, au loin."
+  },
+  {
+   "scene": "refuge_ext",
+   "tag": "REFUGE · 23:10",
+   "dur": 3.2,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 430,
+     "expr": "neutre",
+     "echelle": 0.7
+    },
+    {
+     "id": "tom",
+     "x": 640,
+     "expr": "neutre",
+     "echelle": 0.7
+    }
+   ],
+   "texte": "La porte n'est même pas fermée."
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · SALLE",
+   "dur": 3.2,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 360,
+     "expr": "neutre"
+    },
+    {
+     "id": "tom",
+     "x": 720,
+     "expr": "neutre"
+    }
+   ],
+   "texte": "Sur la table, un vieux carnet."
+  },
+  {
+   "type": "mot",
+   "scene": "refuge_int",
+   "tag": "REFUGE · SALLE",
+   "dur": 3.8,
+   "mot": "Laissez toujours une assiette dehors. Toujours.",
+   "texte": "Laissez une assiette dehors."
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · SALLE",
+   "dur": 3.4,
+   "zoom": [
+    1.05,
+    1.12
+   ],
+   "persos": [
+    {
+     "id": "tom",
+     "x": 540,
+     "expr": "rire"
+    }
+   ],
+   "texte": "Tom rigole. Ils mangent tout."
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · 00:00",
+   "dur": 3.6,
+   "sombre": true,
+   "son": "gratte",
+   "zoom": [
+    1,
+    1.04
+   ],
+   "secousse": 0.4,
+   "persos": [
+    {
+     "id": "ines",
+     "x": 360,
+     "expr": "peur"
+    },
+    {
+     "id": "tom",
+     "x": 720,
+     "expr": "peur"
+    }
+   ],
+   "texte": "À minuit, on gratte à la porte."
+  },
+  {
+   "scene": "porte",
+   "tag": "REFUGE · PORTE",
+   "dur": 4.2,
+   "sombre": true,
+   "zoom": [
+    1,
+    1.18
+   ],
+   "texte": "Une voix très douce : « Bonsoir. J'ai faim. »"
+  },
+  {
+   "type": "regle",
+   "scene": "porte",
+   "tag": "REFUGE · PORTE",
+   "dur": 4.6,
+   "titre": "FICHE DU MONSTRE",
+   "regle": "Il est très poli.\nIl n'entre jamais de force.\nIl compte ceux qui sont dedans.",
+   "texte": ""
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · 00:04",
+   "dur": 3.6,
+   "sombre": true,
+   "zoom": [
+    1.1,
+    1.2
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 540,
+     "expr": "peur"
+    }
+   ],
+   "texte": "Puis il compte. « Un… deux… »"
+  },
+  {
+   "scene": "fenetre",
+   "tag": "REFUGE · FENÊTRE",
+   "dur": 3.4,
+   "sombre": true,
+   "son": "choc",
+   "zoom": [
+    1,
+    1.25
+   ],
+   "secousse": 1,
+   "monstre": {
+    "apparait": 0.6
+   },
+   "texte": "« …trois. »"
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · 00:05",
+   "dur": 3.2,
+   "sombre": true,
+   "zoom": [
+    1.15,
+    1.1
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 360,
+     "expr": "peur"
+    },
+    {
+     "id": "tom",
+     "x": 720,
+     "expr": "peur"
+    }
+   ],
+   "texte": "Ils ne sont que deux."
+  },
+  {
+   "scene": "refuge_int",
+   "tag": "REFUGE · 00:07",
+   "dur": 4.2,
+   "sombre": true,
+   "zoom": [
+    1,
+    1.07
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 540,
+     "expr": "inquiet",
+     "objet": "chocolat"
+    }
+   ],
+   "texte": "Inès pose sa dernière barre de chocolat dehors."
+  },
+  {
+   "scene": "refuge_ext",
+   "tag": "REFUGE · 00:09",
+   "dur": 3,
+   "zoom": [
+    1.05,
+    1
+   ],
+   "texte": "Le grattement s'arrête."
+  },
+  {
+   "scene": "refuge_ext",
+   "tag": "REFUGE · 07:30",
+   "aube": true,
+   "dur": 3.6,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "persos": [
+    {
+     "id": "ines",
+     "x": 430,
+     "expr": "inquiet",
+     "echelle": 0.7
+    },
+    {
+     "id": "tom",
+     "x": 640,
+     "expr": "inquiet",
+     "echelle": 0.7
+    }
+   ],
+   "texte": "Au matin, l'assiette est revenue. Avec un mot."
+  },
+  {
+   "type": "mot",
+   "scene": "refuge_ext",
+   "aube": true,
+   "tag": "REFUGE · 07:31",
+   "dur": 4.8,
+   "son": "choc",
+   "mot": "Merci. Je reviens l'hiver prochain.\nLe troisième, je le garde.",
+   "texte": "Le troisième, je le garde."
+  },
+  {
+   "type": "fin",
+   "dur": 3.2
+  }
+ ]
+}

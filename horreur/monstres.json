@@ -1,0 +1,53 @@
+{
+  "_regle": "Chaque monstre a SA personnalité, SA façon de chasser et SA faiblesse. Une histoire ne se refait jamais : avant d'écrire, vérifier 'histoires_faites' et la liste 'interdit' (lieux, twists et règles déjà utilisés).",
+  "monstres": {
+    "wendigo": {
+      "nom": "WENDIGO", "surnom": "L'AFFAMÉ POLI",
+      "origine": "Légende algonquienne (Canada, nord des États-Unis)",
+      "personnalite": "Très poli, presque gentil. Dit toujours bonsoir et merci. Il a faim depuis des siècles et il ne ment jamais : il prévient avant de manger.",
+      "chasse": "Il compte les gens à l'intérieur. S'il compte un de plus que vous n'êtes, c'est qu'il est déjà entré.",
+      "faiblesse": "Le partage. Celui qui lui donne sa dernière part est épargné… cette année.",
+      "voix": "douce, lente, polie",
+      "histoires_faites": ["ep01 — Le refuge du lac gelé (motoneige en panne, assiette dehors, il compte jusqu'à trois)"]
+    },
+    "mothman": {
+      "nom": "MOTHMAN", "surnom": "LE MESSAGER",
+      "origine": "Point Pleasant, Virginie-Occidentale, 1966",
+      "personnalite": "Ne fait jamais de mal lui-même. Il apparaît avant les catastrophes. Il est triste, il essaie de prévenir, mais personne ne comprend.",
+      "chasse": "Il ne chasse pas : il suit. Ses yeux rouges apparaissent 3 nuits avant le drame.",
+      "faiblesse": "Comprendre son message à temps.",
+      "voix": "aucune — seulement un bruit d'ailes et un grésillement radio",
+      "histoires_faites": []
+    },
+    "skinwalker": {
+      "nom": "SKINWALKER", "surnom": "LE CHANGEUR DE PEAU",
+      "origine": "Folklore navajo (sud-ouest des États-Unis)",
+      "personnalite": "Joueur, moqueur, il adore les imitations. Il s'ennuie vite et fait des erreurs exprès pour voir si on les remarque.",
+      "chasse": "Il prend l'apparence de quelqu'un de proche, mais il se trompe toujours d'un détail.",
+      "faiblesse": "Être appelé par son vrai nom.",
+      "voix": "celle de quelqu'un que tu aimes, un peu trop parfaite",
+      "histoires_faites": [],
+      "interdit": ["chalet + 'n'ouvrez pas la porte' + imitation de voix (déjà vu chez d'autres comptes)"]
+    },
+    "dame_blanche": {
+      "nom": "DAME BLANCHE", "surnom": "L'AUTO-STOPPEUSE",
+      "origine": "Légendes des routes de France et de Belgique",
+      "personnalite": "Calme, mélancolique, elle veut juste rentrer chez elle. Elle se met en colère seulement si on lui ment.",
+      "chasse": "Elle fait du stop la nuit. Une fois montée, elle crie « Attention au virage ! » puis disparaît.",
+      "faiblesse": "La ramener vraiment jusqu'à sa maison.",
+      "voix": "fatiguée, froide",
+      "histoires_faites": []
+    },
+    "croque_mitaine": {
+      "nom": "CROQUE-MITAINE", "surnom": "LE COLLECTIONNEUR",
+      "origine": "Folklore européen",
+      "personnalite": "Maniaque et ordonné. Il collectionne une chose précise de chaque enfant (une chaussette, une dent, un rire). Il déteste le désordre.",
+      "chasse": "Il vit dans les placards mal fermés et les dessous de lit en bazar.",
+      "faiblesse": "Une chambre parfaitement rangée. Il ne peut pas y entrer.",
+      "voix": "un chuchotement qui compte des objets",
+      "histoires_faites": []
+    }
+  },
+  "lieux_deja_utilises": ["lac gelé + refuge (ep01)"],
+  "twists_deja_utilises": ["il compte une personne de trop (ep01)"]
+}
