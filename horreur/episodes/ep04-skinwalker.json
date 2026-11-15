@@ -1,0 +1,408 @@
+{
+ "id": "ep04-skinwalker",
+ "titre": "Le ranch",
+ "format": "survie",
+ "numero": 1,
+ "monstre": "skinwalker",
+ "persos": {
+  "toi": {
+   "nom": "Toi",
+   "peau": "#e6c2a0",
+   "cheveux": "#2a1d14",
+   "coiffure": "court",
+   "tenue": "polo",
+   "haut": "#2b3550",
+   "bas": "#1d2230",
+   "taille": 1
+  }
+ },
+ "plans": [
+  {
+   "type": "roulette",
+   "dur": 6.5,
+   "choix": "skinwalker",
+   "annonce": "TU DOIS SURVIVRE JUSQU'À 6H"
+  },
+  {
+   "decor": "sw_route",
+   "heure": "22:47",
+   "lieu": "ARIZONA · ROUTE DU RANCH",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "drone",
+     "dur": 71
+    },
+    {
+     "t": 0,
+     "son": "moteur",
+     "dur": 9
+    }
+   ],
+   "texte": "Tu rentres seul au ranch. La route coupe la forêt."
+  },
+  {
+   "decor": "sw_route",
+   "heure": "22:49",
+   "lieu": "ARIZONA · ROUTE DU RANCH",
+   "dur": 4.4,
+   "zoom": [
+    1,
+    1.3
+   ],
+   "figure": {
+    "x": 850,
+    "y": 1250,
+    "echelle": 0.3,
+    "apparait": 1.1
+   },
+   "sons": [
+    {
+     "t": 1.1,
+     "son": "stinger"
+    }
+   ],
+   "texte": "Sur le bord, un coyote… debout sur deux pattes."
+  },
+  {
+   "decor": "sw_ranch",
+   "heure": "23:02",
+   "lieu": "LE RANCH",
+   "dur": 4.2,
+   "zoom": [
+    1,
+    1.08
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "nuit",
+     "dur": 14
+    }
+   ],
+   "texte": "Au ranch, tout est éteint. Maman est en ville."
+  },
+  {
+   "type": "regle",
+   "decor": "sw_ranch",
+   "heure": "23:03",
+   "lieu": "LE RANCH",
+   "voile": 0.45,
+   "dur": 4.8,
+   "titre": "RÈGLE N°1",
+   "regle": "Il imite les voix.\nMais il se trompe\ntoujours d'un détail.",
+   "texte": ""
+  },
+  {
+   "decor": "sw_salon",
+   "heure": "23:40",
+   "lieu": "LE RANCH · SALON",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.04
+   ],
+   "sons": [
+    {
+     "t": 0.6,
+     "son": "vibre"
+    }
+   ],
+   "humains": [
+    {
+     "id": "toi",
+     "x": 540,
+     "y": 1810,
+     "echelle": 0.9,
+     "dos": true,
+     "pose": "assis"
+    }
+   ],
+   "telephone": {
+    "contact": "Maman ❤️",
+    "messages": [
+     {
+      "de": "elle",
+      "texte": "Je rentre tard mon cœur, ne m'attends pas 😘",
+      "t": 0.6,
+      "heure": "23:40"
+     }
+    ]
+   },
+   "texte": ""
+  },
+  {
+   "decor": "sw_salon",
+   "heure": "00:13",
+   "lieu": "LE RANCH · SALON",
+   "dur": 3.8,
+   "zoom": [
+    1,
+    1.12
+   ],
+   "filet": true,
+   "ombresPieds": true,
+   "sons": [
+    {
+     "t": 0.4,
+     "son": "toc"
+    }
+   ],
+   "humains": [
+    {
+     "id": "toi",
+     "x": 540,
+     "y": 1810,
+     "echelle": 0.9,
+     "dos": true,
+     "pose": "assis"
+    }
+   ],
+   "texte": "00:13. On frappe à la porte."
+  },
+  {
+   "decor": "sw_porte",
+   "heure": "00:13",
+   "lieu": "LE RANCH · ENTRÉE",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "toc": true,
+   "ombresPieds": true,
+   "sons": [
+    {
+     "t": 0.3,
+     "son": "voix"
+    }
+   ],
+   "texte": "« Mon chéri, c'est maman. J'ai oublié mes clés. »"
+  },
+  {
+   "decor": "sw_porte",
+   "heure": "00:14",
+   "lieu": "LE RANCH · ENTRÉE",
+   "dur": 4.8,
+   "zoom": [
+    1.1,
+    1.18
+   ],
+   "ombresPieds": true,
+   "choix": {
+    "question": "TU OUVRES ?",
+    "options": [
+     "OUI",
+     "NON"
+    ],
+    "choisi": 1,
+    "t": 0.2,
+    "tChoix": 2.0
+   },
+   "sons": [
+    {
+     "t": 2.0,
+     "son": "tic"
+    }
+   ],
+   "texte": "Maman ne t'appelle jamais « mon chéri »."
+  },
+  {
+   "decor": "sw_salon",
+   "heure": "00:14",
+   "lieu": "LE RANCH · SALON",
+   "dur": 5,
+   "voile": 0.3,
+   "sons": [
+    {
+     "t": 0.8,
+     "son": "vibre"
+    },
+    {
+     "t": 2.4,
+     "son": "stinger"
+    }
+   ],
+   "humains": [
+    {
+     "id": "toi",
+     "x": 540,
+     "y": 1810,
+     "echelle": 0.9,
+     "dos": true,
+     "pose": "assis"
+    }
+   ],
+   "telephone": {
+    "contact": "Maman ❤️",
+    "messages": [
+     {
+      "de": "elle",
+      "texte": "Je rentre tard mon cœur, ne m'attends pas 😘",
+      "heure": "23:40"
+     },
+     {
+      "de": "elle",
+      "texte": "Finalement je dors chez tata. Tout va bien à la maison ?",
+      "t": 0.8,
+      "heure": "00:14"
+     }
+    ]
+   },
+   "texte": ""
+  },
+  {
+   "decor": "sw_fenetre",
+   "heure": "00:15",
+   "lieu": "LE RANCH · FENÊTRE",
+   "dur": 4,
+   "zoom": [
+    1,
+    1.12
+   ],
+   "yeux": 9,
+   "sons": [
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 7.4
+    }
+   ],
+   "texte": "Alors… qui frappe ?"
+  },
+  {
+   "decor": "sw_fenetre",
+   "heure": "00:15",
+   "lieu": "LE RANCH · FENÊTRE",
+   "dur": 3.4,
+   "zoom": [
+    1.05,
+    1.2
+   ],
+   "proche": 0.5,
+   "main": true,
+   "secousse": 0.8,
+   "jumpscare": 0.5,
+   "sons": [
+    {
+     "t": 0.5,
+     "son": "stinger"
+    }
+   ],
+   "texte": "Il est à la fenêtre."
+  },
+  {
+   "decor": "sw_salon",
+   "eteint": true,
+   "heure": "00:16",
+   "lieu": "LE RANCH · SALON",
+   "dur": 3.2,
+   "clignote": true,
+   "noir_fin": true,
+   "sons": [
+    {
+     "t": 2.3,
+     "son": "courant"
+    }
+   ],
+   "humains": [
+    {
+     "id": "toi",
+     "x": 540,
+     "y": 1810,
+     "echelle": 0.9,
+     "dos": true,
+     "pose": "assis"
+    }
+   ],
+   "texte": "Le courant saute."
+  },
+  {
+   "decor": "sw_cuisine",
+   "heure": "00:19",
+   "lieu": "LE RANCH · CUISINE",
+   "dur": 5.4,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "lampe": {
+    "x0": 200,
+    "y0": 1300,
+    "x": 760,
+    "y": 640,
+    "r": 320,
+    "duree": 4.2
+   },
+   "sons": [
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 9.4
+    },
+    {
+     "t": 3.8,
+     "son": "stinger",
+     "vol": 0.6
+    }
+   ],
+   "texte": "Ta lampe éclaire la cuisine. Quelqu'un est debout. Trop grand."
+  },
+  {
+   "decor": "sw_cuisine",
+   "heure": "00:20",
+   "lieu": "LE RANCH · CUISINE",
+   "dur": 4,
+   "zoom": [
+    1.05,
+    1.25
+   ],
+   "lampe": {
+    "x": 760,
+    "y": 600,
+    "r": 280
+   },
+   "sons": [
+    {
+     "t": 0.3,
+     "son": "voix"
+    }
+   ],
+   "texte": "« Mon chéri ? Viens voir maman. »"
+  },
+  {
+   "decor": "sw_visage",
+   "dur": 2.6,
+   "jumpscare": 0.12,
+   "secousse": 1.6,
+   "sons": [
+    {
+     "t": 0.12,
+     "son": "cri"
+    }
+   ],
+   "texte": ""
+  },
+  {
+   "type": "mort",
+   "dur": 4,
+   "heure": "00:21",
+   "sousTexte": "Il ne restait que 5 h 39.",
+   "sons": [
+    {
+     "t": 0,
+     "son": "souffle"
+    }
+   ]
+  },
+  {
+   "type": "fin",
+   "dur": 3.4
+  }
+ ]
+}
