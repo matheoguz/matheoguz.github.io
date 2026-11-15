@@ -172,7 +172,7 @@
   }
   const EP_PERSO = id => (G.EP_COURANT && G.EP_COURANT.persos[id]) || {};
 
-  G.PERSO2 = perso2;
+  G.PERSO2 = perso2; G.S2_TRANSFO = transfo;
   Object.assign(G.DECORS = G.DECORS || {}, {
     s2_foret: { fond: foret }, s2_camp: { fond: camp, avant: campAvant }, s2_bois: { fond: bois },
   });

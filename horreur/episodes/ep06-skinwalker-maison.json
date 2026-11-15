@@ -1,0 +1,459 @@
+{
+ "id": "ep06-skinwalker-maison",
+ "titre": "Garde ton petit frère",
+ "format": "survie",
+ "numero": 1,
+ "monstre": "skinwalker",
+ "texteFin": "Tu descends ou tu restes ? Commente 1 ou 2 ↓",
+ "persos": {
+  "toi": {
+   "nom": "Toi",
+   "peau": "#f0c9a4",
+   "cheveux": "#3a2618",
+   "coiffure": "court",
+   "sweat": "#3a7a5a",
+   "pantalon": "#2b2f45",
+   "logo": "#f2f2f2"
+  },
+  "noe": {
+   "nom": "Noé",
+   "peau": "#f0c9a4",
+   "cheveux": "#3a2618",
+   "coiffure": "court",
+   "sweat": "#5a8ac0",
+   "pantalon": "#5a8ac0",
+   "logo": "#f2c94c"
+  },
+  "maman": {
+   "nom": "Maman",
+   "peau": "#e8bf9a",
+   "cheveux": "#6a3a22",
+   "coiffure": "queue",
+   "sweat": "#8a2a3a",
+   "pantalon": "#2b2f45",
+   "logo": "#e0a93a"
+  }
+ },
+ "plans": [
+  {
+   "type": "roulette",
+   "dur": 6.5,
+   "choix": "skinwalker",
+   "annonce": "TU DOIS SURVIVRE JUSQU'À 6H"
+  },
+  {
+   "decor": "s2_maison",
+   "heure": "21:00",
+   "lieu": "LA MAISON · AU BORD DE LA FORÊT",
+   "dur": 5.2,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "voiture": true,
+   "rdc": true,
+   "etage": true,
+   "sons": [
+    {
+     "t": 0,
+     "son": "drone",
+     "dur": 94,
+     "vol": 0.7
+    },
+    {
+     "t": 0,
+     "son": "nuit",
+     "dur": 21
+    }
+   ],
+   "texte": "Tes parents sortent dîner. Tu gardes ton petit frère, Noé."
+  },
+  {
+   "decor": "s2_maison",
+   "heure": "21:30",
+   "lieu": "LA MAISON · AU BORD DE LA FORÊT",
+   "dur": 4.8,
+   "zoom": [
+    1,
+    1.18
+   ],
+   "etage": true,
+   "guetteur": {
+    "x": 860,
+    "y": 1180,
+    "echelle": 0.32,
+    "apparait": 0.8
+   },
+   "sons": [
+    {
+     "t": 0.8,
+     "son": "impact",
+     "vol": 0.5
+    }
+   ],
+   "texte": "Au fond du jardin, quelque chose regarde vos fenêtres."
+  },
+  {
+   "type": "regle",
+   "decor": "s2_maison",
+   "heure": "21:31",
+   "lieu": "LA MAISON",
+   "etage": true,
+   "voile": 0.45,
+   "dur": 5.6,
+   "titre": "RÈGLE N°1",
+   "regle": "Il imite la voix\nde ceux que tu aimes.\nMais il se trompe d'un détail.",
+   "texte": ""
+  },
+  {
+   "decor": "s2_chambre",
+   "heure": "23:10",
+   "lieu": "LA MAISON · CHAMBRE DE NOÉ",
+   "dur": 5.4,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "p2": [
+    {
+     "id": "noe",
+     "x": 600,
+     "y": 1500,
+     "echelle": 0.48,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": 1
+    },
+    {
+     "id": "toi",
+     "x": 250,
+     "y": 1820,
+     "echelle": 0.74,
+     "expr": "inquiet",
+     "regard": 1
+    }
+   ],
+   "texte": "Noé n'arrive pas à dormir. Il dit qu'une dame parle à sa fenêtre."
+  },
+  {
+   "decor": "s2_chambre",
+   "heure": "23:12",
+   "lieu": "LA MAISON · CHAMBRE DE NOÉ",
+   "dur": 4.8,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "ombreFenetre": 0.6,
+   "sons": [
+    {
+     "t": 0.6,
+     "son": "impact",
+     "vol": 0.6
+    }
+   ],
+   "p2": [
+    {
+     "id": "noe",
+     "x": 600,
+     "y": 1500,
+     "echelle": 0.48,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": 1
+    },
+    {
+     "id": "toi",
+     "x": 250,
+     "y": 1820,
+     "echelle": 0.74,
+     "expr": "peur",
+     "regard": 1
+    }
+   ],
+   "texte": "Tu regardes dehors. Personne… enfin, presque."
+  },
+  {
+   "decor": "s2_escalier",
+   "heure": "23:40",
+   "lieu": "LA MAISON · ESCALIER",
+   "dur": 6,
+   "zoom": [
+    1,
+    1.08
+   ],
+   "cuisineLum": true,
+   "p2": [
+    {
+     "id": "toi",
+     "x": 540,
+     "y": 1950,
+     "echelle": 0.95,
+     "dos": true
+    }
+   ],
+   "texte": "D'en bas, la voix de maman : « Chéri, descends m'aider avec les courses ! »"
+  },
+  {
+   "decor": "s2_escalier",
+   "heure": "23:40",
+   "lieu": "LA MAISON · ESCALIER",
+   "dur": 5,
+   "cuisineLum": true,
+   "voile": 0.3,
+   "sons": [
+    {
+     "t": 0.6,
+     "son": "vibre"
+    }
+   ],
+   "telephone": {
+    "contact": "Maman ❤️",
+    "messages": [
+     {
+      "de": "elle",
+      "texte": "On est encore au resto, on rentre vers 1h. Noé dort ?",
+      "t": 0.6,
+      "heure": "23:40"
+     }
+    ]
+   },
+   "texte": ""
+  },
+  {
+   "decor": "s2_escalier",
+   "heure": "23:41",
+   "lieu": "LA MAISON · ESCALIER",
+   "dur": 5.2,
+   "zoom": [
+    1.1,
+    1.3
+   ],
+   "cuisineLum": true,
+   "ombreBas": true,
+   "choix": {
+    "question": "TU DESCENDS ?",
+    "options": [
+     "OUI",
+     "NON"
+    ],
+    "choisi": -1,
+    "t": 0.3
+   },
+   "sons": [
+    {
+     "t": 2.4,
+     "son": "impact",
+     "vol": 0.6
+    }
+   ],
+   "texte": "Maman est au resto. Alors qui est dans la cuisine ?"
+  },
+  {
+   "decor": "s2_cuisine",
+   "heure": "23:41",
+   "lieu": "LA CUISINE · SI T'AS CHOISI 1",
+   "dur": 5.4,
+   "zoom": [
+    1,
+    1.12
+   ],
+   "choix": {
+    "question": "SI T'AS CHOISI :",
+    "options": [
+     "DESCENDRE",
+     "RESTER"
+    ],
+    "choisi": 0,
+    "t": 0,
+    "tChoix": 0
+   },
+   "p2": [
+    {
+     "id": "maman",
+     "x": 790,
+     "y": 1720,
+     "echelle": 1.02,
+     "dos": true
+    }
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 10.4
+    }
+   ],
+   "texte": "Maman est devant le frigo. Pieds nus. Et beaucoup trop grande."
+  },
+  {
+   "decor": "s2_cuisine",
+   "heure": "23:42",
+   "lieu": "LA CUISINE · SI T'AS CHOISI 1",
+   "dur": 5,
+   "zoom": [
+    1.05,
+    1.25
+   ],
+   "transfo": {
+    "id": "maman",
+    "x": 790,
+    "y": 1720,
+    "echelle": 1.02,
+    "echelleM": 0.85,
+    "t0": 2.0,
+    "dur": 1.6,
+    "inverse": true
+   },
+   "texte": "Elle se retourne : « Tu as l'air fatigué, mon chéri. »"
+  },
+  {
+   "decor": "sw_visage",
+   "dur": 2.4,
+   "jumpscare": 0.1,
+   "secousse": 1.6,
+   "sons": [
+    {
+     "t": 0.1,
+     "son": "impact"
+    }
+   ],
+   "texte": ""
+  },
+  {
+   "type": "mort",
+   "dur": 3.4,
+   "heure": "23:42",
+   "sons": [
+    {
+     "t": 0,
+     "son": "souffle"
+    }
+   ]
+  },
+  {
+   "type": "rembobine",
+   "dur": 2.4,
+   "de": "23:42",
+   "a": "23:40"
+  },
+  {
+   "decor": "s2_porte",
+   "heure": "23:41",
+   "lieu": "CHAMBRE DE NOÉ · SI T'AS CHOISI 2",
+   "dur": 5.4,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "commode": true,
+   "choix": {
+    "question": "SI T'AS CHOISI :",
+    "options": [
+     "DESCENDRE",
+     "RESTER"
+    ],
+    "choisi": 1,
+    "t": 0,
+    "tChoix": 0
+   },
+   "texte": "Tu t'enfermes avec Noé. Tu bloques la porte avec la commode."
+  },
+  {
+   "decor": "s2_porte",
+   "heure": "00:30",
+   "lieu": "CHAMBRE DE NOÉ",
+   "dur": 5.6,
+   "zoom": [
+    1,
+    1.15
+   ],
+   "commode": true,
+   "pieds": true,
+   "coups": true,
+   "sons": [
+    {
+     "t": 0.3,
+     "son": "toc"
+    },
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 9.6
+    }
+   ],
+   "texte": "Des coups. Puis la voix de Noé : « Ouvre ! C'est moi, Noé ! »"
+  },
+  {
+   "decor": "s2_chambre",
+   "heure": "00:31",
+   "lieu": "CHAMBRE DE NOÉ",
+   "dur": 4,
+   "zoom": [
+    1.05,
+    1.2
+   ],
+   "nuit": true,
+   "commode": true,
+   "filet": true,
+   "pieds": true,
+   "lampe": false,
+   "sons": [
+    {
+     "t": 0.4,
+     "son": "impact",
+     "vol": 0.8
+    }
+   ],
+   "p2": [
+    {
+     "id": "toi",
+     "x": 470,
+     "y": 1620,
+     "echelle": 0.62,
+     "pose": "assis",
+     "expr": "choc"
+    },
+    {
+     "id": "noe",
+     "x": 640,
+     "y": 1520,
+     "echelle": 0.48,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": -1
+    }
+   ],
+   "texte": "Mais Noé est là. Dans tes bras."
+  },
+  {
+   "decor": "s2_maison",
+   "aube": true,
+   "heure": "06:00",
+   "lieu": "LA MAISON",
+   "dur": 4.2,
+   "zoom": [
+    1.08,
+    1
+   ],
+   "texte": "Vous ne bougez plus jusqu'au matin."
+  },
+  {
+   "type": "mort",
+   "survie": true,
+   "dur": 4.4,
+   "heure": "06:00",
+   "sousTexte": "Mais maintenant, il connaît vos deux voix.",
+   "sons": [
+    {
+     "t": 0,
+     "son": "souffle"
+    }
+   ]
+  },
+  {
+   "type": "fin",
+   "dur": 3.6
+  }
+ ]
+}
