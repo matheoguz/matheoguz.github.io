@@ -37,10 +37,11 @@
 <script src="persos.js"></script>
 <script src="decors.js"></script>
 <script src="decors-skinwalker.js"></script>
+<script src="style2.js"></script>
 <script>
 const W = 1080, H = 1920;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
-const EPISODES = ['ep04-skinwalker', 'ep02-hasshaku', 'ep01-wendigo'];
+const EPISODES = ['ep05-skinwalker-camp', 'ep04-skinwalker', 'ep02-hasshaku', 'ep01-wendigo'];
 let EP = null, BIBLE = null, TIMELINE = [], DUR = 0;
 const FONT = '"Anton", "Inter Display", Impact, sans-serif';
 
@@ -455,10 +456,12 @@ window.renderAt = function (t) {
         const a = clamp((lt - (m.apparait || 0)) / (m.fondu || .6)); if (a > 0) { ctx.save(); if (m.clipBas) { ctx.beginPath(); ctx.rect(0, 0, W, m.clipBas); ctx.clip(); } ctx.globalAlpha = a * (m.alpha ?? 1); ctx.translate(x, m.y); ctx.scale(m.echelle, m.echelle); art.dessin(ctx, lt, m); ctx.restore(); } }
       if (D.avant && D.sousHumains) D.avant(ctx, lt, p);
       (p.humains || []).forEach(o => window.HUMAIN(ctx, EP.persos[o.id], o, lt));
+      (p.p2 || []).forEach(o => { const q = clamp((lt - (o.depart || 0)) / (o.duree || d)); const oo = { ...o, x: o.x0 != null ? lerp(o.x0, o.x, ease(q)) : o.x, y: o.y0 != null ? lerp(o.y0, o.y, ease(q)) : o.y };
+        const a = clamp((lt - (o.apparait || 0)) / .4); if (a <= 0) return; ctx.save(); ctx.globalAlpha = a * (o.alpha ?? 1); window.PERSO2(ctx, EP.persos[o.id], oo, lt); ctx.restore(); });
       if (D.avant && !D.sousHumains) D.avant(ctx, lt, p);
       if (p.voile) { ctx.fillStyle = `rgba(5,8,20,${p.voile})`; ctx.fillRect(0, 0, W, H); }
       if (p.lampe) { const L = p.lampe, q = ease(clamp(lt / (L.duree || d))); const lx = lerp(L.x0 ?? L.x, L.x, q) + Math.sin(lt * 7) * 10, ly = lerp(L.y0 ?? L.y, L.y, q) + Math.cos(lt * 5) * 8;
-        const g = ctx.createRadialGradient(lx, ly, 20, lx, ly, L.r || 330); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.7, 'rgba(0,0,0,.55)'); g.addColorStop(1, 'rgba(0,0,0,.96)'); ctx.fillStyle = g; ctx.fillRect(-200, -200, W + 400, H + 400);
+        const g = ctx.createRadialGradient(lx, ly, 20, lx, ly, L.r || 330); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.7, `rgba(0,0,0,${(L.noir ?? .96) * .55})`); g.addColorStop(1, `rgba(0,0,0,${L.noir ?? .96})`); ctx.fillStyle = g; ctx.fillRect(-200, -200, W + 400, H + 400);
         ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g2 = ctx.createRadialGradient(lx, ly, 10, lx, ly, (L.r || 330) * .8); g2.addColorStop(0, 'rgba(255,240,200,.18)'); g2.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = g2; ctx.fillRect(-200, -200, W + 400, H + 400); ctx.restore(); }
     } else {
     SCENES[p.scene](lt, p);
@@ -475,7 +478,7 @@ window.renderAt = function (t) {
     if (p.type === 'mot') carteMot(lt, p.mot);
     if (p.type === 'regle') carteRegle(lt, p);
     const v = ctx.createRadialGradient(540, 960, 500, 540, 960, 1250); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.65)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
-    if (p.heure) horloge(p.heure, p.lieu, lt); else etiquette(p.tag); sousTitre(p.texte, lt, d, p.texteY);
+    if (p.heure) horloge(p.heure, p.lieu, lt); else etiquette(p.tag); sousTitre(p.texte, lt, d, p.texteY || (EP.format === 'survie' ? 820 : null));
   }
   // fondu d'entrée de chaque plan
   if (lt < .18) { ctx.fillStyle = `rgba(0,0,0,${1 - lt / .18})`; ctx.fillRect(0, 0, W, H); }
@@ -489,7 +492,7 @@ window.cues = function () { const c = []; let a = 0; for (const p of TIMELINE) {
 // ---------- chargement + lecteur ----------
 async function charger(id) {
   [EP, BIBLE] = await Promise.all([fetch(`episodes/${id}.json`).then(r => r.json()), BIBLE || fetch('monstres.json').then(r => r.json())]);
-  TIMELINE = EP.plans; DUR = TIMELINE.reduce((s, p) => s + p.dur, 0); window.DUR = DUR;
+  TIMELINE = EP.plans; window.EP_COURANT = EP; DUR = TIMELINE.reduce((s, p) => s + p.dur, 0); window.DUR = DUR;
   document.getElementById('info').textContent = `Ép. ${EP.numero} · ${EP.titre} · ${DUR.toFixed(1)} s`;
   try { await document.fonts.load(`100px Anton`); await document.fonts.load(`700 60px Caveat`); } catch (e) {}
   renderAt(0); window.PRET = true;

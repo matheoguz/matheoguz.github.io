@@ -1,0 +1,618 @@
+{
+ "id": "ep05-skinwalker-camp",
+ "titre": "Les deux Malik",
+ "format": "survie",
+ "numero": 1,
+ "monstre": "skinwalker",
+ "persos": {
+  "hugo": {
+   "nom": "Hugo",
+   "peau": "#f1cfae",
+   "cheveux": "#5a3a22",
+   "coiffure": "bonnet",
+   "bonnetCol": "#3a6ab0",
+   "sweat": "#4a6fa5",
+   "pantalon": "#2b2f45",
+   "logo": "#f2f2f2",
+   "sac": "#8a5a3a"
+  },
+  "ines": {
+   "nom": "Inès",
+   "peau": "#e2b48c",
+   "cheveux": "#2a1a12",
+   "coiffure": "queue",
+   "sweat": "#e0a93a",
+   "pantalon": "#3a3550",
+   "logo": "#c0392b",
+   "sac": "#4a7a5a"
+  },
+  "malik": {
+   "nom": "Malik",
+   "peau": "#9a6a48",
+   "cheveux": "#141012",
+   "coiffure": "boucles",
+   "sweat": "#c0392b",
+   "pantalon": "#24283a",
+   "logo": "#f2c94c",
+   "sac": "#5a5f7a"
+  }
+ },
+ "plans": [
+  {
+   "type": "roulette",
+   "dur": 6.5,
+   "choix": "skinwalker",
+   "annonce": "TU DOIS SURVIVRE JUSQU'À 6H"
+  },
+  {
+   "decor": "s2_foret",
+   "heure": "18:40",
+   "lieu": "ARIZONA · FORÊT DE KAIBAB",
+   "dur": 5,
+   "defile": 1,
+   "zoom": [
+    1,
+    1.04
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "drone",
+     "dur": 66
+    },
+    {
+     "t": 0,
+     "son": "pas",
+     "dur": 9
+    }
+   ],
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 270,
+     "y": 1760,
+     "echelle": 0.62,
+     "pose": "marche",
+     "expr": "sourire"
+    },
+    {
+     "id": "malik",
+     "x": 540,
+     "y": 1830,
+     "echelle": 0.68,
+     "pose": "marche",
+     "expr": "parle"
+    },
+    {
+     "id": "ines",
+     "x": 810,
+     "y": 1760,
+     "echelle": 0.62,
+     "pose": "marche",
+     "expr": "sourire"
+    }
+   ],
+   "texte": "Week-end camping avec tes potes : Hugo, Inès et Malik."
+  },
+  {
+   "decor": "s2_foret",
+   "heure": "19:10",
+   "lieu": "ARIZONA · FORÊT DE KAIBAB",
+   "dur": 4.6,
+   "defile": 1,
+   "zoom": [
+    1,
+    1.12
+   ],
+   "guetteur": {
+    "x": 900,
+    "y": 1090,
+    "echelle": 0.3,
+    "apparait": 1.0,
+    "ombre": 0.5
+   },
+   "sons": [
+    {
+     "t": 1.0,
+     "son": "stinger",
+     "vol": 0.5
+    }
+   ],
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 270,
+     "y": 1760,
+     "echelle": 0.62,
+     "pose": "marche",
+     "expr": "neutre"
+    },
+    {
+     "id": "malik",
+     "x": 540,
+     "y": 1830,
+     "echelle": 0.68,
+     "pose": "marche",
+     "expr": "sourire"
+    },
+    {
+     "id": "ines",
+     "x": 810,
+     "y": 1760,
+     "echelle": 0.62,
+     "pose": "marche",
+     "expr": "neutre"
+    }
+   ],
+   "texte": "Personne ne voit ce qui marche à côté de vous."
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "21:30",
+   "lieu": "LE CAMP",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.05
+   ],
+   "feuX": 540,
+   "feuY": 1740,
+   "sons": [
+    {
+     "t": 0,
+     "son": "feu",
+     "dur": 22
+    }
+   ],
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 230,
+     "y": 1640,
+     "echelle": 0.62,
+     "pose": "assis",
+     "expr": "sourire",
+     "regard": 1
+    },
+    {
+     "id": "malik",
+     "x": 540,
+     "y": 1560,
+     "echelle": 0.58,
+     "pose": "assis",
+     "expr": "parle"
+    },
+    {
+     "id": "ines",
+     "x": 850,
+     "y": 1640,
+     "echelle": 0.62,
+     "pose": "assis",
+     "expr": "sourire",
+     "regard": -1
+    }
+   ],
+   "texte": "Le soir, feu de camp. Malik raconte des blagues."
+  },
+  {
+   "type": "regle",
+   "decor": "s2_camp",
+   "heure": "21:31",
+   "lieu": "LE CAMP",
+   "voile": 0.45,
+   "dur": 4.8,
+   "feuX": 540,
+   "feuY": 1740,
+   "titre": "RÈGLE N°1",
+   "regle": "Il vole l'apparence\nde quelqu'un.\nMais il se trompe d'un détail.",
+   "texte": ""
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:10",
+   "lieu": "LE CAMP",
+   "dur": 4,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "feuX": 300,
+   "feuY": 1760,
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 150,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "neutre",
+     "regard": 1
+    },
+    {
+     "id": "malik",
+     "x": 640,
+     "y": 1820,
+     "echelle": 0.78,
+     "pose": "lampe",
+     "expr": "parle"
+    },
+    {
+     "id": "ines",
+     "x": 930,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "neutre",
+     "regard": -1
+    }
+   ],
+   "texte": "« Je vais pisser, j'arrive. »"
+  },
+  {
+   "decor": "s2_bois",
+   "heure": "22:12",
+   "lieu": "DANS LES BOIS",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.1
+   ],
+   "lampe": {
+    "x": 600,
+    "y": 1200,
+    "r": 560,
+    "noir": 0.82
+   },
+   "guetteur": {
+    "x": 200,
+    "y": 1800,
+    "echelle": 0.75,
+    "apparait": 2.0,
+    "ombre": 0.75
+   },
+   "p2": [
+    {
+     "id": "malik",
+     "x0": 540,
+     "x": 640,
+     "y0": 1880,
+     "y": 1780,
+     "echelle": 0.7,
+     "dos": true,
+     "pose": "marche"
+    }
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "pas",
+     "dur": 4
+    },
+    {
+     "t": 2.0,
+     "son": "stinger",
+     "vol": 0.7
+    }
+   ],
+   "texte": "Il s'enfonce entre les arbres. Il n'est pas seul."
+  },
+  {
+   "decor": "s2_bois",
+   "heure": "22:13",
+   "lieu": "DANS LES BOIS",
+   "dur": 5.4,
+   "zoom": [
+    1.05,
+    1.2
+   ],
+   "aberration": false,
+   "lampe": {
+    "x": 540,
+    "y": 1150,
+    "r": 560,
+    "noir": 0.82
+   },
+   "transfo": {
+    "id": "malik",
+    "x": 540,
+    "y": 1820,
+    "echelle": 0.75,
+    "echelleM": 0.72,
+    "t0": 1.2,
+    "dur": 2.6
+   },
+   "sons": [
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 5
+    },
+    {
+     "t": 1.2,
+     "son": "os"
+    }
+   ],
+   "texte": "Il regarde Malik. Longtemps. Puis il change de forme."
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:18",
+   "lieu": "LE CAMP",
+   "dur": 4.6,
+   "zoom": [
+    1,
+    1.06
+   ],
+   "feuX": 300,
+   "feuY": 1760,
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 150,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "sourire",
+     "regard": 1
+    },
+    {
+     "id": "malik",
+     "x0": 1180,
+     "x": 640,
+     "y": 1820,
+     "echelle": 0.78,
+     "pose": "marche",
+     "expr": "sourire",
+     "logoInverse": true,
+     "duree": 3
+    },
+    {
+     "id": "ines",
+     "x": 930,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "neutre",
+     "regard": -1
+    }
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "pas",
+     "dur": 3
+    }
+   ],
+   "texte": "Malik revient. Il sourit. Il ne dit plus un mot."
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:19",
+   "lieu": "LE CAMP",
+   "dur": 5,
+   "zoom": [
+    1.3,
+    1.5
+   ],
+   "feuX": 200,
+   "feuY": 1760,
+   "p2": [
+    {
+     "id": "malik",
+     "x": 540,
+     "y": 1820,
+     "echelle": 0.78,
+     "pose": "normal",
+     "expr": "sourire",
+     "logoInverse": true
+    }
+   ],
+   "choix": {
+    "question": "TU REMARQUES UN DÉTAIL ?",
+    "options": [
+     "NON",
+     "SON SWEAT"
+    ],
+    "choisi": 1,
+    "t": 0.2,
+    "tChoix": 2.2
+   },
+   "sons": [
+    {
+     "t": 2.2,
+     "son": "tic"
+    }
+   ],
+   "texte": "Le logo de son sweat a changé de côté."
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:25",
+   "lieu": "LE CAMP",
+   "dur": 4.8,
+   "zoom": [
+    1,
+    1.08
+   ],
+   "feuX": 300,
+   "feuY": 1760,
+   "p2": [
+    {
+     "id": "hugo",
+     "x": 150,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": 1
+    },
+    {
+     "id": "malik",
+     "x": 640,
+     "y": 1820,
+     "echelle": 0.78,
+     "pose": "normal",
+     "expr": "faux",
+     "logoInverse": true,
+     "tete": 0.25
+    },
+    {
+     "id": "ines",
+     "x": 930,
+     "y": 1640,
+     "echelle": 0.6,
+     "pose": "assis",
+     "expr": "peur",
+     "regard": 1
+    }
+   ],
+   "sons": [
+    {
+     "t": 0.4,
+     "son": "voix_loin"
+    }
+   ],
+   "texte": "Dans la forêt, une voix : « Les gars ?! Je me suis perdu ! »"
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:26",
+   "lieu": "LE CAMP",
+   "dur": 5.2,
+   "zoom": [
+    1,
+    1.04
+   ],
+   "feuX": 540,
+   "feuY": 1800,
+   "p2": [
+    {
+     "id": "malik",
+     "x": 290,
+     "y": 1800,
+     "echelle": 0.74,
+     "pose": "normal",
+     "expr": "faux",
+     "logoInverse": true
+    },
+    {
+     "id": "malik",
+     "x0": 1200,
+     "x": 800,
+     "y": 1800,
+     "echelle": 0.74,
+     "pose": "lampe",
+     "expr": "peur",
+     "duree": 2.2
+    }
+   ],
+   "choix": {
+    "question": "QUI EST LE VRAI MALIK ?",
+    "options": [
+     "CELUI DU FEU",
+     "CELUI DU BOIS"
+    ],
+    "choisi": -1,
+    "t": 2.4
+   },
+   "sons": [
+    {
+     "t": 0,
+     "son": "pas",
+     "dur": 2.2
+    },
+    {
+     "t": 2.4,
+     "son": "stinger",
+     "vol": 0.6
+    }
+   ],
+   "texte": "Deux Malik. Exactement pareils."
+  },
+  {
+   "decor": "s2_camp",
+   "heure": "22:30",
+   "lieu": "LE CAMP",
+   "dur": 5.2,
+   "zoom": [
+    1.05,
+    1.3
+   ],
+   "feu": 0,
+   "feuX": 540,
+   "feuY": 1800,
+   "lampe": {
+    "x": 300,
+    "y": 1300,
+    "r": 480,
+    "noir": 0.85
+   },
+   "transfo": {
+    "id": "malik",
+    "x": 300,
+    "y": 1800,
+    "echelle": 0.74,
+    "echelleM": 0.7,
+    "t0": 1.6,
+    "dur": 1.8,
+    "logoInverse": true,
+    "inverse": true
+   },
+   "p2": [
+    {
+     "id": "malik",
+     "x": 800,
+     "y": 1800,
+     "echelle": 0.74,
+     "pose": "lampe",
+     "expr": "peur"
+    }
+   ],
+   "sons": [
+    {
+     "t": 0,
+     "son": "courant"
+    },
+    {
+     "t": 1.6,
+     "son": "os"
+    },
+    {
+     "t": 0,
+     "son": "coeur",
+     "dur": 5
+    }
+   ],
+   "texte": "Le feu s'éteint d'un coup. Malik sourit… et grandit."
+  },
+  {
+   "decor": "sw_visage",
+   "dur": 2.6,
+   "jumpscare": 0.12,
+   "secousse": 1.6,
+   "sons": [
+    {
+     "t": 0.12,
+     "son": "cri"
+    }
+   ],
+   "texte": ""
+  },
+  {
+   "type": "mort",
+   "dur": 4.4,
+   "heure": "22:31",
+   "sousTexte": "Et toi, t'aurais choisi lequel ? 1 ou 2 ?",
+   "sons": [
+    {
+     "t": 0,
+     "son": "souffle"
+    }
+   ]
+  },
+  {
+   "type": "fin",
+   "dur": 3.4
+  }
+ ]
+}
