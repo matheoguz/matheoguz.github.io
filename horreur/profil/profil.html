@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"></head>
+<body style="margin:0;background:#000"><canvas id="c" width="1080" height="1080"></canvas>
+<script>
+const c=document.getElementById('c').getContext('2d'),T=Math.PI*2,L='#141526';
+const ell=(x,y,rx,ry,r=0)=>{c.beginPath();c.ellipse(x,y,rx,ry,r,0,T)};
+function dessiner(v){
+ c.fillStyle='#07080e';c.fillRect(0,0,1080,1080);
+ let g=c.createRadialGradient(540,640,40,540,640,620);g.addColorStop(0,'rgba(242,169,59,.42)');g.addColorStop(1,'rgba(242,169,59,0)');c.fillStyle=g;c.fillRect(0,0,1080,1080);
+ c.save();c.translate(540,640);c.scale(1.15,1.15);
+ // l'ombre qui sort du pli
+ let o=c.createLinearGradient(0,-320,0,120);o.addColorStop(0,'rgba(0,0,0,0)');o.addColorStop(.5,'rgba(5,5,10,.95)');o.addColorStop(1,'rgba(5,5,10,1)');
+ c.fillStyle=o;c.beginPath();c.moveTo(-140,60);c.quadraticCurveTo(-170,-200,-40,-330);c.quadraticCurveTo(0,-370,40,-330);c.quadraticCurveTo(170,-200,140,60);c.closePath();c.fill();
+ // livre ouvert
+ c.fillStyle='#3b1f12';c.beginPath();c.moveTo(-400,-150);c.quadraticCurveTo(0,-110,400,-150);c.lineTo(420,170);c.quadraticCurveTo(0,210,-420,170);c.closePath();c.fill();c.strokeStyle=L;c.lineWidth=10;c.stroke();
+ [-1,1].forEach(s=>{c.beginPath();c.moveTo(0,-110);c.quadraticCurveTo(s*180,-170,s*380,-150);c.lineTo(s*395,150);c.quadraticCurveTo(s*180,130,0,170);c.closePath();c.fillStyle='#efe2c2';c.fill();c.strokeStyle=L;c.lineWidth=8;c.stroke();
+  c.strokeStyle='rgba(120,90,50,.45)';c.lineWidth=6;for(let i=0;i<6;i++){c.beginPath();c.moveTo(s*60,-70+i*36);c.quadraticCurveTo(s*200,-100+i*36,s*330,-90+i*38);c.stroke();}});
+ // mains qui agrippent le haut des pages
+ [-1,1].forEach(s=>{c.lineCap='round';c.lineJoin='round';
+  c.strokeStyle='#05050a';c.lineWidth=34;c.beginPath();c.moveTo(s*70,-210);c.quadraticCurveTo(s*130,-190,s*165,-135);c.stroke();
+  for(let i=0;i<4;i++){const x=s*(140+i*20),y=-142+i*3;
+   c.strokeStyle='#05050a';c.lineWidth=14;c.beginPath();c.moveTo(s*150,-140);c.quadraticCurveTo(x+s*6,-130,x,y+34);c.stroke();
+   c.strokeStyle='#efe6d0';c.lineWidth=7;c.beginPath();c.moveTo(x,y+30);c.quadraticCurveTo(x-s*2,y+52,x-s*10,y+64);c.stroke();}});
+ // oreilles pointues
+ c.fillStyle='rgba(5,5,10,.95)';[-1,1].forEach(s=>{c.beginPath();c.moveTo(s*40,-310);c.lineTo(s*95,-400);c.lineTo(s*100,-285);c.closePath();c.fill();});
+ // yeux
+ c.save();c.shadowColor='#8dff70';c.shadowBlur=60;c.fillStyle='#c4ff9e';ell(-62,-190,30,17,-.15);c.fill();ell(66,-206,30,17,.15);c.fill();c.restore();
+ c.fillStyle='#030304';ell(-62,-190,6,15);c.fill();ell(66,-206,6,15);c.fill();
+ c.restore();
+ // bougie
+ c.save();c.translate(540,915);c.restore();
+ if(v===2){c.textAlign='center';c.font='86px Anton';c.fillStyle='#efe2c2';c.fillText('BESTIAIRE',540,230);c.font='38px Anton';c.fillStyle='#f2a93b';c.fillText('— LE —',540,140);}
+ // vignette ronde
+ let vg=c.createRadialGradient(540,540,380,540,540,560);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.7)');c.fillStyle=vg;c.fillRect(0,0,1080,1080);
+}
+window.dessiner=dessiner;
+</script></body></html>
