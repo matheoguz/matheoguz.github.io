@@ -18,7 +18,7 @@
 </style>
 </head>
 <body>
-<header><div class="le">— LE —</div><h1>BESTIAIRE</h1><p>Les 11 monstres, dessinés en code et animés.</p></header>
+<header><div class="le">— LE —</div><h1>BESTIAIRE</h1><p>Les 12 monstres, dessinés en code et animés.</p></header>
 <div class="grille" id="g"></div>
 <script src="monstres-art.js"></script>
 <script>
@@ -38,7 +38,7 @@ function dessiner(t) {
     const c = cv.getContext('2d'); const g = c.createLinearGradient(0, 0, 0, 800); g.addColorStop(0, art.fond[0]); g.addColorStop(1, art.fond[1]);
     c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = g; c.fillRect(0, 0, 600, 800);
     c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, 700, 600, 100);
-    const s = Math.min(620 / art.hauteur, art.large ? 560 / 1250 : 1);
+    const s = Math.min(620 / art.hauteur, art.large ? 560 / (art.largeur || 1000) : 1);
     c.save(); c.translate(300 + (art.dx || 0), 715); c.scale(s, s); art.dessin(c, t, {}); c.restore();
     const v = c.createRadialGradient(300, 400, 200, 300, 400, 520); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)'); c.fillStyle = v; c.fillRect(0, 0, 600, 800);
   });
