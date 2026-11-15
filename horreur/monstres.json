@@ -1,53 +1,118 @@
 {
-  "_regle": "Chaque monstre a SA personnalité, SA façon de chasser et SA faiblesse. Une histoire ne se refait jamais : avant d'écrire, vérifier 'histoires_faites' et la liste 'interdit' (lieux, twists et règles déjà utilisés).",
-  "monstres": {
-    "wendigo": {
-      "nom": "WENDIGO", "surnom": "L'AFFAMÉ POLI",
-      "origine": "Légende algonquienne (Canada, nord des États-Unis)",
-      "personnalite": "Très poli, presque gentil. Dit toujours bonsoir et merci. Il a faim depuis des siècles et il ne ment jamais : il prévient avant de manger.",
-      "chasse": "Il compte les gens à l'intérieur. S'il compte un de plus que vous n'êtes, c'est qu'il est déjà entré.",
-      "faiblesse": "Le partage. Celui qui lui donne sa dernière part est épargné… cette année.",
-      "voix": "douce, lente, polie",
-      "histoires_faites": ["ep01 — Le refuge du lac gelé (motoneige en panne, assiette dehors, il compte jusqu'à trois)"]
-    },
-    "mothman": {
-      "nom": "MOTHMAN", "surnom": "LE MESSAGER",
-      "origine": "Point Pleasant, Virginie-Occidentale, 1966",
-      "personnalite": "Ne fait jamais de mal lui-même. Il apparaît avant les catastrophes. Il est triste, il essaie de prévenir, mais personne ne comprend.",
-      "chasse": "Il ne chasse pas : il suit. Ses yeux rouges apparaissent 3 nuits avant le drame.",
-      "faiblesse": "Comprendre son message à temps.",
-      "voix": "aucune — seulement un bruit d'ailes et un grésillement radio",
-      "histoires_faites": []
-    },
-    "skinwalker": {
-      "nom": "SKINWALKER", "surnom": "LE CHANGEUR DE PEAU",
-      "origine": "Folklore navajo (sud-ouest des États-Unis)",
-      "personnalite": "Joueur, moqueur, il adore les imitations. Il s'ennuie vite et fait des erreurs exprès pour voir si on les remarque.",
-      "chasse": "Il prend l'apparence de quelqu'un de proche, mais il se trompe toujours d'un détail.",
-      "faiblesse": "Être appelé par son vrai nom.",
-      "voix": "celle de quelqu'un que tu aimes, un peu trop parfaite",
-      "histoires_faites": [],
-      "interdit": ["chalet + 'n'ouvrez pas la porte' + imitation de voix (déjà vu chez d'autres comptes)"]
-    },
-    "dame_blanche": {
-      "nom": "DAME BLANCHE", "surnom": "L'AUTO-STOPPEUSE",
-      "origine": "Légendes des routes de France et de Belgique",
-      "personnalite": "Calme, mélancolique, elle veut juste rentrer chez elle. Elle se met en colère seulement si on lui ment.",
-      "chasse": "Elle fait du stop la nuit. Une fois montée, elle crie « Attention au virage ! » puis disparaît.",
-      "faiblesse": "La ramener vraiment jusqu'à sa maison.",
-      "voix": "fatiguée, froide",
-      "histoires_faites": []
-    },
-    "croque_mitaine": {
-      "nom": "CROQUE-MITAINE", "surnom": "LE COLLECTIONNEUR",
-      "origine": "Folklore européen",
-      "personnalite": "Maniaque et ordonné. Il collectionne une chose précise de chaque enfant (une chaussette, une dent, un rire). Il déteste le désordre.",
-      "chasse": "Il vit dans les placards mal fermés et les dessous de lit en bazar.",
-      "faiblesse": "Une chambre parfaitement rangée. Il ne peut pas y entrer.",
-      "voix": "un chuchotement qui compte des objets",
-      "histoires_faites": []
-    }
+ "_regle": "Un monstre = son pays, son décor, son cri, ses règles tirées de la vraie légende. La 'personnalite' est NOTRE invention (notre identité), toujours cohérente avec la légende. Avant d'écrire un épisode : vérifier 'histoires_faites', 'lieux_deja_utilises', 'twists_deja_utilises', puis les compléter. Persos humains : nouveaux à chaque épisode, habillés selon le lieu et l'époque.",
+ "_exclus": "Monstres vus dans la vidéo d'inspiration (SCP-096, Mothman, Skinwalker) : on ne les fait pas.",
+ "monstres": {
+  "vampire": {
+   "nom": "VAMPIRE", "surnom": "LE COMTE QUI COMPTE", "pays": "Europe de l'Est (Carpates)",
+   "decor": "manoir en ruine dans les Carpates : grand hall, lustre, escalier, miroirs sans reflet, cave aux cercueils",
+   "cri": "presque rien : un chuchotement qui dit ton prénom, un battement d'ailes, une porte qui grince",
+   "legende": ["Ne peut pas entrer chez toi sans y être invité ; après la première invitation, il entre quand il veut.", "N'a pas de reflet dans les miroirs.", "L'ail le repousse.", "Si on renverse des graines (pavot, millet), il doit s'arrêter pour toutes les compter."],
+   "personnalite": "Élégant, vaniteux et maniaque du comptage. Il déteste ne pas se voir dans un miroir et fait semblant que ça ne le gêne pas.",
+   "faiblesse": "Les graines renversées : il ne peut pas s'empêcher de les compter jusqu'au lever du soleil.",
+   "sources": ["https://www.britannica.com/topic/vampire", "https://www.livescience.com/28266-7-strange-ways-humans-act-like-vampires.html"],
+   "histoires_faites": []
   },
-  "lieux_deja_utilises": ["lac gelé + refuge (ep01)"],
-  "twists_deja_utilises": ["il compte une personne de trop (ep01)"]
+  "banshee": {
+   "nom": "BANSHEE", "surnom": "LA PLEUREUSE DES FAMILLES", "pays": "Irlande",
+   "decor": "lande irlandaise dans le brouillard, ferme de pierre isolée, muret, corbeaux",
+   "cri": "une longue lamentation aiguë (le « keening ») qui monte dans la nuit",
+   "legende": ["Son cri annonce une mort dans la famille, AVANT qu'elle arrive.", "Elle ne pleure que pour certaines vieilles familles irlandaises (O'Neill, O'Brien, O'Connor…).", "Elle peut apparaître sous forme de corbeau ou de belette.", "Elle n'est pas méchante : elle prévient."],
+   "personnalite": "Triste, fidèle, fatiguée de pleurer pour les mêmes familles depuis des siècles. Elle ne ment jamais.",
+   "faiblesse": "Elle ne fait rien elle-même : si on comprend son avertissement à temps, on peut changer la fin.",
+   "sources": ["https://en.wikipedia.org/wiki/Banshee", "https://celticlifeintl.com/the-history-of-irish-banshees/"],
+   "histoires_faites": []
+  },
+  "llorona": {
+   "nom": "LA LLORONA", "surnom": "LA MÈRE DE LA RIVIÈRE", "pays": "Mexique",
+   "decor": "rivière la nuit, berges boueuses, pont de bois, lanternes, roseaux",
+   "cri": "« Ay, mis hijos ! » (« Oh, mes enfants ! »), des pleurs portés par l'eau",
+   "legende": ["Elle erre au bord des rivières en cherchant ses enfants noyés.", "Elle emmène les enfants qui traînent près de l'eau la nuit.", "Version du Guatemala : quand ses pleurs semblent loin, elle est tout près ; quand ils semblent proches, elle est loin.", "La légende sert à éloigner les enfants des rivières la nuit."],
+   "personnalite": "Désespérée, jamais en colère : elle croit sincèrement que chaque enfant est le sien.",
+   "faiblesse": "Rester loin de l'eau après la nuit tombée.",
+   "sources": ["https://www.smithsonianmag.com/blogs/smithsonian-latino-center/2018/10/23/ay-mis-hijos-llorona-story/", "https://folklore.usc.edu/?p=39240"],
+   "histoires_faites": []
+  },
+  "gevaudan": {
+   "nom": "LA BÊTE DU GÉVAUDAN", "surnom": "LA BÊTE", "pays": "France (Lozère, 1764-1767)",
+   "decor": "monts de la Margeride, pâturages, bergerie, hameau de pierre, forêt de pins, XVIIIe siècle",
+   "cri": "un grognement grave, puis le silence des cloches du troupeau",
+   "legende": ["A attaqué dans la Margeride entre 1764 et 1767.", "Entre 88 et 124 victimes selon les comptes, surtout des bergères et des enfants qui gardaient les troupeaux seuls.", "Le roi a envoyé des chasseurs ; le mystère n'a jamais été totalement résolu."],
+   "personnalite": "Rusée et patiente. Elle n'attaque jamais un groupe, seulement celui qui s'éloigne.",
+   "faiblesse": "Rester ensemble.",
+   "attention": "Histoire vraie avec de vraies victimes : nos histoires sont inventées, sans nom réel ni détail gore.",
+   "sources": ["https://en.wikipedia.org/wiki/Beast_of_G%C3%A9vaudan", "https://www.tourisme-occitanie.com/bete-du-gevaudan-et-si-menait-l-enquete-en-lozere"],
+   "histoires_faites": []
+  },
+  "kuchisake": {
+   "nom": "KUCHISAKE-ONNA", "surnom": "LA FEMME AU MASQUE", "pays": "Japon",
+   "decor": "ruelle de Tokyo la nuit, lampadaires, distributeurs lumineux, passage à niveau",
+   "cri": "une voix calme derrière un masque : « Watashi, kirei ? » (« Suis-je belle ? »)",
+   "legende": ["Elle porte un masque et demande « Suis-je belle ? ».", "Si on dit non, ou si on crie : danger. Si on dit oui, elle retire le masque et redemande.", "Réponses pour s'en sortir : « Comme ci, comme ça », lui retourner la question, ou lui offrir des bonbons."],
+   "personnalite": "Vexée, obsédée par ce que les autres pensent d'elle. Une réponse floue la laisse perdue.",
+   "faiblesse": "Les réponses ni oui ni non.",
+   "sources": ["https://www.tanukistories.jp/post/kuchisake-onna-the-slit-mouthed-woman-a-japanese-urban-legend", "https://folklore.usc.edu/?p=87441"],
+   "histoires_faites": []
+  },
+  "jersey_devil": {
+   "nom": "JERSEY DEVIL", "surnom": "LE 13E ENFANT", "pays": "États-Unis (New Jersey)",
+   "decor": "Pine Barrens : pinède sablonneuse, cabane, marécage, cheminée de pierre",
+   "cri": "un hurlement strident qui déchire la forêt",
+   "legende": ["Mère Leeds attendait son 13e enfant et l'aurait maudit ; l'enfant serait devenu une créature (1735, selon la légende).", "Ailes de chauve-souris, tête de cheval ou de chèvre, sabots, queue.", "Il se serait envolé par la cheminée.", "Les historiens pensent que cette version s'est surtout formée au XXe siècle."],
+   "personnalite": "Rancunier et jaloux des familles nombreuses. Il compte les enfants à chaque fenêtre.",
+   "faiblesse": "On raconte qu'il ne s'approche pas d'une maison où une bougie brûle pour chacun des enfants. (invention à nous, à afficher comme telle)",
+   "sources": ["https://www.nj.gov/nj/about/famous/nj_devil.shtml", "https://www.livescience.com/28167-jersey-devil.html"],
+   "histoires_faites": []
+  },
+  "krampus": {
+   "nom": "KRAMPUS", "surnom": "LE PUNISSEUR DE DÉCEMBRE", "pays": "Alpes (Autriche, Bavière)",
+   "decor": "village alpin sous la neige, chalets décorés, ruelle aux lanternes, nuit du 5 décembre",
+   "cri": "des cloches et des chaînes qui se rapprochent dans la rue",
+   "legende": ["Compagnon de saint Nicolas : Nicolas récompense, Krampus punit.", "Cornes, poils noirs, longue langue, chaînes, cloches et verges de bouleau.", "La Krampusnacht a lieu le 5 décembre ; des défilés (Krampuslauf) existent encore."],
+   "personnalite": "Un fonctionnaire de la peur : il suit sa liste à la lettre, ne punit jamais un enfant qui n'y est pas.",
+   "faiblesse": "Il n'a pas le droit de toucher un enfant qui n'est pas sur la liste.",
+   "sources": ["https://www.nationalgeographic.com/history/article/131217-krampus-christmas-santa-devil", "https://www.history.com/articles/krampus-christmas-legend-origin"],
+   "histoires_faites": []
+  },
+  "baba_yaga": {
+   "nom": "BABA YAGA", "surnom": "LA GRAND-MÈRE DES BOIS", "pays": "Russie et pays slaves",
+   "decor": "forêt de bouleaux, isba montée sur des pattes de poulet qui tourne sur elle-même, clôture d'os",
+   "cri": "le craquement des pattes de la cabane qui se tourne, le bruit du pilon",
+   "legende": ["Vit dans une isba sur pattes de poulet qui se tourne vers le visiteur quand on le lui demande.", "Voyage dans un mortier, avance avec un pilon et efface ses traces avec un balai.", "Elle aide ou dévore selon ceux qui viennent la voir."],
+   "personnalite": "Imprévisible, piquante, elle teste la politesse et le courage des visiteurs.",
+   "faiblesse": "La politesse et la débrouillardise : elle aide ceux qui la respectent.",
+   "sources": ["https://www.worldhistory.org/Baba_Yaga/", "https://www.mentalfloss.com/culture/folklore-mythology/why-baba-yaga-house-chicken-legs"],
+   "histoires_faites": []
+  },
+  "kappa": {
+   "nom": "KAPPA", "surnom": "LE LUTTEUR DES RIVIÈRES", "pays": "Japon",
+   "decor": "rivière japonaise, rizières, petit pont rouge, roseaux, brume du soir",
+   "cri": "un clapotis, puis un « kek-kek » mouillé sous l'eau",
+   "legende": ["Il a sur la tête une assiette remplie d'eau : s'il la renverse, il perd ses forces.", "Il est très poli : si on le salue profondément, il salue aussi et renverse l'eau.", "Il adore les concombres ; on en jetait dans la rivière pour le calmer.", "Il défie les gens à la lutte."],
+   "personnalite": "Joueur, compétitif, mauvais perdant, mais tient toujours parole.",
+   "faiblesse": "La politesse (la révérence) et les concombres.",
+   "sources": ["https://www.tofugu.com/japan/kappa/", "https://www.bokksu.com/blogs/news/meet-the-kappa-japans-enigmatic-aquatic-yokai"],
+   "histoires_faites": []
+  },
+  "golem": {
+   "nom": "GOLEM", "surnom": "LE GARDIEN D'ARGILE", "pays": "Prague (République tchèque)",
+   "decor": "vieux Prague la nuit, ruelles pavées, rives de la Vltava, grenier de vieille synagogue",
+   "cri": "des pas lourds qui font trembler le plancher, de l'argile qui craque",
+   "legende": ["Le rabbin Loew l'aurait façonné avec l'argile de la Vltava.", "Le mot « emet » (vérité) sur son front lui donne vie ; en effaçant la première lettre, il reste « met » (mort) et il s'arrête.", "Dans une version, un soir de sabbat, il devient violent et le rabbin l'arrête.", "La légende date surtout du XIXe siècle et du livre de Rosenberg (1909)."],
+   "personnalite": "Protecteur mais trop littéral : il obéit mot pour mot, sans comprendre.",
+   "faiblesse": "Une seule lettre sur son front.",
+   "sources": ["https://www.jewishmuseum.cz/novinka/the-golem-of-prague-the-legend-of-rabbi-loew-s-creation", "https://www.myjewishlearning.com/article/interpretations-of-the-golem/"],
+   "histoires_faites": []
+  },
+  "wendigo": {
+   "nom": "WENDIGO", "surnom": "LA FAIM QUI MARCHE", "pays": "Nord du Canada (légendes algonquiennes)",
+   "decor": "forêt boréale enneigée, lac gelé, refuge de trappeur",
+   "cri": "un souffle froid, le craquement de la glace, une voix polie",
+   "legende": ["Esprit lié à l'hiver, au froid et à la faim sans fin dans les récits algonquiens."],
+   "personnalite": "Poli, affamé, il compte les gens à l'intérieur.",
+   "faiblesse": "Le partage.",
+   "histoires_faites": ["ep01 — Le refuge du lac gelé (à refaire avec les nouveaux personnages)"]
+  }
+ },
+ "lieux_deja_utilises": ["lac gelé + refuge (ep01)"],
+ "twists_deja_utilises": ["il compte une personne de trop (ep01)"]
 }

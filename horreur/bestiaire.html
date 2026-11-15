@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le Bestiaire · Les monstres</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+ :root{--encre:#0e1116;--ambre:#f2a93b;--parch:#efe2c2;--brun:#3a2a16}
+ *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% 0,#1f2633,#0b0e14 60%);color:var(--parch);font-family:Inter,system-ui,sans-serif;padding:24px 16px 60px}
+ header{text-align:center;margin-bottom:28px} .le{font-family:Anton,Impact,sans-serif;color:var(--ambre);letter-spacing:4px}
+ h1{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(48px,12vw,96px);margin:0;line-height:1}
+ header p{opacity:.7;margin:8px 0 0}
+ .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;max-width:1200px;margin:auto}
+ article{background:var(--parch);color:var(--brun);border-radius:10px;overflow:hidden;box-shadow:0 10px 30px #0008}
+ .tete{background:var(--encre);padding:14px 18px} .tete h2{font-family:Anton,Impact,sans-serif;font-weight:400;color:var(--ambre);margin:0;font-size:30px}
+ .tete small{color:#fff9;font-weight:600;letter-spacing:1px}
+ .corps{padding:14px 18px} .corps b{display:block;font-size:12px;letter-spacing:1px;color:#8a6a3a;margin-top:10px}
+ .corps p,.corps li{margin:4px 0;font-size:15px;line-height:1.45} ul{padding-left:18px;margin:4px 0}
+ .cri{font-style:italic} .src a{color:#8a6a3a;font-size:12px;word-break:break-all}
+ .fait{background:#e5d3a8;border-radius:6px;padding:6px 10px;font-size:13px;margin-top:10px}
+</style>
+</head>
+<body>
+<header><div class="le">— LE —</div><h1>BESTIAIRE</h1><p>Un monstre. Une histoire. Jamais deux fois.</p></header>
+<div class="grille" id="g"></div>
+<script>
+fetch('monstres.json').then(r=>r.json()).then(d=>{
+ const g=document.getElementById('g'), e=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ Object.values(d.monstres).forEach(m=>{
+  const a=document.createElement('article');
+  a.innerHTML=`<div class="tete"><h2>${e(m.nom)}</h2><small>${e(m.surnom)} · ${e(m.pays)}</small></div>
+  <div class="corps"><b>DÉCOR</b><p>${e(m.decor)}</p><b>SON CRI</b><p class="cri">${e(m.cri)}</p>
+  <b>CE QUE DIT LA LÉGENDE</b><ul>${m.legende.map(l=>`<li>${e(l)}</li>`).join('')}</ul>
+  <b>SA PERSONNALITÉ (la nôtre)</b><p>${e(m.personnalite)}</p><b>SA FAIBLESSE</b><p>${e(m.faiblesse)}</p>
+  ${m.attention?`<b>ATTENTION</b><p>${e(m.attention)}</p>`:''}
+  <div class="fait">Histoires faites : ${m.histoires_faites.length?m.histoires_faites.map(e).join(' · '):'aucune'}</div>
+  ${m.sources?`<b>SOURCES</b><div class="src">${m.sources.map(s=>`<a href="${e(s)}" target="_blank" rel="noopener">${e(s)}</a>`).join('<br>')}</div>`:''}</div>`;
+  g.append(a);
+ });
+});
+</script>
+</body>
+</html>

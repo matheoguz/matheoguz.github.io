@@ -311,7 +311,7 @@ function pageMonstre(x0, nom, t) {
   ctx.fillStyle = PARCH; ctx.fillRect(x0, 760, 430, 640);
   ctx.strokeStyle = '#c9b48a'; ctx.lineWidth = 3; ctx.strokeRect(x0 + 24, 784, 382, 592);
   if (nom) { MONSTRES[nom](x0 + 215, 1300, .48, t, false);
-    ctx.fillStyle = '#3a2a16'; ctx.font = `44px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText(BIBLE.monstres[nom].nom, x0 + 215, 1360); }
+    ctx.fillStyle = '#3a2a16'; ctx.font = `44px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText((BIBLE.monstres[nom] || {nom: ''}).nom, x0 + 215, 1360); }
   ctx.restore();
 }
 function livre(t, pos) {
