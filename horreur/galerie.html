@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le Bestiaire · Galerie</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;800&display=swap" rel="stylesheet">
+<style>
+ :root{--ambre:#f2a93b;--parch:#efe2c2}
+ *{box-sizing:border-box} body{margin:0;background:#0b0e14;color:var(--parch);font-family:Inter,system-ui,sans-serif;padding:24px 16px 60px}
+ header{text-align:center;margin-bottom:24px} .le{font-family:Anton,Impact,sans-serif;color:var(--ambre);letter-spacing:4px}
+ h1{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(44px,11vw,88px);margin:0;line-height:1} header p{opacity:.7;margin:8px 0 0}
+ .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;max-width:1300px;margin:auto}
+ figure{margin:0;border-radius:12px;overflow:hidden;background:#151a22;box-shadow:0 8px 24px #0008}
+ canvas{width:100%;aspect-ratio:3/4;display:block}
+ figcaption{padding:10px 14px 14px} figcaption b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:26px;color:var(--parch);display:block}
+ figcaption span{color:var(--ambre);font-size:13px;font-weight:800;letter-spacing:.5px} figcaption small{display:block;opacity:.6;margin-top:4px;font-size:12px}
+ body.capture header p{display:none}
+</style>
+</head>
+<body>
+<header><div class="le">— LE —</div><h1>BESTIAIRE</h1><p>Les 11 monstres, dessinés en code et animés.</p></header>
+<div class="grille" id="g"></div>
+<script src="monstres-art.js"></script>
+<script>
+const A = window.BESTIAIRE_ART, cartes = [];
+fetch('monstres.json').then(r => r.json()).then(d => {
+  Object.entries(A).forEach(([id, art]) => {
+    const m = d.monstres[id] || { nom: id, surnom: '', pays: '' };
+    const f = document.createElement('figure'), cv = document.createElement('canvas'); cv.width = 600; cv.height = 800;
+    f.append(cv); const cap = document.createElement('figcaption');
+    cap.innerHTML = `<b></b><span></span><small></small>`; cap.querySelector('b').textContent = m.nom; cap.querySelector('span').textContent = m.surnom; cap.querySelector('small').textContent = m.pays;
+    f.append(cap); document.getElementById('g').append(f); cartes.push({ cv, art });
+  });
+  window.PRET = true;
+});
+function dessiner(t) {
+  cartes.forEach(({ cv, art }) => {
+    const c = cv.getContext('2d'); const g = c.createLinearGradient(0, 0, 0, 800); g.addColorStop(0, art.fond[0]); g.addColorStop(1, art.fond[1]);
+    c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = g; c.fillRect(0, 0, 600, 800);
+    c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, 700, 600, 100);
+    const s = Math.min(620 / art.hauteur, art.large ? 560 / 1250 : 1);
+    c.save(); c.translate(300 + (art.dx || 0), 715); c.scale(s, s); art.dessin(c, t, {}); c.restore();
+    const v = c.createRadialGradient(300, 400, 200, 300, 400, 520); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)'); c.fillStyle = v; c.fillRect(0, 0, 600, 800);
+  });
+}
+window.dessiner = dessiner;
+(function boucle(ts) { if (!document.body.classList.contains('capture')) dessiner(ts / 1000); requestAnimationFrame(boucle); })(0);
+</script>
+</body>
+</html>
