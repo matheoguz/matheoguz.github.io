@@ -66,6 +66,7 @@ const SONS = {
   os: d => "aevalsrc='(random(0)-0.5)*gt(random(1),0.985)*exp(-0.4*t)':d=2.5,bandpass=f=1800:w=2500,volume=6,aecho=0.5:0.4:20:0.3",
   pas: d => `aevalsrc='(random(0)-0.5)*exp(-30*mod(t,0.62))':d=${d || 3},lowpass=f=900,volume=2.2`,
   voix_loin: d => 'anoisesrc=d=3:c=pink:a=0.5,bandpass=f=1100:w=700,tremolo=f=4:d=0.9,aecho=0.8:0.7:300:0.5,volume=1.4,afade=t=in:d=0.3,afade=t=out:st=2.3:d=0.7',
+  impact: d => "aevalsrc='0.95*sin(2*PI*34*t)*exp(-1.6*t)+0.5*sin(2*PI*58*t)*exp(-3*t)+0.45*(random(0)-0.5)*exp(-9*t)':d=2.6,lowpass=f=420,volume=3",
   souffle: d => 'anoisesrc=d=4:c=brown:a=0.6,lowpass=f=400,afade=t=in:d=2,afade=t=out:st=2:d=2,volume=1.5',
   baguettes: d => "aevalsrc='(sin(2*PI*2600*t)*exp(-70*t))+(sin(2*PI*2200*(t-0.12))*exp(-70*(t-0.12))*gte(t,0.12))':d=0.5,volume=1.5",
 };

@@ -376,7 +376,7 @@ function fin(t) {
   ctx.font = `64px ${FONT}`; ctx.fillStyle = AMBRE; ctx.textAlign = 'center'; ctx.fillText('BESTIAIRE', 540, 1310);
   logo(560, 150);
   ctx.font = `110px ${FONT}`; ctx.fillStyle = PARCH; ctx.fillText('PAGE SUIVANTE ?', 540, 800);
-  ctx.font = `700 42px Inter, sans-serif`; ctx.fillStyle = '#ffffffb0'; ctx.fillText('Commente le monstre que tu veux ↓', 540, 1720); ctx.globalAlpha = 1;
+  ctx.font = `700 42px Inter, sans-serif`; ctx.fillStyle = '#ffffffb0'; ctx.fillText((EP && EP.texteFin) || 'Commente le monstre que tu veux ↓', 540, 1720); ctx.globalAlpha = 1;
 }
 
 // ---------- sous-titres et étiquette de lieu ----------
@@ -426,12 +426,24 @@ function choixCarte(lt, C) {
     ctx.fillStyle = sel ? '#e3262b' : '#2a2a32'; rr(x - 180, 30, 360, 70, 35); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = `800 32px Inter, sans-serif`; ctx.fillText(`${i + 1}  ${o}${sel ? '  ✓' : ''}`, x, 76); });
   ctx.restore();
 }
+function rembobine(lt, p, d) {
+  ctx.fillStyle = '#0a0b12'; ctx.fillRect(0, 0, W, H);
+  const r = rnd(Math.floor(lt * 30) + 7); for (let i = 0; i < 26; i++) { const y = r() * H; ctx.fillStyle = `rgba(255,255,255,${.04 + r() * .12})`; ctx.fillRect(0, y, W, 2 + r() * 10); }
+  for (let i = 0; i < 1500; i++) { ctx.fillStyle = `rgba(255,255,255,${r() * .18})`; ctx.fillRect(r() * W, r() * H, 3, 3); }
+  const [h1, m1] = p.de.split(':').map(Number), [h2, m2] = p.a.split(':').map(Number), a = h1 * 60 + m1, b = h2 * 60 + m2, cur = Math.round(lerp(a, b, ease(clamp(lt / (d * .85)))));
+  const txt = `${String(Math.floor(cur / 60)).padStart(2, '0')}:${String(cur % 60).padStart(2, '0')}`;
+  ctx.textAlign = 'center'; ctx.font = `150px ${FONT}`; ctx.save(); ctx.shadowColor = '#ff1a1a'; ctx.shadowBlur = 30; ctx.fillStyle = '#ff2a2a'; ctx.fillText(txt, 540, 250); ctx.restore();
+  ctx.fillStyle = '#ffffff'; ctx.font = `200px ${FONT}`; const cl = Math.floor(lt * 4) % 2; ctx.globalAlpha = cl ? 1 : .55; ctx.fillText('◀◀', 540, 980); ctx.globalAlpha = 1;
+  ctx.font = `90px ${FONT}`; ctx.fillText('ON REMBOBINE', 540, 1120);
+}
 function mort(lt, p) {
   ctx.fillStyle = '#0a0000'; ctx.fillRect(0, 0, W, H);
   const g = ctx.createRadialGradient(540, 960, 50, 540, 960, 1100); g.addColorStop(0, 'rgba(160,0,0,.55)'); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   const gl = Math.sin(lt * 50) > .7 ? 12 : 0; ctx.textAlign = 'center'; ctx.font = `140px ${FONT}`;
-  ctx.fillStyle = '#00ffff55'; ctx.fillText('TU N\'AS PAS', 540 - gl, 880); ctx.fillText('SURVÉCU', 540 - gl, 1030);
-  ctx.fillStyle = '#ff2020'; ctx.fillText('TU N\'AS PAS', 540 + gl * .5, 880); ctx.fillText('SURVÉCU', 540 + gl * .5, 1030);
+  const l1 = p.survie ? 'TU AS' : 'TU N\'AS PAS';
+  if (p.survie) { ctx.fillStyle = '#05080a'; ctx.fillRect(0, 0, W, H); const g2 = ctx.createRadialGradient(540, 960, 50, 540, 960, 1100); g2.addColorStop(0, 'rgba(242,169,59,.35)'); g2.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H); }
+  ctx.fillStyle = '#00ffff55'; ctx.fillText(l1, 540 - gl, 880); ctx.fillText('SURVÉCU', 540 - gl, 1030);
+  ctx.fillStyle = p.survie ? '#f2a93b' : '#ff2020'; ctx.fillText(l1, 540 + gl * .5, 880); ctx.fillText('SURVÉCU', 540 + gl * .5, 1030);
   ctx.font = `90px ${FONT}`; ctx.fillStyle = '#ffffffcc'; ctx.fillText(p.heure || '', 540, 1200);
   if (p.sousTexte) { ctx.font = `700 40px Inter, sans-serif`; ctx.fillStyle = '#ffffff99'; ctx.fillText(p.sousTexte, 540, 1300); }
 }
@@ -446,6 +458,7 @@ window.renderAt = function (t) {
   if (p.type === 'roulette') secousse = roulette(lt, p, d);
   else if (p.type === 'fin') fin(lt);
   else if (p.type === 'mort') mort(lt, p);
+  else if (p.type === 'rembobine') rembobine(lt, p, d);
   else {
     const z = p.zoom ? lerp(p.zoom[0], p.zoom[1], ease(k)) : 1; secousse = (p.secousse || 0) * (lt < .5 ? 18 : 3);
     ctx.save(); ctx.translate(540, 1100); ctx.scale(z, z); ctx.translate(-540, -1100);
