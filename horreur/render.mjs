@@ -71,18 +71,24 @@ const SONS = {
   baguettes: d => "aevalsrc='(sin(2*PI*2600*t)*exp(-70*t))+(sin(2*PI*2200*(t-0.12))*exp(-70*(t-0.12))*gte(t,0.12))':d=0.5,volume=1.5",
 };
 const DOSSIER_SONS = path.join(ICI, 'sons');
-const ent = [], fil = [];
+const ent = [], fil = [], fond = [], voix = [];
 cues.forEach((c, i) => {
-  const d = c.dur || 3, fichier = ['mp3', 'wav'].map(x => path.join(DOSSIER_SONS, `${c.son}.${x}`)).find(f => fs.existsSync(f));
-  if (fichier) ent.push(...(c.dur ? ['-stream_loop', '-1'] : []), '-i', fichier);
+  const d = c.dur || 3; let fichier = null, trim = '';
+  if (c.fichier) { fichier = path.join(ICI, c.fichier); trim = `atrim=${c.debut}:${c.fin},asetpts=PTS-STARTPTS,afade=t=in:d=0.04,afade=t=out:st=${Math.max(0, c.fin - c.debut - 0.06)}:d=0.06,`; }
+  else fichier = ['mp3', 'wav'].map(x => path.join(DOSSIER_SONS, `${c.son}.${x}`)).find(f => fs.existsSync(f));
+  if (fichier) ent.push(...(c.dur && !c.fichier ? ['-stream_loop', '-1'] : []), '-i', fichier);
   else ent.push('-f', 'lavfi', '-i', (SONS[c.son] || SONS.woosh)(d));
-  const ms = Math.round(c.t * 1000), vol = c.vol ?? 1;
-  fil.push(`[${i + 2}:a]${c.dur ? `atrim=0:${d},afade=t=out:st=${Math.max(0, d - 1)}:d=1,` : ''}volume=${vol},adelay=${ms}|${ms},aformat=channel_layouts=stereo[s${i}]`);
-  if (fichier) console.log('vrai son :', path.basename(fichier));
+  const ms = Math.round(c.t * 1000), vol = c.vol ?? (c.voix ? 1.6 : 1);
+  fil.push(`[${i + 2}:a]${trim}${c.dur && !c.fichier ? `atrim=0:${d},afade=t=out:st=${Math.max(0, d - 1)}:d=1,` : ''}volume=${vol},adelay=${ms}|${ms},aformat=sample_rates=44100:channel_layouts=stereo[s${i}]`);
+  (c.voix ? voix : fond).push(`[s${i}]`);
 });
 const nappe = `sine=f=55:d=${DUR},volume=0.25`;
 const vent = `anoisesrc=d=${DUR}:c=brown:a=0.2,lowpass=f=500,tremolo=f=0.15:d=0.7`;
-const mix = `[0:a]aformat=channel_layouts=stereo[n];[1:a]aformat=channel_layouts=stereo[v];${fil.join(';')}${fil.length ? ';' : ''}[n][v]${cues.map((_, i) => `[s${i}]`).join('')}amix=inputs=${cues.length + 2}:normalize=0,alimiter=limit=0.95,afade=t=out:st=${DUR - 1}:d=1[a]`;
+let mix = `[0:a]aformat=sample_rates=44100:channel_layouts=stereo[n];[1:a]aformat=sample_rates=44100:channel_layouts=stereo[v];${fil.join(';')};`;
+if (voix.length) {
+  mix += `[n][v]${fond.join('')}amix=inputs=${fond.length + 2}:normalize=0[bg];${voix.join('')}amix=inputs=${voix.length}:normalize=0,apad=whole_dur=${DUR}[vx];[vx]asplit=2[vx1][vx2];`;
+  mix += `[bg][vx1]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[bgd];[bgd][vx2]amix=inputs=2:normalize=0,alimiter=limit=0.95,afade=t=out:st=${DUR - 1}:d=1[a]`;
+} else mix += `[n][v]${fond.join('')}amix=inputs=${fond.length + 2}:normalize=0,alimiter=limit=0.95,afade=t=out:st=${DUR - 1}:d=1[a]`;
 const wav = path.join(tmp, 'son.wav');
 execFileSync('ffmpeg', ['-y', '-v', 'error', '-f', 'lavfi', '-i', nappe, '-f', 'lavfi', '-i', vent, ...ent, '-filter_complex', mix, '-map', '[a]', '-t', String(DUR), wav]);
 

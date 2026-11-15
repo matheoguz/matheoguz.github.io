@@ -37,9 +37,16 @@
  "plans": [
   {
    "type": "roulette",
-   "dur": 6.5,
+   "dur": 9.6,
    "choix": "skinwalker",
-   "annonce": "TU DOIS SURVIVRE JUSQU'À 6H"
+   "annonce": "TU DOIS SURVIVRE JUSQU'À 6H",
+   "voix": [
+    0.15,
+    4.95,
+    4.2
+   ],
+   "texte": "",
+   "spin": 4.3
   },
   {
    "decor": "s2_maison",
@@ -57,7 +64,7 @@
     {
      "t": 0,
      "son": "drone",
-     "dur": 94,
+     "dur": 80,
      "vol": 0.7
     },
     {
@@ -66,13 +73,17 @@
      "dur": 21
     }
    ],
-   "texte": "Tes parents sortent dîner. Tu gardes ton petit frère, Noé."
+   "texte": "Tes parents sortent dîner. Tu gardes ton petit frère, Noé.",
+   "voix": [
+    6.05,
+    10.55
+   ]
   },
   {
    "decor": "s2_maison",
    "heure": "21:30",
    "lieu": "LA MAISON · AU BORD DE LA FORÊT",
-   "dur": 4.8,
+   "dur": 4.4,
    "zoom": [
     1,
     1.18
@@ -91,7 +102,11 @@
      "vol": 0.5
     }
    ],
-   "texte": "Au fond du jardin, quelque chose regarde vos fenêtres."
+   "texte": "Au fond du jardin, quelque chose regarde vos fenêtres.",
+   "voix": [
+    11.17,
+    14.45
+   ]
   },
   {
    "type": "regle",
@@ -100,16 +115,20 @@
    "lieu": "LA MAISON",
    "etage": true,
    "voile": 0.45,
-   "dur": 5.6,
+   "dur": 6.0,
    "titre": "RÈGLE N°1",
    "regle": "Il imite la voix\nde ceux que tu aimes.\nMais il se trompe d'un détail.",
-   "texte": ""
+   "texte": "",
+   "voix": [
+    15.32,
+    20.55
+   ]
   },
   {
    "decor": "s2_chambre",
    "heure": "23:10",
    "lieu": "LA MAISON · CHAMBRE DE NOÉ",
-   "dur": 5.4,
+   "dur": 4.2,
    "zoom": [
     1,
     1.05
@@ -133,13 +152,17 @@
      "regard": 1
     }
    ],
-   "texte": "Noé n'arrive pas à dormir. Il dit qu'une dame parle à sa fenêtre."
+   "texte": "Noé n'arrive pas à dormir. Il dit qu'une dame parle à sa fenêtre.",
+   "voix": [
+    21.27,
+    24.65
+   ]
   },
   {
    "decor": "s2_chambre",
    "heure": "23:12",
    "lieu": "LA MAISON · CHAMBRE DE NOÉ",
-   "dur": 4.8,
+   "dur": 4.0,
    "zoom": [
     1,
     1.1
@@ -171,13 +194,17 @@
      "regard": 1
     }
    ],
-   "texte": "Tu regardes dehors. Personne… enfin, presque."
+   "texte": "Tu regardes dehors. Personne… enfin, presque.",
+   "voix": [
+    24.96,
+    28.3
+   ]
   },
   {
    "decor": "s2_escalier",
    "heure": "23:40",
    "lieu": "LA MAISON · ESCALIER",
-   "dur": 6,
+   "dur": 4.2,
    "zoom": [
     1,
     1.08
@@ -192,13 +219,17 @@
      "dos": true
     }
    ],
-   "texte": "D'en bas, la voix de maman : « Chéri, descends m'aider avec les courses ! »"
+   "texte": "D'en bas, la voix de maman : « Chéri, descends m'aider avec les courses ! »",
+   "voix": [
+    28.68,
+    31.9
+   ]
   },
   {
    "decor": "s2_escalier",
    "heure": "23:40",
    "lieu": "LA MAISON · ESCALIER",
-   "dur": 5,
+   "dur": 4.0,
    "cuisineLum": true,
    "voile": 0.3,
    "sons": [
@@ -218,13 +249,17 @@
      }
     ]
    },
-   "texte": ""
+   "texte": "",
+   "voix": [
+    32.23,
+    35.3
+   ]
   },
   {
    "decor": "s2_escalier",
    "heure": "23:41",
    "lieu": "LA MAISON · ESCALIER",
-   "dur": 5.2,
+   "dur": 4.2,
    "zoom": [
     1.1,
     1.3
@@ -247,13 +282,17 @@
      "vol": 0.6
     }
    ],
-   "texte": "Maman est au resto. Alors qui est dans la cuisine ?"
+   "texte": "Maman est au resto. Alors qui est dans la cuisine ?",
+   "voix": [
+    35.6,
+    37.4
+   ]
   },
   {
    "decor": "s2_cuisine",
    "heure": "23:41",
    "lieu": "LA CUISINE · SI T'AS CHOISI 1",
-   "dur": 5.4,
+   "dur": 5.6,
    "zoom": [
     1,
     1.12
@@ -284,13 +323,17 @@
      "dur": 10.4
     }
    ],
-   "texte": "Maman est devant le frigo. Pieds nus. Et beaucoup trop grande."
+   "texte": "Maman est devant le frigo. Pieds nus. Et beaucoup trop grande.",
+   "voix": [
+    37.93,
+    42.85
+   ]
   },
   {
    "decor": "s2_cuisine",
    "heure": "23:42",
    "lieu": "LA CUISINE · SI T'AS CHOISI 1",
-   "dur": 5,
+   "dur": 4.4,
    "zoom": [
     1.05,
     1.25
@@ -301,11 +344,15 @@
     "y": 1720,
     "echelle": 1.02,
     "echelleM": 0.85,
-    "t0": 2.0,
+    "t0": 2.2,
     "dur": 1.6,
     "inverse": true
    },
-   "texte": "Elle se retourne : « Tu as l'air fatigué, mon chéri. »"
+   "texte": "Elle se retourne : « Tu as l'air fatigué, mon chéri. »",
+   "voix": [
+    43.16,
+    45.05
+   ]
   },
   {
    "decor": "sw_visage",
@@ -329,19 +376,25 @@
      "t": 0,
      "son": "souffle"
     }
-   ]
+   ],
+   "texte": ""
   },
   {
    "type": "rembobine",
    "dur": 2.4,
    "de": "23:42",
-   "a": "23:40"
+   "a": "23:40",
+   "voix": [
+    46.66,
+    47.4
+   ],
+   "texte": ""
   },
   {
    "decor": "s2_porte",
    "heure": "23:41",
    "lieu": "CHAMBRE DE NOÉ · SI T'AS CHOISI 2",
-   "dur": 5.4,
+   "dur": 4.8,
    "zoom": [
     1,
     1.06
@@ -357,13 +410,17 @@
     "t": 0,
     "tChoix": 0
    },
-   "texte": "Tu t'enfermes avec Noé. Tu bloques la porte avec la commode."
+   "texte": "Tu t'enfermes avec Noé. Tu bloques la porte avec la commode.",
+   "voix": [
+    47.63,
+    51.65
+   ]
   },
   {
    "decor": "s2_porte",
    "heure": "00:30",
    "lieu": "CHAMBRE DE NOÉ",
-   "dur": 5.6,
+   "dur": 4.6,
    "zoom": [
     1,
     1.15
@@ -382,13 +439,17 @@
      "dur": 9.6
     }
    ],
-   "texte": "Des coups. Puis la voix de Noé : « Ouvre ! C'est moi, Noé ! »"
+   "texte": "Des coups. Puis la voix de Noé : « Ouvre ! C'est moi, Noé ! »",
+   "voix": [
+    51.83,
+    55.6
+   ]
   },
   {
    "decor": "s2_chambre",
    "heure": "00:31",
    "lieu": "CHAMBRE DE NOÉ",
-   "dur": 4,
+   "dur": 3.6,
    "zoom": [
     1.05,
     1.2
@@ -400,7 +461,7 @@
    "lampe": false,
    "sons": [
     {
-     "t": 0.4,
+     "t": 0.15,
      "son": "impact",
      "vol": 0.8
     }
@@ -424,19 +485,27 @@
      "regard": -1
     }
    ],
-   "texte": "Mais Noé est là. Dans tes bras."
+   "texte": "Mais Noé est là. Dans tes bras.",
+   "voix": [
+    55.85,
+    58.0
+   ]
   },
   {
    "decor": "s2_maison",
    "aube": true,
    "heure": "06:00",
    "lieu": "LA MAISON",
-   "dur": 4.2,
+   "dur": 3.4,
    "zoom": [
     1.08,
     1
    ],
-   "texte": "Vous ne bougez plus jusqu'au matin."
+   "texte": "Vous ne bougez plus jusqu'au matin.",
+   "voix": [
+    58.48,
+    60.6
+   ]
   },
   {
    "type": "mort",
@@ -449,11 +518,24 @@
      "t": 0,
      "son": "souffle"
     }
-   ]
+   ],
+   "voix": [
+    60.94,
+    64.3,
+    0.5
+   ],
+   "texte": ""
   },
   {
    "type": "fin",
-   "dur": 3.6
+   "dur": 4.2,
+   "voix": [
+    64.71,
+    67.7,
+    0.4
+   ],
+   "texte": ""
   }
- ]
+ ],
+ "voix": "sons/voix/ep06.mp3"
 }
