@@ -1,0 +1,33 @@
+{
+ "id": "ep03-rake-nuit",
+ "titre": "Survis jusqu'à 6h",
+ "format": "survie",
+ "numero": 3,
+ "monstre": "rake",
+ "images_a_generer": {
+  "pied_du_lit": "FAIT (Gamma) — POV lit, créature pâle accroupie au pied du lit, lune bleue",
+  "reveil": "POV lit, chambre sombre, réveil digital rouge 03:00 au premier plan, aucune créature",
+  "sous_le_lit": "POV tête penchée sous le lit, obscurité, longs doigts pâles griffus qui dépassent",
+  "placard": "porte de placard entrouverte dans le noir, deux grands yeux noirs brillants dans la fente",
+  "plafond": "chambre éclairée par une lampe jaune, vide… créature pâle collée au coin du plafond",
+  "couloir": "couloir de maison la nuit, ampoule qui grésille, créature à quatre pattes au bout",
+  "visage": "gros plan extrême, visage pâle sans poils, yeux noirs énormes, bouche ouverte, à 10 cm de la caméra",
+  "aube": "lumière grise du matin, lit vide, longues griffures sur le drap"
+ },
+ "plans": [
+  {"type": "roulette", "dur": 6.5, "choix": "rake", "annonce": "TU DOIS SURVIVRE JUSQU'À 6H"},
+  {"image": "reveil", "tag": "TA CHAMBRE · 03:00", "dur": 4, "zoom": [1, 1.08], "sons": [{"t": 0, "son": "nuit", "dur": 60}], "texte": "03:00. Tu te réveilles. Il fait froid."},
+  {"type": "regle", "image": "reveil", "voile": 0.5, "dur": 4.2, "titre": "RÈGLE N°1", "regle": "Ne regarde jamais\nle pied de ton lit.", "texte": ""},
+  {"image": "sous_le_lit", "tag": "TA CHAMBRE · 03:04", "dur": 4.2, "zoom": [1.05, 1.15], "sons": [{"t": 0.3, "son": "gratte"}], "texte": "Un grattement. Juste sous ton matelas."},
+  {"type": "regle", "image": "sous_le_lit", "voile": 0.5, "dur": 4.6, "titre": "RÈGLE N°2", "regle": "S'il chuchote ton prénom,\nne réponds pas.", "texte": "", "sons": [{"t": 1.2, "son": "chuchote"}]},
+  {"image": "placard", "tag": "TA CHAMBRE · 03:09", "dur": 4.4, "zoom": [1, 1.2], "sons": [{"t": 0.2, "son": "porte"}], "texte": "La porte du placard est ouverte. Tu l'avais fermée."},
+  {"image": "plafond", "tag": "TA CHAMBRE · 03:11", "dur": 4.4, "zoom": [1, 1.1], "flash": 0.2, "sons": [{"t": 0.1, "son": "interrupteur"}], "texte": "Tu allumes la lumière. La chambre est vide…"},
+  {"image": "plafond", "tag": "TA CHAMBRE · 03:11", "dur": 3.4, "zoom": [1.1, 1.45], "cadre": "haut", "sons": [{"t": 0.4, "son": "choc"}], "texte": "…sauf le plafond."},
+  {"image": "plafond", "tag": "TA CHAMBRE · 03:12", "dur": 3, "clignote": true, "noir_fin": true, "sons": [{"t": 0, "son": "grésillement"}], "texte": "L'ampoule grésille. Et s'éteint."},
+  {"image": "couloir", "tag": "COULOIR · 03:12", "dur": 4.4, "zoom": [1, 1.3], "secousse": 0.3, "sons": [{"t": 0, "son": "respiration"}], "texte": "Tu cours vers la porte. Au bout du couloir…"},
+  {"image": "pied_du_lit", "tag": "TA CHAMBRE · 03:16", "dur": 4.2, "zoom": [1, 1.12], "sons": [{"t": 0.5, "son": "chuchote"}], "texte": "Tu retournes dans ton lit. Et tu regardes en bas."},
+  {"image": "visage", "tag": "", "dur": 2.6, "jumpscare": 0.15, "secousse": 1.5, "sons": [{"t": 0.15, "son": "cri"}], "texte": ""},
+  {"type": "mort", "dur": 4, "texte_mort": "TU N'AS PAS SURVÉCU", "heure": "03:17"},
+  {"type": "fin", "dur": 3.4}
+ ]
+}
