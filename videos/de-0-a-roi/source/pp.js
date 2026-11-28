@@ -436,6 +436,12 @@ function hood(g, i) { return rel(g, (i ? .4 : -.4), 1.13, 1.55); }
 
 // ===== photo de profil =====
 const VAR = [
+  () => { mode('sunset'); pose(NICO, -34.85, -197.9, 0, 'smug', 93.2); pose(LINA, -34.0, -198.0, 0, 'smile', 93.2);
+    NICO.arms[1].rotation.set(0, 0, 1.7); NICO.head.rotation.y = .25; LINA.head.rotation.y = -.2;
+    camera.position.set(-34.4, 96.0, -202.4); camera.lookAt(-33.6, 90.5, -180); camera.fov = 56; camera.updateProjectionMatrix(); focus(V(-34, 92, -199)); },
+  () => { mode('sunset'); pose(NICO, -.5, 10, Math.PI, 'smug'); pose(LINA, .5, 10.1, Math.PI, 'smile'); NICO.arms[1].rotation.set(0, 0, 1.7);
+    camera.position.set(0, 2.1, 15.2); camera.lookAt(0, 4.5, -60); camera.fov = 52; camera.updateProjectionMatrix(); focus(V(0, 0, 10)); },
+
   () => { mode('sunset'); pose(LINA, 0.42, 20, -.25, 'smug'); LINA.arms[0].rotation.set(-1.5, -.6, .9); LINA.arms[1].rotation.set(-1.5, .6, -.9);
     pose(NICO, -.55, 19.3, .35, 'grin'); NICO.head.rotation.set(0, .15, .05); NICO.arms[0].rotation.set(0, 0, 2.2);
     HERO.position.set(.5, 0, 16.2); HERO.rotation.y = 1.3;
