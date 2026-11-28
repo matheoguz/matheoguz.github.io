@@ -14,6 +14,7 @@ await page.addScriptTag({ path: dir + (process.env.SCENE||'scene.js') });
 const total = await page.evaluate(() => TOTAL), fps = await page.evaluate(() => FPS);
 const N = Math.round(total * fps);
 console.log('durée', total, 'images', N);
+try { fs.writeFileSync(dir + 'timings.json', JSON.stringify(await page.evaluate(() => SHOTS.map(s => ({ t0: s.t0, d: s.d, intro: s.intro || null }))))); } catch (e) {}
 const frame = async i => Buffer.from((await page.evaluate(i => renderFrame(i), i)).split(',')[1], 'base64');
 if (mode === 'preview') {
   fs.mkdirSync(dir + (process.env.PREV||'prev'), { recursive: true });

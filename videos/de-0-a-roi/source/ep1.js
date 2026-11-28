@@ -296,7 +296,7 @@ function focus(p) { PLAYER.copy(p); const m = scene.userData.mode; const o = m =
 const rel = (g, x, y, z) => g.localToWorld(V(x, y, z));
 
 // ---------- HUD (écran de jeu) ----------
-const HUD = { gps: true, route: false, maxi: false, msg: 0, vote: 0, money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] };
+const HUD = { intro: null, gps: true, route: false, maxi: false, msg: 0, vote: 0, money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] };
 function stroked(txt, x, y, font, fill, lw = 12, align = 'center') { ctx.save(); ctx.font = font; ctx.textAlign = align; ctx.lineJoin = 'round'; ctx.lineWidth = lw; ctx.strokeStyle = '#000'; ctx.strokeText(txt, x, y); ctx.fillStyle = fill; ctx.fillText(txt, x, y); ctx.restore(); }
 const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
 function star(x, y, r, filled) { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath();
@@ -352,6 +352,20 @@ function drawMinimap() {
   const n = tr(P.x, P.z - 999); const na = Math.atan2(n[1] - cy, n[0] - cx); stroked('N', cx + Math.cos(na) * (r - 2), cy + Math.sin(na) * (r - 2) + 7, '900 20px Inter', '#fff', 5);
   // barres de vie / armure façon jeu
   ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(cx - r, cy + r + 12, r * 2, 10); ctx.fillStyle = '#5be36f'; ctx.fillRect(cx - r + 2, cy + r + 14, r - 4, 6); ctx.fillStyle = '#3ea8ff'; ctx.fillRect(cx + 2, cy + r + 14, (r - 4) * .35, 6);
+}
+
+function drawIntro({ name, l1, l2, col, k, droite }) {
+  const a = ease(clamp(k));
+  ctx.save(); ctx.filter = 'saturate(1.45) contrast(1.18)'; ctx.drawImage(out, 0, 0); ctx.restore();
+  ctx.save(); const g = ctx.createLinearGradient(droite ? W : 0, 0, droite ? 0 : W, 0); g.addColorStop(0, col + 'cc'); g.addColorStop(.55, col + '00'); ctx.globalAlpha = a * .85; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
+  if (k < .25) { ctx.fillStyle = `rgba(255,255,255,${(1 - k / .25) * .7})`; ctx.fillRect(0, 0, W, H); } // flash du gel d'image
+  ctx.save(); const x0 = droite ? W - 40 : 40, al = droite ? 'right' : 'left'; const off = (1 - a) * (droite ? 120 : -120);
+  ctx.translate(off, 0); ctx.globalAlpha = a;
+  stroked(name, x0, 520, 'italic 900 150px Inter', '#ffffff', 18, al);
+  ctx.fillStyle = '#ffd21f'; ctx.fillRect(droite ? x0 - 330 : x0, 546, 330, 8);
+  stroked(l1, x0, 600, 'italic 900 38px Inter', '#ffd21f', 10, al);
+  stroked(l2, x0, 648, '800 32px Inter', '#ffffff', 8, al);
+  ctx.restore();
 }
 function screen(v) { const p = v.clone().project(camera); return [(p.x + 1) / 2 * W, (1 - p.y) / 2 * H]; }
 
@@ -443,13 +457,20 @@ const SHOTS = [
       if (u > .7) smoke(rel(HERO, 0, 1.2, -1.8), (u - .7) * 8);
       cam(V(17.6, 2.3, 101.2), V(17.9, 2.3, 101.6), V(21.6, 1.3, 105.6), V(21.6, 1.3, 105.6), (u - .5) * 2, 50); }
     focus(V(23, 0, 107)); } },
-  { d: 6.4, txt: ['Lui, c\'est *Nico*.', 'Il fonce', 'sans *réfléchir*.', 'Elle, c\'est *Lina*.', 'Elle réfléchit', 'pour *deux*.'], f(u, t) {
-    mode('day'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5;
-    if (u < .5) { pose(NICO, 22.4, 104.6, Math.PI - .5, 'grin'); NICO.arms[1].rotation.set(0, 0, -2.6 + Math.sin(t * 8) * .25); pose(LINA, 25, 104.8, Math.PI + .3, 'smile');
-      cam(V(21.6, 1.95, 100.8), V(21.9, 1.95, 101.3), V(22.4, 1.6, 104.6), V(22.4, 1.6, 104.6), u * 2, 44); HUD.card = { name: 'NICO', sub: 'fonce sans réfléchir', col: '#d8443a', k: u * 2 }; }
-    else { pose(LINA, 25, 104.8, Math.PI + .3, 'smug'); LINA.arms[0].rotation.set(-1.5, -.6, .9); LINA.arms[1].rotation.set(-1.5, .6, -.9); pose(NICO, 22.4, 104.6, Math.PI - .5, 'neutral');
-      cam(V(26, 1.95, 101.3), V(25.7, 1.95, 101.8), V(25, 1.6, 104.8), V(25, 1.6, 104.8), (u - .5) * 2, 44); HUD.card = { name: 'LINA', sub: 'réfléchit pour deux', col: '#7a45c2', k: (u - .5) * 2 }; }
-    blinkAt(LINA, '', t + .7); focus(V(23, 0, 105)); } },
+  { d: 5.4, intro: 'nico', txt: ['Vous allez être *Nico*.', 'Le pilote.', 'Il fonce', 'sans *réfléchir*.'], f(u, t) {
+    mode('day'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; HUD.gps = false; const tf = Math.min(t, .7);
+    pose(NICO, 22.4, 104.6, Math.PI - .5, 'grin'); NICO.arms[1].rotation.set(0, 0, -2.6 + Math.sin(tf * 8) * .25); NICO.g.position.y = 0;
+    pose(LINA, 25, 104.8, Math.PI + .3, 'smile');
+    const z = t < .7 ? 0 : ease(clamp((t - .7) / .5)) * .5;
+    cam(V(21.0, 1.9, 100.6 + z), V(21.0, 1.9, 100.6 + z), V(23.15, 1.5, 104.6), V(23.15, 1.5, 104.6), 0, 46, 0);
+    HUD.intro = t > .7 ? { name: 'NICO', l1: '22 ANS · LE PILOTE', l2: 'Fonce sans réfléchir.', col: '#d8443a', k: (t - .7) / .5 } : null; focus(V(23, 0, 105)); } },
+  { d: 5.4, intro: 'lina', txt: ['Et vous allez être *Lina*.', 'Le cerveau.', 'Pas un plan', 'ne lui *échappe*.'], f(u, t) {
+    mode('day'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; HUD.gps = false; const tf = Math.min(t, .7);
+    pose(LINA, 25, 104.8, Math.PI + .3 - (1 - ease(clamp(tf / .7))) * .6, 'smug'); LINA.arms[0].rotation.set(-1.5, -.6, .9); LINA.arms[1].rotation.set(-1.5, .6, -.9); LINA.g.position.y = 0;
+    pose(NICO, 22.4, 104.6, Math.PI - .5, 'neutral');
+    const z = t < .7 ? 0 : ease(clamp((t - .7) / .5)) * .5;
+    cam(V(26.2, 1.9, 100.9 + z), V(26.2, 1.9, 100.9 + z), V(24.25, 1.5, 104.8), V(24.25, 1.5, 104.8), 0, 46, 0);
+    HUD.intro = t > .7 ? { name: 'LINA', l1: '21 ANS · LE CERVEAU', l2: 'Pas un plan ne lui échappe.', col: '#7a45c2', k: (t - .7) / .5, droite: true } : null; focus(V(23, 0, 105)); } },
   { d: 4.8, txt: ['Un soir,', 'un *message* arrive.', '*Numéro masqué*.'], f(u, t) {
     mode('sunset'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; HUD.phone = u + .01; HUD.msg = u > .35 ? u - .35 : 0; HUD.route = HUD.maxi = u > .5;
     pose(NICO, 25.2, 108.8, Math.PI, u < .4 ? 'neutral' : 'surprised', 1.0); NICO.arms[1].rotation.set(-1.2, 0, -.5); PHONE.visible = true;
@@ -548,6 +569,7 @@ window.renderFrame = function (i) {
   renderer.render(scene, camera); ctx.drawImage(glCanvas, 0, 0);
   const vg = ctx.createRadialGradient(W / 2, H / 2, H * .3, W / 2, H / 2, H * .75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
   if (T < .25) { ctx.fillStyle = `rgba(255,255,255,${1 - T / .25})`; ctx.fillRect(0, 0, W, H); }
+  if (HUD.intro) drawIntro(HUD.intro);
   drawHUD(); caption(T); if (HUD.vote) drawVote(HUD.vote);
   const end = TOTAL - T;
   if (false) { ctx.fillStyle = `rgba(0,0,0,${clamp((1.7 - end) / .5)})`; ctx.fillRect(0, 0, W, H);
