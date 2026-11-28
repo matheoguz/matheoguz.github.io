@@ -1,27 +1,26 @@
-# DE 0 À ROI — Épisode 1 « La livraison » (texte à lire)
+# DE 0 À ROI — Épisode 1 « Bienvenue à Porto Soleil » (texte à lire)
 
-Vidéo : `episode-1.mp4` (54 s, format TikTok, sans voix). Ville : Porto Soleil. Héros : Nico et Lina.
-Lis avec une voix de bande-annonce : calme au début, plus rapide pendant la poursuite.
+Vidéo : `episode-1.mp4` (56 s, format TikTok, sans voix). Lis avec une voix de bande-annonce, posée.
+Les phrases entre « » sont dites par Maximo : voix grave et lente.
 
 | Temps | Texte |
 |---|---|
 | 0:00 | Dans un an, cette ville sera à eux. |
 | 0:04 | Mais aujourd'hui… ils ont zéro euro. |
-| 0:08 | Lui, c'est Nico. Il fonce sans réfléchir. Elle, c'est Lina. Elle réfléchit pour deux. |
-| 0:14 | Un matin, le téléphone sonne. C'est le Pélican. |
-| 0:18 | (voix du Pélican) « Un colis. Livré avant minuit. Et surtout… vous ne l'ouvrez pas. » |
-| 0:24 | Mission acceptée. Ils traversent toute la ville. |
-| 0:29 | Mais une voiture noire les suit depuis le port. Nico accélère. |
-| 0:34 | Virage serré… et la voiture noire finit dans les cartons. |
-| 0:38 | 23 h 59. Colis livré. Cinq cents euros. |
-| 0:43 | Mais en partant, Lina voit ce qu'il y avait dans le colis… |
-| 0:48 | (voix de Lina) « Nico… on a un problème. » |
-| 0:52 | (silence, « Épisode 2 bientôt… ») |
+| 0:08 | Leur maison : un cabanon qui prend l'eau. Leur voiture : une épave rouillée. |
+| 0:13 | Lui, c'est Nico. Il fonce sans réfléchir. Elle, c'est Lina. Elle réfléchit pour deux. |
+| 0:20 | Un soir, un message arrive. Numéro masqué. |
+| 0:25 | Minuit. Le vieux garage du port nord. (la voiture roule, puis ils marchent jusqu'au garage) |
+| 0:30 | Et là… une voiture en or entre dans le garage. |
+| 0:35 | Maximo. L'homme le plus riche de Porto Soleil. |
+| 0:39 | (Maximo) « Personne ne vous connaît. C'est parfait. J'ai deux boulots pour vous. » |
+| 0:45 | Il pose deux missions sur sa voiture. (Maximo) « Une seule. Choisissez bien. » |
+| 0:51 | (silence, écran « À toi de choisir : A ou B ? ») |
 
-## Faire la voix
-CapCut : importer la vidéo → Audio → Voix off, lire le tableau. Ajouter une musique « trap / suspense » à volume bas.
-Description TikTok : « Épisode 1 : de 0 € à roi de Porto Soleil. Ils ont 0 €… Abonne-toi pour la suite 👑 #histoire #serie #animation »
+## Description TikTok
+« Épisode 1 : ils ont 0 €, un cabanon et une épave… et Maximo leur propose deux missions. A ou B ? Le plus demandé en commentaire devient l'épisode 2 👑 #serie #histoire #animation »
 
-## Idées pour la suite
-- Épisode 2 : ce qu'il y a dans le colis (une clé en or ? une carte ?) et qui conduisait la voiture noire.
-- Ensuite : Madame Ruby (le club), puis Don Arturo, le roi actuel de la ville. Le compteur d'argent monte à chaque épisode.
+## Épisode 2 (selon le vote)
+- **A — Le fourgon blindé** : braquage du fourgon qui transporte les billets chaque jeudi (plan de Lina, Nico au volant, poursuite avec la police).
+- **B — La guerre des docks** : reprendre la cargaison volée à Maximo par le gang des Requins (bagarre et fusillade en style cartoon, ennemis mis K.O.).
+- Plus tard : d'autres chefs arrivent, un nouveau tous les quelques épisodes, comme dans GTA.
