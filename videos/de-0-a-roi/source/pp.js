@@ -436,6 +436,14 @@ function hood(g, i) { return rel(g, (i ? .4 : -.4), 1.13, 1.55); }
 
 // ===== photo de profil =====
 const VAR = [
+  () => { mode('sunset'); pose(NICO, -.5, 10.1, -Math.PI / 2 + .5, 'smug'); pose(LINA, .5, 10.15, Math.PI / 2 - .5, 'smug');
+    NICO.head.rotation.y = .95; LINA.head.rotation.y = -.95;
+    for (const c of [NICO, LINA]) { c.arms[0].rotation.set(-1.5, -.6, .9); c.arms[1].rotation.set(-1.5, .6, -.9); }
+    camera.position.set(0, 1.7, 15.6); camera.lookAt(0, 1.45, 10); camera.fov = 36; camera.updateProjectionMatrix(); focus(V(0, 0, 10)); },
+  () => { mode('night'); pose(NICO, -.5, 10.1, -Math.PI / 2 + .5, 'grin'); pose(LINA, .5, 10.15, Math.PI / 2 - .5, 'smug');
+    NICO.head.rotation.y = .9; LINA.head.rotation.y = -.95;
+    for (const c of [NICO, LINA]) { c.arms[0].rotation.set(-1.5, -.6, .9); c.arms[1].rotation.set(-1.5, .6, -.9); }
+    camera.position.set(0, 1.7, 15.6); camera.lookAt(0, 1.45, 10); camera.fov = 36; camera.updateProjectionMatrix(); focus(V(0, 0, 10)); },
   () => { mode('sunset'); pose(NICO, -34.85, -197.9, 0, 'smug', 93.2); pose(LINA, -34.0, -198.0, 0, 'smile', 93.2);
     NICO.arms[1].rotation.set(0, 0, 1.7); NICO.head.rotation.y = .25; LINA.head.rotation.y = -.2;
     camera.position.set(-34.4, 96.0, -202.4); camera.lookAt(-33.6, 90.5, -180); camera.fov = 56; camera.updateProjectionMatrix(); focus(V(-34, 92, -199)); },
