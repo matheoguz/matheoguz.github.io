@@ -61,7 +61,7 @@ for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
   wnx.fillStyle = rnd() < .55 ? (rnd() < .5 ? '#ffd38a' : '#ffe9c2') : '#1a1a2a'; wnx.fillRect(10 + i * 30, 12 + j * 30, 18, 20);
 }
 const WIN_D = tex(wd), WIN_N = tex(wn);
-const buildings = [];
+const buildings = []; const FOOT = [];
 const PASTEL = [0xf6b3c8, 0x9fe0d0, 0xfff1d6, 0x8fd3f0, 0xf9d48a, 0xe8b4f0, 0xffffff, 0xf3a79a];
 function building(x, z, w, d, h, col) {
   if (x + w / 2 > -78 && x - w / 2 < -46 && z + d / 2 > 44 && z - d / 2 < 76) return null;
@@ -73,7 +73,7 @@ function building(x, z, w, d, h, col) {
   const s2 = toon(col, { map: a2, emissive: 0xffd28a, emissiveMap: b2, emissiveIntensity: 0 });
   const top = toon(new THREE.Color(col).multiplyScalar(.75));
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [s1, s1, top, top, s2, s2]); m.position.set(x, h / 2, z); add(m);
-  buildings.push(s1, s2);
+  buildings.push(s1, s2); FOOT.push([x, z, w, d]);
   if (h < 26) box(w + .4, .5, d + .4, toon(PASTEL[(Math.abs(x * 7 + z) | 0) % PASTEL.length]), x, h + .25, z); // corniche art déco
   return m;
 }
@@ -291,11 +291,12 @@ function cam(p0, p1, l0, l1, u, fov = 50, sway = 1) {
   const e = ease(u); camera.position.lerpVectors(p0, p1, e); camera.position.x += Math.sin(T * 1.1) * .03 * sway; camera.position.y += Math.sin(T * 1.6) * .02 * sway;
   camera.lookAt(new THREE.Vector3().lerpVectors(l0, l1, e)); camera.fov = fov; camera.updateProjectionMatrix();
 }
-function focus(p) { const m = scene.userData.mode; const o = m === 'sunset' ? V(40, 18, -10) : V(22, 40, 16); sun.position.copy(p).add(o); sun.target.position.copy(p); }
+let PLAYER = V(0, 0, 0);
+function focus(p) { PLAYER.copy(p); const m = scene.userData.mode; const o = m === 'sunset' ? V(40, 18, -10) : V(22, 40, 16); sun.position.copy(p).add(o); sun.target.position.copy(p); }
 const rel = (g, x, y, z) => g.localToWorld(V(x, y, z));
 
 // ---------- HUD (écran de jeu) ----------
-const HUD = { msg: 0, vote: 0, money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] };
+const HUD = { gps: true, route: false, maxi: false, msg: 0, vote: 0, money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] };
 function stroked(txt, x, y, font, fill, lw = 12, align = 'center') { ctx.save(); ctx.font = font; ctx.textAlign = align; ctx.lineJoin = 'round'; ctx.lineWidth = lw; ctx.strokeStyle = '#000'; ctx.strokeText(txt, x, y); ctx.fillStyle = fill; ctx.fillText(txt, x, y); ctx.restore(); }
 const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
 function star(x, y, r, filled) { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath();
@@ -305,17 +306,7 @@ function drawHUD() {
   const sc = 1 + HUD.red * .18;
   ctx.save(); ctx.translate(W - 34, 238); ctx.scale(sc, sc); stroked(fmt(HUD.money), 0, 0, '900 56px Inter', HUD.red > .05 ? '#ff3b3b' : '#5be36f', 13, 'right'); ctx.restore();
   for (let i = 0; i < 5; i++) star(W - 50 - (4 - i) * 44, 285, 17, i < HUD.stars);
-  if (HUD.map) {
-    const cx = 112, cy = 250, r = 82; ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fillStyle = 'rgba(20,28,40,.85)'; ctx.fill(); ctx.clip();
-    const off = (T * 40) % 60; ctx.strokeStyle = 'rgba(200,210,225,.55)'; ctx.lineWidth = 9;
-    ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
-    for (let k = -2; k < 4; k++) { const y = cy - r + k * 60 + off; ctx.beginPath(); ctx.moveTo(cx - r, y); ctx.lineTo(cx, y); ctx.stroke(); }
-    ctx.fillStyle = 'rgba(60,170,220,.8)'; ctx.fillRect(cx + 30, cy - r, 60, 2 * r);
-    ctx.strokeStyle = '#ffd21f'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - r); ctx.stroke();
-    ctx.restore(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.lineWidth = 5; ctx.strokeStyle = '#fff'; ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx, cy - 13); ctx.lineTo(cx + 10, cy + 10); ctx.lineTo(cx, cy + 5); ctx.lineTo(cx - 10, cy + 10); ctx.closePath(); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#000'; ctx.stroke();
-    if (HUD.timer) stroked('⏱ ' + HUD.timer, cx, cy + r + 46, '900 38px Inter', HUD.timer === '23:59' ? '#ff4d4d' : '#ffffff', 10);
-  }
+  if (HUD.gps !== false) drawMinimap();
   if (HUD.popup) { const { title, sub, col, k } = HUD.popup; const y = 430 - (1 - ease(clamp(k))) * 40; ctx.save(); ctx.globalAlpha = clamp(k * 3);
     ctx.fillStyle = 'rgba(0,0,0,.78)'; ctx.beginPath(); ctx.roundRect(60, y - 70, W - 120, sub ? 140 : 100, 18); ctx.fill();
     ctx.fillStyle = col; ctx.fillRect(60, y - 70, W - 120, 8);
@@ -328,9 +319,39 @@ function drawHUD() {
       stroked('« Vieux garage du port.', W / 2, y + 132, '800 30px Inter', '#06210f', 0); stroked('Minuit. Venez seuls. »', W / 2, y + 172, '800 30px Inter', '#06210f', 0); }
     ctx.restore(); }
   if (HUD.card) { const { name, sub, col, k } = HUD.card; const x0 = -W + ease(clamp(k * 3)) * W; ctx.save(); ctx.translate(x0, 0);
-    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 960); ctx.lineTo(W * .82, 940); ctx.lineTo(W * .76, 1080); ctx.lineTo(0, 1090); ctx.fill();
-    stroked(name, 40, 1030, 'italic 900 78px Inter', '#fff', 12, 'left'); stroked(sub, 44, 1072, '800 30px Inter', '#ffd21f', 8, 'left'); ctx.restore(); }
+    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 640); ctx.lineTo(W * .82, 620); ctx.lineTo(W * .76, 760); ctx.lineTo(0, 770); ctx.fill();
+    stroked(name, 40, 710, 'italic 900 78px Inter', '#fff', 12, 'left'); stroked(sub, 44, 752, '800 30px Inter', '#ffd21f', 8, 'left'); ctx.restore(); }
   for (const z of HUD.zz) stroked(z.t, z.x, z.y, `900 ${z.s}px Inter`, '#fff', 8);
+}
+
+// mini-carte GPS façon GTA (en bas à gauche, tourne avec la caméra)
+const ROUTE = [[25, 104], [8, 100], [0, 96], [0, 41], [-58, 41], [-62, 46], [-62, 54]];
+function drawMinimap() {
+  const cx = 138, cy = 1000, r = 108, sc = 1.15;
+  const dir = new THREE.Vector3(); camera.getWorldDirection(dir); const yaw = Math.atan2(dir.x, -dir.z);
+  const P = PLAYER;
+  const tr = (x, z) => { const dx = (x - P.x) * sc, dz = (z - P.z) * sc; const c = Math.cos(-yaw), s2 = Math.sin(-yaw); return [cx + dx * c - dz * s2, cy + dx * s2 + dz * c]; };
+  ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.closePath(); ctx.fillStyle = '#28323c'; ctx.fill(); ctx.clip();
+  const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, z], i) => { const [a, b] = tr(x, z); i ? ctx.lineTo(a, b) : ctx.moveTo(a, b); }); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
+  const rect = (x0, z0, x1, z1, fill) => poly([[x0, z0], [x1, z0], [x1, z1], [x0, z1]], fill);
+  rect(70, -320, 600, 320, '#2e6f9e'); rect(14, -320, 70, 320, '#c9b07a');
+  for (const [x, z, w, d] of FOOT) rect(x - w / 2, z - d / 2, x + w / 2, z + d / 2, '#465260');
+  rect(-72, 52, -52, 68, '#5a4a3a');
+  ctx.strokeStyle = '#e8edf2'; ctx.lineCap = 'round';
+  const road = (pts, w) => { ctx.lineWidth = w * sc; ctx.beginPath(); pts.forEach(([x, z], i) => { const [a, b] = tr(x, z); i ? ctx.lineTo(a, b) : ctx.moveTo(a, b); }); ctx.stroke(); };
+  road([[0, 300], [0, -300]], 12); for (const z of [40, -40, -130]) road([[0, z], [-95, z]], 9); road([[0, 96], [12, 96]], 8);
+  if (HUD.route) { ctx.strokeStyle = '#b84dff'; ctx.lineWidth = 6; ctx.beginPath(); let started = false;
+    ROUTE.forEach(([x, z]) => { const [a, b] = tr(x, z); started ? ctx.lineTo(a, b) : ctx.moveTo(a, b); started = true; }); ctx.stroke(); }
+  const blip = (x, z, txt, col) => { let [a, b] = tr(x, z); const d = Math.hypot(a - cx, b - cy); if (d > r - 16) { a = cx + (a - cx) / d * (r - 16); b = cy + (b - cy) / d * (r - 16); }
+    ctx.beginPath(); ctx.arc(a, b, 13, 0, 7); ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#000'; ctx.stroke();
+    ctx.font = '900 15px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#000'; ctx.fillText(txt, a, b + 1); };
+  blip(25, 112, '⌂', '#5be36f'); if (HUD.maxi) blip(-62, 58, 'M', '#ffd21f');
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.lineWidth = 6; ctx.strokeStyle = '#0b0b10'; ctx.stroke(); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy - 13); ctx.lineTo(cx + 10, cy + 10); ctx.lineTo(cx, cy + 5); ctx.lineTo(cx - 10, cy + 10); ctx.closePath(); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = '#000'; ctx.stroke();
+  const n = tr(P.x, P.z - 999); const na = Math.atan2(n[1] - cy, n[0] - cx); stroked('N', cx + Math.cos(na) * (r - 2), cy + Math.sin(na) * (r - 2) + 7, '900 20px Inter', '#fff', 5);
+  // barres de vie / armure façon jeu
+  ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(cx - r, cy + r + 12, r * 2, 10); ctx.fillStyle = '#5be36f'; ctx.fillRect(cx - r + 2, cy + r + 14, r - 4, 6); ctx.fillStyle = '#3ea8ff'; ctx.fillRect(cx + 2, cy + r + 14, (r - 4) * .35, 6);
 }
 function screen(v) { const p = v.clone().project(camera); return [(p.x + 1) / 2 * W, (1 - p.y) / 2 * H]; }
 
@@ -377,6 +398,22 @@ const GLAMP = new THREE.PointLight(0xffb45a, 0, 22, 1.4); GAR.add(GLAMP); GLAMP.
   for (let i = 0; i < 4; i++) { const c = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 1.1), toon(0x9a7448)); c.position.set(-7.8 + (i % 2) * 1.15, .55 + Math.floor(i / 2) * 1.1, -2.5); c.rotation.y = rnd() * .3; GAR.add(c); }
   const tag = neon('REQUINS', '#5be36f', 4, 1, 9.95, 3.4, 1.5, -Math.PI / 2, 140); scene.remove(tag); GAR.add(tag); tag.position.set(9.9, 3.4, 1.5); tag.rotation.y = -Math.PI / 2; tag.material.opacity = .55;
   GAR.traverse(o => { if (o.isMesh) { o.receiveShadow = true; o.castShadow = true; } }); }
+
+// le port : conteneurs et grues
+{ const im = new THREE.InstancedMesh(new THREE.BoxGeometry(2.4, 2.6, 6), toon(0xffffff), 80); const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), c = new THREE.Color(); let n = 0;
+  const COLS = [0xc8402e, 0x2f6fa8, 0x3f8f4a, 0xe0a030, 0x7a4ab0, 0x2aa7cf];
+  for (let x = -92; x < -46 && n < 80; x += 3.2) for (let z = 46; z < 92 && n < 80; z += 7) {
+    if (x > -75 && x < -49 && z > 48 && z < 72) continue; if (rnd() < .35) continue;
+    const h = 1 + Math.floor(rnd() * 3); for (let k = 0; k < h && n < 80; k++) { q.setFromEuler(new THREE.Euler(0, (rnd() - .5) * .08, 0)); m4.compose(V(x, 1.3 + k * 2.6, z), q, V(1, 1, 1)); im.setMatrixAt(n, m4); im.setColorAt(n++, c.set(COLS[Math.floor(rnd() * COLS.length)])); } }
+  im.count = n; im.castShadow = im.receiveShadow = true; scene.add(im);
+  for (const [x, z] of [[-88, 82], [-46, 88]]) { const g = new THREE.Group(); const y = toon(0xf2c230);
+    const mat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 26, 1.2), y); mat.position.y = 13; g.add(mat);
+    const boom = new THREE.Mesh(new THREE.BoxGeometry(22, 1, 1), y); boom.position.set(6, 25, 0); g.add(boom);
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2, 2.4), toon(0xe9e2d0)); cab.position.set(0, 23.5, 0); g.add(cab);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(.35, 8, 6), basic(0xff3030)); lamp.position.set(16.5, 25.7, 0); g.add(lamp);
+    const cable = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, 12), toon(0x222222)); cable.position.set(14, 19, 0); g.add(cable);
+    g.position.set(x, 0, z); g.rotation.y = rnd() * 3; g.traverse(o => o.castShadow = true); scene.add(g); }
+}
 const WRECK = car({ col: 0x6b4a3a }); WRECK.position.set(-68, -.25, 64); WRECK.rotation.set(0, .7, .06);
 const FOLD = ['A', 'B'].map((L, i) => { const [c, x] = cnv(256, 320); x.fillStyle = i ? '#c8402e' : '#e9c46a'; x.fillRect(0, 0, 256, 320); x.fillStyle = 'rgba(0,0,0,.75)'; x.font = '900 200px Inter'; x.textAlign = 'center'; x.fillText(L, 128, 230);
   x.fillStyle = '#111'; x.fillRect(20, 20, 216, 18); x.font = '900 30px Inter'; x.fillStyle = '#fff'; x.fillText('CONFIDENTIEL', 128, 300);
@@ -414,37 +451,41 @@ const SHOTS = [
       cam(V(26, 1.95, 101.3), V(25.7, 1.95, 101.8), V(25, 1.6, 104.8), V(25, 1.6, 104.8), (u - .5) * 2, 44); HUD.card = { name: 'LINA', sub: 'réfléchit pour deux', col: '#7a45c2', k: (u - .5) * 2 }; }
     blinkAt(LINA, '', t + .7); focus(V(23, 0, 105)); } },
   { d: 4.8, txt: ['Un soir,', 'un *message* arrive.', '*Numéro masqué*.'], f(u, t) {
-    mode('sunset'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; HUD.phone = u + .01; HUD.msg = u > .35 ? u - .35 : 0;
+    mode('sunset'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; HUD.phone = u + .01; HUD.msg = u > .35 ? u - .35 : 0; HUD.route = HUD.maxi = u > .5;
     pose(NICO, 25.2, 108.8, Math.PI, u < .4 ? 'neutral' : 'surprised', 1.0); NICO.arms[1].rotation.set(-1.2, 0, -.5); PHONE.visible = true;
     pose(LINA, 26.6, 108.9, Math.PI + .5, u < .5 ? 'neutral' : 'determined', 1.0); LINA.head.rotation.y = .4;
     cam(V(25.4, 2.9, 104.6), V(25.5, 2.8, 105.2), V(25.6, 2.4, 108.8), V(25.6, 2.4, 108.8), u, 46); focus(V(25, 0, 108)); } },
   { d: 5.8, txt: ['*Minuit*.', 'Le vieux garage', 'du port nord.'], f(u, t) {
     mode('night'); GLAMP.intensity = 25 + Math.sin(t * 40) * 6 * (Math.sin(t * 3) > .7 ? 1 : 0);
     if (u < .55) { // conduite : caméra derrière la voiture, comme dans GTA
-      const k = u / .55, x = -14 - k * 44; HUD.map = true;
+      const k = u / .55, x = -14 - k * 44; HUD.route = HUD.maxi = true;
       HERO.position.set(x, 0, 41.2); HERO.rotation.y = Math.PI / 2 + Math.sin(t * 2.2) * .015;
       seat(NICO, HERO, -1, 'determined'); seat(LINA, HERO, 1, 'neutral');
       camera.position.set(x + 9.2, 3.3, 41.2 + Math.sin(t * .8) * .25); camera.lookAt(x - 8, 1.2, 41.2); camera.fov = 58; camera.updateProjectionMatrix(); focus(V(x, 0, 41));
     } else { // à pied : caméra à l'épaule, derrière Nico
-      const k = (u - .55) / .45, z = 45.5 + k * 5.2; HERO.position.set(-57.6, 0, 43.5); HERO.rotation.y = Math.PI;
+      HUD.route = HUD.maxi = true; const k = (u - .55) / .45, z = 45.5 + k * 5.2; HERO.position.set(-57.6, 0, 43.5); HERO.rotation.y = Math.PI;
       pose(NICO, -61.3, z, 0, 'determined'); walk(NICO, t * 7.5, .5); pose(LINA, -60.0, z - .5, 0, 'neutral'); walk(LINA, t * 7.5 + 1.5, .5);
       camera.position.set(-60.4, 2.9, z - 4.4); camera.lookAt(-61.0, 1.6, z + 5); camera.fov = 58; camera.updateProjectionMatrix(); focus(V(-61, 0, z)); }
   } },
   { d: 4.4, txt: ['Et là...', 'une voiture *en or*', 'entre dans le garage.'], f(u, t) {
-    mode('night'); GLAMP.intensity = 25;
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true;
     HERO.position.set(-58, 0, 52); HERO.rotation.y = Math.PI;
     pose(NICO, -61.2, 51.6, Math.PI, 'surprised'); pose(LINA, -59.8, 51.4, Math.PI, 'surprised');
     const gz = 34 + ease(clamp(u * 1.2)) * 24; GOLD.position.set(-63, 0, gz); GOLD.rotation.y = Math.PI; GOLDL.intensity = 60;
     cam(V(-60.5, 1.7, 63.5), V(-60.6, 1.7, 63), V(-61.5, 1.4, 50), V(-62.5, 1.2, 54), u, 52); focus(V(-61, 0, 55)); } },
-  { d: 4.6, txt: ['*Maximo*.', 'L\'homme le plus *riche*', 'de Porto Soleil.'], f(u, t) {
-    mode('night'); GLAMP.intensity = 25; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
+  { d: 4.6, txt: ['*Maximo*.', 'Le patron', 'du *quartier du port*.'], f(u, t) {
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
     HERO.position.set(-58, 0, 52); HERO.rotation.y = Math.PI;
     const mz = 55.6 - ease(clamp(u * 1.5)) * 1.2; pose(MAXI, -61.6, mz, Math.PI, 'cool'); if (u < .66) walk(MAXI, t * 6, .35);
     smoke(rel(MAXI.head, .4, -.1, .56), t);
-    HUD.card = { name: 'MAXIMO', sub: 'possède la moitié de la ville', col: '#c99a1e', k: u * 1.6 };
+    HUD.card = { name: 'MAXIMO', sub: 'le patron du quartier du port', col: '#c99a1e', k: u * 1.6 };
     cam(V(-61.2, 1.05, 50.2), V(-61.3, 1.2, 50.6), V(-61.6, 2.1, mz), V(-61.6, 2.1, mz), u, 46); focus(V(-61, 0, 55)); } },
+  { d: 5.2, txt: ['Le port,', 'c\'est *son* quartier.', 'Et ce n\'est que', 'le *premier* chef...'], f(u, t) {
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; HERO.position.set(-57.6, 0, 43.5); HERO.rotation.y = Math.PI;
+    const e = ease(u); camera.position.set(lerp(-28, -22, e), lerp(34, 46, e), lerp(96, 70, e));
+    camera.lookAt(lerp(-62, -34, e), lerp(2, 40, e), lerp(58, -205, e)); camera.fov = 58; camera.updateProjectionMatrix(); focus(V(-62, 0, 58)); } },
   { d: 5.8, txt: ['« Personne', 'ne vous *connaît*.', 'C\'est *parfait*.', 'J\'ai *deux* boulots', 'pour vous. »'], f(u, t) {
-    mode('night'); GLAMP.intensity = 25; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
     HERO.position.set(-58, 0, 52); HERO.rotation.y = Math.PI;
     pose(MAXI, -61.6, 54.4, Math.PI, 'cool'); talkFace(MAXI, t, 'cooltalk', 'cool'); MAXI.arms[0].rotation.set(-.9 - Math.sin(t * 3) * .2, 0, .3);
     pose(NICO, -61.2, 51.6, 0, u < .6 ? 'neutral' : 'grin'); pose(LINA, -59.8, 51.4, -.2, 'determined');
@@ -453,7 +494,7 @@ const SHOTS = [
     else cam(V(-60.3, 2.2, 54.6), V(-60.4, 2.15, 54.3), V(-60.5, 1.8, 51.5), V(-60.5, 1.8, 51.5), (u - .55) / .45, 46);
     focus(V(-61, 0, 54)); } },
   { d: 5.4, txt: ['Il pose', '*deux missions*', 'sur sa voiture.', '« Une seule.', 'Choisissez *bien*. »'], f(u, t) {
-    mode('night'); GLAMP.intensity = 25; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
     pose(MAXI, -61.6, 55.2, Math.PI + .3, 'cool'); if (u > .6) talkFace(MAXI, t, 'cooltalk', 'cool');
     FOLD.forEach((f, i) => { f.visible = true; const k = ease(clamp((u - .1 - i * .12) / .2)); const end = hood(GOLD, i); f.position.set(lerp(-61.6, end.x, k), lerp(2.6, end.y, k) + Math.sin(k * Math.PI) * .5, lerp(55.0, end.z, k)); f.rotation.set(0, Math.PI + (i ? .15 : -.1), 0); });
     if (u < .6) cam(V(-64.2, 3.9, 52.4), V(-64.0, 3.8, 52.8), V(-62.8, 1.3, 56.2), V(-62.8, 1.3, 56.2), u / .6, 46);
@@ -461,9 +502,9 @@ const SHOTS = [
       cam(V(-60.6, 1.9, 48.4), V(-60.7, 1.95, 48.8), V(-61.6, 1.8, 55.2), V(-61.6, 1.8, 55.2), (u - .6) / .4, 50); }
     focus(V(-62, 0, 55)); } },
   { d: 5.0, txt: [], f(u, t) {
-    mode('night'); GLAMP.intensity = 25; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
+    mode('night'); GLAMP.intensity = 25; HUD.maxi = true; GOLD.position.set(-63, 0, 58); GOLD.rotation.y = Math.PI; GOLDL.intensity = 30;
     FOLD.forEach((f, i) => { f.visible = true; f.position.copy(hood(GOLD, i)); f.rotation.set(0, Math.PI + (i ? .15 : -.1), 0); });
-    cam(V(-63.8, 3.6, 53.0), V(-63.6, 3.3, 53.6), V(-62.8, 1.2, 56.3), V(-62.8, 1.2, 56.3), u, 46); HUD.vote = u + .01; focus(V(-62, 0, 56)); } },
+    cam(V(-63.8, 3.6, 53.0), V(-63.6, 3.3, 53.6), V(-62.8, 1.2, 56.3), V(-62.8, 1.2, 56.3), u, 46); HUD.vote = u + .01; HUD.gps = false; focus(V(-62, 0, 56)); } },
 ];
 
 function drawVote(k) {
