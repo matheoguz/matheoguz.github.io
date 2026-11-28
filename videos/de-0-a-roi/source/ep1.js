@@ -563,7 +563,7 @@ window.renderFrame = function (i) {
   chars.forEach(c => c.g.visible = false); [HERO, BLACK].forEach(c => { c.position.set(0, -50, 0); c.rotation.set(0, 0, 0); });
   GOLD.position.set(0, -50, 0); GOLDL.intensity = 0; GLAMP.intensity = 0; WRECK.visible = true; FOLD.forEach(f => f.visible = false); SMOKE.forEach(m => m.visible = false);
   PKG.visible = false; PKG.rotation.set(0, 0, 0); PHONE.visible = false; CARTONS.forEach(b => { b.position.copy(b.userData.base); b.rotation.set(0, 0, 0); });
-  Object.assign(HUD, { money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] });
+  Object.assign(HUD, { intro: null, gps: true, route: false, maxi: false, msg: 0, vote: 0, money: 0, stars: 0, map: false, timer: null, popup: null, red: 0, card: null, phone: 0, zz: [] });
   const t = T - s.t0; s.f(clamp(t / s.d), t);
   FILL.position.copy(camera.position).add(V(0, 1.5, 0));
   renderer.render(scene, camera); ctx.drawImage(glCanvas, 0, 0);
