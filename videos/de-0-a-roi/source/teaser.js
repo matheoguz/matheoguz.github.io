@@ -463,13 +463,49 @@ const LOOT = new THREE.Group(); scene.add(LOOT);
   for (let i = 0; i < 9; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(.36, .1, .18), toon(0x6fbf73)); b.position.set(.45 + (i % 3) * .38, 1.11 + Math.floor(i / 3) * .1, (i % 2) * .05); LOOT.add(b);
     const band = new THREE.Mesh(new THREE.BoxGeometry(.06, .105, .185), toon(0xf2e6c0)); band.position.copy(b.position); LOOT.add(band); }
   const lamp = new THREE.PointLight(0xffd59a, 0, 8, 1.2); lamp.position.set(0, 3, 0); LOOT.add(lamp); LOOT.userData.lamp = lamp;
-  // armes au mur
-  const plank = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2, .1), toon(0x2b2f38)); plank.position.set(0, 2.4, -1.4); LOOT.add(plank);
-  for (let i = 0; i < 5; i++) { const g = gun(); g.scale.setScalar(2.2); g.rotation.set(0, Math.PI / 2, 0); g.position.set(-1.3 + i * .65, 2.6 + (i % 2) * .5, -1.3); LOOT.add(g); }
-  const lg = new THREE.Group(); const m = toon(0x1a1a1a); const body = new THREE.Mesh(new THREE.BoxGeometry(1.4, .14, .1), m); lg.add(body); const st = new THREE.Mesh(new THREE.BoxGeometry(.4, .25, .1), toon(0x6b3f22)); st.position.x = -.8; lg.add(st);
-  const mag = new THREE.Mesh(new THREE.BoxGeometry(.12, .3, .08), m); mag.position.set(.1, -.2, 0); mag.rotation.z = .2; lg.add(mag); lg.position.set(0, 1.9, -1.3); LOOT.add(lg);
   LOOT.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); LOOT.position.set(-62, 0, 64); }
 
+
+// ---------- le mur d'armes (chaque type reconnaissable) ----------
+const ARM = new THREE.Group(); scene.add(ARM);
+{ const M = toon(0x1c1c20), MET = toon(0x5a5f68), WOOD = toon(0x8a5228), OLIVE = toon(0x4f5a2e), RED = toon(0xb3261e);
+  const B = (w, h, d, m, x, y, z, rz = 0, par) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.rotation.z = rz; (par || this).add(o); return o; };
+  const C = (r, l, m, x, y, z, rz = Math.PI / 2, par) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, l, 14), m); o.position.set(x, y, z); o.rotation.z = rz; par.add(o); return o; };
+  const W = {};
+  // pistolet
+  { const g = new THREE.Group(); B(.5, .12, .07, M, .05, .1, 0, 0, g); B(.12, .26, .07, M, -.12, -.06, 0, -.25, g); const tg = new THREE.Mesh(new THREE.TorusGeometry(.05, .012, 6, 12, Math.PI), M); tg.position.set(0, -.02, 0); tg.rotation.z = Math.PI; g.add(tg); W.pistolet = g; }
+  // revolver
+  { const g = new THREE.Group(); C(.035, .45, MET, .2, .12, 0, Math.PI / 2, g); C(.075, .14, MET, -.02, .1, 0, Math.PI / 2, g); B(.12, .28, .07, WOOD, -.15, -.07, 0, -.35, g); B(.08, .06, .05, MET, -.07, .17, 0, 0, g); W.revolver = g; }
+  // mitraillette
+  { const g = new THREE.Group(); B(.42, .14, .09, M, 0, .08, 0, 0, g); C(.025, .14, M, .27, .1, 0, Math.PI / 2, g); B(.08, .2, .07, M, -.06, -.08, 0, 0, g); B(.06, .3, .05, MET, -.06, -.3, 0, 0, g); B(.26, .03, .03, MET, -.32, .1, 0, 0, g); W.mitraillette = g; }
+  // fusil à pompe
+  { const g = new THREE.Group(); C(.03, 1.0, M, .25, .1, 0, Math.PI / 2, g); C(.028, .7, M, .2, .03, 0, Math.PI / 2, g); B(.22, .08, .08, WOOD, .3, .03, 0, 0, g); B(.3, .13, .08, M, -.32, .07, 0, 0, g); B(.42, .14, .07, WOOD, -.62, .0, 0, .18, g); W.pompe = g; }
+  // fusil d'assaut (chargeur courbé)
+  { const g = new THREE.Group(); C(.022, .45, M, .55, .12, 0, Math.PI / 2, g); B(.3, .1, .09, WOOD, .26, .1, 0, 0, g); B(.4, .14, .09, M, -.08, .11, 0, 0, g); B(.03, .1, .03, M, .7, .19, 0, 0, g);
+    for (let k = 0; k < 4; k++) B(.09, .1, .06, MET, .0 + k * .035, -.0 - k * .085, 0, .18 + k * .12, g);
+    B(.08, .17, .07, WOOD, -.17, -.03, 0, -.3, g); B(.4, .13, .07, WOOD, -.47, .04, 0, .12, g); W.assaut = g; }
+  // sniper (lunette + bipied)
+  { const g = new THREE.Group(); C(.02, .8, M, .55, .1, 0, Math.PI / 2, g); B(.5, .12, .08, OLIVE, .0, .08, 0, 0, g); C(.045, .4, M, .02, .23, 0, Math.PI / 2, g); C(.06, .05, MET, .24, .23, 0, Math.PI / 2, g); C(.06, .05, MET, -.2, .23, 0, Math.PI / 2, g);
+    B(.12, .2, .06, OLIVE, -.27, -.05, 0, -.3, g); B(.45, .14, .07, OLIVE, -.55, .05, 0, .1, g); for (const s of [-1, 1]) B(.015, .3, .015, M, .55, -.06, s * .04, s * .3, g); W.sniper = g; }
+  // lance-roquettes
+  { const g = new THREE.Group(); C(.085, 1.1, OLIVE, 0, .1, 0, Math.PI / 2, g); const tip = new THREE.Mesh(new THREE.ConeGeometry(.08, .24, 12), RED); tip.rotation.z = -Math.PI / 2; tip.position.set(.66, .1, 0); g.add(tip);
+    B(.07, .2, .06, M, .1, -.06, 0, 0, g); B(.07, .2, .06, M, -.15, -.06, 0, 0, g); B(.12, .09, .05, M, .1, .23, 0, 0, g); W.roquettes = g; }
+  // batte
+  { const g = new THREE.Group(); const b = new THREE.Mesh(new THREE.CylinderGeometry(.06, .025, .95, 12), toon(0xc8955a)); b.rotation.z = -Math.PI / 2; g.add(b); C(.035, .06, M, -.48, 0, 0, Math.PI / 2, g); W.batte = g; }
+  // couteau
+  { const g = new THREE.Group(); const lame = new THREE.Mesh(new THREE.BoxGeometry(.4, .09, .02), toon(0xd9dde3)); lame.position.x = .15; g.add(lame);
+    const pointe = new THREE.Mesh(new THREE.ConeGeometry(.045, .12, 3), toon(0xd9dde3)); pointe.rotation.z = -Math.PI / 2; pointe.position.x = .4; g.add(pointe); B(.06, .14, .05, M, -.07, 0, 0, 0, g); B(.22, .07, .05, toon(0x3a2616), -.2, 0, 0, 0, g); W.couteau = g; }
+  const LIST = [['pistolet', 'PISTOLET'], ['revolver', 'REVOLVER'], ['mitraillette', 'MITRAILLETTE'], ['pompe', 'FUSIL À POMPE'], ['assaut', "FUSIL D'ASSAUT"], ['sniper', 'SNIPER'], ['roquettes', 'LANCE-ROQUETTES'], ['batte', 'BATTE'], ['couteau', 'COUTEAU']];
+  const board = new THREE.Mesh(new THREE.BoxGeometry(4.6, 3.3, .08), toon(0x3a3f48)); board.position.set(0, 2.45, -.05); ARM.add(board);
+  const [pc, px] = cnv(256, 256); px.fillStyle = '#3a3f48'; px.fillRect(0, 0, 256, 256); px.fillStyle = '#23272e'; for (let a = 0; a < 8; a++) for (let b2 = 0; b2 < 8; b2++) { px.beginPath(); px.arc(16 + a * 32, 16 + b2 * 32, 4, 0, 7); px.fill(); }
+  const pt = tex(pc); pt.wrapS = pt.wrapT = THREE.RepeatWrapping; pt.repeat.set(4, 3); board.material = toon(0xffffff, { map: pt });
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(4.8, 3.5, .05), toon(0xf2c230)); frame.position.set(0, 2.45, -.1); ARM.add(frame);
+  LIST.forEach(([k, label], n) => { const col = n % 3, row = Math.floor(n / 3); const g = W[k]; const sc = k === 'roquettes' || k === 'pompe' || k === 'sniper' ? .95 : k === 'assaut' ? 1.05 : 1.25;
+    g.scale.setScalar(sc); g.position.set(-1.45 + col * 1.45, 3.78 - row * 1.05, .08); ARM.add(g);
+    const [c, x] = cnv(512, 96); x.fillStyle = 'rgba(0,0,0,.85)'; x.beginPath(); x.roundRect(4, 4, 504, 88, 16); x.fill(); x.fillStyle = '#ffd21f'; x.font = '900 52px Inter'; x.textAlign = 'center'; x.fillText(label, 256, 66);
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.25, .24), basic(0xffffff, { map: tex(c), transparent: true })); pl.position.set(-1.45 + col * 1.45, 3.12 - row * 1.05, .07); ARM.add(pl); });
+  const spot = new THREE.PointLight(0xfff1dc, 0, 9, 1.2); spot.position.set(0, 3, 2.5); ARM.add(spot); ARM.userData.spot = spot;
+  ARM.traverse(o => { if (o.isMesh) o.castShadow = true; }); ARM.position.set(-52.15, 0, 56); ARM.rotation.y = -Math.PI / 2; }
 // textes façon bande-annonce
 function vertical(l1, l2, a) { ctx.save(); ctx.globalAlpha = a; ctx.translate(W - 70, H / 2); ctx.rotate(Math.PI / 2); ctx.textAlign = 'center';
   ctx.font = '700 40px Inter'; ctx.letterSpacing = '14px'; ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 12; ctx.fillText(l1, 0, 0);
@@ -507,7 +543,7 @@ const SHOTS = [
     POL.userData.r.material.color.set(on ? 0xff2030 : 0x400008); POL.userData.b.material.color.set(on ? 0x101840 : 0x2060ff);
     BLACK.position.set(2.5, 0, -10 - t * 26); cam(V(4.2, 1.0, -31.5), V(3.6, 1.0, -33), V(-3, 1.2, -40), V(-3, 1.2, -40.5), u, 52, .4); focus(V(0, 0, -40)); } },
   { d: 2.3, f(u, t) { mode('night'); LOOT.visible = true; LOOT.userData.lamp.intensity = 20; cam(V(-60.2, 2.6, 66.4), V(-60.8, 2.3, 65.6), V(-62.6, 1.3, 64), V(-62.8, 1.3, 64), u, 46, .2); focus(V(-62, 0, 64)); } },
-  { d: 2.1, f(u, t) { mode('night'); LOOT.visible = true; LOOT.userData.lamp.intensity = 20; cam(V(-61, 2.4, 67), V(-61.6, 2.4, 66.2), V(-62, 2.5, 62.7), V(-62, 2.5, 62.7), u, 46, .2); focus(V(-62, 0, 64)); } },
+  { d: 3.6, f(u, t) { mode('night'); ARM.visible = true; ARM.userData.spot.intensity = 30; WRECK.visible = false; GLAMP.intensity = 15; cam(V(-62.6, 2.5, 56), V(-61.8, 2.5, 56), V(-52, 2.5, 56), V(-52, 2.5, 56), u, 50, .15); focus(V(-56, 0, 56)); } },
   { d: 2.4, f(u, t) { mode('sunset'); HERO.position.set(20.5, 0, 107); HERO.rotation.y = -.5; const z = t < .5 ? 0 : ease(clamp((t - .5) / .4)) * .5;
     pose(NICO, 22.4, 104.6, Math.PI - .5, 'grin'); NICO.arms[1].rotation.set(0, 0, -2.4); NICO.g.position.y = 0; pose(LINA, 25, 104.8, Math.PI + .3, 'smile');
     cam(V(21.0, 1.9, 100.6 + z), V(21.0, 1.9, 100.6 + z), V(23.15, 1.5, 104.6), V(23.15, 1.5, 104.6), 0, 46, 0); focus(V(23, 0, 105));
@@ -526,9 +562,9 @@ const TOTAL = acc; window.TOTAL = TOTAL; window.FPS = FPS;
 window.renderFrame = function (i) {
   T = i / FPS; const s = SHOTS.find(s => T >= s.t0 && T < s.t0 + s.d) || SHOTS[SHOTS.length - 1];
   chars.forEach(c => c.g.visible = false); [HERO, BLACK, POL, CUST, ...TRAFFIC].forEach(c => { c.position.set(0, -50, 0); c.rotation.set(0, 0, 0); });
-  GOLD.position.set(0, -50, 0); GOLDL.intensity = 0; GLAMP.intensity = 0; GLOWL2.intensity = 0; POL.userData.pr.intensity = POL.userData.pb.intensity = 0; LOOT.visible = false; LOOT.userData.lamp.intensity = 0;
+  GOLD.position.set(0, -50, 0); GOLDL.intensity = 0; GLAMP.intensity = 0; GLOWL2.intensity = 0; POL.userData.pr.intensity = POL.userData.pb.intensity = 0; LOOT.visible = false; LOOT.userData.lamp.intensity = 0; ARM.visible = false; ARM.userData.spot.intensity = 0;
   FOLD.forEach(f => f.visible = false); SMOKE.forEach(m => m.visible = false); PKG.visible = false; PHONE.visible = false;
-  HUD.intro = null; TX = null;
+  HUD.intro = null; TX = null; WRECK.visible = true;
   const t = T - s.t0; s.f(clamp(t / s.d), t);
   FILL.position.copy(camera.position).add(V(0, 1.5, 0));
   renderer.render(scene, camera); ctx.drawImage(glCanvas, 0, 0);
