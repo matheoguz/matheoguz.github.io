@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De 0 à Roi : crée ta série animée avec Claude</title>
+<meta name="description" content="La formation pour créer ta propre série animée façon jeu vidéo avec Claude : histoire, ville 3D, personnages, écran de jeu, vidéo TikTok. Et le garage de Porto Soleil pour customiser ta voiture.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,wght@0,500;0,700;0,800;0,900;1,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nuit:#0d0a1f; --nuit2:#171233; --violet:#3a1f6e; --rose:#ff3fa4; --corail:#ff6f61; --orange:#ffb46b; --or:#ffd21f;
+  --vert:#5be36f; --cyan:#3ee0ff; --blanc:#fff8f1; --gris:#b9b3cc; --ligne:rgba(255,255,255,.12);
+  --rayon:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--nuit);color:var(--blanc);font-family:Inter,system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img,video,canvas{display:block;max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+.titre{font-family:Anton,Impact,sans-serif;text-transform:uppercase;letter-spacing:.01em;line-height:.92;font-weight:400}
+.penche{display:inline-block;transform:skewX(-8deg)}
+.degrade{background:linear-gradient(180deg,#fff 0%,#ffd7a8 38%,#ff8a6b 62%,#ff3fa4 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #2a0f3f) drop-shadow(0 10px 24px rgba(255,63,164,.45))}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:900 1rem/1 Inter;text-transform:uppercase;letter-spacing:.04em;padding:1em 1.4em;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn-or{background:var(--or);color:#1a1022;box-shadow:0 6px 0 #b8860b,0 12px 30px rgba(255,210,31,.35)}
+.btn-or:hover{transform:translateY(-2px)}
+.btn-ligne{background:rgba(255,255,255,.08);color:#fff;border:2px solid rgba(255,255,255,.35);backdrop-filter:blur(6px)}
+.etiquette{display:inline-block;font:900 .75rem/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--or);padding:.5em .8em;border:2px solid currentColor;border-radius:6px;transform:skewX(-8deg)}
+section{position:relative}
+.sec{padding:88px 0}
+.sec h2{font-size:clamp(2.6rem,8vw,5rem);margin:.35em 0 .25em}
+.sec .chapo{color:var(--gris);font-size:1.08rem;max-width:620px}
+
+/* HERO */
+.hero{min-height:100svh;display:flex;align-items:center;overflow:hidden;
+  background:linear-gradient(180deg,#1b1240 0%,#3a1f6e 26%,#8a3f9e 46%,#ff6f61 66%,#ffb46b 82%,#ffd89a 100%)}
+.hero::after{content:"";position:absolute;inset:auto 0 0;height:32%;background:linear-gradient(180deg,transparent,var(--nuit) 92%)}
+.soleil{position:absolute;left:50%;top:58%;width:min(70vw,560px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  background:repeating-linear-gradient(180deg,#ffe28a 0 14px,transparent 14px 22px),linear-gradient(180deg,#ffe9a8,#ff7a59);-webkit-mask:linear-gradient(#000 45%,transparent 46%,transparent 50%,#000 51%,#000 60%,transparent 61%,transparent 64%,#000 65%,#000 73%,transparent 74%,transparent 76%,#000 77%);mask:linear-gradient(#000 45%,transparent 46%,transparent 50%,#000 51%,#000 60%,transparent 61%,transparent 64%,#000 65%,#000 73%,transparent 74%,transparent 76%,#000 77%);opacity:.75}
+.palmiers{position:absolute;inset:auto 0 0;height:62%;pointer-events:none;z-index:1}
+.ville{position:absolute;inset:auto 0 18%;height:30%;z-index:0;opacity:.55}
+.hero .wrap{position:relative;z-index:2;display:grid;gap:36px;align-items:center;padding:96px 0 72px}
+@media(min-width:900px){.hero .wrap{grid-template-columns:1.15fr .85fr}}
+.hero h1{font-size:clamp(4.2rem,17vw,9.5rem)}
+.hero h1 small{display:block;font-size:.3em;letter-spacing:.06em;color:#fff;-webkit-text-fill-color:#fff;filter:none;margin-bottom:.25em}
+.hero p.lead{font-size:clamp(1.08rem,3.6vw,1.3rem);font-weight:700;max-width:520px;margin:18px 0 26px;text-shadow:0 2px 12px rgba(40,10,60,.5)}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.telephone{justify-self:center;width:min(300px,76vw);aspect-ratio:9/19;border-radius:42px;padding:10px;background:#0b0b10;box-shadow:0 0 0 2px #2b2b38,0 30px 80px rgba(20,0,40,.6),0 0 60px rgba(255,63,164,.35);position:relative;transform:rotate(3deg)}
+.telephone video{width:100%;height:100%;object-fit:cover;border-radius:33px;background:#000}
+.telephone .badge-son{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font:800 .72rem Inter;background:rgba(0,0,0,.6);padding:.45em .8em;border-radius:99px;white-space:nowrap}
+.bandeau{position:relative;z-index:3;background:var(--or);color:#1a1022;overflow:hidden;white-space:nowrap;transform:rotate(-2deg) scale(1.04);border-block:3px solid #1a1022}
+.bandeau div{display:inline-block;padding:12px 0;font:400 1.4rem Anton;letter-spacing:.06em;animation:defile 28s linear infinite}
+@keyframes defile{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.bandeau div{animation:none}}
+
+/* GARAGE */
+.garage{background:radial-gradient(120% 70% at 50% 0%,#2a1650 0%,var(--nuit) 60%)}
+.garage-grille{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.garage-grille>*{min-width:0}
+@media(min-width:960px){.garage-grille{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}}
+.scene{position:relative;border-radius:var(--rayon);overflow:hidden;background:#0a0814;border:1px solid var(--ligne);aspect-ratio:4/5;max-height:76svh;width:100%}
+@media(min-width:960px){.scene{aspect-ratio:4/3.4;position:sticky;top:16px}}
+.scene canvas{position:absolute;inset:0;width:100%!important;height:100%!important;touch-action:none}
+.hud{position:absolute;inset:0;pointer-events:none;font-family:Inter}
+.hud .argent{position:absolute;top:14px;right:16px;text-align:right}
+.hud .argent b{display:block;font:900 clamp(1.6rem,6vw,2.2rem)/1 Inter;color:var(--vert);-webkit-text-stroke:1.5px #000;paint-order:stroke fill;text-shadow:0 3px 0 #000}
+.hud .argent span{font:800 .72rem Inter;letter-spacing:.1em;text-transform:uppercase;color:#fff;text-shadow:0 2px 0 #000}
+.hud .nom-voiture{position:absolute;left:16px;top:14px}
+.hud .nom-voiture b{font:400 clamp(1.7rem,7vw,2.6rem)/1 Anton;text-transform:uppercase;display:inline-block;transform:skewX(-8deg);text-shadow:0 3px 0 #000}
+.hud .nom-voiture span{display:block;font:800 .72rem Inter;letter-spacing:.1em;color:var(--or);text-transform:uppercase;text-shadow:0 2px 0 #000}
+.hud .stats{position:absolute;left:16px;bottom:62px;width:min(210px,52%);display:grid;gap:6px}
+.stat{font:800 .66rem Inter;text-transform:uppercase;letter-spacing:.08em;text-shadow:0 1px 0 #000}
+.stat i{display:block;height:7px;border-radius:9px;background:rgba(255,255,255,.18);margin-top:3px;overflow:hidden}
+.stat i u{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--rose));transition:width .4s}
+.vues{position:absolute;right:12px;bottom:12px;display:flex;gap:6px;pointer-events:auto}
+.vues button,.outil{font:800 .72rem Inter;color:#fff;background:rgba(10,8,20,.7);border:1px solid rgba(255,255,255,.25);padding:.6em .8em;border-radius:10px;cursor:pointer;backdrop-filter:blur(6px)}
+.vues button:hover,.outil:hover{border-color:var(--or)}
+.photo{position:absolute;left:12px;bottom:12px;pointer-events:auto}
+.toast{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%) scale(.9);opacity:0;transition:.25s;text-align:center;pointer-events:none;width:90%}
+.toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.toast b{display:block;font:400 clamp(2rem,8vw,3rem)/1 Anton;text-transform:uppercase;transform:skewX(-8deg);text-shadow:0 4px 0 #000}
+.toast span{font:800 1rem Inter;text-shadow:0 2px 0 #000}
+.panneau{background:var(--nuit2);border:1px solid var(--ligne);border-radius:var(--rayon);padding:16px}
+.voitures{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.voitures button{background:#211a44;border:2px solid transparent;border-radius:12px;padding:10px 4px;color:#fff;cursor:pointer;text-align:center}
+.voitures button b{display:block;font:400 1.05rem/1 Anton;text-transform:uppercase;letter-spacing:.02em}
+.voitures button span{font:800 .66rem Inter;color:var(--gris)}
+.voitures button.actif{border-color:var(--or);background:#2e2360}
+.voitures button .possede{color:var(--vert)}
+.onglets{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none}
+.onglets::-webkit-scrollbar{display:none}
+.onglets button{flex:none;font:800 .8rem Inter;color:var(--gris);background:transparent;border:0;border-bottom:3px solid transparent;padding:.5em .7em;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}
+.onglets button.actif{color:#fff;border-color:var(--rose)}
+.options{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;min-height:120px}
+.opt{position:relative;background:#211a44;border:2px solid transparent;border-radius:12px;padding:10px 8px;color:#fff;cursor:pointer;text-align:left;font:700 .82rem Inter}
+.opt .pastille{display:block;width:100%;height:34px;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.2)}
+.opt small{display:block;font:800 .72rem Inter;color:var(--vert);margin-top:3px}
+.opt small.deja{color:var(--gris)}
+.opt.actif{border-color:var(--or);background:#2e2360}
+.opt.actif::after{content:"✓";position:absolute;top:6px;right:8px;font:900 .8rem Inter;color:var(--or)}
+.plaque-champ{display:flex;gap:8px;align-items:center;grid-column:1/-1}
+.plaque-champ input{flex:1;font:900 1.2rem/1 Inter;text-transform:uppercase;letter-spacing:.12em;text-align:center;background:#f4f1e6;color:#1d2a6b;border:3px solid #1d2a6b;border-radius:8px;padding:.5em;min-width:0}
+.facture{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--ligne)}
+.facture div{font:800 .8rem Inter;color:var(--gris);text-transform:uppercase;letter-spacing:.06em}
+.facture b{display:block;font:900 1.5rem Inter;color:#fff;letter-spacing:0}
+.facture b.trop{color:#ff4d4d}
+.aide{font-size:.82rem;color:var(--gris);margin-top:10px}
+
+/* VOTE */
+.vote{background:linear-gradient(180deg,var(--nuit),#1f0f2e)}
+.missions{display:grid;gap:16px;margin-top:28px}
+@media(min-width:760px){.missions{grid-template-columns:1fr 1fr}}
+.mission{position:relative;text-align:left;border-radius:var(--rayon);padding:26px 22px 22px;background:linear-gradient(160deg,#2a1650,#160f2e);border:2px solid var(--ligne);color:#fff;cursor:pointer;overflow:hidden;transition:border-color .2s,transform .2s;font:inherit}
+.mission:hover{transform:translateY(-3px)}
+.mission .lettre{position:absolute;right:-6px;top:-24px;font:400 9rem/1 Anton;color:rgba(255,255,255,.06)}
+.mission h3{font:400 1.9rem/1 Anton;text-transform:uppercase;margin:12px 0 8px;transform:skewX(-6deg)}
+.mission p{color:var(--gris)}
+.mission .gain{display:inline-block;margin-top:14px;font:900 .85rem Inter;color:var(--vert)}
+.mission.choisie{border-color:var(--or);box-shadow:0 0 0 4px rgba(255,210,31,.15)}
+.mission.choisie .etiquette{background:var(--or);color:#1a1022}
+.vote-msg{margin-top:18px;font-weight:700;min-height:1.5em}
+
+/* FORMATION */
+.modules{display:grid;gap:12px;margin-top:30px;counter-reset:m}
+.module{border:1px solid var(--ligne);border-radius:16px;background:var(--nuit2);overflow:hidden}
+.module summary{list-style:none;display:flex;gap:14px;align-items:center;padding:18px;cursor:pointer}
+.module summary::-webkit-details-marker{display:none}
+.module .num{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font:400 1.4rem Anton;background:#2e2360;color:var(--or)}
+.module h3{font:800 1.05rem/1.25 Inter}
+.module h3 span{display:block;font:600 .85rem Inter;color:var(--gris);margin-top:2px}
+.module .etat{margin-left:auto;flex:none;font:900 .7rem Inter;letter-spacing:.08em;text-transform:uppercase;padding:.45em .7em;border-radius:6px}
+.etat.libre{background:var(--vert);color:#062010}
+.etat.verrou{background:rgba(255,255,255,.08);color:var(--gris)}
+.module .contenu{padding:0 18px 18px 78px;color:var(--gris)}
+@media(max-width:560px){.module .contenu{padding-left:18px}}
+.module .contenu ol{padding-left:1.2em;display:grid;gap:8px;margin:8px 0}
+.prompt{position:relative;background:#0b0918;border:1px dashed rgba(255,255,255,.25);border-radius:12px;padding:16px;margin-top:12px;color:#e9e4ff;font:600 .9rem/1.55 Inter;white-space:pre-wrap}
+.prompt button{position:absolute;top:10px;right:10px}
+.prix{display:grid;gap:22px;align-items:center;margin-top:46px;padding:30px 24px;border-radius:24px;background:linear-gradient(135deg,#3a1f6e,#8a3f9e 55%,#ff6f61);box-shadow:0 30px 80px rgba(255,63,164,.25)}
+@media(min-width:820px){.prix{grid-template-columns:1fr auto}}
+.prix .montant{font:400 clamp(4rem,14vw,6rem)/1 Anton;text-shadow:0 5px 0 #2a0f3f}
+.prix ul{list-style:none;display:grid;gap:6px;margin-top:10px;font-weight:700}
+.prix li::before{content:"★ ";color:var(--or)}
+.prix .note{font-size:.82rem;opacity:.85;margin-top:10px}
+.faq{display:grid;gap:10px;margin-top:26px}
+.faq details{border-bottom:1px solid var(--ligne);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:800;list-style:none}
+.faq summary::after{content:"+";float:right;color:var(--or);font-weight:900}
+.faq details[open] summary::after{content:"–"}
+.faq p{color:var(--gris);margin-top:8px}
+footer{padding:40px 0 60px;color:var(--gris);font-size:.82rem;border-top:1px solid var(--ligne)}
+:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<section class="hero" id="haut">
+  <div class="soleil" aria-hidden="true"></div>
+  <svg class="ville" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path fill="#3a1f6e" d="M0 300V190h60v-40h40v60h50V120h70v90h40V80h30V40h20v40h30v130h50V150h60v60h40V100h80v110h40V60h40V20h30v40h40v150h50V140h60v70h40V110h50v100h60V170h70v130z"/></svg>
+  <svg class="palmiers" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <g fill="#1b0f35">
+      <path d="M120 500c8-120 18-230 52-330l10 4c-30 100-40 210-44 326z"/>
+      <path d="M176 172c-60-30-120-20-160 10 50-10 100-6 150 8zm6 0c40-60 100-80 150-70-50 16-100 40-140 78zm-4 2c-10-60-50-110-100-120 40 30 66 70 86 124zm8 2c60-10 110 20 140 60-46-30-96-44-140-50zm-8 4c-50 20-80 70-84 120 20-46 50-86 92-112z"/>
+      <path d="M1060 500c-6-140-24-250-70-360l-10 4c40 110 56 220 62 356z"/>
+      <path d="M986 144c60-40 130-40 180-10-56-12-112-6-170 18zm-6 0c-40-60-104-80-156-66 52 14 104 38 146 76zm4 0c10-60 54-104 106-110-42 28-70 64-94 114zm-6 6c-60-6-112 26-138 70 44-34 92-52 136-60zm6 2c50 26 74 76 74 124-18-46-46-88-82-116z"/>
+      <path d="M840 500c4-90 12-160 34-230l8 3c-20 70-26 140-28 227z"/>
+      <path d="M876 274c-40-24-86-20-118 2 36-8 72-6 110 6zm4 0c30-40 74-54 110-46-36 10-72 26-102 52zm-2 2c-6-42-34-76-70-86 28 22 46 50 60 88z"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div>
+      <span class="etiquette">Formation · Série animée avec Claude</span>
+      <h1 class="titre"><span class="penche degrade"><small>Crée ta série</small>De 0<br>à roi</span></h1>
+      <p class="lead">Une ville 3D, des personnages, un écran de jeu avec l'argent qui monte… Cette série a été fabriquée de A à Z avec Claude. Je te montre comment faire la tienne.</p>
+      <div class="ctas">
+        <a class="btn btn-or" href="#formation">La formation</a>
+        <a class="btn btn-ligne" href="#garage">Entrer au garage</a>
+      </div>
+    </div>
+    <div class="telephone">
+      <video src="../videos/de-0-a-roi/episode-1.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Épisode 1 de la série De 0 à Roi"></video>
+      <span class="badge-son">Épisode 1 · « La livraison »</span>
+    </div>
+  </div>
+</section>
+
+<div class="bandeau" aria-hidden="true"><div>★ PORTO SOLEIL ★ NICO &amp; LINA ★ 0 € ★ LE PÉLICAN ★ MADAME RUBY ★ DON ARTURO ★ MISSION RÉUSSIE ★ PORTO SOLEIL ★ NICO &amp; LINA ★ 0 € ★ LE PÉLICAN ★ MADAME RUBY ★ DON ARTURO ★ MISSION RÉUSSIE ★&nbsp;</div></div>
+
+<section class="sec garage" id="garage">
+  <div class="wrap">
+    <span class="etiquette">Porto Soleil Customs</span>
+    <h2 class="titre"><span class="penche">Le garage</span></h2>
+    <p class="chapo">Nico et Lina ont gagné 500 € dans l'épisode 1. Choisis ta voiture, customise-la et paie avec l'argent de la série. Tourne autour avec le doigt.</p>
+    <div class="garage-grille" style="margin-top:28px">
+      <div class="scene" id="scene">
+        <div class="hud">
+          <div class="nom-voiture"><span id="hud-type">Décapotable</span><b id="hud-nom">Lagoon</b></div>
+          <div class="argent"><b id="hud-argent">500 €</b><span>Ton argent</span></div>
+          <div class="stats" id="hud-stats"></div>
+          <div class="toast" id="toast"><b id="toast-titre"></b><span id="toast-texte"></span></div>
+        </div>
+        <button class="outil photo" id="photo" type="button">📸 Photo</button>
+        <div class="vues" role="group" aria-label="Angle de vue">
+          <button type="button" data-vue="34">3/4</button><button type="button" data-vue="profil">Profil</button><button type="button" data-vue="arriere">Arrière</button>
+        </div>
+      </div>
+      <div class="panneau">
+        <div class="voitures" id="voitures"></div>
+        <div class="onglets" id="onglets" role="tablist"></div>
+        <div class="options" id="options"></div>
+        <div class="facture">
+          <div>Total des modifs<b id="total">0 €</b></div>
+          <button class="btn btn-or" id="payer" type="button">Payer</button>
+        </div>
+        <p class="aide" id="aide">Tu peux tout essayer gratuitement. Tu paies seulement ce que tu gardes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec vote" id="vote">
+  <div class="wrap">
+    <span class="etiquette">Épisode 2 · C'est toi qui choisis</span>
+    <h2 class="titre"><span class="penche">Quelle mission&nbsp;?</span></h2>
+    <p class="chapo">À la fin de chaque épisode, deux missions. La plus demandée en commentaire sur TikTok devient l'épisode suivant.</p>
+    <div class="missions">
+      <button class="mission" type="button" data-m="A">
+        <span class="lettre">A</span><span class="etiquette">Mission A</span>
+        <h3>La voiture noire</h3>
+        <p>Remonter la piste de la voiture qui les suivait, jusqu'aux docks du port. Qui veut le colis, et pourquoi&nbsp;?</p>
+        <span class="gain">Risqué · Gros gain possible</span>
+      </button>
+      <button class="mission" type="button" data-m="B">
+        <span class="lettre">B</span><span class="etiquette">Mission B</span>
+        <h3>Le Pélican</h3>
+        <p>Retourner au garage et demander des comptes au Pélican. Il savait ce qu'il y avait dans le colis&nbsp;?</p>
+        <span class="gain">Plus sûr · Un nouvel allié&nbsp;?</span>
+      </button>
+    </div>
+    <p class="vote-msg" id="vote-msg" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="sec" id="formation">
+  <div class="wrap">
+    <span class="etiquette">La formation</span>
+    <h2 class="titre"><span class="penche">Fais ta série<br>avec Claude</span></h2>
+    <p class="chapo">Pas de logiciel 3D, pas de dessin. Tu racontes ton idée, Claude écrit le code qui fabrique la ville, les personnages et la vidéo. Tu valides chaque étape.</p>
+
+    <div class="modules">
+      <details class="module" open>
+        <summary><span class="num">1</span><h3>L'histoire qui accroche<span>Accroche en 2 secondes, missions, fin à suspense</span></h3><span class="etat libre">Gratuit</span></summary>
+        <div class="contenu">
+          <ol>
+            <li><b>Commence par la fin</b> : montre 2 secondes du futur (ils sont riches), puis reviens au départ (« aujourd'hui, ils ont 0 € »).</li>
+            <li><b>Un épisode = une mission</b>, avec un objectif clair et une limite de temps.</li>
+            <li><b>Termine sur une question</b> et laisse les abonnés choisir la suite.</li>
+            <li><b>Demande toujours l'histoire en 5 lignes avant de fabriquer</b> : tu changes d'avis avant d'avoir perdu du temps.</li>
+          </ol>
+          <p>Le message à donner à Claude pour démarrer :</p>
+          <div class="prompt" id="prompt1"><button class="outil" type="button" data-copie="prompt1">Copier</button>Tu es le réalisateur de ma série animée verticale pour TikTok (50 secondes par épisode).
+L'idée : [écris ton idée en une phrase].
+Le style : cartoon 3D, personnages à grosse tête blanche, sous-titres mot par mot avec les mots importants en jaune, et un écran de jeu (argent, étoiles, mini-carte, « mission réussie »).
+
+Avant de fabriquer quoi que ce soit, présente-moi :
+1. l'histoire de l'épisode 1 en 5 lignes ;
+2. l'accroche des 2 premières secondes ;
+3. 10 plans maximum, avec pour chacun le texte de la voix off ;
+4. la fin à suspense et les 2 missions au choix pour l'épisode 2.
+Attends mon OK.</div>
+        </div>
+      </details>
+      <details class="module"><summary><span class="num">2</span><h3>Construire la ville en 3D<span>Rues, plage, palmiers, gratte-ciel, néons, jour et nuit</span></h3><span class="etat verrou">🔒</span></summary></details>
+      <details class="module"><summary><span class="num">3</span><h3>Créer tes personnages<span>Têtes, expressions, vêtements, démarche</span></h3><span class="etat verrou">🔒</span></summary></details>
+      <details class="module"><summary><span class="num">4</span><h3>L'écran de jeu<span>Compteur d'argent, étoiles, mini-carte, missions</span></h3><span class="etat verrou">🔒</span></summary></details>
+      <details class="module"><summary><span class="num">5</span><h3>Transformer tout ça en vidéo<span>Plans de caméra, sous-titres, rendu en MP4 vertical</span></h3><span class="etat verrou">🔒</span></summary></details>
+      <details class="module"><summary><span class="num">6</span><h3>Voix, musique et publication<span>Voix off sur CapCut, description, faire voter les abonnés</span></h3><span class="etat verrou">🔒</span></summary></details>
+      <details class="module"><summary><span class="num">★</span><h3>Bonus : ton garage 3D<span>Le garage de cette page, à adapter à ta série</span></h3><span class="etat verrou">🔒</span></summary></details>
+    </div>
+
+    <div class="prix">
+      <div>
+        <span class="etiquette">Accès complet</span>
+        <div class="montant">19 €</div>
+        <ul>
+          <li>Les 6 modules + le bonus garage</li>
+          <li>Tous les messages à copier-coller dans Claude</li>
+          <li>Les fichiers de l'épisode 1 pour partir d'un exemple qui marche</li>
+        </ul>
+        <p class="note">Il te faut un abonnement Claude qui donne accès à Claude Code.</p>
+      </div>
+      <div><button class="btn btn-or" type="button" id="acheter" aria-disabled="true">Ouverture très bientôt</button></div>
+    </div>
+
+    <div class="faq">
+      <details><summary>Faut-il savoir coder&nbsp;?</summary><p>Non. Claude écrit tout le code. Toi, tu racontes, tu regardes les images qu'il te montre et tu dis ce qui ne va pas.</p></details>
+      <details><summary>Qu'est-ce qu'il faut pour commencer&nbsp;?</summary><p>Un abonnement Claude avec Claude Code, et une appli de montage gratuite comme CapCut pour ajouter ta voix.</p></details>
+      <details><summary>Et la voix&nbsp;?</summary><p>Tu la fais toi-même : la vidéo sort sans voix, avec le texte à lire et le minutage de chaque phrase.</p></details>
+      <details><summary>C'est GTA&nbsp;?</summary><p>Non. Porto Soleil, Nico, Lina et toutes les voitures sont inventés. Ce projet n'a aucun lien avec Rockstar Games ni avec la série GTA.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">De 0 à Roi · Porto Soleil · univers original fabriqué avec Claude. Sans lien avec Rockstar Games ni GTA.</div></footer>
+
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const $ = s => document.querySelector(s);
+const store = { get(k, d) { try { const v = localStorage.getItem('d0r-' + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem('d0r-' + k, JSON.stringify(v)); } catch {} } };
+const euros = n => n.toLocaleString('fr-FR') + ' €';
+
+/* ---------- les voitures (inventées) ---------- */
+const VOITURES = {
+  lagoon: { nom: 'Lagoon', type: 'Décapotable · la voiture de Nico', prix: 0, stats: [55, 40, 50], p: { xF: 2.25, xR: -2.25, R: .36, y0: .24, hb: .86, hood: .82, gF: .42, gTF: .22, gTR: .2, gR: .4, roof: 1.32, cabrio: true, nez: .28 } },
+  vento: { nom: 'Vento GT', type: 'Coupé sport', prix: 48000, stats: [92, 88, 80], p: { xF: 2.3, xR: -2.25, R: .37, y0: .2, hb: .74, hood: .64, gF: .62, gTF: -.08, gTR: -.85, gR: -1.75, roof: 1.18, nez: .5 } },
+  bruto: { nom: 'Bruto 69', type: 'Muscle car', prix: 22000, stats: [80, 90, 55], p: { xF: 2.45, xR: -2.4, R: .39, y0: .26, hb: .96, hood: .95, gF: .3, gTF: -.2, gTR: -1.05, gR: -1.5, roof: 1.4, nez: .18 } },
+  rex: { nom: 'Rex', type: 'Gros 4×4', prix: 35000, stats: [60, 55, 85], p: { xF: 2.3, xR: -2.3, R: .46, y0: .42, hb: 1.18, hood: 1.12, gF: .95, gTF: .45, gTR: -2.0, gR: -2.15, roof: 1.92, nez: .22 } },
+};
+const PEINTURES = [
+  ['Orange couchant', '#e8743a'], ['Rose néon', '#ff3fa4'], ['Menthe Porto', '#4fd1b0'], ['Bleu océan', '#1f7fd6'],
+  ['Violet nuit', '#6a3fd0'], ['Jaune taxi', '#f5c518'], ['Noir minuit', '#121318'], ['Blanc nacré', '#f2f2ee'], ['Rouge cerise', '#c8102e'], ['Vert gazon', '#2f9e44'],
+];
+const MODS = {
+  peinture: { nom: 'Peinture', prix: 150, options: PEINTURES.map(([n, c]) => ({ id: c, nom: n, couleur: c })) },
+  finition: { nom: 'Finition', prix: 120, options: [{ id: 'brillant', nom: 'Brillante' }, { id: 'mat', nom: 'Mate' }, { id: 'metal', nom: 'Métallisée' }, { id: 'nacre', nom: 'Nacrée' }] },
+  jantes: { nom: 'Jantes', prix: 200, options: [{ id: 'sport', nom: 'Sport 5 branches' }, { id: 'rayons', nom: 'Multi-rayons' }, { id: 'pleines', nom: 'Pleines' }, { id: 'etoile', nom: 'Étoile' }] },
+  couleurJantes: { nom: 'Couleur jantes', prix: 80, options: [['Chrome', '#d9dde3'], ['Noir', '#1a1a1e'], ['Or', '#d4a52b'], ['Rose', '#ff3fa4'], ['Blanc', '#ffffff'], ['Cyan', '#3ee0ff']].map(([n, c]) => ({ id: c, nom: n, couleur: c })) },
+  aileron: { nom: 'Aileron', prix: 250, options: [{ id: 'aucun', nom: 'Aucun' }, { id: 'becquet', nom: 'Becquet' }, { id: 'gt', nom: 'Aileron GT' }] },
+  neons: { nom: 'Néons', prix: 180, options: [['Aucun', ''], ['Rose', '#ff3fa4'], ['Cyan', '#3ee0ff'], ['Vert', '#5be36f'], ['Violet', '#9b5cff'], ['Or', '#ffd21f']].map(([n, c]) => ({ id: c || 'aucun', nom: n, couleur: c || null })) },
+  vitres: { nom: 'Vitres', prix: 90, options: [{ id: '0', nom: 'Claires' }, { id: '50', nom: 'Teintées 50 %' }, { id: '90', nom: 'Fumées 90 %' }] },
+  suspension: { nom: 'Suspension', prix: 140, options: [{ id: 'origine', nom: "D'origine" }, { id: 'sport', nom: 'Sport (–4 cm)' }, { id: 'ras', nom: 'Au ras du sol' }] },
+  plaque: { nom: 'Plaque', prix: 60, options: [] },
+};
+const DEFAUT = { peinture: '#e8743a', finition: 'brillant', jantes: 'sport', couleurJantes: '#d9dde3', aileron: 'aucun', neons: 'aucun', vitres: '0', suspension: 'origine', plaque: 'NICO 01' };
+
+let argent = store.get('argent', 500);
+let possedees = store.get('possedees', { lagoon: { ...DEFAUT } });
+let voitureId = 'lagoon';
+let essai = { ...(possedees.lagoon || DEFAUT) };
+let onglet = 'peinture';
+
+/* ---------- scène ---------- */
+const hote = $('#scene');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+hote.prepend(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#0b0816'); scene.fog = new THREE.Fog('#0b0816', 14, 34);
+const pmrem = new THREE.PMREMGenerator(renderer); const env = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+const camera = new THREE.PerspectiveCamera(36, 1, .1, 100); camera.position.set(8.2, 3, 8.6);
+const controles = new OrbitControls(camera, renderer.domElement);
+Object.assign(controles, { enableDamping: true, dampingFactor: .08, enablePan: false, minDistance: 6.5, maxDistance: 16, maxPolarAngle: Math.PI * .48, minPolarAngle: Math.PI * .18, autoRotate: true, autoRotateSpeed: .9 });
+controles.target.set(0, .75, 0);
+controles.addEventListener('start', () => { controles.autoRotate = false; });
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), .42, .45, .93); composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+// le garage
+scene.add(new THREE.HemisphereLight('#9d8cff', '#1a1020', .55));
+const spot = new THREE.SpotLight('#fff1e0', 45, 22, .7, .6, 1.5); spot.position.set(2, 8, 3); spot.castShadow = true; spot.shadow.mapSize.set(1024, 1024); spot.shadow.bias = -.0004; scene.add(spot);
+const contre = new THREE.DirectionalLight('#ff6fb8', .6); contre.position.set(-6, 3, -5); scene.add(contre);
+const sol = new THREE.Mesh(new THREE.CircleGeometry(30, 64), new THREE.MeshStandardMaterial({ color: '#141022', roughness: .32, metalness: .35 })); sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+const plateau = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 3.5, .12, 72), new THREE.MeshStandardMaterial({ color: '#221a3a', roughness: .25, metalness: .6 })); plateau.position.y = .06; plateau.receiveShadow = true; scene.add(plateau);
+const anneau = new THREE.Mesh(new THREE.TorusGeometry(3.45, .035, 8, 120), new THREE.MeshBasicMaterial({ color: '#3ee0ff' })); anneau.rotation.x = Math.PI / 2; anneau.position.y = .12; scene.add(anneau);
+// néons et enseigne
+function tube(couleur, l, x, y, z, ry = 0, vertical = false) { const m = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, l, 10), new THREE.MeshBasicMaterial({ color: couleur })); m.position.set(x, y, z); if (!vertical) m.rotation.z = Math.PI / 2; m.rotation.y = ry; scene.add(m); }
+const murs = new THREE.MeshStandardMaterial({ color: '#1a1430', roughness: .85 });
+const fond = new THREE.Mesh(new THREE.PlaneGeometry(40, 10), murs); fond.position.set(0, 5, -9); scene.add(fond);
+const cote = new THREE.Mesh(new THREE.PlaneGeometry(40, 10), murs); cote.position.set(-9, 5, 0); cote.rotation.y = Math.PI / 2; scene.add(cote);
+tube('#ff3fa4', 14, 0, 1.1, -8.9); tube('#3ee0ff', 14, 0, 4.6, -8.9); tube('#ff3fa4', 14, -8.9, 1.1, 0, Math.PI / 2); tube('#3ee0ff', 14, -8.9, 4.6, 0, Math.PI / 2);
+for (const x of [-6, -2, 2, 6]) tube('#ffd9b0', 3, x, 7.2, -1, Math.PI / 2);
+{ const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const x = c.getContext('2d');
+  x.font = 'italic 900 118px Inter, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#ff3fa4'; x.shadowBlur = 26; x.fillStyle = '#ffe3f2';
+  x.fillText('PORTO SOLEIL', 512, 96); x.font = '900 64px Inter, sans-serif'; x.shadowColor = '#3ee0ff'; x.fillStyle = '#dffbff'; x.fillText('C U S T O M S', 512, 196);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const enseigne = new THREE.Mesh(new THREE.PlaneGeometry(8, 2), new THREE.MeshBasicMaterial({ map: t, transparent: true })); enseigne.position.set(0, 2.85, -8.85); scene.add(enseigne);
+  document.fonts?.ready.then(() => { x.clearRect(0, 0, 1024, 256); x.font = 'italic 900 118px Inter, sans-serif'; x.shadowColor = '#ff3fa4'; x.fillStyle = '#ffe3f2'; x.fillText('PORTO SOLEIL', 512, 96); x.font = '900 64px Inter, sans-serif'; x.shadowColor = '#3ee0ff'; x.fillStyle = '#dffbff'; x.fillText('C U S T O M S', 512, 196); t.needsUpdate = true; }); }
+// établi, pneus, bidons : les petits détails
+const bois = new THREE.MeshStandardMaterial({ color: '#3a2c55', roughness: .6 });
+const etabli = new THREE.Mesh(new THREE.BoxGeometry(3, 1, 1), bois); etabli.position.set(-7.6, .5, -5); etabli.castShadow = true; scene.add(etabli);
+for (let i = 0; i < 4; i++) { const p = new THREE.Mesh(new THREE.TorusGeometry(.36, .16, 10, 24), new THREE.MeshStandardMaterial({ color: '#111', roughness: .9 })); p.rotation.x = Math.PI / 2; p.position.set(6.6, .16 + i * .3, -6.4); p.castShadow = true; scene.add(p); }
+for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.CylinderGeometry(.32, .32, .9, 16), new THREE.MeshStandardMaterial({ color: ['#ff3fa4', '#ffd21f', '#3ee0ff'][i], roughness: .4, metalness: .3 })); b.position.set(-6.6 + i * .72, .45, -7.4); b.castShadow = true; scene.add(b); }
+
+/* ---------- fabrication d'une voiture ---------- */
+const voiture = new THREE.Group(); scene.add(voiture);
+const matPeinture = new THREE.MeshPhysicalMaterial({ envMap: env, envMapIntensity: .9, color: '#e8743a', metalness: .3, roughness: .28, clearcoat: 1, clearcoatRoughness: .06 });
+const matVitre = new THREE.MeshPhysicalMaterial({ envMap: env, envMapIntensity: 1, color: '#9fc7e6', metalness: 0, roughness: .05, transparent: true, opacity: .45 });
+const matJante = new THREE.MeshStandardMaterial({ envMap: env, envMapIntensity: 1, color: '#d9dde3', metalness: .95, roughness: .18 });
+const matPneu = new THREE.MeshStandardMaterial({ color: '#141414', roughness: .85 });
+const matNoir = new THREE.MeshStandardMaterial({ color: '#0d0d10', roughness: .5, metalness: .3 });
+const matChrome = new THREE.MeshStandardMaterial({ envMap: env, envMapIntensity: 1, color: '#e8eaee', metalness: 1, roughness: .1 });
+const matPhare = new THREE.MeshBasicMaterial({ color: '#fff7dc' });
+const matFeu = new THREE.MeshBasicMaterial({ color: '#ff2a3a' });
+const matNeon = new THREE.MeshBasicMaterial({ color: '#ff3fa4', transparent: true, opacity: .9 });
+const lumiereNeon = new THREE.PointLight('#ff3fa4', 0, 6, 1.4); lumiereNeon.position.y = .15; voiture.add(lumiereNeon);
+let parts = {};
+
+function extrude(shape, largeur, mat, biseau = .07) {
+  const g = new THREE.ExtrudeGeometry(shape, { depth: largeur, bevelEnabled: true, bevelThickness: biseau, bevelSize: biseau, bevelSegments: 4, curveSegments: 24 });
+  g.translate(0, 0, -largeur / 2); g.computeVertexNormals(); const m = new THREE.Mesh(g, mat); m.castShadow = true; m.receiveShadow = true; return m;
+}
+function profilCaisse(p) {
+  const s = new THREE.Shape(); const ra = p.R + .07; const a0 = Math.asin(Math.max(-.95, (p.y0 - p.R) / ra));
+  const wf = p.xF - .78 - p.R * .4, wr = p.xR + .72 + p.R * .3; p.wf = wf; p.wr = wr;
+  s.moveTo(p.xF - .05, p.y0 + .06);
+  s.lineTo(wf + ra * Math.cos(a0), p.y0);
+  s.absarc(wf, p.R, ra, a0, Math.PI - a0, false);
+  s.lineTo(wr + ra * Math.cos(a0), p.y0);
+  s.absarc(wr, p.R, ra, a0, Math.PI - a0, false);
+  s.lineTo(p.xR + .1, p.y0);
+  s.quadraticCurveTo(p.xR - .04, p.y0 + .05, p.xR, p.y0 + .28);
+  s.lineTo(p.xR + .02, p.hb - .1);
+  s.quadraticCurveTo(p.xR + .04, p.hb, p.xR + .3, p.hb);
+  s.lineTo(p.gR, p.hb + .02);
+  s.lineTo(p.gF, p.hb + .02);
+  s.lineTo(p.xF - p.nez - .3, p.hood);
+  s.quadraticCurveTo(p.xF - .05, p.hood - .02, p.xF + .02, p.hood - .2);
+  s.quadraticCurveTo(p.xF + .06, p.y0 + .2, p.xF - .05, p.y0 + .06);
+  return s;
+}
+function roue(R, style) {
+  const g = new THREE.Group();
+  const pneu = new THREE.Mesh(new THREE.CylinderGeometry(R, R, .3, 36), matPneu); pneu.rotation.x = Math.PI / 2; pneu.castShadow = true; g.add(pneu);
+  const flanc = new THREE.Mesh(new THREE.TorusGeometry(R - .04, .05, 10, 36), matPneu); flanc.position.z = .15; g.add(flanc);
+  const jante = new THREE.Group(); jante.position.z = .155; g.add(jante);
+  const rj = R * .7;
+  const fondJ = new THREE.Mesh(new THREE.CylinderGeometry(rj, rj, .04, 32), matNoir); fondJ.rotation.x = Math.PI / 2; jante.add(fondJ);
+  const cercle = new THREE.Mesh(new THREE.TorusGeometry(rj, .035, 8, 36), matJante); cercle.position.z = .02; jante.add(cercle);
+  const moyeu = new THREE.Mesh(new THREE.CylinderGeometry(.07, .08, .06, 16), matJante); moyeu.rotation.x = Math.PI / 2; moyeu.position.z = .03; jante.add(moyeu);
+  const branches = { sport: [5, .075], rayons: [12, .025], etoile: [6, .05], pleines: [0, 0] }[style];
+  if (style === 'pleines') { const d = new THREE.Mesh(new THREE.CylinderGeometry(rj * .95, rj * .95, .03, 32), matJante); d.rotation.x = Math.PI / 2; d.position.z = .025; jante.add(d);
+    for (let i = 0; i < 5; i++) { const t = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, .04, 8), matNoir); t.rotation.x = Math.PI / 2; const a = i / 5 * Math.PI * 2; t.position.set(Math.cos(a) * rj * .55, Math.sin(a) * rj * .55, .04); jante.add(t); } }
+  else for (let i = 0; i < branches[0]; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(branches[1], rj * .95, .035), matJante); const a = i / branches[0] * Math.PI * 2;
+    b.position.set(Math.cos(a + Math.PI / 2) * rj * .48, Math.sin(a + Math.PI / 2) * rj * .48, .035); b.rotation.z = a + (style === 'etoile' ? .25 : 0); jante.add(b); }
+  const etrier = new THREE.Mesh(new THREE.BoxGeometry(.12, .2, .06), new THREE.MeshStandardMaterial({ color: '#d61f3c', roughness: .4 })); etrier.position.set(rj * .55, .1, .05); g.add(etrier);
+  return g;
+}
+function construire() {
+  voiture.clear(); voiture.add(lumiereNeon); parts = {};
+  const v = VOITURES[voitureId], p = { ...v.p }, L = 1.86;
+  const caisse = new THREE.Group(); voiture.add(caisse); parts.caisse = caisse;
+  caisse.add(extrude(profilCaisse(p), L, matPeinture, .08));
+  // habitacle
+  if (!p.cabrio) {
+    const vitre = new THREE.Shape(); vitre.moveTo(p.gF + .04, p.hb); vitre.lineTo(p.gTF, p.roof - .05); vitre.lineTo(p.gTR, p.roof - .05); vitre.lineTo(p.gR - .04, p.hb); vitre.closePath();
+    caisse.add(extrude(vitre, 1.5, matVitre, .05));
+    const toit = new THREE.Shape(); toit.moveTo(p.gTF + .06, p.roof - .07); toit.lineTo(p.gTF + .02, p.roof); toit.lineTo(p.gTR - .02, p.roof); toit.lineTo(p.gTR - .06, p.roof - .07); toit.closePath();
+    caisse.add(extrude(toit, 1.5, matPeinture, .05));
+    for (const z of [-1, 1]) { const montant = new THREE.Mesh(new THREE.BoxGeometry(.07, p.roof - p.hb, .04), matPeinture); const mx = (p.gF + p.gTF) / 2; montant.position.set(mx * .5 + (p.gTF + p.gTR) / 4, (p.roof + p.hb) / 2, z * .78); montant.rotation.z = 0; }
+  } else {
+    const pb = new THREE.Mesh(new THREE.BoxGeometry(.06, .5, 1.6), matVitre); pb.position.set(p.gF - .05, p.hb + .26, 0); pb.rotation.z = .55; caisse.add(pb);
+    const cadre = new THREE.Mesh(new THREE.BoxGeometry(.06, .04, 1.62), matChrome); cadre.position.set(p.gF - .19, p.hb + .5, 0); caisse.add(cadre);
+    for (const z of [-.42, .42]) { const siege = new THREE.Mesh(new THREE.BoxGeometry(.5, .6, .55), new THREE.MeshStandardMaterial({ color: '#f1e3cf', roughness: .7 })); siege.position.set(-.55, p.hb + .1, z); siege.castShadow = true; caisse.add(siege);
+      const dos = new THREE.Mesh(new THREE.BoxGeometry(.14, .55, .55), siege.material); dos.position.set(-.8, p.hb + .42, z); dos.rotation.z = -.15; caisse.add(dos); }
+    const volant = new THREE.Mesh(new THREE.TorusGeometry(.17, .03, 8, 24), matNoir); volant.position.set(.05, p.hb + .32, .42); volant.rotation.y = Math.PI / 2; volant.rotation.x = .5; caisse.add(volant);
+    const interieur = new THREE.Mesh(new THREE.BoxGeometry(1.6, .1, 1.5), new THREE.MeshStandardMaterial({ color: '#2a1d18' })); interieur.position.set(-.2, p.hb - .02, 0); caisse.add(interieur);
+  }
+  // phares, feux, calandre, rétros, poignées, échappement
+  for (const z of [-.62, .62]) {
+    const ph = new THREE.Mesh(new THREE.CapsuleGeometry(.07, .26, 4, 10), matPhare); ph.rotation.x = Math.PI / 2; ph.position.set(p.xF - .02, p.hood - .17, z); caisse.add(ph);
+    const feu = new THREE.Mesh(new THREE.BoxGeometry(.05, .1, .48), matFeu); feu.position.set(p.xR - .05, p.hb - .2, z * .95); caisse.add(feu);
+    const retro = new THREE.Mesh(new THREE.BoxGeometry(.18, .12, .16), matPeinture); retro.position.set(p.gF - .12, p.hb + .1, z * 1.62); caisse.add(retro);
+    const poignee = new THREE.Mesh(new THREE.BoxGeometry(.16, .035, .03), matChrome); poignee.position.set(-.15, p.hb - .14, z * 1.55); caisse.add(poignee);
+  }
+  const feuCentre = new THREE.Mesh(new THREE.BoxGeometry(.04, .035, 1.2), matFeu); feuCentre.position.set(p.xR - .05, p.hb - .2, 0); caisse.add(feuCentre);
+  const calandre = new THREE.Mesh(new THREE.BoxGeometry(.05, .16, .9), matNoir); calandre.position.set(p.xF + .02, p.hood - .34, 0); caisse.add(calandre);
+  for (const z of [-.5, .5]) { const ech = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, .2, 14), matChrome); ech.rotation.z = Math.PI / 2; ech.position.set(p.xR - .05, p.y0 + .1, z); caisse.add(ech); }
+  // plaques
+  const plaqueTex = document.createElement('canvas'); plaqueTex.width = 512; plaqueTex.height = 128; parts.plaqueCanvas = plaqueTex;
+  parts.plaqueTexture = new THREE.CanvasTexture(plaqueTex); parts.plaqueTexture.colorSpace = THREE.SRGBColorSpace;
+  for (const [x, ry] of [[p.xR - .09, -Math.PI / 2], [p.xF + .08, Math.PI / 2]]) { const pl = new THREE.Mesh(new THREE.PlaneGeometry(.6, .15), new THREE.MeshStandardMaterial({ map: parts.plaqueTexture, roughness: .4 })); pl.position.set(x, p.y0 + .3, 0); pl.rotation.y = ry; caisse.add(pl); }
+  // aileron
+  parts.aileron = new THREE.Group(); caisse.add(parts.aileron); parts.p = p;
+  // roues
+  parts.roues = [];
+  for (const x of [p.wf, p.wr]) for (const z of [-1, 1]) { const r = roue(p.R, essai.jantes); r.position.set(x, p.R, z * (L / 2 - .02)); if (z < 0) r.rotation.y = Math.PI; voiture.add(r); parts.roues.push(r); }
+  // néons sous caisse
+  const neon = new THREE.Mesh(new THREE.PlaneGeometry(p.xF - p.xR - .6, 1.5), matNeon); neon.rotation.x = -Math.PI / 2; neon.position.set((p.xF + p.xR) / 2, .03, 0); voiture.add(neon); parts.neon = neon;
+  const halo = new THREE.Mesh(new THREE.PlaneGeometry(p.xF - p.xR + 1.6, 3), new THREE.MeshBasicMaterial({ color: '#ff3fa4', transparent: true, opacity: .35, depthWrite: false })); halo.rotation.x = -Math.PI / 2; halo.position.set((p.xF + p.xR) / 2, .125, 0); voiture.add(halo); parts.halo = halo;
+  appliquer();
+}
+function appliquer() {
+  const e = essai, p = parts.p;
+  matPeinture.color.set(e.peinture);
+  const f = { brillant: [.3, .28, 1, 0], mat: [.05, .72, 0, 0], metal: [.85, .22, 1, 0], nacre: [.4, .2, 1, 1] }[e.finition];
+  Object.assign(matPeinture, { metalness: f[0], roughness: f[1], clearcoat: f[2], iridescence: f[3], iridescenceIOR: 1.5 }); matPeinture.needsUpdate = true;
+  matJante.color.set(e.couleurJantes);
+  const t = { '0': ['#9fc7e6', .42], '50': ['#2b3a4a', .72], '90': ['#07090d', .93] }[e.vitres]; matVitre.color.set(t[0]); matVitre.opacity = t[1];
+  const bas = { origine: 0, sport: -.05, ras: -.11 }[e.suspension]; parts.caisse.position.y = bas;
+  const neon = MODS.neons.options.find(o => o.id === e.neons)?.couleur;
+  parts.neon.visible = parts.halo.visible = !!neon; lumiereNeon.intensity = neon ? 6 : 0;
+  if (neon) { matNeon.color.set(neon); parts.halo.material.color.set(neon); lumiereNeon.color.set(neon); }
+  parts.aileron.clear();
+  if (e.aileron === 'becquet') { const b = new THREE.Mesh(new THREE.BoxGeometry(.35, .06, 1.6), matPeinture); b.position.set(p.xR + .25, p.hb + .07, 0); b.rotation.z = -.2; parts.aileron.add(b); }
+  if (e.aileron === 'gt') { const aile = new THREE.Mesh(new THREE.BoxGeometry(.45, .05, 1.9), matNoir); aile.position.set(p.xR + .28, p.hb + .42, 0); aile.rotation.z = -.12; parts.aileron.add(aile);
+    for (const z of [-.6, .6]) { const pied = new THREE.Mesh(new THREE.BoxGeometry(.12, .4, .04), matNoir); pied.position.set(p.xR + .3, p.hb + .2, z); parts.aileron.add(pied);
+      const flanc = new THREE.Mesh(new THREE.BoxGeometry(.5, .16, .03), matPeinture); flanc.position.set(p.xR + .28, p.hb + .44, z * 1.58); parts.aileron.add(flanc); } }
+  const x = parts.plaqueCanvas.getContext('2d'); x.fillStyle = '#f4f1e6'; x.fillRect(0, 0, 512, 128); x.fillStyle = '#1d2a6b'; x.fillRect(0, 0, 56, 128); x.fillRect(456, 0, 56, 128);
+  x.fillStyle = '#1d2a6b'; x.font = '900 84px Inter, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText((e.plaque || '').toUpperCase().slice(0, 8), 256, 68);
+  x.fillStyle = '#ffd21f'; x.font = '900 22px Inter'; x.fillText('PS', 28, 100); parts.plaqueTexture.needsUpdate = true;
+}
+
+/* ---------- interface ---------- */
+function prixModifs() {
+  const base = possedees[voitureId] || DEFAUT; let total = 0;
+  for (const k in MODS) if (essai[k] !== base[k]) total += MODS[k].prix;
+  return total;
+}
+function majHUD() {
+  const v = VOITURES[voitureId]; $('#hud-nom').textContent = v.nom; $('#hud-type').textContent = v.type; $('#hud-argent').textContent = euros(argent);
+  $('#hud-stats').innerHTML = ['Vitesse', 'Accélération', 'Tenue de route'].map((n, i) => {
+    const bonus = i === 2 ? ({ origine: 0, sport: 6, ras: 10 }[essai.suspension] + (essai.aileron === 'gt' ? 8 : essai.aileron === 'becquet' ? 3 : 0)) : i === 1 && essai.aileron === 'gt' ? -2 : 0;
+    return `<div class="stat">${n}<i><u style="width:${Math.min(100, v.stats[i] + bonus)}%"></u></i></div>`; }).join('');
+  const possede = !!possedees[voitureId];
+  const total = possede ? prixModifs() : v.prix + prixModifs();
+  $('#total').textContent = euros(total); $('#total').classList.toggle('trop', total > argent);
+  $('#payer').textContent = possede ? 'Payer' : 'Acheter la voiture';
+  $('#aide').textContent = possede ? 'Tu peux tout essayer gratuitement. Tu paies seulement ce que tu gardes.' : `Cette voiture coûte ${euros(v.prix)}. Essaie-la ici : il faudra gagner des missions pour l'avoir.`;
+}
+function rendreVoitures() {
+  $('#voitures').innerHTML = Object.entries(VOITURES).map(([id, v]) => `<button type="button" data-v="${id}" class="${id === voitureId ? 'actif' : ''}"><b>${v.nom}</b><span class="${possedees[id] ? 'possede' : ''}">${possedees[id] ? 'À toi' : euros(v.prix)}</span></button>`).join('');
+}
+function rendreOnglets() {
+  $('#onglets').innerHTML = Object.entries(MODS).map(([k, m]) => `<button type="button" role="tab" aria-selected="${k === onglet}" data-o="${k}" class="${k === onglet ? 'actif' : ''}">${m.nom}</button>`).join('');
+}
+function rendreOptions() {
+  const m = MODS[onglet], base = possedees[voitureId] || DEFAUT;
+  if (onglet === 'plaque') { $('#options').innerHTML = `<label class="plaque-champ"><input id="plaque" maxlength="8" value="${essai.plaque}" aria-label="Texte de la plaque"></label><p class="aide" style="grid-column:1/-1">8 caractères maximum · ${euros(m.prix)}</p>`;
+    $('#plaque').addEventListener('input', e => { essai.plaque = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 8); appliquer(); majHUD(); }); return; }
+  $('#options').innerHTML = m.options.map(o => {
+    const deja = base[onglet] === o.id;
+    const past = o.couleur ? `<span class="pastille" style="background:${o.couleur}"></span>` : onglet === 'neons' ? `<span class="pastille" style="background:repeating-linear-gradient(45deg,#333 0 6px,#222 6px 12px)"></span>` : '';
+    return `<button type="button" class="opt ${essai[onglet] === o.id ? 'actif' : ''}" data-id="${o.id}">${past}${o.nom}<small class="${deja ? 'deja' : ''}">${deja ? 'Installé' : euros(m.prix)}</small></button>`; }).join('');
+}
+function toast(titre, texte, couleur) { $('#toast-titre').textContent = titre; $('#toast-titre').style.color = couleur; $('#toast-texte').textContent = texte; $('#toast').classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => $('#toast').classList.remove('on'), 2200); }
+
+$('#voitures').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; voitureId = b.dataset.v; essai = { ...(possedees[voitureId] || DEFAUT) }; construire(); rendreVoitures(); rendreOptions(); majHUD(); });
+$('#onglets').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b) return; onglet = b.dataset.o; rendreOnglets(); rendreOptions(); });
+$('#options').addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (!b) return; essai[onglet] = b.dataset.id; if (onglet === 'jantes') construire(); else appliquer(); rendreOptions(); majHUD(); });
+$('#payer').addEventListener('click', () => {
+  const possede = !!possedees[voitureId], total = possede ? prixModifs() : VOITURES[voitureId].prix + prixModifs();
+  if (total === 0) return toast('Rien à payer', 'Choisis une modif d\'abord.', '#fff');
+  if (total > argent) return toast('Pas assez d\'argent', 'Il te manque ' + euros(total - argent) + '. La suite arrive dans l\'épisode 2…', '#ff4d4d');
+  argent -= total; possedees[voitureId] = { ...essai }; store.set('argent', argent); store.set('possedees', possedees);
+  toast(possede ? 'Modif installée' : 'Voiture achetée', '–' + euros(total), '#5be36f'); rendreVoitures(); rendreOptions(); majHUD();
+});
+const VUES = { '34': [8.2, 3, 8.6], profil: [0, 1.8, 11.5], arriere: [-9.6, 2.6, 4.6] };
+document.querySelectorAll('[data-vue]').forEach(b => b.addEventListener('click', () => { controles.autoRotate = false; vue = VUES[b.dataset.vue]; }));
+let vue = null;
+$('#photo').addEventListener('click', () => { composer.render(); const a = document.createElement('a'); a.download = `${VOITURES[voitureId].nom.replace(/\s/g, '-').toLowerCase()}-porto-soleil.png`; a.href = renderer.domElement.toDataURL('image/png'); a.click(); });
+
+function taille() { const r = hote.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); composer.setSize(r.width, r.height); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+  camera.fov = r.width / r.height < .9 ? 44 : 36; camera.updateProjectionMatrix(); }
+new ResizeObserver(taille).observe(hote);
+let visible = true; new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hote);
+const horloge = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const t = horloge.getElapsedTime(); if (!visible) return;
+  if (vue) { camera.position.lerp(new THREE.Vector3(...vue), .08); if (camera.position.distanceTo(new THREE.Vector3(...vue)) < .05) vue = null; }
+  controles.update(); anneau.material.color.setHSL((.52 + Math.sin(t * .4) * .08) % 1, 1, .6);
+  if (parts.halo?.visible) parts.halo.material.opacity = .28 + Math.sin(t * 3) * .06;
+  composer.render();
+});
+
+construire(); rendreVoitures(); rendreOnglets(); rendreOptions(); majHUD();
+window.__garage = { construire, essai: () => essai, choisir: id => document.querySelector(`[data-v="${id}"]`).click(), set: (k, v) => { essai[k] = v; k === 'jantes' ? construire() : appliquer(); majHUD(); } };
+
+/* ---------- vote ---------- */
+const choix = store.get('vote', null);
+function majVote(m) { document.querySelectorAll('.mission').forEach(b => b.classList.toggle('choisie', b.dataset.m === m));
+  $('#vote-msg').textContent = m ? `Ton choix : mission ${m}. Écris « ${m} » en commentaire sous l'épisode 1 sur TikTok pour qu'il compte.` : ''; }
+document.querySelectorAll('.mission').forEach(b => b.addEventListener('click', () => { store.set('vote', b.dataset.m); majVote(b.dataset.m); }));
+majVote(choix);
+/* copier */
+document.querySelectorAll('[data-copie]').forEach(b => b.addEventListener('click', async () => {
+  const txt = $('#' + b.dataset.copie).innerText.replace(/^Copier\n?/, '');
+  try { await navigator.clipboard.writeText(txt); b.textContent = 'Copié ✓'; } catch { b.textContent = 'Sélectionne le texte'; }
+  setTimeout(() => b.textContent = 'Copier', 1800); }));
+</script>
+</body>
+</html>
